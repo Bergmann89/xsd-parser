@@ -2186,14 +2186,6 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        helper.begin_ns_scope();
-                        if self.is_root {
-                            helper.write_xmlns(
-                                &mut bytes,
-                                Some(&super::PREFIX_XSI),
-                                &super::NS_XSI,
-                            );
-                        }
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
                         helper.write_attrib_opt(&mut bytes, "attrib-b", &self.value.attrib_b)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -2204,7 +2196,6 @@ pub mod quick_xml_serialize {
                     },
                     SimpleTypeSerializerState::End__ => {
                         *self.state = SimpleTypeSerializerState::Done__;
-                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SimpleTypeSerializerState::Done__ => return Ok(None),
@@ -2252,14 +2243,6 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        helper.begin_ns_scope();
-                        if self.is_root {
-                            helper.write_xmlns(
-                                &mut bytes,
-                                Some(&super::PREFIX_XSI),
-                                &super::NS_XSI,
-                            );
-                        }
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
                         helper.write_attrib_opt(&mut bytes, "attrib-b", &self.value.attrib_b)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -2272,7 +2255,6 @@ pub mod quick_xml_serialize {
                     }
                     SequenceTypeSerializerState::End__ => {
                         *self.state = SequenceTypeSerializerState::Done__;
-                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SequenceTypeSerializerState::Done__ => return Ok(None),
@@ -2386,14 +2368,6 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
-                        helper.begin_ns_scope();
-                        if self.is_root {
-                            helper.write_xmlns(
-                                &mut bytes,
-                                Some(&super::PREFIX_XSI),
-                                &super::NS_XSI,
-                            );
-                        }
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
                         helper.write_attrib_opt(&mut bytes, "attrib-b", &self.value.attrib_b)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -2406,7 +2380,6 @@ pub mod quick_xml_serialize {
                     }
                     NestedSeqTypeSerializerState::End__ => {
                         *self.state = NestedSeqTypeSerializerState::Done__;
-                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     NestedSeqTypeSerializerState::Done__ => return Ok(None),

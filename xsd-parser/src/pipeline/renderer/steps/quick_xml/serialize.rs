@@ -751,15 +751,6 @@ impl ComplexBase<'_> {
                     Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
                 });
 
-                let need_xsi_namespace =
-                    nillable_type_support && !collector.provides_xsi_namespace();
-                let xsi = need_xsi_namespace.then(|| {
-                    let namespace = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::Namespace");
-                    let namespace_prefix = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::misc::NamespacePrefix");
-
-                    quote!(helper.write_xmlns(&mut bytes, Some(&#namespace_prefix::XSI), &#namespace::XSI);)
-                });
-
                 let global_xmlns = collector
                     .get_namespaces(ctx.types, ctx.ident, default_namespace.as_ref())
                     .values()
@@ -777,8 +768,8 @@ impl ComplexBase<'_> {
                         quote! {
                             helper.write_xmlns(&mut bytes, #prefix_const, &#ns_const);
                         }
-                    });
-                let global_xmlns = xsi.into_iter().chain(global_xmlns).collect::<Vec<_>>();
+                    })
+                    .collect::<Vec<_>>();
                 let global_xmlns = global_xmlns.is_empty().not().then(|| {
                     quote! {
                         if self.is_root {
@@ -1412,10 +1403,6 @@ impl NamespaceCollector {
         }))
     }
 
-    fn provides_xsi_namespace(&self) -> bool {
-        self.xsi_namespace.is_some()
-    }
-
     fn get_namespaces(
         &mut self,
         types: &MetaTypes,
@@ -1445,12 +1432,6 @@ impl NamespaceCollector {
             let ty = types.items.get(ident).unwrap();
             let mut state = GetNamespaceState::Empty;
 
-            if self.nillable_type_support {
-                if let Some(id) = &self.xsi_namespace {
-                    Self::add_ns(&mut state, types, NamespaceKey::Normal(*id));
-                }
-            }
-
             match &ty.variant {
                 MetaTypeVariant::Union(x) => {
                     for ty in &*x.types {
@@ -1459,6 +1440,11 @@ impl NamespaceCollector {
                 }
                 MetaTypeVariant::Reference(x) => {
                     self.merge(&mut state, types, &x.type_, default_ns);
+                    if self.nillable_type_support && x.nillable {
+                        if let Some(id) = self.xsi_namespace {
+                            Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                        }
+                    }
                 }
                 MetaTypeVariant::Enumeration(x) => {
                     for var in &*x.variants {
@@ -1478,6 +1464,11 @@ impl NamespaceCollector {
                     for el in &*x.elements {
                         if let ElementMetaVariant::Type { type_, .. } = &el.variant {
                             self.merge(&mut state, types, type_, default_ns);
+                        }
+                        if self.nillable_type_support && el.nillable {
+                            if let Some(id) = self.xsi_namespace {
+                                Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                            }
                         }
                     }
                 }
