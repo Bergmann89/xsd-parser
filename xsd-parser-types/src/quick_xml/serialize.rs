@@ -598,6 +598,7 @@ impl SerializeHelper {
         prefix: Option<&NamespacePrefix>,
         namespace: &Namespace,
     ) {
+        let prefix = prefix.filter(|p| !p.0.is_empty());
         for entry in self.namespaces.iter().rev() {
             if &entry.namespace == namespace {
                 if entry.prefix.as_ref() == prefix {

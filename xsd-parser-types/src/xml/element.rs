@@ -201,20 +201,39 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
             match replace(self, Self::Done) {
                 Self::Start { name, element } => {
                     let element_name = name.map_or_else(|| from_utf8(&element.name), Ok)?;
-                    let attributes = element.attributes.iter().map(|(k, v)| Attribute {
-                        key: QName(k),
-                        value: Cow::Borrowed(&v.0),
-                    });
-
                     let mut start = BytesStart::new(element_name);
 
                     helper.begin_ns_scope();
                     for (prefix, ns) in &**element.namespaces {
-                        let prefix = NamespacePrefix::new(prefix.0.clone().into_owned());
                         let ns = Namespace::new(ns.0.clone().into_owned());
-                        helper.write_xmlns(&mut start, Some(&prefix), &ns);
+                        let prefix = if prefix.0.is_empty() {
+                            None
+                        } else {
+                            Some(NamespacePrefix::new(prefix.0.clone().into_owned()))
+                        };
+                        helper.write_xmlns(&mut start, prefix.as_ref(), &ns);
                     }
 
+                    // The deserializer stores xmlns declarations in both
+                    // `element.namespaces` and `element.attributes`. Skip xmlns
+                    // attributes that already have a corresponding namespaces entry
+                    // (emitted above via write_xmlns) to avoid duplicates.
+                    let attributes = element
+                        .attributes
+                        .iter()
+                        .filter(|(k, _)| {
+                            if *k.0 == b"xmlns"[..] {
+                                !element.namespaces.contains_key(&b""[..])
+                            } else if let Some(prefix) = k.0.strip_prefix(b"xmlns:") {
+                                !element.namespaces.contains_key(prefix)
+                            } else {
+                                true
+                            }
+                        })
+                        .map(|(k, v)| Attribute {
+                            key: QName(k),
+                            value: Cow::Borrowed(&v.0),
+                        });
                     start.extend_attributes(attributes);
 
                     let event = if element.values.is_empty() {
@@ -620,4 +639,180 @@ mod tests {
     <name first="elizabeth" last="smith"/>
 </names>
 "#;
+
+    #[test]
+    fn roundtrip_with_default_namespace() {
+        const INPUT: &str = r#"<root xmlns="http://example.com/ns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><child><value>hello</value></child></root>"#;
+
+        let mut reader = SliceReader::new(INPUT);
+        let doc1 = Element::deserialize(&mut reader).unwrap();
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        doc1.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        assert!(
+            !output.contains("xmlns:=\""),
+            "must not produce invalid xmlns:= attribute, got: {output}"
+        );
+        assert_eq!(
+            output.matches("xmlns=").count(),
+            1,
+            "default namespace xmlns= should appear exactly once, got: {output}"
+        );
+        assert_eq!(
+            output.matches("xmlns:xsi=").count(),
+            1,
+            "xmlns:xsi= should appear exactly once, got: {output}"
+        );
+
+        let mut reader2 = SliceReader::new(output);
+        let doc2 = Element::deserialize(&mut reader2).unwrap();
+        assert_eq!(doc1, doc2, "round-trip should preserve element equality");
+    }
+
+    #[test]
+    fn roundtrip_without_namespaces() {
+        const INPUT: &str =
+            r#"<root><child first="alice" last="jones"/><child first="bob"/></root>"#;
+
+        let mut reader = SliceReader::new(INPUT);
+        let doc1 = Element::deserialize(&mut reader).unwrap();
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        doc1.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        let mut reader2 = SliceReader::new(output);
+        let doc2 = Element::deserialize(&mut reader2).unwrap();
+        assert_eq!(doc1, doc2);
+    }
+
+    #[test]
+    fn roundtrip_with_prefixed_namespace_only() {
+        const INPUT: &str =
+            r#"<root xmlns:ns="http://example.com/ns"><ns:child>text</ns:child></root>"#;
+
+        let mut reader = SliceReader::new(INPUT);
+        let doc1 = Element::deserialize(&mut reader).unwrap();
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        doc1.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        assert!(
+            !output.contains("xmlns:=\""),
+            "must not produce invalid xmlns:= attribute, got: {output}"
+        );
+        assert_eq!(
+            output.matches("xmlns:ns=").count(),
+            1,
+            "xmlns:ns= should appear exactly once, got: {output}"
+        );
+
+        let mut reader2 = SliceReader::new(output);
+        let doc2 = Element::deserialize(&mut reader2).unwrap();
+        assert_eq!(doc1, doc2);
+    }
+
+    /// XML Namespaces 1.0 §6.2: `xmlns=""` undeclares the default namespace.
+    #[test]
+    fn roundtrip_default_namespace_undeclaration() {
+        const INPUT: &str = r#"<root xmlns="http://example.com/ns"><child xmlns=""><value>plain</value></child></root>"#;
+
+        let mut reader = SliceReader::new(INPUT);
+        let doc1 = Element::deserialize(&mut reader).unwrap();
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        doc1.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        assert!(
+            !output.contains("xmlns:=\""),
+            "must not produce invalid xmlns:= attribute, got: {output}"
+        );
+
+        let mut reader2 = SliceReader::new(output);
+        let doc2 = Element::deserialize(&mut reader2).unwrap();
+        assert_eq!(doc1, doc2);
+    }
+
+    /// XML Namespaces 1.0 §6.1: inner declaration shadows outer with same prefix.
+    #[test]
+    fn roundtrip_prefix_rebinding() {
+        const INPUT: &str = r#"<root xmlns:ns="http://ns1"><ns:child xmlns:ns="http://ns2"><ns:value>text</ns:value></ns:child></root>"#;
+
+        let mut reader = SliceReader::new(INPUT);
+        let doc1 = Element::deserialize(&mut reader).unwrap();
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        doc1.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        assert!(
+            output.contains(r#"xmlns:ns="http://ns1""#),
+            "parent ns binding must be present, got: {output}"
+        );
+        assert!(
+            output.contains(r#"xmlns:ns="http://ns2""#),
+            "child ns rebinding must be present, got: {output}"
+        );
+
+        let mut reader2 = SliceReader::new(output);
+        let doc2 = Element::deserialize(&mut reader2).unwrap();
+        assert_eq!(doc1, doc2);
+    }
+
+    /// Inherited namespaces must not be re-declared on child elements.
+    #[test]
+    fn roundtrip_inherited_namespace_not_redeclared() {
+        const INPUT: &str = r#"<root xmlns:ns="http://example.com"><ns:child><ns:value>text</ns:value></ns:child></root>"#;
+
+        let mut reader = SliceReader::new(INPUT);
+        let doc1 = Element::deserialize(&mut reader).unwrap();
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        doc1.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        assert_eq!(
+            output.matches(r"xmlns:ns=").count(),
+            1,
+            "xmlns:ns= should appear only on root, not redeclared on children, got: {output}"
+        );
+
+        let mut reader2 = SliceReader::new(output);
+        let doc2 = Element::deserialize(&mut reader2).unwrap();
+        assert_eq!(doc1, doc2);
+    }
+
+    /// Xmlns declarations added only via `.attribute()` (without a
+    /// corresponding `.namespace()` entry) must be emitted verbatim.
+    #[test]
+    fn attribute_only_xmlns_is_preserved() {
+        let el = Element::new()
+            .name(b"root".as_ref())
+            .attribute(b"xmlns:foo".as_ref(), b"http://foo.example".as_ref())
+            .attribute(b"foo:bar".as_ref(), b"value".as_ref());
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        el.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        assert!(
+            output.contains(r#"xmlns:foo="http://foo.example""#),
+            "xmlns:foo must be preserved, got: {output}"
+        );
+        assert!(
+            output.contains(r#"foo:bar="value""#),
+            "foo:bar attribute must be preserved, got: {output}"
+        );
+    }
 }
