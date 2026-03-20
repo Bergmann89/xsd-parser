@@ -1,4 +1,6 @@
-use xsd_parser::{config::OptimizerFlags, Config, IdentType};
+use xsd_parser::{
+    config::OptimizerFlags, pipeline::renderer::NamespaceSerialization, Config, IdentType,
+};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -92,4 +94,66 @@ mod quick_xml {
     #![allow(unused_imports)]
 
     include!("expected/quick_xml.rs");
+}
+
+/* dynamic_quick_xml */
+
+#[test]
+fn generate_dynamic_quick_xml() {
+    generate_test(
+        "tests/feature/nillable/schema.xsd",
+        "tests/feature/nillable/expected/dynamic_quick_xml.rs",
+        config().with_quick_xml_config(NamespaceSerialization::Dynamic, None, false),
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_dynamic_quick_xml_with_nil() {
+    use crate::utils::quick_xml_write_test;
+    use dynamic_quick_xml::Foo;
+    use xsd_parser_types::xml::Nillable;
+
+    // Verify that serializing Foo with nil 'b' DOES emit xmlns:xsi at root
+    let obj = Foo {
+        a: 42,
+        b: Nillable::nil(),
+        c: None,
+        d: None,
+    };
+
+    quick_xml_write_test(
+        &obj,
+        "Foo",
+        "tests/feature/nillable/example/dynamic_with_nil.xml",
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_dynamic_quick_xml_no_nil() {
+    use crate::utils::quick_xml_write_test;
+    use dynamic_quick_xml::Foo;
+    use xsd_parser_types::xml::Nillable;
+
+    // Verify that serializing Foo WITHOUT any nil values does NOT emit xmlns:xsi at root
+    let obj = Foo {
+        a: 42,
+        b: Nillable::new(100),
+        c: Some(200),
+        d: None,
+    };
+
+    quick_xml_write_test(
+        &obj,
+        "Foo",
+        "tests/feature/nillable/example/dynamic_no_nil.xml",
+    );
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod dynamic_quick_xml {
+    #![allow(unused_imports)]
+
+    include!("expected/dynamic_quick_xml.rs");
 }

@@ -512,6 +512,104 @@ where
     }
 }
 
+/// Trait for collecting namespaces of a type and all its sub-types.
+///
+/// Implement this trait to allow the dynamic serialization mode to discover which
+/// XML namespaces a value actually requires at runtime.
+pub trait CollectNamespaces {
+    /// Collect all XML namespaces that `self` (and its children) need into `helper`.
+    fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>);
+}
+
+macro_rules! impl_collect_namespaces {
+    ($ident:path) => {
+        impl CollectNamespaces for $ident {
+            fn collect_namespaces(&self, _: &mut SerializeHelper, _: &mut BytesStart<'_>) {}
+        }
+    };
+}
+
+// Implementations for primitive types (all no-ops).
+impl_collect_namespaces!(bool);
+impl_collect_namespaces!(char);
+impl_collect_namespaces!(str);
+impl_collect_namespaces!(String);
+
+impl_collect_namespaces!(u8);
+impl_collect_namespaces!(u16);
+impl_collect_namespaces!(u32);
+impl_collect_namespaces!(u64);
+impl_collect_namespaces!(u128);
+impl_collect_namespaces!(usize);
+
+impl_collect_namespaces!(i8);
+impl_collect_namespaces!(i16);
+impl_collect_namespaces!(i32);
+impl_collect_namespaces!(i64);
+impl_collect_namespaces!(i128);
+impl_collect_namespaces!(isize);
+
+impl_collect_namespaces!(f32);
+impl_collect_namespaces!(f64);
+
+impl_collect_namespaces!(std::num::NonZeroU8);
+impl_collect_namespaces!(std::num::NonZeroU16);
+impl_collect_namespaces!(std::num::NonZeroU32);
+impl_collect_namespaces!(std::num::NonZeroU64);
+impl_collect_namespaces!(std::num::NonZeroU128);
+impl_collect_namespaces!(std::num::NonZeroUsize);
+
+impl_collect_namespaces!(std::num::NonZeroI8);
+impl_collect_namespaces!(std::num::NonZeroI16);
+impl_collect_namespaces!(std::num::NonZeroI32);
+impl_collect_namespaces!(std::num::NonZeroI64);
+impl_collect_namespaces!(std::num::NonZeroI128);
+impl_collect_namespaces!(std::num::NonZeroIsize);
+
+#[cfg(feature = "num")]
+impl_collect_namespaces!(num::BigInt);
+
+#[cfg(feature = "num")]
+impl_collect_namespaces!(num::BigUint);
+
+impl<T: CollectNamespaces> CollectNamespaces for Option<T> {
+    fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        if let Some(inner) = self {
+            inner.collect_namespaces(helper, bytes);
+        }
+    }
+}
+
+impl<T: CollectNamespaces> CollectNamespaces for Vec<T> {
+    fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        for item in self {
+            item.collect_namespaces(helper, bytes);
+        }
+    }
+}
+
+impl<T: CollectNamespaces + ?Sized> CollectNamespaces for Box<T> {
+    fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        self.as_ref().collect_namespaces(helper, bytes);
+    }
+}
+
+impl<T: CollectNamespaces, const N: usize> CollectNamespaces for [T; N] {
+    fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        for item in self {
+            item.collect_namespaces(helper, bytes);
+        }
+    }
+}
+
+impl<T: CollectNamespaces> CollectNamespaces for [T] {
+    fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        for item in self {
+            item.collect_namespaces(helper, bytes);
+        }
+    }
+}
+
 /// Helper that defines some useful methods needed for `quick_xml` serialization.
 ///
 /// Mainly used in [`Serializer`] and [`SerializeBytes`].

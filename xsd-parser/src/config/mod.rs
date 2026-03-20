@@ -277,6 +277,10 @@ impl Config {
             self = self.with_render_step(RenderStep::PrefixConstants);
         }
 
+        if namespaces == NamespaceSerialization::Dynamic {
+            self = self.with_render_step(RenderStep::QuickXmlCollectNamespaces);
+        }
+
         self.with_render_steps([
             RenderStep::NamespaceConstants,
             RenderStep::QuickXmlSerialize {

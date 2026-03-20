@@ -1,3 +1,4 @@
+mod collect_namespaces;
 mod deserialize;
 mod serialize;
 
@@ -6,6 +7,7 @@ use crate::models::{
     meta::{ElementMetaVariant, ElementMode},
 };
 
+pub use self::collect_namespaces::QuickXmlCollectNamespacesRenderStep;
 pub use self::deserialize::QuickXmlDeserializeRenderStep;
 pub use self::serialize::{NamespaceSerialization, QuickXmlSerializeRenderStep};
 

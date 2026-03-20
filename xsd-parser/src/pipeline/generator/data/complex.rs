@@ -611,11 +611,9 @@ impl<'types> ComplexDataElement<'types> {
                 }
 
                 let type_ = &ctx.any_type;
-                let absolute =
-                    ctx.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS);
                 let target_type = PathData::from_path(type_.clone()).into_included();
                 let target_type = ctx
-                    .path_data_mixed(mixed, absolute, target_type)
+                    .path_data_mixed(mixed, target_type)
                     .with_using(format!("{type_}"));
 
                 let target_is_dynamic = false;
@@ -634,25 +632,21 @@ impl<'types> ComplexDataElement<'types> {
                     occurs = Occurs::Optional;
                 }
 
-                let absolute =
-                    ctx.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS);
                 let (target_ref, need_box) = ctx.get_or_create_type_ref_for_element(
                     type_,
                     !force_box && direct_usage && occurs.is_direct(),
                 )?;
 
                 let target_type = target_ref.path.clone();
-                let target_type = ctx.path_data_mixed(mixed, absolute, target_type);
-                let target_type = ctx.path_data_nillable(nillable, absolute, target_type);
+                let target_type = ctx.path_data_mixed(mixed, target_type);
+                let target_type = ctx.path_data_nillable(nillable, target_type);
 
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
                 (target_type, target_is_dynamic, need_box)
             }
             ElementMetaVariant::Text => {
-                let absolute =
-                    ctx.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS);
-                let target_type = ctx.path_data_text(absolute);
+                let target_type = ctx.path_data_text();
                 let target_is_dynamic = false;
                 let need_box = false;
 
@@ -699,7 +693,6 @@ impl<'types> ComplexDataElement<'types> {
             .naming
             .format_variant_ident(&meta.ident.name, None);
         let origin = ComplexDataElementOrigin::Generated(Box::new(meta));
-        let absolute = ctx.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS);
         let extra_attributes = Vec::new();
 
         Self {
@@ -710,7 +703,7 @@ impl<'types> ComplexDataElement<'types> {
             tag_name: TagName::default(),
             field_ident,
             variant_ident,
-            target_type: ctx.path_data_text(absolute),
+            target_type: ctx.path_data_text(),
             need_indirection: false,
             target_is_dynamic: false,
             extra_attributes,

@@ -10,6 +10,7 @@ mod union;
 use std::borrow::Cow;
 use std::mem::swap;
 
+use crate::config::GeneratorFlags;
 use crate::models::{
     code::IdentPath,
     data::{BuildInData, CustomData, PathData},
@@ -35,10 +36,10 @@ impl<'types> CustomData<'types> {
 }
 
 impl Context<'_, '_> {
-    fn path_data_nillable(&self, is_mixed: bool, absolute: bool, mut path: PathData) -> PathData {
+    fn path_data_nillable(&self, is_mixed: bool, mut path: PathData) -> PathData {
         if !is_mixed {
             path
-        } else if absolute {
+        } else if self.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS) {
             let mut tmp = self.nillable_type.clone();
 
             swap(&mut path.path, &mut tmp);
@@ -54,10 +55,10 @@ impl Context<'_, '_> {
         }
     }
 
-    fn path_data_mixed(&self, is_mixed: bool, absolute: bool, mut path: PathData) -> PathData {
+    fn path_data_mixed(&self, is_mixed: bool, mut path: PathData) -> PathData {
         if !is_mixed {
             path
-        } else if absolute {
+        } else if self.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS) {
             let mut tmp = self.mixed_type.clone();
 
             swap(&mut path.path, &mut tmp);
@@ -73,8 +74,8 @@ impl Context<'_, '_> {
         }
     }
 
-    fn path_data_text(&self, absolute: bool) -> PathData {
-        if absolute {
+    fn path_data_text(&self) -> PathData {
+        if self.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS) {
             let target_type = self.text_type.clone();
 
             PathData::from_path(target_type)

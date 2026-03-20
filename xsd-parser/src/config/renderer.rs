@@ -187,6 +187,14 @@ pub enum RenderStep {
         /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::pipeline::renderer::QuickXmlDeserializeRenderStep::boxed_deserializer).
         boxed_deserializer: bool,
     },
+
+    /// Renderer that renders the [`CollectNamespaces`](xsd_parser_types::quick_xml::CollectNamespaces)
+    /// trait for each generated type.
+    ///
+    /// This step is required when using [`NamespaceSerialization::Dynamic`] so
+    /// that the serializer can discover which XML namespaces are actually needed
+    /// at runtime before writing the root start element.
+    QuickXmlCollectNamespaces,
 }
 
 /// Helper trait to deal with custom render steps.
@@ -241,6 +249,7 @@ impl RenderStepConfig for RenderStep {
             Self::WithNamespaceTrait => RenderStepType::ExtraImpls,
             Self::QuickXmlSerialize { .. } => RenderStepType::ExtraImpls,
             Self::QuickXmlDeserialize { .. } => RenderStepType::ExtraImpls,
+            Self::QuickXmlCollectNamespaces => RenderStepType::ExtraImpls,
         }
     }
 
@@ -251,7 +260,8 @@ impl RenderStepConfig for RenderStep {
     fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
         use crate::pipeline::renderer::{
             DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
-            PrefixConstantsRenderStep, QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
+            PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
+            QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
             SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
             TypesRenderStep, WithNamespaceTraitRenderStep,
         };
@@ -280,14 +290,16 @@ impl RenderStepConfig for RenderStep {
             Self::QuickXmlDeserialize { boxed_deserializer } => {
                 Box::new(QuickXmlDeserializeRenderStep { boxed_deserializer })
             }
+            Self::QuickXmlCollectNamespaces => Box::new(QuickXmlCollectNamespacesRenderStep),
         }
     }
 
     fn is_mutual_exclusive_to(&self, other: &dyn RenderStepConfig) -> bool {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
-            QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
-            SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+            DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
+            QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
+            SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
+            TypesRenderStep, WithNamespaceTraitRenderStep,
         };
 
         if self
@@ -309,6 +321,7 @@ impl RenderStepConfig for RenderStep {
             (Self::WithNamespaceTrait, Some(Self::WithNamespaceTrait)) => true,
             (Self::QuickXmlSerialize { .. }, Some(Self::QuickXmlSerialize { .. })) => true,
             (Self::QuickXmlDeserialize { .. }, Some(Self::QuickXmlDeserialize { .. })) => true,
+            (Self::QuickXmlCollectNamespaces, Some(Self::QuickXmlCollectNamespaces)) => true,
             (Self::Types, None) => other_id == TypeId::of::<TypesRenderStep>(),
             (
                 Self::TypesSerdeXmlRs {
@@ -338,6 +351,9 @@ impl RenderStepConfig for RenderStep {
             (Self::QuickXmlDeserialize { .. }, None) => {
                 other_id == TypeId::of::<QuickXmlDeserializeRenderStep>()
             }
+            (Self::QuickXmlCollectNamespaces, None) => {
+                other_id == TypeId::of::<QuickXmlCollectNamespacesRenderStep>()
+            }
             _ => false,
         }
     }
@@ -356,7 +372,8 @@ impl RenderStep {
             | (Self::NamespaceConstants, Self::NamespaceConstants)
             | (Self::WithNamespaceTrait, Self::WithNamespaceTrait)
             | (Self::QuickXmlSerialize { .. }, Self::QuickXmlSerialize { .. })
-            | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. }) => true,
+            | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. })
+            | (Self::QuickXmlCollectNamespaces, Self::QuickXmlCollectNamespaces) => true,
             (_, _) => false,
         }
     }

@@ -1,0 +1,8 @@
+<Foo xmlns="Foo">
+    <Inner1 xmlns="Bar">
+        <A>Bar String</A>
+    </Inner1>
+    <Inner2 xmlns="Baz">
+        <B>Baz String</B>
+    </Inner2>
+</Foo>

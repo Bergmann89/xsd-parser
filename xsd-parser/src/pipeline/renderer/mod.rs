@@ -44,9 +44,10 @@ pub use self::error::Error;
 pub use self::meta::MetaData;
 pub use self::steps::{
     DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
-    NamespaceSerialization, PrefixConstantsRenderStep, QuickXmlDeserializeRenderStep,
-    QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
-    SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+    NamespaceSerialization, PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
+    QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep,
+    SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep, TypesRenderStep,
+    WithNamespaceTraitRenderStep,
 };
 
 /// The [`Renderer`] is the central orchestrator for Rust code generation from
