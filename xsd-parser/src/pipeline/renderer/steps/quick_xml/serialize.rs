@@ -12,14 +12,13 @@ use quote::{format_ident, quote};
 use xsd_parser_types::misc::Namespace;
 
 use crate::config::{GeneratorFlags, TypedefMode};
-use crate::models::data::EnumerationVariantValue;
 use crate::models::{
     code::IdentPath,
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataEnum, ComplexDataStruct, DataTypeVariant, DynamicData, EnumerationData,
-        EnumerationDataVariant, Occurs, PathData, ReferenceData, SimpleData, UnionData,
-        UnionTypeVariant,
+        EnumerationDataVariant, EnumerationVariantValue, Occurs, PathData, ReferenceData,
+        SimpleData, TagName, UnionData, UnionTypeVariant,
     },
     meta::{CustomMetaNamespace, ElementMetaVariant, MetaTypeVariant, MetaTypes},
     schema::{xs::FormChoiceType, NamespaceId},
@@ -54,6 +53,16 @@ pub enum NamespaceSerialization {
 
     /// All namespace definitions are serialized to the root element.
     Global,
+
+    /// Namespace definitions are collected at runtime by traversing the value
+    /// tree via the [`CollectNamespaces`](xsd_parser_types::quick_xml::CollectNamespaces)
+    /// trait, and only the namespaces that are actually needed by the current
+    /// value are written to the root element.
+    ///
+    /// This requires the [`QuickXmlCollectNamespacesRenderStep`](super::QuickXmlCollectNamespacesRenderStep)
+    /// to be added to the renderer pipeline as well, so that `CollectNamespaces`
+    /// is implemented for all generated types.
+    Dynamic,
 }
 
 impl NamespaceSerialization {
@@ -64,12 +73,13 @@ impl NamespaceSerialization {
         matches!(self, Self::None)
     }
 
-    /// Returns `true` if this is [`NamespaceSerialization::Local`] or
-    /// [`NamespaceSerialization::Global`], `false` otherwise.
+    /// Returns `true` if this is [`NamespaceSerialization::Local`],
+    /// [`NamespaceSerialization::Global`], or [`NamespaceSerialization::Dynamic`],
+    /// `false` otherwise.
     #[inline]
     #[must_use]
     pub fn is_some(&self) -> bool {
-        matches!(self, Self::Local | Self::Global)
+        matches!(self, Self::Local | Self::Global | Self::Dynamic)
     }
 }
 
@@ -739,17 +749,7 @@ impl ComplexBase<'_> {
                     .clone();
                 let mut collector = collector.borrow_mut();
 
-                let xmlns = self.tag_name.as_ref().and_then(|tag| {
-                    let module = tag.module?;
-                    if tag.form != FormChoiceType::Qualified || module.prefix().is_some() {
-                        return None;
-                    }
-
-                    let ns = module.make_ns_const()?;
-                    let ns_const = ctx.resolve_type_for_serialize_module(&ns);
-
-                    Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
-                });
+                let xmlns = self.tag_name.as_ref().and_then(|x| x.render_xmlns(ctx));
 
                 let global_xmlns = collector
                     .get_namespaces(ctx.types, ctx.ident, default_namespace.as_ref())
@@ -782,6 +782,21 @@ impl ComplexBase<'_> {
                     quote! {
                         #xmlns
                         #global_xmlns
+                    }
+                })
+            }
+            NamespaceSerialization::Dynamic => {
+                let xmlns = self.tag_name.as_ref().and_then(|x| x.render_xmlns(ctx));
+
+                let collect_namespaces = resolve_quick_xml_ident!(
+                    ctx,
+                    "::xsd_parser_types::quick_xml::CollectNamespaces"
+                );
+
+                Some(quote! {
+                    #xmlns
+                    if self.is_root {
+                        #collect_namespaces::collect_namespaces(self.value, helper, &mut bytes);
                     }
                 })
             }
@@ -1371,6 +1386,20 @@ impl Occurs {
                 Some(quote!(#iter_serializer<'ser, &'ser [#target_type], #target_type>))
             }
         }
+    }
+}
+
+impl TagName<'_> {
+    fn render_xmlns(&self, ctx: &mut Context<'_, '_>) -> Option<TokenStream> {
+        let module = self.module?;
+        if self.form != FormChoiceType::Qualified || module.prefix().is_some() {
+            return None;
+        }
+
+        let ns = module.make_ns_const()?;
+        let ns_const = ctx.resolve_type_for_serialize_module(&ns);
+
+        Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
     }
 }
 

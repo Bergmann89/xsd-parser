@@ -71,7 +71,11 @@ impl PathData {
         if !self.generics.is_empty() {
             ret.extend(quote!(<));
 
-            for x in &self.generics {
+            for (idx, x) in self.generics.iter().enumerate() {
+                if idx > 0 {
+                    ret.extend(quote!(,));
+                }
+
                 ret.extend(x.relative_to(path));
             }
 

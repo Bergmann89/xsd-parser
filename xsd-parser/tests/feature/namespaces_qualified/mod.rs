@@ -228,3 +228,109 @@ mod quick_xml_global_no_alt {
 
     include!("expected/quick_xml_global_no_alt.rs");
 }
+
+/* quick_xml_dynamic_alt */
+
+#[test]
+fn generate_quick_xml_dynamic_alt() {
+    generate_test(
+        "tests/feature/namespaces_qualified/foo.xsd",
+        "tests/feature/namespaces_qualified/expected/quick_xml_dynamic_alt.rs",
+        config().with_quick_xml_serialize_config(NamespaceSerialization::Dynamic, None),
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_dynamic_alt() {
+    use quick_xml_dynamic_alt::Foo;
+
+    let obj = crate::utils::quick_xml_read_test::<Foo, _>(
+        "tests/feature/namespaces_qualified/example/dynamic_alt.xml",
+    );
+
+    assert_eq!(obj.inner_1.a, "Bar String");
+    assert_eq!(obj.inner_2.b, "Baz String");
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_quick_xml_dynamic_alt() {
+    use quick_xml_dynamic_alt::{Foo, Inner1Type, Inner2Type};
+
+    let obj = Foo {
+        inner_1: Inner1Type {
+            a: "Bar String".into(),
+        },
+        inner_2: Inner2Type {
+            b: "Baz String".into(),
+        },
+    };
+
+    crate::utils::quick_xml_write_test(
+        &obj,
+        "Foo",
+        "tests/feature/namespaces_qualified/example/dynamic_alt.xml",
+    );
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod quick_xml_dynamic_alt {
+    #![allow(unused_imports)]
+
+    include!("expected/quick_xml_dynamic_alt.rs");
+}
+
+/* quick_xml_dynamic_no_alt */
+
+#[test]
+fn generate_quick_xml_dynamic_no_alt() {
+    generate_test(
+        "tests/feature/namespaces_qualified/foo.xsd",
+        "tests/feature/namespaces_qualified/expected/quick_xml_dynamic_no_alt.rs",
+        config()
+            .without_parser_flags(ParserFlags::ALTERNATIVE_PREFIXES)
+            .with_quick_xml_serialize_config(NamespaceSerialization::Dynamic, None),
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_dynamic_no_alt() {
+    use quick_xml_dynamic_no_alt::Foo;
+
+    let obj = crate::utils::quick_xml_read_test::<Foo, _>(
+        "tests/feature/namespaces_qualified/example/dynamic_no_alt.xml",
+    );
+
+    assert_eq!(obj.inner_1.a, "Bar String");
+    assert_eq!(obj.inner_2.b, "Baz String");
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_quick_xml_dynamic_no_alt() {
+    use quick_xml_dynamic_no_alt::{Foo, Inner1Type, Inner2Type};
+
+    let obj = Foo {
+        inner_1: Inner1Type {
+            a: "Bar String".into(),
+        },
+        inner_2: Inner2Type {
+            b: "Baz String".into(),
+        },
+    };
+
+    crate::utils::quick_xml_write_test(
+        &obj,
+        "Foo",
+        "tests/feature/namespaces_qualified/example/dynamic_no_alt.xml",
+    );
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod quick_xml_dynamic_no_alt {
+    #![allow(unused_imports)]
+
+    include!("expected/quick_xml_dynamic_no_alt.rs");
+}

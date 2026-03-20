@@ -27,7 +27,8 @@ pub use self::enum_const::EnumConstantsRenderStep;
 pub use self::namespace_const::NamespaceConstantsRenderStep;
 pub use self::prefix_const::PrefixConstantsRenderStep;
 pub use self::quick_xml::{
-    NamespaceSerialization, QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
+    NamespaceSerialization, QuickXmlCollectNamespacesRenderStep, QuickXmlDeserializeRenderStep,
+    QuickXmlSerializeRenderStep,
 };
 pub use self::serde::{
     SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,

@@ -29,9 +29,9 @@ pub use self::deserialize::{
 pub use self::error::{Error, Kind as ErrorKind, UnionError, ValidateError};
 pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
 pub use self::serialize::{
-    BoxedSerializer, ContentSerializer, DerefIter, IterSerializer, SerializeBytes,
-    SerializeBytesToString, SerializeHelper, SerializeSync, Serializer, WithBoxedSerializer,
-    WithSerializeToBytes, WithSerializer,
+    BoxedSerializer, CollectNamespaces, ContentSerializer, DerefIter, IterSerializer,
+    SerializeBytes, SerializeBytesToString, SerializeHelper, SerializeSync, Serializer,
+    WithBoxedSerializer, WithSerializeToBytes, WithSerializer,
 };
 
 #[cfg(feature = "async")]

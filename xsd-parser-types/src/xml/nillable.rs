@@ -8,9 +8,9 @@ use crate::misc::Namespace;
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
-    DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, ErrorKind, SerializeHelper, Serializer, WithDeserializer,
-    WithSerializer,
+    CollectNamespaces, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+    DeserializerOutput, DeserializerResult, Error, ErrorKind, SerializeHelper, Serializer,
+    WithDeserializer, WithSerializer,
 };
 use crate::traits::WithNamespace;
 
@@ -105,6 +105,22 @@ where
 
     fn namespace() -> Option<&'static str> {
         T::namespace()
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl<T> CollectNamespaces for Nillable<T>
+where
+    T: CollectNamespaces,
+{
+    fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        use crate::misc::NamespacePrefix;
+
+        if self.0.is_none() {
+            helper.write_xmlns(bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
+        } else if let Some(inner) = &self.0 {
+            inner.collect_namespaces(helper, bytes);
+        }
     }
 }
 
