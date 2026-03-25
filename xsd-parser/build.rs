@@ -23,7 +23,7 @@ fn main() {
     let doc_svg = format!("data:image/svg+xml;base64,{doc_svg}");
 
     let readme = read_to_string(readme).expect("Unable to read `README.md`");
-    let readme = readme.replace("doc/overview.svg", &doc_svg);
+    let readme = readme.replace("./doc/overview.svg", &doc_svg);
     let readme = rx.replace_all(&readme, |c: &Captures<'_>| {
         let keyword = &c[1];
         if KEYWORDS.contains(&keyword) {
