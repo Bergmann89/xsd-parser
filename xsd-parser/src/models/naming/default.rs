@@ -7,11 +7,7 @@ use std::sync::{
 use inflector::Inflector;
 use proc_macro2::Ident as Ident2;
 
-use crate::models::{
-    meta::{MetaType, MetaTypeVariant},
-    schema::MaxOccurs,
-    TypeIdent,
-};
+use crate::models::{meta::MetaType, TypeIdent};
 use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
 
 use super::Name;
@@ -29,7 +25,7 @@ impl NamingTrait for Naming {
     }
 
     fn builder(&self) -> Box<dyn NameBuilderTrait> {
-        Box::new(NameBuilder::new(self.0.clone(), self.clone_boxed()))
+        Box::new(NameBuilder::new(self.0.clone(), Box::new(self.clone())))
     }
 
     fn unify(&self, s: &str) -> String {
@@ -37,29 +33,7 @@ impl NamingTrait for Naming {
     }
 
     fn make_type_name(&self, postfixes: &[String], ty: &MetaType, ident: &TypeIdent) -> Name {
-        if let MetaTypeVariant::Reference(ti) = &ty.variant {
-            if ident.name.is_generated() && ti.type_.name.is_named() {
-                let s = self.format_type_name(ti.type_.name.as_str());
-
-                if ti.max_occurs > MaxOccurs::Bounded(1) {
-                    return Name::new_generated(format!("{s}List"));
-                } else if ti.min_occurs == 0 {
-                    return Name::new_generated(format!("{s}Opt"));
-                }
-            }
-        }
-
-        let postfix = postfixes
-            .get(ident.type_ as usize)
-            .map_or("", |s| s.as_str());
-
-        let s = self.format_type_name(ident.name.as_str());
-
-        if s.ends_with(postfix) {
-            ident.name.clone()
-        } else {
-            Name::new_generated(format!("{s}{postfix}"))
-        }
+        super::make_type_name(self, postfixes, ty, ident)
     }
 
     fn make_unknown_variant(&self, id: usize) -> Ident2 {

@@ -1,0 +1,20 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:simpleType name="String..1">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="String1">
+        <xs:restriction base="xs:string">
+            <xs:length value="1" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="Document">
+        <xs:sequence>
+            <xs:element name="type" type="String..1" />
+            <xs:element name="value" type="String1" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

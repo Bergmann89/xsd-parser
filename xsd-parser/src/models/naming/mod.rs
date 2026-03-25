@@ -7,10 +7,45 @@ use inflector::Inflector;
 use proc_macro2::Ident as Ident2;
 use quote::format_ident;
 
+use crate::config::MetaType;
+use crate::models::meta::MetaTypeVariant;
+use crate::models::schema::MaxOccurs;
+use crate::TypeIdent;
+
 use super::Name;
 
 pub use self::default::{NameBuilder, Naming};
 pub use self::explicit::{ExplicitNameBuilder, ExplicitNaming};
+
+/// Make a type name based on the passed `ident` and `ty` and the provided `postfixes`.
+pub fn make_type_name<X>(naming: &X, postfixes: &[String], ty: &MetaType, ident: &TypeIdent) -> Name
+where
+    X: crate::traits::Naming,
+{
+    if let MetaTypeVariant::Reference(ti) = &ty.variant {
+        if ident.name.is_generated() && ti.type_.name.is_named() {
+            let s = naming.format_type_name(ti.type_.name.as_str());
+
+            if ti.max_occurs > MaxOccurs::Bounded(1) {
+                return Name::new_generated(format!("{s}List"));
+            } else if ti.min_occurs == 0 {
+                return Name::new_generated(format!("{s}Opt"));
+            }
+        }
+    }
+
+    let postfix = postfixes
+        .get(ident.type_ as usize)
+        .map_or("", |s| s.as_str());
+
+    let s = naming.format_type_name(ident.name.as_str());
+
+    if s.ends_with(postfix) {
+        ident.name.clone()
+    } else {
+        Name::new_generated(format!("{s}{postfix}"))
+    }
+}
 
 /// Unify the passed string `s` into a standard format.
 #[must_use]

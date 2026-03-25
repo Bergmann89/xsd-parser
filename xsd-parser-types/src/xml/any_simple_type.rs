@@ -604,6 +604,7 @@ fn parse_base64_binary(bytes: &str) -> Result<Base64Binary, Error> {
 
 #[inline]
 #[cfg(not(feature = "base64"))]
+#[allow(clippy::unnecessary_wraps)]
 fn parse_base64_binary(s: &str) -> Result<Base64Binary, Error> {
     Ok(s.to_string())
 }
