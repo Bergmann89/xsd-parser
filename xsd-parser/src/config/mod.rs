@@ -1047,3 +1047,166 @@ impl Schemas {
         None
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn with_quick_xml_serialize_called_twice_no_duplicates() {
+        let config = Config::default()
+            .with_quick_xml_serialize()
+            .with_quick_xml_serialize();
+
+        assert_eq!(
+            count_step(&config, "Types"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "Defaults"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "PrefixConstants"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "NamespaceConstants"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "QuickXmlSerialize"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+    }
+
+    #[test]
+    fn with_quick_xml_deserialize_called_twice_no_duplicates() {
+        let config = Config::default()
+            .with_quick_xml_deserialize()
+            .with_quick_xml_deserialize();
+
+        assert_eq!(
+            count_step(&config, "Types"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "Defaults"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "NamespaceConstants"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "QuickXmlDeserialize"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+    }
+
+    #[test]
+    fn with_quick_xml_called_twice_no_duplicates() {
+        let config = Config::default().with_quick_xml().with_quick_xml();
+
+        assert_eq!(
+            count_step(&config, "Types"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "Defaults"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "PrefixConstants"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "NamespaceConstants"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "QuickXmlSerialize"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+        assert_eq!(
+            count_step(&config, "QuickXmlDeserialize"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+    }
+
+    #[test]
+    fn with_advanced_enums_called_twice_no_duplicates() {
+        let config = Config::default()
+            .with_advanced_enums()
+            .with_advanced_enums();
+
+        assert_eq!(
+            count_step(&config, "EnumConstants"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+    }
+
+    #[test]
+    fn with_render_step_replaces_same_step() {
+        let config = Config::default()
+            .with_render_step(RenderStep::PrefixConstants)
+            .with_render_step(RenderStep::PrefixConstants);
+
+        assert_eq!(
+            count_step(&config, "PrefixConstants"),
+            1,
+            "steps: {:#?}",
+            step_names(&config)
+        );
+    }
+
+    fn step_names(config: &Config) -> Vec<String> {
+        config
+            .renderer
+            .steps
+            .iter()
+            .map(|s| format!("{s:?}"))
+            .collect()
+    }
+
+    fn count_step(config: &Config, name: &str) -> usize {
+        config
+            .renderer
+            .steps
+            .iter()
+            .filter(|s| format!("{s:?}").starts_with(name))
+            .count()
+    }
+}
