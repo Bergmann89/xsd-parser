@@ -278,7 +278,15 @@ pub mod bar {
                                 Some("A"),
                                 false,
                             )?);
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_BAR,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::A(x) => match x.next(helper).transpose()? {
@@ -287,6 +295,7 @@ pub mod bar {
                         },
                         InnerTypeSerializerState::End__ => {
                             *self.state = InnerTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         InnerTypeSerializerState::Done__ => return Ok(None),
@@ -547,7 +556,15 @@ pub mod baz {
                                 Some("B"),
                                 false,
                             )?);
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_BAZ,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::B(x) => match x.next(helper).transpose()? {
@@ -556,6 +573,7 @@ pub mod baz {
                         },
                         InnerTypeSerializerState::End__ => {
                             *self.state = InnerTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         InnerTypeSerializerState::Done__ => return Ok(None),
@@ -816,7 +834,15 @@ pub mod biz {
                                 Some("C"),
                                 false,
                             )?);
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_BIZ,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::C(x) => match x.next(helper).transpose()? {
@@ -825,6 +851,7 @@ pub mod biz {
                         },
                         InnerTypeSerializerState::End__ => {
                             *self.state = InnerTypeSerializerState::Done__;
+                            helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
                         InnerTypeSerializerState::Done__ => return Ok(None),
@@ -1232,7 +1259,11 @@ pub mod quick_xml_serialize {
                                 Some("Inner"),
                                 false,
                             )?);
-                        let bytes = BytesStart::new(self.name);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     OuterTypeSerializerState::BarInner(x) => match x.next(helper).transpose()? {
@@ -1263,6 +1294,7 @@ pub mod quick_xml_serialize {
                     },
                     OuterTypeSerializerState::End__ => {
                         *self.state = OuterTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     OuterTypeSerializerState::Done__ => return Ok(None),

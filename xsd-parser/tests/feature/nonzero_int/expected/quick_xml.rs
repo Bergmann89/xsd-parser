@@ -153,8 +153,13 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::Init__ => {
                         *self.state = FooTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                        }
                         helper.write_attrib(&mut bytes, "a-int", &self.value.a_int)?;
                         helper.write_attrib(&mut bytes, "b-int", &self.value.b_int)?;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),

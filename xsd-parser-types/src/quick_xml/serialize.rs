@@ -710,6 +710,30 @@ impl SerializeHelper {
         self.add_namespace_entry(bytes, prefix.map(|x| &x.0[..]), namespace.clone());
     }
 
+    /// Write a suitable `xmlns` attribute for the given `namespace`, deriving
+    /// the prefix from the element `tag`.
+    ///
+    /// If `tag` contains a colon (e.g. `"tns:Element"`), the part before the
+    /// colon is used as the namespace prefix (`xmlns:tns="..."`). Otherwise, a
+    /// default namespace declaration is emitted (`xmlns="..."`).
+    pub fn write_xmlns_for_tag(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        tag: &str,
+        namespace: &Namespace,
+    ) {
+        match tag.split_once(':') {
+            Some((prefix, _)) => {
+                let prefix = NamespacePrefix::from(prefix.as_bytes().to_vec());
+
+                self.write_xmlns(bytes, Some(&prefix), namespace);
+            }
+            None => {
+                self.write_xmlns(bytes, None, namespace);
+            }
+        }
+    }
+
     /// Write the passed `attrib` to the passed `bytes` object.
     ///
     /// # Errors

@@ -689,29 +689,36 @@ impl ComplexBase<'_> {
                 let mut xmlns = Vec::new();
                 let mut cache = HashSet::new();
 
-                let element_module = self
-                    .tag_name
-                    .as_ref()
-                    .and_then(|tag| {
-                        let module = tag.module?;
-                        let form = if matches!((&default_namespace, &module.namespace), (Some(a), Some(b)) if a == b) {
-                            FormChoiceType::Unqualified
-                        } else {
-                            tag.form
-                        };
+                // Emit the element's own namespace using write_xmlns_for_tag so
+                // the prefix is derived from the tag name at runtime.
+                if let Some(module) = self.tag_name.as_ref().and_then(|tag| {
+                    let module = tag.module?;
+                    let dominated_by_default = matches!(
+                        (&default_namespace, &module.namespace),
+                        (Some(a), Some(b)) if a == b
+                    );
 
-                        Some((form, module))
-                    })
-                    .into_iter();
-                let attribute_modules = attributes
-                    .iter()
-                    .filter_map(|attrib| {
-                        (attrib.tag_name.form == FormChoiceType::Qualified)
-                            .then_some(attrib.tag_name.module?)
-                    })
-                    .map(|module| (FormChoiceType::Qualified, module));
+                    (!dominated_by_default || tag.form == FormChoiceType::Qualified)
+                        .then_some(module)
+                }) {
+                    cache.insert(module.namespace_id);
 
-                for (form, module) in element_module.chain(attribute_modules) {
+                    if let Some(path) = module.make_ns_const() {
+                        let ns_const = ctx.resolve_type_for_serialize_module(&path);
+
+                        xmlns.push(quote! {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &#ns_const);
+                        });
+                    }
+                }
+
+                // Emit attribute namespaces with their own fixed prefix.
+                let attribute_modules = attributes.iter().filter_map(|attrib| {
+                    (attrib.tag_name.form == FormChoiceType::Qualified)
+                        .then_some(attrib.tag_name.module?)
+                });
+
+                for module in attribute_modules {
                     if !cache.insert(module.namespace_id) {
                         continue;
                     }
@@ -721,9 +728,8 @@ impl ComplexBase<'_> {
                     };
 
                     let ns_const = ctx.resolve_type_for_serialize_module(&path);
-                    let prefix_const = (form == FormChoiceType::Qualified)
-                        .then(|| module.make_prefix_const())
-                        .flatten()
+                    let prefix_const = module
+                        .make_prefix_const()
                         .map(|path| ctx.resolve_type_for_serialize_module(&path))
                         .map_or_else(|| quote!(None), |x| quote!(Some(&#x)));
 
@@ -750,6 +756,10 @@ impl ComplexBase<'_> {
                 let mut collector = collector.borrow_mut();
 
                 let xmlns = self.tag_name.as_ref().and_then(|x| x.render_xmlns(ctx));
+                let root_xmlns = self
+                    .tag_name
+                    .as_ref()
+                    .and_then(|x| x.render_root_xmlns(ctx));
 
                 let global_xmlns = collector
                     .get_namespaces(ctx.types, ctx.ident, default_namespace.as_ref())
@@ -770,9 +780,10 @@ impl ComplexBase<'_> {
                         }
                     })
                     .collect::<Vec<_>>();
-                let global_xmlns = global_xmlns.is_empty().not().then(|| {
+                let global_xmlns = (root_xmlns.is_some() || !global_xmlns.is_empty()).then(|| {
                     quote! {
                         if self.is_root {
+                            #root_xmlns
                             #( #global_xmlns )*
                         }
                     }
@@ -787,6 +798,10 @@ impl ComplexBase<'_> {
             }
             NamespaceSerialization::Dynamic => {
                 let xmlns = self.tag_name.as_ref().and_then(|x| x.render_xmlns(ctx));
+                let root_xmlns = self
+                    .tag_name
+                    .as_ref()
+                    .and_then(|x| x.render_root_xmlns(ctx));
 
                 let collect_namespaces = resolve_quick_xml_ident!(
                     ctx,
@@ -796,6 +811,7 @@ impl ComplexBase<'_> {
                 Some(quote! {
                     #xmlns
                     if self.is_root {
+                        #root_xmlns
                         #collect_namespaces::collect_namespaces(self.value, helper, &mut bytes);
                     }
                 })
@@ -1399,7 +1415,26 @@ impl TagName<'_> {
         let ns = module.make_ns_const()?;
         let ns_const = ctx.resolve_type_for_serialize_module(&ns);
 
-        Some(quote!(helper.write_xmlns(&mut bytes, None, &#ns_const);))
+        Some(quote!(helper.write_xmlns_for_tag(&mut bytes, self.name, &#ns_const);))
+    }
+
+    /// Generates a namespace declaration for unqualified elements that should
+    /// only be emitted on the root element.
+    ///
+    /// In XSD, global (root) elements are always namespace-qualified regardless
+    /// of `elementFormDefault`. This method returns a token stream that writes
+    /// the default namespace (`xmlns="..."`) when the element has an unqualified
+    /// form but still needs to declare its namespace on the root element.
+    fn render_root_xmlns(&self, ctx: &mut Context<'_, '_>) -> Option<TokenStream> {
+        if self.form == FormChoiceType::Qualified {
+            return None;
+        }
+
+        let module = self.module?;
+        let ns = module.make_ns_const()?;
+        let ns_const = ctx.resolve_type_for_serialize_module(&ns);
+
+        Some(quote!(helper.write_xmlns_for_tag(&mut bytes, self.name, &#ns_const);))
     }
 }
 

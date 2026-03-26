@@ -1,4 +1,4 @@
-<Outer>
+<Outer xmlns="Foo">
     <Inner><A>Text in A</A></Inner>
     <Inner><B>Text in B</B></Inner>
     <Inner><C>Text in C</C></Inner>

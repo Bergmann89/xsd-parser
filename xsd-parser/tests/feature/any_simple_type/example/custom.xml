@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Foo xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<Foo xmlns="http://example.com"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      TestAttrib="87654321">
     <Value xsi:type="xs:string">Test</Value>
