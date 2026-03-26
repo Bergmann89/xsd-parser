@@ -168,6 +168,27 @@ fn write_quick_xml_global_alt() {
     );
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_quick_xml_global_alt_prefixed() {
+    use quick_xml_global_alt::{Foo, Inner1Type, Inner2Type};
+
+    let obj = Foo {
+        inner_1: Inner1Type {
+            a: "Bar String".into(),
+        },
+        inner_2: Inner2Type {
+            b: "Baz String".into(),
+        },
+    };
+
+    crate::utils::quick_xml_write_test(
+        &obj,
+        "tns:Foo",
+        "tests/feature/namespaces_qualified/example/global_alt_prefixed.xml",
+    );
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod quick_xml_global_alt {
     #![allow(unused_imports)]

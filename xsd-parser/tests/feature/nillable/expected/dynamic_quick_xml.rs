@@ -787,6 +787,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             CollectNamespaces::collect_namespaces(self.value, helper, &mut bytes);
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -880,6 +881,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             CollectNamespaces::collect_namespaces(self.value, helper, &mut bytes);
                         }
                         return Ok(Some(Event::Start(bytes)));

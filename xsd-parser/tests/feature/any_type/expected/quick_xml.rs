@@ -594,6 +594,10 @@ pub mod quick_xml_serialize {
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_XS);
+                        }
                         bytes.extend_attributes(self.value.any_attribute.attributes());
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -613,6 +617,7 @@ pub mod quick_xml_serialize {
                     },
                     AnyTypeSerializerState::End__ => {
                         *self.state = AnyTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     AnyTypeSerializerState::Done__ => return Ok(None),

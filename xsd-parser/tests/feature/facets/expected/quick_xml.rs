@@ -813,7 +813,11 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
-                        let bytes = BytesStart::new(self.name);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     RootTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -822,6 +826,7 @@ pub mod quick_xml_serialize {
                     },
                     RootTypeSerializerState::End__ => {
                         *self.state = RootTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     RootTypeSerializerState::Done__ => return Ok(None),

@@ -478,7 +478,11 @@ pub mod annotations {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AnnotationsXElementTypeSerializerState::Page(x) => {
@@ -542,7 +546,11 @@ pub mod annotations {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -2560,7 +2568,11 @@ pub mod annotion {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotXElementTypeSerializerState::Annot(x) => {
@@ -2634,7 +2646,11 @@ pub mod annotion {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "Creator", &self.value.creator)?;
@@ -2750,7 +2766,11 @@ pub mod annotion {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotAnnotParametersXElementTypeSerializerState::Parameter(x) => {
@@ -2825,7 +2845,11 @@ pub mod annotion {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Boundary",
@@ -2928,7 +2952,11 @@ pub mod annotion {
                             * self . state = PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -3518,7 +3546,11 @@ pub mod attachments {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AttachmentsXElementTypeSerializerState::Attachment(x) => {
@@ -3582,7 +3614,11 @@ pub mod attachments {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
@@ -4188,7 +4224,11 @@ pub mod custom_tags {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CustomTagsXElementTypeSerializerState::CustomTag(x) => {
@@ -4253,7 +4293,11 @@ pub mod custom_tags {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "NameSpace", &self.value.name_space)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -8490,7 +8534,11 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Event", &self.value.event)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -8657,7 +8705,11 @@ pub mod definition {
                             *self.state = CtDestXTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             helper.write_attrib_opt(&mut bytes, "Left", &self.value.left)?;
@@ -8721,7 +8773,11 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageAreaXTypeSerializerState::PhysicalBox(x) => {
@@ -8831,7 +8887,11 @@ pub mod definition {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtRegionXTypeSerializerState::Area(x) => {
@@ -8905,7 +8965,11 @@ pub mod definition {
                             }
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtActionGotoXElementTypeSerializerState::Dest(x) => {
@@ -8971,7 +9035,11 @@ pub mod definition {
                             *self.state = CtActionUriXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "URI", &self.value.uri)?;
                             helper.write_attrib_opt(&mut bytes, "Base", &self.value.base)?;
                             helper.write_attrib_opt(&mut bytes, "Target", &self.value.target)?;
@@ -9020,7 +9088,11 @@ pub mod definition {
                             *self.state = CtActionGotoAxElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "AttachID", &self.value.attach_id)?;
                             helper.write_attrib(&mut bytes, "NewWindow", &self.value.new_window)?;
                             helper.end_ns_scope();
@@ -9068,7 +9140,11 @@ pub mod definition {
                             *self.state = CtActionSoundXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "ResourceID",
@@ -9126,7 +9202,11 @@ pub mod definition {
                             *self.state = CtActionMovieXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "ResourceID",
@@ -9188,7 +9268,11 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Start", &self.value.start)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -9388,7 +9472,11 @@ pub mod definition {
                             *self.state = CtActionGotoBookmarkXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
@@ -9437,7 +9525,11 @@ pub mod definition {
                             *self.state = CtRegionAreaLineXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
@@ -9485,7 +9577,11 @@ pub mod definition {
                                 CtRegionAreaOuadraticBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
                             helper.write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
                             helper.end_ns_scope();
@@ -9539,7 +9635,11 @@ pub mod definition {
                                 CtRegionAreaCubicBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
                             helper.write_attrib(&mut bytes, "Point3", &self.value.point_3)?;
@@ -9592,7 +9692,11 @@ pub mod definition {
                             *self.state = CtRegionAreaArcXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "SweepDirection",
@@ -14979,7 +15083,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -15052,7 +15160,11 @@ pub mod document {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Title", &self.value.title)?;
                             helper.write_attrib_opt(&mut bytes, "Count", &self.value.count)?;
                             helper.write_attrib(&mut bytes, "Expanded", &self.value.expanded)?;
@@ -15148,7 +15260,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPermissionXTypeSerializerState::Edit(x) => {
@@ -15312,7 +15428,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtVPreferencesXTypeSerializerState::Content__(x) => {
@@ -15575,7 +15695,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentXElementTypeSerializerState::CommonData(x) => {
@@ -15771,7 +15895,11 @@ pub mod document {
                             *self.state = CtPermissionPrintXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Printable", &self.value.printable)?;
                             helper.write_attrib(&mut bytes, "Copies", &self.value.copies)?;
                             helper.end_ns_scope();
@@ -15822,7 +15950,11 @@ pub mod document {
                                 CtPermissionValidPeriodXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "StartDate",
@@ -15899,7 +16031,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentCommonDataXElementTypeSerializerState::MaxUnitId(x) => {
@@ -16045,7 +16181,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentPagesXElementTypeSerializerState::Page(x) => match x
@@ -16112,7 +16252,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentOutlinesXElementTypeSerializerState::OutlineElem(x) => {
@@ -16178,7 +16322,11 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentBookmarksXElementTypeSerializerState::Bookmark(x) => {
@@ -16240,7 +16388,11 @@ pub mod document {
                                 DocumentCommonDataTemplatePageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "ZOrder", &self.value.z_order)?;
@@ -16295,7 +16447,11 @@ pub mod document {
                             *self.state = DocumentPagesPageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             helper.end_ns_scope();
@@ -17406,7 +17562,11 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "AppName", &self.value.app_name)?;
                             helper.write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
                             helper.write_attrib_opt(
@@ -17561,7 +17721,11 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ExtensionsXElementTypeSerializerState::Extension(x) => {
@@ -17621,7 +17785,11 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -20391,7 +20559,11 @@ pub mod ofd {
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoXTypeSerializerState::DocId(x) => {
@@ -20622,7 +20794,11 @@ pub mod ofd {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Version", &self.value.version)?;
                             helper.write_attrib(&mut bytes, "DocType", &self.value.doc_type)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -20688,7 +20864,11 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoKeywordsXElementTypeSerializerState::Keyword(x) => {
@@ -20764,7 +20944,11 @@ pub mod ofd {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoCustomDatasXElementTypeSerializerState::CustomData(x) => {
@@ -20842,7 +21026,11 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyXElementTypeSerializerState::DocInfo(x) => {
@@ -20954,7 +21142,11 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyVersionsXElementTypeSerializerState::Version(x) => {
@@ -21016,7 +21208,11 @@ pub mod ofd {
                                 OfdDocBodyVersionsVersionXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Index", &self.value.index)?;
                             helper.write_attrib(&mut bytes, "Current", &self.value.current)?;
@@ -37550,7 +37746,11 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
                             helper.write_attrib(&mut bytes, "Extend", &self.value.extend)?;
@@ -37622,7 +37822,11 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "CodePosition",
@@ -37701,7 +37905,11 @@ pub mod page {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtClipXTypeSerializerState::Area(x) => match x.next(helper).transpose()? {
@@ -37765,7 +37973,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(&mut bytes, "Value", &self.value.value)?;
                             helper.write_attrib_opt(&mut bytes, "Index", &self.value.index)?;
                             helper.write_attrib_opt(
@@ -37947,7 +38159,11 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -38060,7 +38276,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -38151,7 +38371,11 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -38276,7 +38500,11 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -38412,7 +38640,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "VerticesPerRow",
@@ -38498,7 +38730,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -38678,7 +38914,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockXTypeSerializerState::Content__(x) => {
@@ -38881,7 +39121,11 @@ pub mod page {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -39029,7 +39273,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
                             helper.write_attrib_opt(&mut bytes, "XStep", &self.value.x_step)?;
@@ -39113,7 +39361,11 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
                             helper.write_attrib(
@@ -39196,7 +39448,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -39442,7 +39698,11 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageXElementTypeSerializerState::Template(x) => {
@@ -39561,7 +39821,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Position",
@@ -39631,7 +39895,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "DrawParam",
@@ -39773,7 +40041,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitActionsXElementTypeSerializerState::Action(x) => {
@@ -39838,7 +40110,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitClipsXElementTypeSerializerState::Clip(x) => {
@@ -39907,7 +40183,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib(&mut bytes, "y", &self.value.y)?;
                             helper.write_attrib_opt(
@@ -39985,7 +40265,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -40071,7 +40355,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -40145,7 +40433,11 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40320,7 +40612,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40501,7 +40797,11 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40660,7 +40960,11 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -40784,7 +41088,11 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -40906,7 +41214,11 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Thumbnail",
@@ -41025,7 +41337,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
                             helper.write_attrib_opt(&mut bytes, "DeltaX", &self.value.delta_x)?;
@@ -41086,7 +41402,11 @@ pub mod page {
                             *self.state = PageTemplateXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "TemplateID",
@@ -41148,7 +41468,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageContentXElementTypeSerializerState::Layer(x) => {
@@ -41214,7 +41538,11 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -46804,7 +47132,11 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -46887,7 +47219,11 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Relative",
@@ -46987,7 +47323,11 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -47066,7 +47406,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -47133,7 +47477,11 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -47229,7 +47577,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -47395,7 +47747,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtColorSpacePaletteXElementTypeSerializerState::Cv(x) => {
@@ -47470,7 +47826,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResColorSpacesXElementTypeSerializerState::ColorSpace(x) => match x
@@ -47541,7 +47901,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResDrawParamsXElementTypeSerializerState::DrawParam(x) => match x
@@ -47608,7 +47972,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResFontsXElementTypeSerializerState::Font(x) => {
@@ -47678,7 +48046,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResMultiMediasXElementTypeSerializerState::MultiMedia(x) => match x
@@ -47738,7 +48110,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -47793,7 +48165,11 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -47887,7 +48263,11 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Relative",
@@ -47995,7 +48375,11 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -48077,7 +48461,11 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
@@ -48146,7 +48534,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -50079,7 +50467,11 @@ pub mod signature {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureXElementTypeSerializerState::SiqnedInfo(x) => {
@@ -50171,7 +50563,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -50212,7 +50604,11 @@ pub mod signature {
                                 SianatureSiqnedInfoProviderXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "ProviderName",
@@ -50285,7 +50681,11 @@ pub mod signature {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(
                                 &mut bytes,
                                 "CheckMethod",
@@ -50354,7 +50754,11 @@ pub mod signature {
                                 SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "PageRef", &self.value.page_ref)?;
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
@@ -50418,7 +50822,11 @@ pub mod signature {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureSiqnedInfoSealXElementTypeSerializerState::BaseLoc(x) => {
@@ -50480,7 +50888,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -51003,7 +51411,11 @@ pub mod signatures {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SiqnaturesXElementTypeSerializerState::MaxSignId(x) => {
@@ -51073,7 +51485,11 @@ pub mod signatures {
                             *self.state = SiqnaturesSignatureXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
@@ -51865,7 +52281,11 @@ pub mod version {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -51953,7 +52373,11 @@ pub mod version {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocVersionFileListXElementTypeSerializerState::File(x) => {
@@ -52019,7 +52443,11 @@ pub mod version {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -52341,6 +52769,11 @@ pub mod xs {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_XS,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_XSI),

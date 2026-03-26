@@ -735,7 +735,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UrlsetTypeSerializerState::Url(x) => match x.next(helper).transpose()? {
@@ -800,7 +800,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TUrlTypeSerializerState::Loc(x) => match x.next(helper).transpose()? {

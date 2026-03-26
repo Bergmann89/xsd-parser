@@ -425,8 +425,16 @@ pub mod tns {
                                         false,
                                     )?,
                                 );
-                                let bytes =
+                                let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                                helper.begin_ns_scope();
+                                if self.is_root {
+                                    helper.write_xmlns_for_tag(
+                                        &mut bytes,
+                                        self.name,
+                                        &super::super::super::NS_TNS,
+                                    );
+                                }
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(
                                     bytes,
                                 )));
@@ -451,6 +459,7 @@ pub mod tns {
                             }
                             PersonTypeSerializerState::End__ => {
                                 *self.state = PersonTypeSerializerState::Done__;
+                                helper.end_ns_scope();
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                                     ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                                 )));
@@ -757,8 +766,16 @@ pub mod tns {
                                         false,
                                     ),
                                 );
-                                let bytes =
+                                let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                                helper.begin_ns_scope();
+                                if self.is_root {
+                                    helper.write_xmlns_for_tag(
+                                        &mut bytes,
+                                        self.name,
+                                        &super::super::super::NS_TNS,
+                                    );
+                                }
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(
                                     bytes,
                                 )));
@@ -771,6 +788,7 @@ pub mod tns {
                             }
                             PersonsTypeSerializerState::End__ => {
                                 *self.state = PersonsTypeSerializerState::Done__;
+                                helper.end_ns_scope();
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                                     ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                                 )));
@@ -1620,8 +1638,16 @@ pub mod tns {
                                         false,
                                     ),
                                 );
-                                let bytes =
+                                let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                                helper.begin_ns_scope();
+                                if self.is_root {
+                                    helper.write_xmlns_for_tag(
+                                        &mut bytes,
+                                        self.name,
+                                        &super::super::super::NS_TNS,
+                                    );
+                                }
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(
                                     bytes,
                                 )));
@@ -1634,6 +1660,7 @@ pub mod tns {
                             }
                             AdvancedPersonsTypeSerializerState::End__ => {
                                 *self.state = AdvancedPersonsTypeSerializerState::Done__;
+                                helper.end_ns_scope();
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                                     ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                                 )));
@@ -1692,8 +1719,16 @@ pub mod tns {
                                         false,
                                     )?,
                                 );
-                                let bytes =
+                                let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                                helper.begin_ns_scope();
+                                if self.is_root {
+                                    helper.write_xmlns_for_tag(
+                                        &mut bytes,
+                                        self.name,
+                                        &super::super::super::NS_TNS,
+                                    );
+                                }
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(
                                     bytes,
                                 )));
@@ -1742,6 +1777,7 @@ pub mod tns {
                             }
                             PersonTypeSerializerState::End__ => {
                                 *self.state = PersonTypeSerializerState::Done__;
+                                helper.end_ns_scope();
                                 return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                                     ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                                 )));

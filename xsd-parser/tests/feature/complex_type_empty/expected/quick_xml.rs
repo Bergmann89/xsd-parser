@@ -124,7 +124,7 @@ pub mod quick_xml_serialize {
                         *self.state = SuccessTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }

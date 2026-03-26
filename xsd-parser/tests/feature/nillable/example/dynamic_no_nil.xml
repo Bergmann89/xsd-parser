@@ -1,4 +1,4 @@
-<Foo>
+<Foo xmlns="http://example.com">
     <A>42</A>
     <B>100</B>
     <C>200</C>
