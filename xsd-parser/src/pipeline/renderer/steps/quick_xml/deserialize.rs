@@ -4352,7 +4352,8 @@ impl DefaultableCache {
                             mode: ElementMode::Group,
                             ..
                         }
-                    );
+                    )
+                    && self.is_defaultable_element(types, &x.elements[0]);
 
                 if defaultable {
                     Defaultable::Complete
