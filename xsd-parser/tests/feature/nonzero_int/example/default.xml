@@ -1,1 +1,1 @@
-<Foo a-int="123" b-int="-123" />
+<Foo xmlns="http://example.com" a-int="123" b-int="-123" />

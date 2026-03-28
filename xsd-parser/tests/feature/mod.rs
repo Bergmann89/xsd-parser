@@ -54,6 +54,7 @@ mod mixed_unexpected_text;
 mod multi_pattern_alternatives;
 mod multi_pattern_facets;
 mod namespaces_qualified;
+mod namespaces_unqualified;
 mod nested_group_reuse;
 mod nillable;
 mod nillable_dynamic_types;

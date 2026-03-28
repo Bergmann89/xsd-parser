@@ -448,7 +448,11 @@ pub mod bar {
                             )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::B(x) => match x.next(helper).transpose()? {
@@ -509,7 +513,11 @@ pub mod bar {
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
@@ -983,7 +991,11 @@ pub mod foo {
                             )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         InnerTypeSerializerState::A(x) => match x.next(helper).transpose()? {
@@ -1044,7 +1056,11 @@ pub mod foo {
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns(&mut bytes, None, &super::super::NS_UNNAMED_5);
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
@@ -1326,7 +1342,16 @@ pub mod xs {
                     match &mut *self.state {
                         AnyTypeSerializerState::Init__ => {
                             *self.state = AnyTypeSerializerState::Done__;
-                            let bytes = BytesStart::new(self.name);
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_XS,
+                                );
+                            }
+                            helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         AnyTypeSerializerState::Done__ => return Ok(None),

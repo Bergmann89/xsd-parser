@@ -296,7 +296,8 @@ impl RenderStepConfig for RenderStep {
 
     fn is_mutual_exclusive_to(&self, other: &dyn RenderStepConfig) -> bool {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
+            DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
+            PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
             QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
             SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
             TypesRenderStep, WithNamespaceTraitRenderStep,
@@ -318,6 +319,8 @@ impl RenderStepConfig for RenderStep {
             (Self::TypesSerdeQuickXml, Some(Self::TypesSerdeQuickXml)) => true,
             (Self::Defaults, Some(Self::Defaults)) => true,
             (Self::NamespaceConstants, Some(Self::NamespaceConstants)) => true,
+            (Self::EnumConstants, Some(Self::EnumConstants)) => true,
+            (Self::PrefixConstants, Some(Self::PrefixConstants)) => true,
             (Self::WithNamespaceTrait, Some(Self::WithNamespaceTrait)) => true,
             (Self::QuickXmlSerialize { .. }, Some(Self::QuickXmlSerialize { .. })) => true,
             (Self::QuickXmlDeserialize { .. }, Some(Self::QuickXmlDeserialize { .. })) => true,
@@ -351,6 +354,8 @@ impl RenderStepConfig for RenderStep {
             (Self::QuickXmlDeserialize { .. }, None) => {
                 other_id == TypeId::of::<QuickXmlDeserializeRenderStep>()
             }
+            (Self::EnumConstants, None) => other_id == TypeId::of::<EnumConstantsRenderStep>(),
+            (Self::PrefixConstants, None) => other_id == TypeId::of::<PrefixConstantsRenderStep>(),
             (Self::QuickXmlCollectNamespaces, None) => {
                 other_id == TypeId::of::<QuickXmlCollectNamespacesRenderStep>()
             }
@@ -370,6 +375,8 @@ impl RenderStep {
             )
             | (Self::Defaults, Self::Defaults)
             | (Self::NamespaceConstants, Self::NamespaceConstants)
+            | (Self::EnumConstants, Self::EnumConstants)
+            | (Self::PrefixConstants, Self::PrefixConstants)
             | (Self::WithNamespaceTrait, Self::WithNamespaceTrait)
             | (Self::QuickXmlSerialize { .. }, Self::QuickXmlSerialize { .. })
             | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. })

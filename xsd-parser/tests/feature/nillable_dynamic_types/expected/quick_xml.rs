@@ -710,6 +710,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
@@ -768,12 +769,17 @@ pub mod quick_xml_serialize {
                     IntermediateTypeSerializerState::Init__ => {
                         *self.state = IntermediateTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                        }
                         helper.write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
                         helper.write_attrib_opt(
                             &mut bytes,
                             "intermediateValue",
                             &self.value.intermediate_value,
                         )?;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     IntermediateTypeSerializerState::Done__ => return Ok(None),
@@ -817,6 +823,10 @@ pub mod quick_xml_serialize {
                     FinalTypeSerializerState::Init__ => {
                         *self.state = FinalTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                        }
                         helper.write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -828,6 +838,7 @@ pub mod quick_xml_serialize {
                             "finalValue",
                             &self.value.final_value,
                         )?;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     FinalTypeSerializerState::Done__ => return Ok(None),

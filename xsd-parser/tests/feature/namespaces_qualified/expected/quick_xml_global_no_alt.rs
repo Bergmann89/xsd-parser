@@ -730,7 +730,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Inner1(x) => match x.next(helper).transpose()? {
@@ -801,7 +801,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_6);
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_6);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     Inner1TypeSerializerState::A(x) => match x.next(helper).transpose()? {
@@ -861,7 +861,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns(&mut bytes, None, &super::NS_UNNAMED_7);
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_7);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     Inner2TypeSerializerState::B(x) => match x.next(helper).transpose()? {
