@@ -3137,9 +3137,18 @@ impl ComplexDataElement<'_> {
             Occurs::Optional => quote!(Ok(super::#type_ident::#variant_ident(None))),
             Occurs::DynamicList => {
                 let min = self.meta().min_occurs;
-
-                quote! {
-                    Ok(super::#type_ident::#variant_ident(helper.finish_vec_default(#min, Vec::new())?))
+                // finish_vec_default() requires the deserializer to implement Default.
+                // BUT, if min is 0, then it doesn't need to have a default value -- the
+                // underlying type doesn't need to be defaultable if a Vec of it is allowed
+                // to be empty
+                if min == 0 {
+                    quote! {
+                        Ok(super::#type_ident::#variant_ident(Vec::new()))
+                    }
+                } else {
+                    quote! {
+                        Ok(super::#type_ident::#variant_ident(helper.finish_vec_default(#min, Vec::new())?))
+                    }
                 }
             }
             Occurs::StaticList(sz) => {
@@ -4276,6 +4285,9 @@ impl DefaultableCache {
     }
 
     fn is_defaultable_element(&mut self, types: &MetaTypes, el: &ElementMeta) -> bool {
+        if el.min_occurs == 0 {
+            return true;
+        }
         if let ElementMetaVariant::Type {
             type_,
             mode: ElementMode::Group,
@@ -4344,17 +4356,8 @@ impl DefaultableCache {
                 defaultable
             }
             Some(MetaTypeVariant::Choice(x)) => {
-                let defaultable = x.elements.len() == 1
-                    && x.elements[0].min_occurs >= 1
-                    && matches!(
-                        &x.elements[0].variant,
-                        ElementMetaVariant::Type {
-                            mode: ElementMode::Group,
-                            ..
-                        }
-                    )
-                    && self.is_defaultable_element(types, &x.elements[0]);
-
+                let defaultable =
+                    x.elements.len() == 1 && self.is_defaultable_element(types, &x.elements[0]);
                 if defaultable {
                     Defaultable::Complete
                 } else {
