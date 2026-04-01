@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<foo:foo 
+  xmlns:foo="http://example.com" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://example.com ../schema.xsd"
+>
+  <foo:info>test 1</foo:info>
+  <foo:info>test 2</foo:info>
+</foo:foo>
