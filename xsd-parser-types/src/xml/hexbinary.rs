@@ -68,7 +68,6 @@ impl DeserializeBytes for HexString {
 
 /// Wrapper for hexBinary as decoded bytes.
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct HexBinary(pub Vec<u8>);
 
 impl Deref for HexBinary {
@@ -76,5 +75,48 @@ impl Deref for HexBinary {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl SerializeBytes for HexBinary {
+    fn serialize_bytes(
+        &self,
+        _helper: &mut SerializeHelper,
+    ) -> Result<Option<Cow<'_, str>>, Error> {
+        let hex_string = const_hex::encode(&self.0);
+        Ok(Some(Cow::Owned(hex_string)))
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl DeserializeBytes for HexBinary {
+    fn deserialize_bytes(_helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        let inner = const_hex::decode(bytes).map_err(Error::custom)?;
+        Ok(Self(inner))
+    }
+}
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for HexBinary {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let hex_string = const_hex::encode(&self.0);
+        serializer.serialize_str(&hex_string)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for HexBinary {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let hex_string = String::deserialize(deserializer)?;
+        let bytes = const_hex::decode(hex_string.as_bytes())
+            .map_err(|e| serde::de::Error::custom(format!("Invalid hex string: {}", e)))?;
+        Ok(Self(bytes))
     }
 }

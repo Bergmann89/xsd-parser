@@ -14,23 +14,34 @@ repository.workspace = true
 all-features = true
 
 [features]
-default = [ ]
+default = []
 # Enable support for async `quick-xml` de-/serialization
-async = [ "dep:futures", "dep:tokio", "quick-xml/async-tokio" ]
+async = ["dep:futures", "dep:tokio", "quick-xml/async-tokio"]
+
+# Enable support for base64 encoding/decoding
+base64 = ["dep:base64"]
 
 # Enable support for dynamic xml types
-xml = [ "dep:indexmap", "dep:encoding_rs" ]
+xml = ["dep:indexmap", "dep:encoding_rs"]
 
 # Enable support for `quick-xml` de-/serialization
-quick-xml = [ "xml", "dep:quick-xml", "dep:regex", "dep:thiserror" ]
+quick-xml = [
+    "xml",
+    "dep:quick-xml",
+    "dep:regex",
+    "dep:thiserror",
+    "dep:const-hex",
+    "dep:base64",
+]
 
 [dependencies]
 base64 = { workspace = true, optional = true }
+const-hex = { workspace = true, optional = true }
 encoding_rs = { workspace = true, optional = true }
 futures = { workspace = true, optional = true }
 indexmap = { workspace = true, optional = true }
 num = { workspace = true, optional = true }
-quick-xml = { workspace = true, optional = true, features = [ "encoding" ] }
+quick-xml = { workspace = true, optional = true, features = ["encoding"] }
 regex = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
 thiserror = { workspace = true, optional = true }

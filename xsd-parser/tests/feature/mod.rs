@@ -34,6 +34,7 @@ mod extension_mixed_content;
 mod extension_simple_content;
 mod extra_derive;
 mod facets;
+mod facets_binary;
 mod globally_allowed_attribute;
 mod group_modules;
 mod group_optional_followed_by_element;

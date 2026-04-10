@@ -24,6 +24,7 @@ homepage = "https://github.com/Bergmann89/xsd-parser"
 [workspace.dependencies]
 anyhow = "1.0"
 base64 = "0.22"
+const-hex = "1.17.0"
 bit-set = "0.8"
 bitflags = "2.7"
 bytesize = "2.3"

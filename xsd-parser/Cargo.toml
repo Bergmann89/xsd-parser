@@ -44,6 +44,7 @@ xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
 
 [dev-dependencies]
 clap = { workspace = true, features = [ "derive" ] }
+const-hex = { workspace = true }
 num = { workspace = true, features = [ "serde" ] }
 quick-xml = { workspace = true, features = [ "serialize" ]}
 regex = { workspace = true }

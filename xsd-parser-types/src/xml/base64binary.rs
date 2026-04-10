@@ -6,6 +6,9 @@ use crate::quick_xml::{
     DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
 };
 
+#[cfg(any(feature = "quick-xml", feature = "serde"))]
+use base64::{engine::general_purpose, Engine as _};
+
 /// Wrapper for base64Binary encoded as a String.
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -69,7 +72,6 @@ impl DeserializeBytes for Base64String {
 
 /// Wrapper for base64Binary as decoded bytes.
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
-#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Base64Binary(pub Vec<u8>);
 
 impl Deref for Base64Binary {
@@ -77,5 +79,51 @@ impl Deref for Base64Binary {
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl SerializeBytes for Base64Binary {
+    fn serialize_bytes(
+        &self,
+        _helper: &mut SerializeHelper,
+    ) -> Result<Option<Cow<'_, str>>, Error> {
+        let base64_string = general_purpose::STANDARD.encode(&self.0);
+        Ok(Some(Cow::Owned(base64_string)))
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl DeserializeBytes for Base64Binary {
+    fn deserialize_bytes(_helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        let inner = general_purpose::STANDARD
+            .decode(bytes)
+            .map_err(Error::custom)?;
+        Ok(Self(inner))
+    }
+}
+
+#[cfg(feature = "serde")]
+impl serde::Serialize for Base64Binary {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let base64_string = general_purpose::STANDARD.encode(&self.0);
+        serializer.serialize_str(&base64_string)
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de> serde::Deserialize<'de> for Base64Binary {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let base64_string = String::deserialize(deserializer)?;
+        let bytes = general_purpose::STANDARD
+            .decode(base64_string.as_bytes())
+            .map_err(|e| serde::de::Error::custom(format!("Invalid base64 string: {}", e)))?;
+        Ok(Self(bytes))
     }
 }
