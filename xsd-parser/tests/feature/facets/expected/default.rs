@@ -12,6 +12,8 @@ pub enum RootTypeContent {
     NegativeDecimal(NegativeDecimalType),
     PositiveDecimal(PositiveDecimalType),
     RestrictedString(RestrictedStringType),
+    HexType(HexType),
+    Base64Type(Base64Type),
 }
 #[derive(Debug)]
 pub struct NegativeDecimalType(pub f64);
@@ -142,6 +144,94 @@ impl TryFrom<String> for RestrictedStringType {
     }
 }
 impl Deref for RestrictedStringType {
+    type Target = String;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+#[derive(Debug)]
+pub struct HexType(pub String);
+impl HexType {
+    pub fn new(inner: String) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
+        Ok(Self(inner))
+    }
+    #[must_use]
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
+        fn binary_value_length(value: &str) -> usize {
+            value.bytes().count() / 2usize
+        }
+        if binary_value_length(value) < 16usize {
+            return Err(ValidateError::MinLength(16usize));
+        }
+        if binary_value_length(value) > 16usize {
+            return Err(ValidateError::MaxLength(16usize));
+        }
+        Ok(())
+    }
+}
+impl From<HexType> for String {
+    fn from(value: HexType) -> String {
+        value.0
+    }
+}
+impl TryFrom<String> for HexType {
+    type Error = ValidateError;
+    fn try_from(value: String) -> Result<Self, ValidateError> {
+        Self::new(value)
+    }
+}
+impl Deref for HexType {
+    type Target = String;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+#[derive(Debug)]
+pub struct Base64Type(pub String);
+impl Base64Type {
+    pub fn new(inner: String) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
+        Ok(Self(inner))
+    }
+    #[must_use]
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
+        fn binary_value_length(value: &str) -> usize {
+            let bytes = value.as_bytes();
+            let padding = match bytes {
+                [.., b'=', b'='] => 2,
+                [.., b'='] => 1,
+                _ => 0,
+            };
+            (bytes.len() / 4usize) * 3usize - padding
+        }
+        if binary_value_length(value) < 16usize {
+            return Err(ValidateError::MinLength(16usize));
+        }
+        if binary_value_length(value) > 16usize {
+            return Err(ValidateError::MaxLength(16usize));
+        }
+        Ok(())
+    }
+}
+impl From<Base64Type> for String {
+    fn from(value: Base64Type) -> String {
+        value.0
+    }
+}
+impl TryFrom<String> for Base64Type {
+    type Error = ValidateError;
+    fn try_from(value: String) -> Result<Self, ValidateError> {
+        Self::new(value)
+    }
+}
+impl Deref for Base64Type {
     type Target = String;
     fn deref(&self) -> &Self::Target {
         &self.0

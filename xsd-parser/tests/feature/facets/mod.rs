@@ -22,6 +22,8 @@ macro_rules! check_obj {
         assert!(matches!(it.next(), Some(RootTypeContent::NegativeDecimal(x)) if x.eq(&-1234.56_f64)));
         assert!(matches!(it.next(), Some(RootTypeContent::PositiveDecimal(x)) if x.eq(&0.01_f64)));
         assert!(matches!(it.next(), Some(RootTypeContent::RestrictedString(x)) if *x == "Abcdef"));
+        assert!(matches!(it.next(), Some(RootTypeContent::HexType(x)) if *x == "a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9"));
+        assert!(matches!(it.next(), Some(RootTypeContent::Base64Type(x)) if *x == "QUJDREVGR0hJSktMTU5PUA=="));
         assert!(it.next().is_none());
     }};
 }
@@ -36,6 +38,14 @@ macro_rules! test_obj {
                 RootTypeContent::NegativeDecimal((-1234.56_f64).try_into().unwrap()),
                 RootTypeContent::PositiveDecimal(0.011_f64.try_into().unwrap()),
                 RootTypeContent::RestrictedString(String::from("Abcdef").try_into().unwrap()),
+                RootTypeContent::HexType(
+                    String::from("a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9")
+                        .try_into()
+                        .unwrap(),
+                ),
+                RootTypeContent::Base64Type(
+                    String::from("QUJDREVGR0hJSktMTU5PUA==").try_into().unwrap(),
+                ),
             ],
         }
     }};

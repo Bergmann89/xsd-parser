@@ -35,6 +35,16 @@ pub use self::type_eq::TypeEq;
 pub use self::types::{MetaTypes, ModuleMeta, SchemaMeta};
 pub use self::union::{UnionMeta, UnionMetaType, UnionMetaTypes};
 
+/// Indicate what type of binary value is expected
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+pub enum BinaryType {
+    /// Value is based on `xs:hexBinary`.
+    Hex,
+
+    /// Value is based on `xs:base64Binary`.
+    Base64,
+}
+
 /// Constrains defined by the different facets of a type.
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Constrains {
@@ -58,6 +68,9 @@ pub struct Constrains {
 
     /// Defines the whitespace handling.
     pub whitespace: WhiteSpace,
+
+    /// Indicates if the value is a binary primitive and which lexical rules it uses.
+    pub binary_type: Option<BinaryType>,
 }
 
 impl Default for Constrains {
@@ -73,6 +86,7 @@ impl Default for Constrains {
             min_length: None,
             max_length: None,
             whitespace: WhiteSpace::default(),
+            binary_type: None,
         }
     }
 }

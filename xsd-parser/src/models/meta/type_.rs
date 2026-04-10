@@ -11,8 +11,8 @@ use crate::models::schema::{xs::FormChoiceType, SchemaId};
 use crate::models::TypeIdent;
 
 use super::{
-    ComplexMeta, CustomMeta, DynamicMeta, EnumerationMeta, GroupMeta, MetaTypes, ReferenceMeta,
-    SimpleMeta, TypeEq, UnionMeta,
+    BinaryType, ComplexMeta, CustomMeta, DynamicMeta, EnumerationMeta, GroupMeta, MetaTypes,
+    ReferenceMeta, SimpleMeta, TypeEq, UnionMeta,
 };
 
 /// Represents a fully interpreted type from an XML schema.
@@ -39,6 +39,9 @@ pub struct MetaType {
 
     /// Documentation of the type extracted from `xs:documentation` nodes.
     pub documentation: Vec<String>,
+
+    /// Indicates if and what type of Binary  is this type.
+    pub binary_type: Option<BinaryType>,
 }
 
 /// Actual data variant a [`MetaType`] represents.
@@ -131,6 +134,7 @@ impl MetaType {
     pub fn new(variant: MetaTypeVariant) -> Self {
         Self {
             variant,
+            binary_type: None,
             form: None,
             schema: None,
             display_name: None,

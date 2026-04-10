@@ -27,6 +27,8 @@ pub enum RootTypeContent {
     NegativeDecimal(NegativeDecimalType),
     PositiveDecimal(PositiveDecimalType),
     RestrictedString(RestrictedStringType),
+    HexType(HexType),
+    Base64Type(Base64Type),
 }
 impl WithSerializer for RootType {
     type Serializer<'x> = quick_xml_serialize::RootTypeSerializer<'x>;
@@ -247,6 +249,120 @@ impl DeserializeBytes for RestrictedStringType {
     }
 }
 impl WithDeserializerFromBytes for RestrictedStringType {}
+#[derive(Debug)]
+pub struct HexType(pub String);
+impl HexType {
+    pub fn new(inner: String) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
+        Ok(Self(inner))
+    }
+    #[must_use]
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
+        fn binary_value_length(value: &str) -> usize {
+            value.bytes().count() / 2usize
+        }
+        if binary_value_length(value) < 16usize {
+            return Err(ValidateError::MinLength(16usize));
+        }
+        if binary_value_length(value) > 16usize {
+            return Err(ValidateError::MaxLength(16usize));
+        }
+        Ok(())
+    }
+}
+impl From<HexType> for String {
+    fn from(value: HexType) -> String {
+        value.0
+    }
+}
+impl TryFrom<String> for HexType {
+    type Error = ValidateError;
+    fn try_from(value: String) -> Result<Self, ValidateError> {
+        Self::new(value)
+    }
+}
+impl Deref for HexType {
+    type Target = String;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl SerializeBytes for HexType {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
+        self.0.serialize_bytes(helper)
+    }
+}
+impl WithSerializeToBytes for HexType {}
+impl DeserializeBytes for HexType {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        let inner = String::deserialize_bytes(helper, bytes)?;
+        Ok(Self::new(inner).map_err(|error| (bytes, error))?)
+    }
+}
+impl WithDeserializerFromBytes for HexType {}
+#[derive(Debug)]
+pub struct Base64Type(pub String);
+impl Base64Type {
+    pub fn new(inner: String) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
+        Ok(Self(inner))
+    }
+    #[must_use]
+    pub fn into_inner(self) -> String {
+        self.0
+    }
+    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
+        fn binary_value_length(value: &str) -> usize {
+            let bytes = value.as_bytes();
+            let padding = match bytes {
+                [.., b'=', b'='] => 2,
+                [.., b'='] => 1,
+                _ => 0,
+            };
+            (bytes.len() / 4usize) * 3usize - padding
+        }
+        if binary_value_length(value) < 16usize {
+            return Err(ValidateError::MinLength(16usize));
+        }
+        if binary_value_length(value) > 16usize {
+            return Err(ValidateError::MaxLength(16usize));
+        }
+        Ok(())
+    }
+}
+impl From<Base64Type> for String {
+    fn from(value: Base64Type) -> String {
+        value.0
+    }
+}
+impl TryFrom<String> for Base64Type {
+    type Error = ValidateError;
+    fn try_from(value: String) -> Result<Self, ValidateError> {
+        Self::new(value)
+    }
+}
+impl Deref for Base64Type {
+    type Target = String;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl SerializeBytes for Base64Type {
+    fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
+        self.0.serialize_bytes(helper)
+    }
+}
+impl WithSerializeToBytes for Base64Type {}
+impl DeserializeBytes for Base64Type {
+    fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+        let inner = String::deserialize_bytes(helper, bytes)?;
+        Ok(Self::new(inner).map_err(|error| (bytes, error))?)
+    }
+}
+impl WithDeserializerFromBytes for Base64Type {}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
@@ -416,6 +532,16 @@ pub mod quick_xml_deserialize {
             Option<<super::RestrictedStringType as WithDeserializer>::Deserializer>,
             Option<<super::RestrictedStringType as WithDeserializer>::Deserializer>,
         ),
+        HexType(
+            Option<super::HexType>,
+            Option<<super::HexType as WithDeserializer>::Deserializer>,
+            Option<<super::HexType as WithDeserializer>::Deserializer>,
+        ),
+        Base64Type(
+            Option<super::Base64Type>,
+            Option<<super::Base64Type as WithDeserializer>::Deserializer>,
+            Option<<super::Base64Type as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::RootTypeContent),
         Unknown__,
     }
@@ -449,6 +575,20 @@ pub mod quick_xml_deserialize {
                     let output =
                         <super::RestrictedStringType as WithDeserializer>::init(helper, event)?;
                     return self.handle_restricted_string(helper, Default::default(), None, output);
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"HexType")
+                ) {
+                    let output = <super::HexType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_hex_type(helper, Default::default(), None, output);
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"Base64Type")
+                ) {
+                    let output = <super::Base64Type as WithDeserializer>::init(helper, event)?;
+                    return self.handle_base_64_type(helper, Default::default(), None, output);
                 }
             }
             *self.state__ = RootTypeContentDeserializerState::Init__;
@@ -488,6 +628,24 @@ pub mod quick_xml_deserialize {
                         helper.finish_element("RestrictedString", values)?,
                     ))
                 }
+                S::HexType(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_hex_type(&mut values, value)?;
+                    }
+                    Ok(super::RootTypeContent::HexType(
+                        helper.finish_element("HexType", values)?,
+                    ))
+                }
+                S::Base64Type(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_base_64_type(&mut values, value)?;
+                    }
+                    Ok(super::RootTypeContent::Base64Type(
+                        helper.finish_element("Base64Type", values)?,
+                    ))
+                }
                 S::Done__(data) => Ok(data),
                 _ => unreachable!(),
             }
@@ -523,6 +681,30 @@ pub mod quick_xml_deserialize {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"RestrictedString",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_hex_type(
+            values: &mut Option<super::HexType>,
+            value: super::HexType,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"HexType",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_base_64_type(
+            values: &mut Option<super::Base64Type>,
+            value: super::Base64Type,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"Base64Type",
                 )))?;
             }
             *values = Some(value);
@@ -630,6 +812,74 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
+        fn handle_hex_type<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::HexType>,
+            fallback: Option<<super::HexType as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::HexType>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RootTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_hex_type(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_hex_type(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::HexType(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::HexType(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
+        fn handle_base_64_type<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::Base64Type>,
+            fallback: Option<<super::Base64Type as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::Base64Type>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use RootTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_base_64_type(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_base_64_type(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::Base64Type(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::Base64Type(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
     }
     impl<'de> Deserializer<'de, super::RootTypeContent> for RootTypeContentDeserializer {
         fn init(
@@ -682,6 +932,24 @@ pub mod quick_xml_deserialize {
                     (S::RestrictedString(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
                         match self.handle_restricted_string(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::HexType(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_hex_type(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Base64Type(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_base_64_type(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -748,6 +1016,40 @@ pub mod quick_xml_deserialize {
                             false,
                         )?;
                         match self.handle_restricted_string(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (
+                        S::HexType(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"HexType",
+                            false,
+                        )?;
+                        match self.handle_hex_type(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (
+                        S::Base64Type(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Base64Type",
+                            false,
+                        )?;
+                        match self.handle_base_64_type(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -858,6 +1160,8 @@ pub mod quick_xml_serialize {
         NegativeDecimal(<super::NegativeDecimalType as WithSerializer>::Serializer<'ser>),
         PositiveDecimal(<super::PositiveDecimalType as WithSerializer>::Serializer<'ser>),
         RestrictedString(<super::RestrictedStringType as WithSerializer>::Serializer<'ser>),
+        HexType(<super::HexType as WithSerializer>::Serializer<'ser>),
+        Base64Type(<super::Base64Type as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -884,6 +1188,16 @@ pub mod quick_xml_serialize {
                                 WithSerializer::serializer(x, Some("RestrictedString"), false)?,
                             )
                         }
+                        super::RootTypeContent::HexType(x) => {
+                            *self.state = RootTypeContentSerializerState::HexType(
+                                WithSerializer::serializer(x, Some("HexType"), false)?,
+                            )
+                        }
+                        super::RootTypeContent::Base64Type(x) => {
+                            *self.state = RootTypeContentSerializerState::Base64Type(
+                                WithSerializer::serializer(x, Some("Base64Type"), false)?,
+                            )
+                        }
                     },
                     RootTypeContentSerializerState::NegativeDecimal(x) => {
                         match x.next(helper).transpose()? {
@@ -898,6 +1212,18 @@ pub mod quick_xml_serialize {
                         }
                     }
                     RootTypeContentSerializerState::RestrictedString(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = RootTypeContentSerializerState::Done__,
+                        }
+                    }
+                    RootTypeContentSerializerState::HexType(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = RootTypeContentSerializerState::Done__,
+                        }
+                    }
+                    RootTypeContentSerializerState::Base64Type(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = RootTypeContentSerializerState::Done__,

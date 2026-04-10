@@ -6,8 +6,8 @@ use std::str::from_utf8;
 use tracing::instrument;
 
 use crate::models::meta::{
-    AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DerivedTypeMeta, DynamicMeta, ElementMeta,
-    ElementMetaVariant, ElementMode, ElementsMeta, EnumerationMetaVariant, MetaType,
+    AnyAttributeMeta, AnyMeta, AttributeMeta, Base, BinaryType, DerivedTypeMeta, DynamicMeta,
+    ElementMeta, ElementMetaVariant, ElementMode, ElementsMeta, EnumerationMetaVariant, MetaType,
     MetaTypeVariant, ReferenceMeta, SimpleMeta, UnionMetaType, WhiteSpace,
 };
 use crate::models::schema::xs::{
@@ -43,6 +43,9 @@ pub(super) struct VariantProcessor<'a, 'state, 'schema> {
     /// Documentation of the currently build type extracted from `xs:annotation`
     /// and `xs:documentation` nodes.
     documentation: Vec<String>,
+
+    /// If the type is either based on `xs:hexBinary` or `xs:base64Binary`, indicate which of the two
+    binary_type: Option<BinaryType>,
 
     /// `true` if the simple content type of a complex type was already duplicated
     /// and is now unique for this type.
@@ -159,18 +162,26 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             type_mode: TypeMode::Unknown,
             content_mode: ContentMode::Unknown,
             documentation: Vec::new(),
+            binary_type: None,
             is_simple_content_unique: false,
         }
     }
 
     pub(super) fn finish(self) -> Result<MetaType, Error> {
-        let Self { variant, owner, .. } = self;
+        let Self {
+            variant,
+            owner,
+            documentation,
+            binary_type,
+            ..
+        } = self;
         let variant = variant.ok_or(Error::NoType)?;
 
         let mut type_ = MetaType::new(variant);
+        type_.binary_type = binary_type;
         type_.form = Some(owner.current_schema().element_form_default);
         type_.schema = Some(owner.current_schema_id());
-        type_.documentation = self.documentation;
+        type_.documentation = documentation;
 
         Ok(type_)
     }
@@ -179,6 +190,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
         let variant = self.variant.take().ok_or(Error::NoType)?;
 
         let mut type_ = MetaType::new(variant);
+        type_.binary_type = self.binary_type.clone();
         type_.form = Some(self.owner.current_schema().element_form_default);
         type_.schema = Some(self.owner.current_schema_id());
         swap(&mut type_.documentation, &mut self.documentation);
@@ -193,6 +205,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
         self.fixed = false;
         self.type_mode = TypeMode::Unknown;
         self.content_mode = ContentMode::Unknown;
+        self.binary_type = None;
         self.is_simple_content_unique = false;
 
         self.documentation.clear();
@@ -416,6 +429,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             .map(|base| {
                 let base = self.owner.resolve_type_ident(base, IdentType::Type)?;
 
+                self.binary_type = self.resolve_binary_type(&base);
                 self.copy_base_type(base, UpdateMode::Restriction)
             })
             .transpose()?;
@@ -588,6 +602,10 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
     #[instrument(err, level = "trace", skip(self))]
     fn apply_restriction(&mut self, ty: &'schema RestrictionType) -> Result<(), Error> {
         use crate::models::schema::xs::RestrictionTypeContent as C;
+
+        let base = self.owner.resolve_type_ident(&ty.base, IdentType::Type)?;
+        let binary_type = self.resolve_binary_type(&base);
+        self.binary_type = binary_type;
 
         for c in &ty.content {
             match c {
@@ -1097,8 +1115,20 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                 _ => crate::unreachable!("Not a valid facet for a simple type!"),
             }
 
+            if let Some(binary_type) = processor.binary_type.clone() {
+                constrains.binary_type = Some(binary_type);
+            }
+
             Ok(())
         })
+    }
+
+    fn resolve_binary_type(&self, ident: &TypeIdent) -> Option<BinaryType> {
+        match ident.name.as_str() {
+            "hexBinary" => Some(BinaryType::Hex),
+            "base64Binary" => Some(BinaryType::Base64),
+            _ => self.owner.get_type(ident).binary_type.clone(),
+        }
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -1251,6 +1281,10 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
         };
 
         let mut base = base.into_owned();
+
+        if let BaseIdent::Simple(ident) = &ident {
+            self.binary_type = self.binary_type.clone().or(self.resolve_binary_type(ident));
+        }
 
         match (self.content_mode, &mut base) {
             (ContentMode::Simple, MetaTypeVariant::Enumeration(ei)) => ei.variants.clear(),
