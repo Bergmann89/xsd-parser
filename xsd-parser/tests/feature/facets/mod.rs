@@ -4,7 +4,6 @@ use xsd_parser::{
 };
 
 use crate::utils::{generate_test, ConfigEx};
-use xsd_parser_types::xml::{Base64String, HexString};
 
 fn config() -> Config {
     Config::test_default()
@@ -41,12 +40,12 @@ macro_rules! test_obj {
                 RootTypeContent::NegativeDecimal((-1234.56_f64).try_into().unwrap()),
                 RootTypeContent::PositiveDecimal(0.011_f64.try_into().unwrap()),
                 RootTypeContent::RestrictedString(String::from("Abcdef").try_into().unwrap()),
-                RootTypeContent::HexType(HexType(HexString(String::from(
+                RootTypeContent::HexType(HexType(xsd_parser_types::xml::HexString(String::from(
                     "a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9",
                 )))),
-                RootTypeContent::Base64Type(Base64Type(Base64String(String::from(
-                    "QUJDREVGR0hJSktMTU5PUA==",
-                )))),
+                RootTypeContent::Base64Type(Base64Type(xsd_parser_types::xml::Base64String(
+                    String::from("QUJDREVGR0hJSktMTU5PUA=="),
+                ))),
             ],
         }
     }};

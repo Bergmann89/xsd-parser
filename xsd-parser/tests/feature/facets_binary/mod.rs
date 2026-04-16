@@ -4,7 +4,6 @@ use xsd_parser::{
 };
 
 use crate::utils::{generate_test, ConfigEx};
-use xsd_parser_types::xml::{Base64BinaryBytes, HexBinary};
 
 fn config() -> Config {
     Config::test_default()
@@ -25,8 +24,8 @@ macro_rules! check_obj {
         assert!(matches!(it.next(), Some(RootTypeContent::NegativeDecimal(x)) if x.eq(&-1234.56_f64)));
         assert!(matches!(it.next(), Some(RootTypeContent::PositiveDecimal(x)) if x.eq(&0.01_f64)));
         assert!(matches!(it.next(), Some(RootTypeContent::RestrictedString(x)) if *x == "Abcdef"));
-        assert!(matches!(it.next(), Some(RootTypeContent::HexType(x)) if x.0 == HexBinary(const_hex::decode("a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9").unwrap())));
-        assert!(matches!(it.next(), Some(RootTypeContent::Base64Type(x)) if *x == Base64BinaryBytes( b"ABCDEFGHIJKLMNOP".to_vec())));
+        assert!(matches!(it.next(), Some(RootTypeContent::HexType(x)) if x.0 == xsd_parser_types::xml::HexBinary(const_hex::decode("a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9").unwrap())));
+        assert!(matches!(it.next(), Some(RootTypeContent::Base64Type(x)) if *x == xsd_parser_types::xml::Base64BinaryBytes(b"ABCDEFGHIJKLMNOP".to_vec())));
         assert!(it.next().is_none());
     }};
 }
@@ -41,10 +40,10 @@ macro_rules! test_obj {
                 RootTypeContent::NegativeDecimal((-1234.56_f64).try_into().unwrap()),
                 RootTypeContent::PositiveDecimal(0.011_f64.try_into().unwrap()),
                 RootTypeContent::RestrictedString(String::from("Abcdef").try_into().unwrap()),
-                RootTypeContent::HexType(HexType(HexBinary(
+                RootTypeContent::HexType(HexType(xsd_parser_types::xml::HexBinary(
                     const_hex::decode("a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9").unwrap(),
                 ))),
-                RootTypeContent::Base64Type(Base64Type(Base64BinaryBytes(
+                RootTypeContent::Base64Type(Base64Type(xsd_parser_types::xml::Base64BinaryBytes(
                     b"ABCDEFGHIJKLMNOP".to_vec(),
                 ))),
             ],
@@ -98,7 +97,11 @@ fn read_quick_xml() {
 fn write_quick_xml() {
     let obj = test_obj!(quick_xml);
 
-    crate::utils::quick_xml_write_test(&obj, "Values", "tests/feature/facets/example/default.xml");
+    crate::utils::quick_xml_write_test(
+        &obj,
+        "Values",
+        "tests/feature/facets_binary/example/default.xml",
+    );
 }
 
 #[cfg(not(feature = "update-expectations"))]
