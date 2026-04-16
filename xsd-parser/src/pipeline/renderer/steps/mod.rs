@@ -18,7 +18,6 @@ use crate::config::RendererFlags;
 use crate::models::{
     code::IdentPath,
     data::{ConfigValue, ConstrainsData, EnumerationData, SimpleData, UnionData},
-    meta::BinaryType,
 };
 
 use super::Context;
@@ -202,28 +201,6 @@ impl ConstrainsData<'_> {
             let validate_range_end = self.render_validate_range_end(ctx);
             let validate_min_length = self.render_validate_min_length(ctx);
             let validate_max_length = self.render_validate_max_length(ctx);
-            let binary_value_length = self.meta.binary_type.as_ref().map(|binary_type| {
-                let body = match binary_type {
-                    BinaryType::Hex => quote! {
-                        value.bytes().count() / 2usize
-                    },
-                    BinaryType::Base64 => quote! {
-                        let bytes = value.as_bytes();
-                        let padding = match bytes {
-                            [.., b'=', b'='] => 2,
-                            [.., b'='] => 1,
-                            _ => 0,
-                        };
-                        (bytes.len() / 4usize) * 3usize - padding
-                    },
-                };
-
-                quote! {
-                    fn binary_value_length(value: &str) -> usize {
-                        #body
-                    }
-                }
-            });
 
             let result = ctx.resolve_build_in("::core::result::Result");
 
@@ -232,7 +209,6 @@ impl ConstrainsData<'_> {
 
             quote! {
                 pub fn validate_value(value: &#target_type) -> #result<(), #validate_error> {
-                    #binary_value_length
                     #validate_range_start
                     #validate_range_end
                     #validate_min_length
@@ -303,8 +279,6 @@ impl ConstrainsData<'_> {
 
             let check = if *x == 1 {
                 quote!(value.is_empty())
-            } else if self.meta.binary_type.is_some() {
-                quote!(binary_value_length(value) < #x)
             } else {
                 quote!(value.len() < #x)
             };
@@ -324,8 +298,6 @@ impl ConstrainsData<'_> {
         self.meta.max_length.as_ref().map(|x| {
             let check = if *x == 0 {
                 quote!(!value.is_empty())
-            } else if self.meta.binary_type.is_some() {
-                quote!(binary_value_length(value) > #x)
             } else {
                 quote!(value.len() > #x)
             };

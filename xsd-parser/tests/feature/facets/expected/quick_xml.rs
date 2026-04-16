@@ -8,6 +8,7 @@ use xsd_parser_types::{
         SerializeBytes, SerializeHelper, ValidateError, WithDeserializer,
         WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
+    xml::{Base64String, HexString},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -250,42 +251,39 @@ impl DeserializeBytes for RestrictedStringType {
 }
 impl WithDeserializerFromBytes for RestrictedStringType {}
 #[derive(Debug)]
-pub struct HexType(pub String);
+pub struct HexType(pub HexString);
 impl HexType {
-    pub fn new(inner: String) -> Result<Self, ValidateError> {
+    pub fn new(inner: HexString) -> Result<Self, ValidateError> {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     #[must_use]
-    pub fn into_inner(self) -> String {
+    pub fn into_inner(self) -> HexString {
         self.0
     }
-    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
-        fn binary_value_length(value: &str) -> usize {
-            value.bytes().count() / 2usize
-        }
-        if binary_value_length(value) < 16usize {
+    pub fn validate_value(value: &HexString) -> Result<(), ValidateError> {
+        if value.len() < 16usize {
             return Err(ValidateError::MinLength(16usize));
         }
-        if binary_value_length(value) > 16usize {
+        if value.len() > 16usize {
             return Err(ValidateError::MaxLength(16usize));
         }
         Ok(())
     }
 }
-impl From<HexType> for String {
-    fn from(value: HexType) -> String {
+impl From<HexType> for HexString {
+    fn from(value: HexType) -> HexString {
         value.0
     }
 }
-impl TryFrom<String> for HexType {
+impl TryFrom<HexString> for HexType {
     type Error = ValidateError;
-    fn try_from(value: String) -> Result<Self, ValidateError> {
+    fn try_from(value: HexString) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
 impl Deref for HexType {
-    type Target = String;
+    type Target = HexString;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
@@ -298,54 +296,45 @@ impl SerializeBytes for HexType {
 impl WithSerializeToBytes for HexType {}
 impl DeserializeBytes for HexType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        let inner = String::deserialize_bytes(helper, bytes)?;
+        let inner = HexString::deserialize_bytes(helper, bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
 impl WithDeserializerFromBytes for HexType {}
 #[derive(Debug)]
-pub struct Base64Type(pub String);
+pub struct Base64Type(pub Base64String);
 impl Base64Type {
-    pub fn new(inner: String) -> Result<Self, ValidateError> {
+    pub fn new(inner: Base64String) -> Result<Self, ValidateError> {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     #[must_use]
-    pub fn into_inner(self) -> String {
+    pub fn into_inner(self) -> Base64String {
         self.0
     }
-    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
-        fn binary_value_length(value: &str) -> usize {
-            let bytes = value.as_bytes();
-            let padding = match bytes {
-                [.., b'=', b'='] => 2,
-                [.., b'='] => 1,
-                _ => 0,
-            };
-            (bytes.len() / 4usize) * 3usize - padding
-        }
-        if binary_value_length(value) < 16usize {
+    pub fn validate_value(value: &Base64String) -> Result<(), ValidateError> {
+        if value.len() < 16usize {
             return Err(ValidateError::MinLength(16usize));
         }
-        if binary_value_length(value) > 16usize {
+        if value.len() > 16usize {
             return Err(ValidateError::MaxLength(16usize));
         }
         Ok(())
     }
 }
-impl From<Base64Type> for String {
-    fn from(value: Base64Type) -> String {
+impl From<Base64Type> for Base64String {
+    fn from(value: Base64Type) -> Base64String {
         value.0
     }
 }
-impl TryFrom<String> for Base64Type {
+impl TryFrom<Base64String> for Base64Type {
     type Error = ValidateError;
-    fn try_from(value: String) -> Result<Self, ValidateError> {
+    fn try_from(value: Base64String) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
 impl Deref for Base64Type {
-    type Target = String;
+    type Target = Base64String;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
@@ -358,7 +347,7 @@ impl SerializeBytes for Base64Type {
 impl WithSerializeToBytes for Base64Type {}
 impl DeserializeBytes for Base64Type {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        let inner = String::deserialize_bytes(helper, bytes)?;
+        let inner = Base64String::deserialize_bytes(helper, bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }

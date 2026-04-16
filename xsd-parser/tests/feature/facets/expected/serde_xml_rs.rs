@@ -2,7 +2,10 @@ use core::ops::Deref;
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::sync::LazyLock;
-use xsd_parser_types::quick_xml::{fraction_digits, ValidateError};
+use xsd_parser_types::{
+    quick_xml::{fraction_digits, ValidateError},
+    xml::{Base64String, HexString},
+};
 pub type Root = RootType;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RootType {
@@ -157,89 +160,77 @@ impl Deref for RestrictedStringType {
     }
 }
 #[derive(Debug, Deserialize, Serialize)]
-pub struct HexType(pub String);
+pub struct HexType(pub HexString);
 impl HexType {
-    pub fn new(inner: String) -> Result<Self, ValidateError> {
+    pub fn new(inner: HexString) -> Result<Self, ValidateError> {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     #[must_use]
-    pub fn into_inner(self) -> String {
+    pub fn into_inner(self) -> HexString {
         self.0
     }
-    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
-        fn binary_value_length(value: &str) -> usize {
-            value.bytes().count() / 2usize
-        }
-        if binary_value_length(value) < 16usize {
+    pub fn validate_value(value: &HexString) -> Result<(), ValidateError> {
+        if value.len() < 16usize {
             return Err(ValidateError::MinLength(16usize));
         }
-        if binary_value_length(value) > 16usize {
+        if value.len() > 16usize {
             return Err(ValidateError::MaxLength(16usize));
         }
         Ok(())
     }
 }
-impl From<HexType> for String {
-    fn from(value: HexType) -> String {
+impl From<HexType> for HexString {
+    fn from(value: HexType) -> HexString {
         value.0
     }
 }
-impl TryFrom<String> for HexType {
+impl TryFrom<HexString> for HexType {
     type Error = ValidateError;
-    fn try_from(value: String) -> Result<Self, ValidateError> {
+    fn try_from(value: HexString) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
 impl Deref for HexType {
-    type Target = String;
+    type Target = HexString;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Base64Type(pub String);
+pub struct Base64Type(pub Base64String);
 impl Base64Type {
-    pub fn new(inner: String) -> Result<Self, ValidateError> {
+    pub fn new(inner: Base64String) -> Result<Self, ValidateError> {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     #[must_use]
-    pub fn into_inner(self) -> String {
+    pub fn into_inner(self) -> Base64String {
         self.0
     }
-    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
-        fn binary_value_length(value: &str) -> usize {
-            let bytes = value.as_bytes();
-            let padding = match bytes {
-                [.., b'=', b'='] => 2,
-                [.., b'='] => 1,
-                _ => 0,
-            };
-            (bytes.len() / 4usize) * 3usize - padding
-        }
-        if binary_value_length(value) < 16usize {
+    pub fn validate_value(value: &Base64String) -> Result<(), ValidateError> {
+        if value.len() < 16usize {
             return Err(ValidateError::MinLength(16usize));
         }
-        if binary_value_length(value) > 16usize {
+        if value.len() > 16usize {
             return Err(ValidateError::MaxLength(16usize));
         }
         Ok(())
     }
 }
-impl From<Base64Type> for String {
-    fn from(value: Base64Type) -> String {
+impl From<Base64Type> for Base64String {
+    fn from(value: Base64Type) -> Base64String {
         value.0
     }
 }
-impl TryFrom<String> for Base64Type {
+impl TryFrom<Base64String> for Base64Type {
     type Error = ValidateError;
-    fn try_from(value: String) -> Result<Self, ValidateError> {
+    fn try_from(value: Base64String) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
 impl Deref for Base64Type {
-    type Target = String;
+    type Target = Base64String;
     fn deref(&self) -> &Self::Target {
         &self.0
     }

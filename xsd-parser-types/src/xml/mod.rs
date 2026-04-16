@@ -4,7 +4,9 @@
 
 mod any_simple_type;
 mod attributes;
+mod base64binary;
 mod element;
+mod hexbinary;
 mod mixed;
 mod namespace_scope;
 mod namespaces;
@@ -12,6 +14,9 @@ mod nillable;
 mod qname;
 mod text;
 mod value;
+
+pub use self::base64binary::{Base64Binary as Base64BinaryBytes, Base64String};
+pub use self::hexbinary::{HexBinary, HexString};
 
 pub use self::any_simple_type::{AnySimpleType, Base64Binary, Decimal, Integer, Unsigned};
 pub use self::attributes::{
