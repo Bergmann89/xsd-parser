@@ -1,3 +1,5 @@
+#![cfg(feature = "base64")]
+
 use xsd_parser::{
     config::{OptimizerFlags, SerdeXmlRsVersion},
     Config, IdentType,
@@ -25,7 +27,7 @@ macro_rules! check_obj {
         assert!(matches!(it.next(), Some(RootTypeContent::PositiveDecimal(x)) if x.eq(&0.01_f64)));
         assert!(matches!(it.next(), Some(RootTypeContent::RestrictedString(x)) if *x == "Abcdef"));
         assert!(matches!(it.next(), Some(RootTypeContent::HexType(x)) if x.0 == xsd_parser_types::xml::HexBinary(const_hex::decode("a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9").unwrap())));
-        assert!(matches!(it.next(), Some(RootTypeContent::Base64Type(x)) if *x == xsd_parser_types::xml::Base64BinaryBytes(b"ABCDEFGHIJKLMNOP".to_vec())));
+        assert!(matches!(it.next(), Some(RootTypeContent::Base64Type(x)) if *x == xsd_parser_types::xml::Base64Binary(b"ABCDEFGHIJKLMNOP".to_vec())));
         assert!(it.next().is_none());
     }};
 }
@@ -43,7 +45,7 @@ macro_rules! test_obj {
                 RootTypeContent::HexType(HexType(xsd_parser_types::xml::HexBinary(
                     const_hex::decode("a1f3e8b2c9d4f6e7a2b3c4d5e6f7a8b9").unwrap(),
                 ))),
-                RootTypeContent::Base64Type(Base64Type(xsd_parser_types::xml::Base64BinaryBytes(
+                RootTypeContent::Base64Type(Base64Type(xsd_parser_types::xml::Base64Binary(
                     b"ABCDEFGHIJKLMNOP".to_vec(),
                 ))),
             ],
@@ -72,6 +74,7 @@ mod default {
 /* quick_xml */
 
 #[test]
+#[cfg(feature = "base64")]
 fn generate_quick_xml() {
     generate_test(
         "tests/feature/facets_binary/schema.xsd",
@@ -82,6 +85,7 @@ fn generate_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+#[cfg(feature = "base64")]
 fn read_quick_xml() {
     use quick_xml::RootType;
 
@@ -94,6 +98,7 @@ fn read_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+#[cfg(feature = "base64")]
 fn write_quick_xml() {
     let obj = test_obj!(quick_xml);
 

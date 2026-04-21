@@ -1,5 +1,5 @@
-use std::borrow::Cow;
 use std::ops::Deref;
+use std::{borrow::Cow, ops::DerefMut};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
@@ -51,6 +51,12 @@ impl Deref for HexString {
     }
 }
 
+impl DerefMut for HexString {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
 #[cfg(feature = "quick-xml")]
 impl SerializeBytes for HexString {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
@@ -71,10 +77,16 @@ impl DeserializeBytes for HexString {
 pub struct HexBinary(pub Vec<u8>);
 
 impl Deref for HexBinary {
-    type Target = [u8];
+    type Target = Vec<u8>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
+    }
+}
+
+impl DerefMut for HexBinary {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 

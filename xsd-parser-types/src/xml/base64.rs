@@ -1,12 +1,12 @@
-use std::borrow::Cow;
 use std::ops::Deref;
+use std::{borrow::Cow, ops::DerefMut};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
 };
 
-#[cfg(any(feature = "quick-xml", feature = "serde"))]
+#[cfg(all(feature = "base64", any(feature = "quick-xml", feature = "serde")))]
 use base64::{engine::general_purpose, Engine as _};
 
 /// Wrapper for base64Binary encoded as a String.
@@ -55,6 +55,12 @@ impl Deref for Base64String {
     }
 }
 
+impl DerefMut for Base64String {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
 #[cfg(feature = "quick-xml")]
 impl SerializeBytes for Base64String {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
@@ -74,15 +80,32 @@ impl DeserializeBytes for Base64String {
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Base64Binary(pub Vec<u8>);
 
+impl From<Vec<u8>> for Base64Binary {
+    fn from(value: Vec<u8>) -> Self {
+        Self(value)
+    }
+}
+
+impl From<Base64Binary> for Vec<u8> {
+    fn from(value: Base64Binary) -> Self {
+        value.0
+    }
+}
+
 impl Deref for Base64Binary {
-    type Target = [u8];
+    type Target = Vec<u8>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
+impl DerefMut for Base64Binary {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
 
-#[cfg(feature = "quick-xml")]
+#[cfg(all(feature = "base64", feature = "quick-xml"))]
 impl SerializeBytes for Base64Binary {
     fn serialize_bytes(
         &self,
@@ -93,7 +116,7 @@ impl SerializeBytes for Base64Binary {
     }
 }
 
-#[cfg(feature = "quick-xml")]
+#[cfg(all(feature = "base64", feature = "quick-xml"))]
 impl DeserializeBytes for Base64Binary {
     fn deserialize_bytes(_helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         let inner = general_purpose::STANDARD
@@ -103,7 +126,7 @@ impl DeserializeBytes for Base64Binary {
     }
 }
 
-#[cfg(feature = "serde")]
+#[cfg(all(feature = "base64", feature = "serde"))]
 impl serde::Serialize for Base64Binary {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -114,7 +137,7 @@ impl serde::Serialize for Base64Binary {
     }
 }
 
-#[cfg(feature = "serde")]
+#[cfg(all(feature = "base64", feature = "serde"))]
 impl<'de> serde::Deserialize<'de> for Base64Binary {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where

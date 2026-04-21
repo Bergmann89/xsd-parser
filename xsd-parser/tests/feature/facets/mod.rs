@@ -1,3 +1,5 @@
+#![cfg(not(feature = "base64"))]
+
 use xsd_parser::{
     config::{OptimizerFlags, SerdeXmlRsVersion},
     Config, IdentType,

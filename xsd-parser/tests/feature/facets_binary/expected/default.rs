@@ -3,7 +3,7 @@ use regex::Regex;
 use std::sync::LazyLock;
 use xsd_parser_types::{
     quick_xml::{fraction_digits, ValidateError},
-    xml::{Base64BinaryBytes, HexBinary},
+    xml::{Base64Binary, HexBinary},
 };
 pub type Root = RootType;
 #[derive(Debug)]
@@ -191,17 +191,17 @@ impl Deref for HexType {
     }
 }
 #[derive(Debug)]
-pub struct Base64Type(pub Base64BinaryBytes);
+pub struct Base64Type(pub Base64Binary);
 impl Base64Type {
-    pub fn new(inner: Base64BinaryBytes) -> Result<Self, ValidateError> {
+    pub fn new(inner: Base64Binary) -> Result<Self, ValidateError> {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     #[must_use]
-    pub fn into_inner(self) -> Base64BinaryBytes {
+    pub fn into_inner(self) -> Base64Binary {
         self.0
     }
-    pub fn validate_value(value: &Base64BinaryBytes) -> Result<(), ValidateError> {
+    pub fn validate_value(value: &Base64Binary) -> Result<(), ValidateError> {
         if value.len() < 16usize {
             return Err(ValidateError::MinLength(16usize));
         }
@@ -211,19 +211,19 @@ impl Base64Type {
         Ok(())
     }
 }
-impl From<Base64Type> for Base64BinaryBytes {
-    fn from(value: Base64Type) -> Base64BinaryBytes {
+impl From<Base64Type> for Base64Binary {
+    fn from(value: Base64Type) -> Base64Binary {
         value.0
     }
 }
-impl TryFrom<Base64BinaryBytes> for Base64Type {
+impl TryFrom<Base64Binary> for Base64Type {
     type Error = ValidateError;
-    fn try_from(value: Base64BinaryBytes) -> Result<Self, ValidateError> {
+    fn try_from(value: Base64Binary) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
 impl Deref for Base64Type {
-    type Target = Base64BinaryBytes;
+    type Target = Base64Binary;
     fn deref(&self) -> &Self::Target {
         &self.0
     }

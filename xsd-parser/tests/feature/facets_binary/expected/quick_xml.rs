@@ -8,7 +8,7 @@ use xsd_parser_types::{
         SerializeBytes, SerializeHelper, ValidateError, WithDeserializer,
         WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
-    xml::{Base64BinaryBytes, HexBinary},
+    xml::{Base64Binary, HexBinary},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -302,17 +302,17 @@ impl DeserializeBytes for HexType {
 }
 impl WithDeserializerFromBytes for HexType {}
 #[derive(Debug)]
-pub struct Base64Type(pub Base64BinaryBytes);
+pub struct Base64Type(pub Base64Binary);
 impl Base64Type {
-    pub fn new(inner: Base64BinaryBytes) -> Result<Self, ValidateError> {
+    pub fn new(inner: Base64Binary) -> Result<Self, ValidateError> {
         Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     #[must_use]
-    pub fn into_inner(self) -> Base64BinaryBytes {
+    pub fn into_inner(self) -> Base64Binary {
         self.0
     }
-    pub fn validate_value(value: &Base64BinaryBytes) -> Result<(), ValidateError> {
+    pub fn validate_value(value: &Base64Binary) -> Result<(), ValidateError> {
         if value.len() < 16usize {
             return Err(ValidateError::MinLength(16usize));
         }
@@ -322,19 +322,19 @@ impl Base64Type {
         Ok(())
     }
 }
-impl From<Base64Type> for Base64BinaryBytes {
-    fn from(value: Base64Type) -> Base64BinaryBytes {
+impl From<Base64Type> for Base64Binary {
+    fn from(value: Base64Type) -> Base64Binary {
         value.0
     }
 }
-impl TryFrom<Base64BinaryBytes> for Base64Type {
+impl TryFrom<Base64Binary> for Base64Type {
     type Error = ValidateError;
-    fn try_from(value: Base64BinaryBytes) -> Result<Self, ValidateError> {
+    fn try_from(value: Base64Binary) -> Result<Self, ValidateError> {
         Self::new(value)
     }
 }
 impl Deref for Base64Type {
-    type Target = Base64BinaryBytes;
+    type Target = Base64Binary;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
@@ -347,7 +347,7 @@ impl SerializeBytes for Base64Type {
 impl WithSerializeToBytes for Base64Type {}
 impl DeserializeBytes for Base64Type {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-        let inner = Base64BinaryBytes::deserialize_bytes(helper, bytes)?;
+        let inner = Base64Binary::deserialize_bytes(helper, bytes)?;
         Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }

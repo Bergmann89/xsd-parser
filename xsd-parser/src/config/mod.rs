@@ -560,7 +560,7 @@ impl Config {
 
     /// Add a type definition for `xs:base64Binary` that uses the `xsd_parser_types::xml::Base64Binary` type.
     pub fn with_base64binary_type(self) -> Self {
-        self.with_base64binary_type_from("::xsd_parser_types::xml::Base64BinaryBytes")
+        self.with_base64binary_type_from("::xsd_parser_types::xml::Base64Binary")
     }
 
     /// Add a type definition for `xs:Base64Binary` that uses the type defined at the passed `path`.
