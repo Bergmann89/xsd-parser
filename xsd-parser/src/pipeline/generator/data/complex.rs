@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 use std::mem::take;
 
+use inflector::Inflector;
 use proc_macro2::{Ident as Ident2, Literal};
 use quote::format_ident;
 
@@ -23,6 +24,7 @@ use crate::models::{
     ElementIdent, TypeIdent,
 };
 use crate::pipeline::generator::ValueGeneratorMode;
+use crate::Name;
 
 use super::super::{Context, Error};
 
@@ -172,6 +174,7 @@ impl<'types> ComplexData<'types> {
     ) -> Result<Self, Error> {
         let base = ComplexBase::new(ctx, form, ComplexFlags::empty())?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+        let field_ident = format_ident!("{}", ctx.content_display_name);
 
         let content_ref = ctx.get_or_create_type_ref_for_value(simple_type, occurs.is_direct())?;
         let target_type = content_ref.path.clone();
@@ -189,6 +192,7 @@ impl<'types> ComplexData<'types> {
             simple_type: Some(simple_type),
             min_occurs,
             max_occurs,
+            field_ident,
             target_type,
             extra_attributes: Vec::new(),
         };
@@ -206,6 +210,7 @@ impl<'types> ComplexData<'types> {
         })
     }
 
+    #[allow(clippy::too_many_lines)]
     fn new_enum(
         ctx: &mut Context<'_, 'types>,
         form: FormChoiceType,
@@ -303,6 +308,7 @@ impl<'types> ComplexData<'types> {
             }
         } else {
             let type_ref = ctx.current_type_ref();
+            let field_ident = format_ident!("{}", ctx.content_display_name);
 
             let target_type = (*type_ref.path).clone().with_ident(content_ident.clone());
             let target_type = PathData::from_path(target_type);
@@ -312,6 +318,7 @@ impl<'types> ComplexData<'types> {
                 simple_type: None,
                 min_occurs,
                 max_occurs,
+                field_ident,
                 target_type,
                 extra_attributes: Vec::new(),
             };
@@ -472,6 +479,7 @@ impl<'types> ComplexData<'types> {
             }
         } else {
             let type_ref = ctx.current_type_ref();
+            let field_ident = format_ident!("{}", ctx.content_display_name);
 
             let target_type = (*type_ref.path).clone().with_ident(content_ident.clone());
             let target_type = PathData::from_path(target_type);
@@ -481,6 +489,7 @@ impl<'types> ComplexData<'types> {
                 simple_type: None,
                 min_occurs,
                 max_occurs,
+                field_ident,
                 target_type,
                 extra_attributes: Vec::new(),
             };
@@ -716,8 +725,13 @@ impl<'types> ComplexDataElement<'types> {
         max_occurs: MaxOccurs,
         content_ident: Ident2,
     ) -> Self {
+        let s_name = ctx.content_display_name.clone();
+        let b_name = Literal::byte_string(s_name.as_bytes());
+        let field_ident = format_ident!("{s_name}");
+        let variant_ident = format_ident!("{}", s_name.to_pascal_case());
+
         let meta = ElementMeta {
-            ident: ElementIdent::named("content"),
+            ident: ElementIdent::new(Name::new_named(s_name.clone())),
             variant: ElementMetaVariant::Type {
                 type_: TypeIdent::UNKNOWN,
                 mode: ElementMode::Group,
@@ -741,11 +755,11 @@ impl<'types> ComplexDataElement<'types> {
         Self {
             origin,
             occurs,
-            s_name: "content".into(),
-            b_name: Literal::byte_string(b"content"),
+            s_name,
+            b_name,
             tag_name: TagName::default(),
-            field_ident: format_ident!("content"),
-            variant_ident: format_ident!("Content"),
+            field_ident,
+            variant_ident,
             target_type,
             need_indirection: false,
             target_is_dynamic: false,

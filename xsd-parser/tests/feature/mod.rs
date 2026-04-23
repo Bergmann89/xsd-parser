@@ -16,6 +16,7 @@ mod choice_with_sequence;
 mod complex_type_empty;
 mod complex_type_with_group;
 mod complex_type_with_repeated_content;
+mod content_display_name;
 mod custom_type;
 mod defaultable_content;
 mod derive;

@@ -1193,6 +1193,8 @@ impl ComplexDataContent<'_> {
         ctx: &Context<'_, '_>,
         state_ident: &Ident2,
     ) -> TokenStream {
+        let field_ident = &self.field_ident;
+
         match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
@@ -1201,7 +1203,7 @@ impl ComplexDataContent<'_> {
 
                 quote! {
                     *self.state = #state_ident::Content__(
-                        #with_serializer::serializer(&self.value.content, None, false)?
+                        #with_serializer::serializer(&self.value.#field_ident, None, false)?
                     )
                 }
             }
@@ -1212,7 +1214,7 @@ impl ComplexDataContent<'_> {
                 quote! {
                     *self.state = #state_ident::Content__(
                         #iter_serializer::new(
-                            self.value.content.as_ref(),
+                            self.value.#field_ident.as_ref(),
                             None,
                             false
                         )
@@ -1226,7 +1228,7 @@ impl ComplexDataContent<'_> {
                 quote! {
                     *self.state = #state_ident::Content__(
                         #iter_serializer::new(
-                            &self.value.content[..],
+                            &self.value.#field_ident[..],
                             None,
                             false
                         )

@@ -2379,6 +2379,7 @@ impl ComplexDataContent<'_> {
     }
 
     fn deserializer_field_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let field_ident = &self.field_ident;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let target_type = match self.occurs {
@@ -2396,60 +2397,64 @@ impl ComplexDataContent<'_> {
         };
 
         quote! {
-            content: #target_type,
+            #field_ident: #target_type,
         }
     }
 
     fn deserializer_struct_field_init(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let field_ident = &self.field_ident;
+
         match self.occurs {
             Occurs::None => quote!(),
-            Occurs::Single | Occurs::Optional => quote!(content: None,),
+            Occurs::Single | Occurs::Optional => quote!(#field_ident: None,),
             Occurs::DynamicList | Occurs::StaticList(_) => {
                 let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
 
-                quote!(content: #vec::new(),)
+                quote!(#field_ident: #vec::new(),)
             }
         }
     }
 
     fn deserializer_struct_field_finish(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
+        let field_ident = &self.field_ident;
         let convert = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
                 if ctx.has_defaultable_content() {
-                    quote!(helper.finish_default(self.content)?)
+                    quote!(helper.finish_default(self.#field_ident)?)
                 } else {
-                    quote!(helper.finish_content(self.content)?)
+                    quote!(helper.finish_content(self.#field_ident)?)
                 }
             }
             Occurs::Optional => {
-                quote! { self.content }
+                quote! { self.#field_ident }
             }
             Occurs::DynamicList => {
                 let min = self.min_occurs;
                 let max = self.max_occurs.render_opt();
 
                 if ctx.has_defaultable_content() {
-                    quote!(helper.finish_vec_default(#min, self.content)?)
+                    quote!(helper.finish_vec_default(#min, self.#field_ident)?)
                 } else {
-                    quote!(helper.finish_vec(#min, #max, self.content)?)
+                    quote!(helper.finish_vec(#min, #max, self.#field_ident)?)
                 }
             }
             Occurs::StaticList(sz) => {
                 if ctx.has_defaultable_content() {
-                    quote!(helper.finish_arr_default::<_, #sz>(self.content)?)
+                    quote!(helper.finish_arr_default::<_, #sz>(self.#field_ident)?)
                 } else {
-                    quote!(helper.finish_arr::<_, #sz>(self.content)?)
+                    quote!(helper.finish_arr::<_, #sz>(self.#field_ident)?)
                 }
             }
         };
 
         quote! {
-            content: #convert,
+            #field_ident: #convert,
         }
     }
 
     fn deserializer_struct_field_fn_store(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let field_ident = &self.field_ident;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let body = match self.occurs {
@@ -2459,15 +2464,15 @@ impl ComplexDataContent<'_> {
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
 
                 quote! {
-                    if self.content.is_some() {
+                    if self.#field_ident.is_some() {
                         Err(#error_kind::DuplicateContent)?;
                     }
 
-                    self.content = Some(value);
+                    self.#field_ident = Some(value);
                 }
             }
             Occurs::DynamicList | Occurs::StaticList(_) => quote! {
-                self.content.push(value);
+                self.#field_ident.push(value);
             },
         };
 

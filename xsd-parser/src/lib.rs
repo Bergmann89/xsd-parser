@@ -356,7 +356,8 @@ pub fn exec_generator_with_ident_cache<'types>(
     let mut generator = Generator::new(types)
         .flags(config.flags)
         .box_flags(config.box_flags)
-        .typedef_mode(config.typedef_mode);
+        .typedef_mode(config.typedef_mode)
+        .content_display_name(config.content_display_name);
 
     generator = generator
         .text_type(config.text_type)

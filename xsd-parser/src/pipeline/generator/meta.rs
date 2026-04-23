@@ -40,6 +40,9 @@ pub struct MetaData<'types> {
 
     /// Type to use to store unstructured `xs:anyAttribute` attributes.
     pub any_attributes_type: IdentPath,
+
+    /// Name to use for the generated content field of the generated types.
+    pub content_display_name: String,
 }
 
 impl MetaData<'_> {
