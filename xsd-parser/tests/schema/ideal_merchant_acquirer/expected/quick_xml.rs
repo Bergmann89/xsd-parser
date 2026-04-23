@@ -1,6 +1,7 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
+    xml::Base64String,
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -115,7 +116,7 @@ impl WithDeserializer for SignedInfoType {
 #[derive(Debug)]
 pub struct SignatureValueType {
     pub id: Option<String>,
-    pub content: String,
+    pub content: Base64String,
 }
 impl WithSerializer for SignatureValueType {
     type Serializer<'x> = quick_xml_serialize::SignatureValueTypeSerializer<'x>;
@@ -262,7 +263,7 @@ pub struct ReferenceType {
     pub type_: Option<String>,
     pub transforms: Option<TransformsType>,
     pub digest_method: DigestMethodType,
-    pub digest_value: String,
+    pub digest_value: Base64String,
 }
 impl WithSerializer for ReferenceType {
     type Serializer<'x> = quick_xml_serialize::ReferenceTypeSerializer<'x>;
@@ -446,7 +447,7 @@ pub struct SpkiDataType {
 }
 #[derive(Debug)]
 pub struct SpkiDataTypeContent {
-    pub spki_sexp: String,
+    pub spki_sexp: Base64String,
 }
 impl WithSerializer for SpkiDataType {
     type Serializer<'x> = quick_xml_serialize::SpkiDataTypeSerializer<'x>;
@@ -531,9 +532,9 @@ impl WithDeserializer for DigestMethodType {
 #[derive(Debug)]
 pub struct DsaKeyValueType {
     pub content_36: Option<DsaKeyValueContent36Type>,
-    pub g: Option<String>,
-    pub y: String,
-    pub j: Option<String>,
+    pub g: Option<Base64String>,
+    pub y: Base64String,
+    pub j: Option<Base64String>,
     pub content_37: Option<DsaKeyValueContent37Type>,
 }
 impl WithSerializer for DsaKeyValueType {
@@ -556,8 +557,8 @@ impl WithDeserializer for DsaKeyValueType {
 }
 #[derive(Debug)]
 pub struct RsaKeyValueType {
-    pub modulus: String,
-    pub exponent: String,
+    pub modulus: Base64String,
+    pub exponent: Base64String,
 }
 impl WithSerializer for RsaKeyValueType {
     type Serializer<'x> = quick_xml_serialize::RsaKeyValueTypeSerializer<'x>;
@@ -584,10 +585,10 @@ pub struct X509DataContent19Type {
 #[derive(Debug)]
 pub enum X509DataContent19TypeContent {
     X509IssuerSerial(X509IssuerSerialType),
-    X509Ski(String),
+    X509Ski(Base64String),
     X509SubjectName(String),
-    X509Certificate(String),
-    X509Crl(String),
+    X509Certificate(Base64String),
+    X509Crl(Base64String),
 }
 impl WithSerializer for X509DataContent19Type {
     type Serializer<'x> = quick_xml_serialize::X509DataContent19TypeSerializer<'x>;
@@ -631,8 +632,8 @@ impl WithDeserializer for X509DataContent19TypeContent {
 }
 #[derive(Debug)]
 pub struct PgpDataContent23Type {
-    pub pgp_key_id: String,
-    pub pgp_key_packet: Option<String>,
+    pub pgp_key_id: Base64String,
+    pub pgp_key_packet: Option<Base64String>,
 }
 impl WithSerializer for PgpDataContent23Type {
     type Serializer<'x> = quick_xml_serialize::PgpDataContent23TypeSerializer<'x>;
@@ -654,7 +655,7 @@ impl WithDeserializer for PgpDataContent23Type {
 }
 #[derive(Debug)]
 pub struct PgpDataContent25Type {
-    pub pgp_key_packet: String,
+    pub pgp_key_packet: Base64String,
 }
 impl WithSerializer for PgpDataContent25Type {
     type Serializer<'x> = quick_xml_serialize::PgpDataContent25TypeSerializer<'x>;
@@ -721,8 +722,8 @@ impl WithDeserializer for TransformTypeContent {
 }
 #[derive(Debug)]
 pub struct DsaKeyValueContent36Type {
-    pub p: String,
-    pub q: String,
+    pub p: Base64String,
+    pub q: Base64String,
 }
 impl WithSerializer for DsaKeyValueContent36Type {
     type Serializer<'x> = quick_xml_serialize::DsaKeyValueContent36TypeSerializer<'x>;
@@ -744,8 +745,8 @@ impl WithDeserializer for DsaKeyValueContent36Type {
 }
 #[derive(Debug)]
 pub struct DsaKeyValueContent37Type {
-    pub seed: String,
-    pub pgen_counter: String,
+    pub seed: Base64String,
+    pub pgen_counter: Base64String,
 }
 impl WithSerializer for DsaKeyValueContent37Type {
     type Serializer<'x> = quick_xml_serialize::DsaKeyValueContent37TypeSerializer<'x>;
@@ -790,10 +791,13 @@ impl WithDeserializer for X509IssuerSerialType {
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
-    use xsd_parser_types::quick_xml::{
-        BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-        ErrorKind, Event, RawByteStr, WithDeserializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
+            DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
+            ErrorKind, Event, RawByteStr, WithDeserializer,
+        },
+        xml::Base64String,
     };
     #[derive(Debug)]
     pub struct DirectoryReqTypeDeserializer {
@@ -2221,13 +2225,13 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct SignatureValueTypeDeserializer {
         id: Option<String>,
-        content: Option<String>,
+        content: Option<Base64String>,
         state__: Box<SignatureValueTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum SignatureValueTypeDeserializerState {
         Init__,
-        Content__(<String as WithDeserializer>::Deserializer),
+        Content__(<Base64String as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl SignatureValueTypeDeserializer {
@@ -2263,7 +2267,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: String) -> Result<(), Error> {
+        fn store_content(&mut self, value: Base64String) -> Result<(), Error> {
             if self.content.is_some() {
                 Err(ErrorKind::DuplicateContent)?;
             }
@@ -2273,7 +2277,7 @@ pub mod quick_xml_deserialize {
         fn handle_content<'de>(
             mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
         ) -> DeserializerResult<'de, super::SignatureValueType> {
             use SignatureValueTypeDeserializerState as S;
             let DeserializerOutput {
@@ -3652,7 +3656,7 @@ pub mod quick_xml_deserialize {
         type_: Option<String>,
         transforms: Option<super::TransformsType>,
         digest_method: Option<super::DigestMethodType>,
-        digest_value: Option<String>,
+        digest_value: Option<Base64String>,
         state__: Box<ReferenceTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -3660,7 +3664,7 @@ pub mod quick_xml_deserialize {
         Init__,
         Transforms(Option<<super::TransformsType as WithDeserializer>::Deserializer>),
         DigestMethod(Option<<super::DigestMethodType as WithDeserializer>::Deserializer>),
-        DigestValue(Option<<String as WithDeserializer>::Deserializer>),
+        DigestValue(Option<<Base64String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -3741,7 +3745,7 @@ pub mod quick_xml_deserialize {
             self.digest_method = Some(value);
             Ok(())
         }
-        fn store_digest_value(&mut self, value: String) -> Result<(), Error> {
+        fn store_digest_value(&mut self, value: Base64String) -> Result<(), Error> {
             if self.digest_value.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"DigestValue",
@@ -3823,7 +3827,7 @@ pub mod quick_xml_deserialize {
         fn handle_digest_value<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<ReferenceTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use ReferenceTypeDeserializerState as S;
@@ -5559,13 +5563,13 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct SpkiDataTypeContentDeserializer {
-        spki_sexp: Option<String>,
+        spki_sexp: Option<Base64String>,
         state__: Box<SpkiDataTypeContentDeserializerState>,
     }
     #[derive(Debug)]
     enum SpkiDataTypeContentDeserializerState {
         Init__,
-        SpkiSexp(Option<<String as WithDeserializer>::Deserializer>),
+        SpkiSexp(Option<<Base64String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -5584,7 +5588,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_spki_sexp(&mut self, value: String) -> Result<(), Error> {
+        fn store_spki_sexp(&mut self, value: Base64String) -> Result<(), Error> {
             if self.spki_sexp.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"SPKISexp",
@@ -5596,7 +5600,7 @@ pub mod quick_xml_deserialize {
         fn handle_spki_sexp<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<SpkiDataTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use SpkiDataTypeContentDeserializerState as S;
@@ -6018,9 +6022,9 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct DsaKeyValueTypeDeserializer {
         content_36: Option<super::DsaKeyValueContent36Type>,
-        g: Option<String>,
-        y: Option<String>,
-        j: Option<String>,
+        g: Option<Base64String>,
+        y: Option<Base64String>,
+        j: Option<Base64String>,
         content_37: Option<super::DsaKeyValueContent37Type>,
         state__: Box<DsaKeyValueTypeDeserializerState>,
     }
@@ -6028,9 +6032,9 @@ pub mod quick_xml_deserialize {
     enum DsaKeyValueTypeDeserializerState {
         Init__,
         Content36(Option<<super::DsaKeyValueContent36Type as WithDeserializer>::Deserializer>),
-        G(Option<<String as WithDeserializer>::Deserializer>),
-        Y(Option<<String as WithDeserializer>::Deserializer>),
-        J(Option<<String as WithDeserializer>::Deserializer>),
+        G(Option<<Base64String as WithDeserializer>::Deserializer>),
+        Y(Option<<Base64String as WithDeserializer>::Deserializer>),
+        J(Option<<Base64String as WithDeserializer>::Deserializer>),
         Content37(Option<<super::DsaKeyValueContent37Type as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
@@ -6085,21 +6089,21 @@ pub mod quick_xml_deserialize {
             self.content_36 = Some(value);
             Ok(())
         }
-        fn store_g(&mut self, value: String) -> Result<(), Error> {
+        fn store_g(&mut self, value: Base64String) -> Result<(), Error> {
             if self.g.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"G")))?;
             }
             self.g = Some(value);
             Ok(())
         }
-        fn store_y(&mut self, value: String) -> Result<(), Error> {
+        fn store_y(&mut self, value: Base64String) -> Result<(), Error> {
             if self.y.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Y")))?;
             }
             self.y = Some(value);
             Ok(())
         }
-        fn store_j(&mut self, value: String) -> Result<(), Error> {
+        fn store_j(&mut self, value: Base64String) -> Result<(), Error> {
             if self.j.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"J")))?;
             }
@@ -6154,7 +6158,7 @@ pub mod quick_xml_deserialize {
         fn handle_g<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use DsaKeyValueTypeDeserializerState as S;
@@ -6187,7 +6191,7 @@ pub mod quick_xml_deserialize {
         fn handle_y<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use DsaKeyValueTypeDeserializerState as S;
@@ -6224,7 +6228,7 @@ pub mod quick_xml_deserialize {
         fn handle_j<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use DsaKeyValueTypeDeserializerState as S;
@@ -6501,15 +6505,15 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct RsaKeyValueTypeDeserializer {
-        modulus: Option<String>,
-        exponent: Option<String>,
+        modulus: Option<Base64String>,
+        exponent: Option<Base64String>,
         state__: Box<RsaKeyValueTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum RsaKeyValueTypeDeserializerState {
         Init__,
-        Modulus(Option<<String as WithDeserializer>::Deserializer>),
-        Exponent(Option<<String as WithDeserializer>::Deserializer>),
+        Modulus(Option<<Base64String as WithDeserializer>::Deserializer>),
+        Exponent(Option<<Base64String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -6545,7 +6549,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_modulus(&mut self, value: String) -> Result<(), Error> {
+        fn store_modulus(&mut self, value: Base64String) -> Result<(), Error> {
             if self.modulus.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"Modulus",
@@ -6554,7 +6558,7 @@ pub mod quick_xml_deserialize {
             self.modulus = Some(value);
             Ok(())
         }
-        fn store_exponent(&mut self, value: String) -> Result<(), Error> {
+        fn store_exponent(&mut self, value: Base64String) -> Result<(), Error> {
             if self.exponent.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"Exponent",
@@ -6566,7 +6570,7 @@ pub mod quick_xml_deserialize {
         fn handle_modulus<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<RsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use RsaKeyValueTypeDeserializerState as S;
@@ -6603,7 +6607,7 @@ pub mod quick_xml_deserialize {
         fn handle_exponent<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<RsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use RsaKeyValueTypeDeserializerState as S;
@@ -6939,9 +6943,9 @@ pub mod quick_xml_deserialize {
             Option<<super::X509IssuerSerialType as WithDeserializer>::Deserializer>,
         ),
         X509Ski(
-            Option<String>,
-            Option<<String as WithDeserializer>::Deserializer>,
-            Option<<String as WithDeserializer>::Deserializer>,
+            Option<Base64String>,
+            Option<<Base64String as WithDeserializer>::Deserializer>,
+            Option<<Base64String as WithDeserializer>::Deserializer>,
         ),
         X509SubjectName(
             Option<String>,
@@ -6949,14 +6953,14 @@ pub mod quick_xml_deserialize {
             Option<<String as WithDeserializer>::Deserializer>,
         ),
         X509Certificate(
-            Option<String>,
-            Option<<String as WithDeserializer>::Deserializer>,
-            Option<<String as WithDeserializer>::Deserializer>,
+            Option<Base64String>,
+            Option<<Base64String as WithDeserializer>::Deserializer>,
+            Option<<Base64String as WithDeserializer>::Deserializer>,
         ),
         X509Crl(
-            Option<String>,
-            Option<<String as WithDeserializer>::Deserializer>,
-            Option<<String as WithDeserializer>::Deserializer>,
+            Option<Base64String>,
+            Option<<Base64String as WithDeserializer>::Deserializer>,
+            Option<<Base64String as WithDeserializer>::Deserializer>,
         ),
         Done__(super::X509DataContent19TypeContent),
         Unknown__,
@@ -6985,7 +6989,7 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509SKI")
                 ) {
-                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    let output = <Base64String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_ski(helper, Default::default(), None, output);
                 }
                 if matches!(
@@ -6999,14 +7003,14 @@ pub mod quick_xml_deserialize {
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509Certificate")
                 ) {
-                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    let output = <Base64String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_certificate(helper, Default::default(), None, output);
                 }
                 if matches!(
                     helper.resolve_local_name(x.name(), &super::NS_DS),
                     Some(b"X509CRL")
                 ) {
-                    let output = <String as WithDeserializer>::init(helper, event)?;
+                    let output = <Base64String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x509_crl(helper, Default::default(), None, output);
                 }
             }
@@ -7081,7 +7085,10 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn store_x509_ski(values: &mut Option<String>, value: String) -> Result<(), Error> {
+        fn store_x509_ski(
+            values: &mut Option<Base64String>,
+            value: Base64String,
+        ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"X509SKI",
@@ -7102,7 +7109,10 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn store_x509_certificate(values: &mut Option<String>, value: String) -> Result<(), Error> {
+        fn store_x509_certificate(
+            values: &mut Option<Base64String>,
+            value: Base64String,
+        ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"X509Certificate",
@@ -7111,7 +7121,10 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn store_x509_crl(values: &mut Option<String>, value: String) -> Result<(), Error> {
+        fn store_x509_crl(
+            values: &mut Option<Base64String>,
+            value: Base64String,
+        ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"X509CRL",
@@ -7157,9 +7170,9 @@ pub mod quick_xml_deserialize {
         fn handle_x509_ski<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            mut values: Option<String>,
-            fallback: Option<<String as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, String>,
+            mut values: Option<Base64String>,
+            fallback: Option<<Base64String as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, Base64String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use X509DataContent19TypeContentDeserializerState as S;
             let DeserializerOutput {
@@ -7225,9 +7238,9 @@ pub mod quick_xml_deserialize {
         fn handle_x509_certificate<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            mut values: Option<String>,
-            fallback: Option<<String as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, String>,
+            mut values: Option<Base64String>,
+            fallback: Option<<Base64String as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, Base64String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use X509DataContent19TypeContentDeserializerState as S;
             let DeserializerOutput {
@@ -7259,9 +7272,9 @@ pub mod quick_xml_deserialize {
         fn handle_x509_crl<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            mut values: Option<String>,
-            fallback: Option<<String as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, String>,
+            mut values: Option<Base64String>,
+            fallback: Option<<Base64String as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, Base64String>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use X509DataContent19TypeContentDeserializerState as S;
             let DeserializerOutput {
@@ -7501,15 +7514,15 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct PgpDataContent23TypeDeserializer {
-        pgp_key_id: Option<String>,
-        pgp_key_packet: Option<String>,
+        pgp_key_id: Option<Base64String>,
+        pgp_key_packet: Option<Base64String>,
         state__: Box<PgpDataContent23TypeDeserializerState>,
     }
     #[derive(Debug)]
     enum PgpDataContent23TypeDeserializerState {
         Init__,
-        PgpKeyId(Option<<String as WithDeserializer>::Deserializer>),
-        PgpKeyPacket(Option<<String as WithDeserializer>::Deserializer>),
+        PgpKeyId(Option<<Base64String as WithDeserializer>::Deserializer>),
+        PgpKeyPacket(Option<<Base64String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -7531,7 +7544,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_pgp_key_id(&mut self, value: String) -> Result<(), Error> {
+        fn store_pgp_key_id(&mut self, value: Base64String) -> Result<(), Error> {
             if self.pgp_key_id.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"PGPKeyID",
@@ -7540,7 +7553,7 @@ pub mod quick_xml_deserialize {
             self.pgp_key_id = Some(value);
             Ok(())
         }
-        fn store_pgp_key_packet(&mut self, value: String) -> Result<(), Error> {
+        fn store_pgp_key_packet(&mut self, value: Base64String) -> Result<(), Error> {
             if self.pgp_key_packet.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"PGPKeyPacket",
@@ -7552,7 +7565,7 @@ pub mod quick_xml_deserialize {
         fn handle_pgp_key_id<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<PgpDataContent23TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use PgpDataContent23TypeDeserializerState as S;
@@ -7589,7 +7602,7 @@ pub mod quick_xml_deserialize {
         fn handle_pgp_key_packet<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<PgpDataContent23TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use PgpDataContent23TypeDeserializerState as S;
@@ -7764,13 +7777,13 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct PgpDataContent25TypeDeserializer {
-        pgp_key_packet: Option<String>,
+        pgp_key_packet: Option<Base64String>,
         state__: Box<PgpDataContent25TypeDeserializerState>,
     }
     #[derive(Debug)]
     enum PgpDataContent25TypeDeserializerState {
         Init__,
-        PgpKeyPacket(Option<<String as WithDeserializer>::Deserializer>),
+        PgpKeyPacket(Option<<Base64String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -7789,7 +7802,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_pgp_key_packet(&mut self, value: String) -> Result<(), Error> {
+        fn store_pgp_key_packet(&mut self, value: Base64String) -> Result<(), Error> {
             if self.pgp_key_packet.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"PGPKeyPacket",
@@ -7801,7 +7814,7 @@ pub mod quick_xml_deserialize {
         fn handle_pgp_key_packet<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<PgpDataContent25TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use PgpDataContent25TypeDeserializerState as S;
@@ -8304,15 +8317,15 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct DsaKeyValueContent36TypeDeserializer {
-        p: Option<String>,
-        q: Option<String>,
+        p: Option<Base64String>,
+        q: Option<Base64String>,
         state__: Box<DsaKeyValueContent36TypeDeserializerState>,
     }
     #[derive(Debug)]
     enum DsaKeyValueContent36TypeDeserializerState {
         Init__,
-        P(Option<<String as WithDeserializer>::Deserializer>),
-        Q(Option<<String as WithDeserializer>::Deserializer>),
+        P(Option<<Base64String as WithDeserializer>::Deserializer>),
+        Q(Option<<Base64String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -8330,14 +8343,14 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_p(&mut self, value: String) -> Result<(), Error> {
+        fn store_p(&mut self, value: Base64String) -> Result<(), Error> {
             if self.p.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"P")))?;
             }
             self.p = Some(value);
             Ok(())
         }
-        fn store_q(&mut self, value: String) -> Result<(), Error> {
+        fn store_q(&mut self, value: Base64String) -> Result<(), Error> {
             if self.q.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Q")))?;
             }
@@ -8347,7 +8360,7 @@ pub mod quick_xml_deserialize {
         fn handle_p<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<DsaKeyValueContent36TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use DsaKeyValueContent36TypeDeserializerState as S;
@@ -8384,7 +8397,7 @@ pub mod quick_xml_deserialize {
         fn handle_q<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<DsaKeyValueContent36TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use DsaKeyValueContent36TypeDeserializerState as S;
@@ -8567,15 +8580,15 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct DsaKeyValueContent37TypeDeserializer {
-        seed: Option<String>,
-        pgen_counter: Option<String>,
+        seed: Option<Base64String>,
+        pgen_counter: Option<Base64String>,
         state__: Box<DsaKeyValueContent37TypeDeserializerState>,
     }
     #[derive(Debug)]
     enum DsaKeyValueContent37TypeDeserializerState {
         Init__,
-        Seed(Option<<String as WithDeserializer>::Deserializer>),
-        PgenCounter(Option<<String as WithDeserializer>::Deserializer>),
+        Seed(Option<<Base64String as WithDeserializer>::Deserializer>),
+        PgenCounter(Option<<Base64String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -8595,14 +8608,14 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_seed(&mut self, value: String) -> Result<(), Error> {
+        fn store_seed(&mut self, value: Base64String) -> Result<(), Error> {
             if self.seed.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Seed")))?;
             }
             self.seed = Some(value);
             Ok(())
         }
-        fn store_pgen_counter(&mut self, value: String) -> Result<(), Error> {
+        fn store_pgen_counter(&mut self, value: Base64String) -> Result<(), Error> {
             if self.pgen_counter.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"PgenCounter",
@@ -8614,7 +8627,7 @@ pub mod quick_xml_deserialize {
         fn handle_seed<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<DsaKeyValueContent37TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use DsaKeyValueContent37TypeDeserializerState as S;
@@ -8651,7 +8664,7 @@ pub mod quick_xml_deserialize {
         fn handle_pgen_counter<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
             fallback: &mut Option<DsaKeyValueContent37TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use DsaKeyValueContent37TypeDeserializerState as S;
@@ -9101,9 +9114,12 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
+        },
+        xml::Base64String,
     };
     #[derive(Debug)]
     pub struct DirectoryReqTypeSerializer<'ser> {
@@ -9494,7 +9510,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum SignatureValueTypeSerializerState<'ser> {
         Init__,
-        Content__(<String as WithSerializer>::Serializer<'ser>),
+        Content__(<Base64String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -9915,7 +9931,7 @@ pub mod quick_xml_serialize {
             IterSerializer<'ser, Option<&'ser super::TransformsType>, super::TransformsType>,
         ),
         DigestMethod(<super::DigestMethodType as WithSerializer>::Serializer<'ser>),
-        DigestValue(<String as WithSerializer>::Serializer<'ser>),
+        DigestValue(<Base64String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -10508,7 +10524,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum SpkiDataTypeContentSerializerState<'ser> {
         Init__,
-        SpkiSexp(<String as WithSerializer>::Serializer<'ser>),
+        SpkiSexp(<Base64String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -10683,9 +10699,9 @@ pub mod quick_xml_serialize {
                 super::DsaKeyValueContent36Type,
             >,
         ),
-        G(IterSerializer<'ser, Option<&'ser String>, String>),
-        Y(<String as WithSerializer>::Serializer<'ser>),
-        J(IterSerializer<'ser, Option<&'ser String>, String>),
+        G(IterSerializer<'ser, Option<&'ser Base64String>, Base64String>),
+        Y(<Base64String as WithSerializer>::Serializer<'ser>),
+        J(IterSerializer<'ser, Option<&'ser Base64String>, Base64String>),
         Content37(
             IterSerializer<
                 'ser,
@@ -10796,8 +10812,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum RsaKeyValueTypeSerializerState<'ser> {
         Init__,
-        Modulus(<String as WithSerializer>::Serializer<'ser>),
-        Exponent(<String as WithSerializer>::Serializer<'ser>),
+        Modulus(<Base64String as WithSerializer>::Serializer<'ser>),
+        Exponent(<Base64String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -10923,10 +10939,10 @@ pub mod quick_xml_serialize {
     pub(super) enum X509DataContent19TypeContentSerializerState<'ser> {
         Init__,
         X509IssuerSerial(<super::X509IssuerSerialType as WithSerializer>::Serializer<'ser>),
-        X509Ski(<String as WithSerializer>::Serializer<'ser>),
+        X509Ski(<Base64String as WithSerializer>::Serializer<'ser>),
         X509SubjectName(<String as WithSerializer>::Serializer<'ser>),
-        X509Certificate(<String as WithSerializer>::Serializer<'ser>),
-        X509Crl(<String as WithSerializer>::Serializer<'ser>),
+        X509Certificate(<Base64String as WithSerializer>::Serializer<'ser>),
+        X509Crl(<Base64String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -11045,8 +11061,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum PgpDataContent23TypeSerializerState<'ser> {
         Init__,
-        PgpKeyId(<String as WithSerializer>::Serializer<'ser>),
-        PgpKeyPacket(IterSerializer<'ser, Option<&'ser String>, String>),
+        PgpKeyId(<Base64String as WithSerializer>::Serializer<'ser>),
+        PgpKeyPacket(IterSerializer<'ser, Option<&'ser Base64String>, Base64String>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -11112,7 +11128,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum PgpDataContent25TypeSerializerState<'ser> {
         Init__,
-        PgpKeyPacket(<String as WithSerializer>::Serializer<'ser>),
+        PgpKeyPacket(<Base64String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -11281,8 +11297,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum DsaKeyValueContent36TypeSerializerState<'ser> {
         Init__,
-        P(<String as WithSerializer>::Serializer<'ser>),
-        Q(<String as WithSerializer>::Serializer<'ser>),
+        P(<Base64String as WithSerializer>::Serializer<'ser>),
+        Q(<Base64String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -11340,8 +11356,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum DsaKeyValueContent37TypeSerializerState<'ser> {
         Init__,
-        Seed(<String as WithSerializer>::Serializer<'ser>),
-        PgenCounter(<String as WithSerializer>::Serializer<'ser>),
+        Seed(<Base64String as WithSerializer>::Serializer<'ser>),
+        PgenCounter(<Base64String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }

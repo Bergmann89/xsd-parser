@@ -1,6 +1,7 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{Error, WithDeserializer, WithSerializer},
+    xml::Base64String,
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -1505,7 +1506,7 @@ impl WithDeserializer for DeliveryTermsCodeType {
 pub struct BinaryObjectType {
     pub mime_code: String,
     pub filename: String,
-    pub content: String,
+    pub content: Base64String,
 }
 impl WithSerializer for BinaryObjectType {
     type Serializer<'x> = quick_xml_serialize::BinaryObjectTypeSerializer<'x>;
@@ -2164,10 +2165,13 @@ impl WithDeserializer for DateTypeDateStringType {
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
-    use xsd_parser_types::quick_xml::{
-        BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-        ErrorKind, Event, RawByteStr, WithDeserializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
+            DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
+            ErrorKind, Event, RawByteStr, WithDeserializer,
+        },
+        xml::Base64String,
     };
     #[derive(Debug)]
     pub struct CrossIndustryInvoiceTypeDeserializer {
@@ -29160,13 +29164,13 @@ pub mod quick_xml_deserialize {
     pub struct BinaryObjectTypeDeserializer {
         mime_code: String,
         filename: String,
-        content: Option<String>,
+        content: Option<Base64String>,
         state__: Box<BinaryObjectTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum BinaryObjectTypeDeserializerState {
         Init__,
-        Content__(<String as WithDeserializer>::Deserializer),
+        Content__(<Base64String as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl BinaryObjectTypeDeserializer {
@@ -29210,7 +29214,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: String) -> Result<(), Error> {
+        fn store_content(&mut self, value: Base64String) -> Result<(), Error> {
             if self.content.is_some() {
                 Err(ErrorKind::DuplicateContent)?;
             }
@@ -29220,7 +29224,7 @@ pub mod quick_xml_deserialize {
         fn handle_content<'de>(
             mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, String>,
+            output: DeserializerOutput<'de, Base64String>,
         ) -> DeserializerResult<'de, super::BinaryObjectType> {
             use BinaryObjectTypeDeserializerState as S;
             let DeserializerOutput {
@@ -34120,9 +34124,12 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            WithSerializer,
+        },
+        xml::Base64String,
     };
     #[derive(Debug)]
     pub struct CrossIndustryInvoiceTypeSerializer<'ser> {
@@ -39948,7 +39955,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum BinaryObjectTypeSerializerState<'ser> {
         Init__,
-        Content__(<String as WithSerializer>::Serializer<'ser>),
+        Content__(<Base64String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),

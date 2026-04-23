@@ -1,3 +1,4 @@
+use xsd_parser_types::xml::Base64String;
 pub type DirectoryReq = DirectoryReqType;
 #[derive(Debug)]
 pub struct DirectoryReqType {
@@ -29,7 +30,7 @@ pub struct SignedInfoType {
 #[derive(Debug)]
 pub struct SignatureValueType {
     pub id: Option<String>,
-    pub content: String,
+    pub content: Base64String,
 }
 #[derive(Debug)]
 pub struct KeyInfoType {
@@ -68,7 +69,7 @@ pub struct ReferenceType {
     pub type_: Option<String>,
     pub transforms: Option<TransformsType>,
     pub digest_method: DigestMethodType,
-    pub digest_value: String,
+    pub digest_value: Base64String,
 }
 #[derive(Debug)]
 pub struct KeyValueType {
@@ -108,7 +109,7 @@ pub struct SpkiDataType {
 }
 #[derive(Debug)]
 pub struct SpkiDataTypeContent {
-    pub spki_sexp: String,
+    pub spki_sexp: Base64String,
 }
 #[derive(Debug)]
 pub struct TransformsType {
@@ -121,15 +122,15 @@ pub struct DigestMethodType {
 #[derive(Debug)]
 pub struct DsaKeyValueType {
     pub content_36: Option<DsaKeyValueContent36Type>,
-    pub g: Option<String>,
-    pub y: String,
-    pub j: Option<String>,
+    pub g: Option<Base64String>,
+    pub y: Base64String,
+    pub j: Option<Base64String>,
     pub content_37: Option<DsaKeyValueContent37Type>,
 }
 #[derive(Debug)]
 pub struct RsaKeyValueType {
-    pub modulus: String,
-    pub exponent: String,
+    pub modulus: Base64String,
+    pub exponent: Base64String,
 }
 #[derive(Debug)]
 pub struct X509DataContent19Type {
@@ -138,19 +139,19 @@ pub struct X509DataContent19Type {
 #[derive(Debug)]
 pub enum X509DataContent19TypeContent {
     X509IssuerSerial(X509IssuerSerialType),
-    X509Ski(String),
+    X509Ski(Base64String),
     X509SubjectName(String),
-    X509Certificate(String),
-    X509Crl(String),
+    X509Certificate(Base64String),
+    X509Crl(Base64String),
 }
 #[derive(Debug)]
 pub struct PgpDataContent23Type {
-    pub pgp_key_id: String,
-    pub pgp_key_packet: Option<String>,
+    pub pgp_key_id: Base64String,
+    pub pgp_key_packet: Option<Base64String>,
 }
 #[derive(Debug)]
 pub struct PgpDataContent25Type {
-    pub pgp_key_packet: String,
+    pub pgp_key_packet: Base64String,
 }
 #[derive(Debug)]
 pub struct TransformType {
@@ -163,13 +164,13 @@ pub enum TransformTypeContent {
 }
 #[derive(Debug)]
 pub struct DsaKeyValueContent36Type {
-    pub p: String,
-    pub q: String,
+    pub p: Base64String,
+    pub q: Base64String,
 }
 #[derive(Debug)]
 pub struct DsaKeyValueContent37Type {
-    pub seed: String,
-    pub pgen_counter: String,
+    pub seed: Base64String,
+    pub pgen_counter: Base64String,
 }
 #[derive(Debug)]
 pub struct X509IssuerSerialType {

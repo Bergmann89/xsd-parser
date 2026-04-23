@@ -5391,9 +5391,12 @@ pub mod er {
 }
 pub mod xs {
     use std::borrow::Cow;
-    use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-        WithDeserializerFromBytes, WithSerializeToBytes,
+    use xsd_parser_types::{
+        quick_xml::{
+            DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+            WithDeserializerFromBytes, WithSerializeToBytes,
+        },
+        xml::{Base64String, HexString},
     };
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
@@ -5436,7 +5439,7 @@ pub mod xs {
     pub type QNameType = String;
     pub type AnySimpleType = String;
     pub type AnyUriType = String;
-    pub type Base64BinaryType = String;
+    pub type Base64BinaryType = Base64String;
     pub type BooleanType = bool;
     pub type ByteType = i8;
     pub type DateType = String;
@@ -5450,7 +5453,7 @@ pub mod xs {
     pub type GMonthDayType = String;
     pub type GYearType = String;
     pub type GYearMonthType = String;
-    pub type HexBinaryType = String;
+    pub type HexBinaryType = HexString;
     pub type IntType = i32;
     pub type IntegerType = i32;
     pub type LanguageType = String;

@@ -1,9 +1,12 @@
+use std::convert::Infallible;
 use std::ops::Deref;
+use std::str::FromStr;
 use std::{borrow::Cow, ops::DerefMut};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+    WithDeserializerFromBytes, WithSerializeToBytes,
 };
 
 /// Wrapper for hexBinary encoded as String.
@@ -43,6 +46,14 @@ impl From<HexString> for String {
     }
 }
 
+impl FromStr for HexString {
+    type Err = Infallible;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        Ok(Self(value.to_owned()))
+    }
+}
+
 impl Deref for HexString {
     type Target = String;
 
@@ -71,6 +82,12 @@ impl DeserializeBytes for HexString {
         Ok(Self(inner))
     }
 }
+
+#[cfg(feature = "quick-xml")]
+impl WithSerializeToBytes for HexString {}
+
+#[cfg(feature = "quick-xml")]
+impl WithDeserializerFromBytes for HexString {}
 
 /// Wrapper for hexBinary as decoded bytes.
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
@@ -108,6 +125,12 @@ impl DeserializeBytes for HexBinary {
         Ok(Self(inner))
     }
 }
+
+#[cfg(feature = "quick-xml")]
+impl WithSerializeToBytes for HexBinary {}
+
+#[cfg(feature = "quick-xml")]
+impl WithDeserializerFromBytes for HexBinary {}
 
 #[cfg(feature = "serde")]
 impl serde::Serialize for HexBinary {

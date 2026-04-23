@@ -11,8 +11,6 @@ fn config() -> Config {
     Config::test_default()
         .without_optimizer_flags(OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE_SIMPLE)
         .with_generate([(IdentType::Element, "tns:Root")])
-        .with_hexbinary_type_from("::xsd_parser_types::xml::HexString")
-        .with_base64binary_type_from("::xsd_parser_types::xml::Base64String")
 }
 
 #[cfg(not(feature = "update-expectations"))]

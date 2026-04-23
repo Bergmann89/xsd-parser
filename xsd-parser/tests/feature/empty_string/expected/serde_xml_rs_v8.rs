@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use xsd_parser_types::xml::{Base64String, HexString};
 pub type ComplexContent = ComplexContentType;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ComplexContentType {
@@ -33,7 +34,7 @@ pub type AnySimpleType = String;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AnyType;
 pub type AnyUriType = String;
-pub type Base64BinaryType = String;
+pub type Base64BinaryType = Base64String;
 pub type BooleanType = bool;
 pub type ByteType = i8;
 pub type DateType = String;
@@ -47,7 +48,7 @@ pub type GMonthType = String;
 pub type GMonthDayType = String;
 pub type GYearType = String;
 pub type GYearMonthType = String;
-pub type HexBinaryType = String;
+pub type HexBinaryType = HexString;
 pub type IntType = i32;
 pub type IntegerType = i32;
 pub type LanguageType = String;

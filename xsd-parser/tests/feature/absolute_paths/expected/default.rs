@@ -90,7 +90,7 @@ pub type AnySimpleType = ::std::string::String;
 #[derive(Debug)]
 pub struct AnyType;
 pub type AnyUriType = ::std::string::String;
-pub type Base64BinaryType = ::std::string::String;
+pub type Base64BinaryType = ::xsd_parser_types::xml::Base64String;
 pub type BooleanType = ::core::primitive::bool;
 pub type ByteType = ::core::primitive::i8;
 pub type DateType = ::std::string::String;
@@ -104,7 +104,7 @@ pub type GMonthType = ::std::string::String;
 pub type GMonthDayType = ::std::string::String;
 pub type GYearType = ::std::string::String;
 pub type GYearMonthType = ::std::string::String;
-pub type HexBinaryType = ::std::string::String;
+pub type HexBinaryType = ::xsd_parser_types::xml::HexString;
 pub type IntType = ::core::primitive::i32;
 pub type IntegerType = ::core::primitive::i32;
 pub type LanguageType = ::std::string::String;

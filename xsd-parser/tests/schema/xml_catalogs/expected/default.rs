@@ -128,6 +128,7 @@ pub mod er {
     pub type UriSuffix = UriSuffixType;
 }
 pub mod xs {
+    use xsd_parser_types::xml::{Base64String, HexString};
     #[derive(Debug, Default)]
     pub struct EntitiesType(pub Vec<String>);
     pub type EntityType = String;
@@ -142,7 +143,7 @@ pub mod xs {
     pub type QNameType = String;
     pub type AnySimpleType = String;
     pub type AnyUriType = String;
-    pub type Base64BinaryType = String;
+    pub type Base64BinaryType = Base64String;
     pub type BooleanType = bool;
     pub type ByteType = i8;
     pub type DateType = String;
@@ -156,7 +157,7 @@ pub mod xs {
     pub type GMonthDayType = String;
     pub type GYearType = String;
     pub type GYearMonthType = String;
-    pub type HexBinaryType = String;
+    pub type HexBinaryType = HexString;
     pub type IntType = i32;
     pub type IntegerType = i32;
     pub type LanguageType = String;

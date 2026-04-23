@@ -1,3 +1,4 @@
+use xsd_parser_types::xml::{Base64String, HexString};
 pub type OpenDrive = OpenDriveXElementType;
 #[derive(Debug)]
 pub struct OpenDriveXElementType {
@@ -291,7 +292,7 @@ pub type AnySimpleTypeXType = String;
 #[derive(Debug)]
 pub struct AnyTypeXType;
 pub type AnyUriXType = String;
-pub type Base64BinaryXType = String;
+pub type Base64BinaryXType = Base64String;
 pub type BooleanXType = bool;
 pub type ByteXType = i8;
 pub type DateXType = String;
@@ -305,7 +306,7 @@ pub type GMonthXType = String;
 pub type GMonthDayXType = String;
 pub type GYearXType = String;
 pub type GYearMonthXType = String;
-pub type HexBinaryXType = String;
+pub type HexBinaryXType = HexString;
 pub type IntXType = i32;
 pub type IntegerXType = i32;
 pub type LanguageXType = String;

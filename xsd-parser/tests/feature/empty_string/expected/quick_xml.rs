@@ -5,6 +5,7 @@ use xsd_parser_types::{
         DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
         WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
+    xml::{Base64String, HexString},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -168,7 +169,7 @@ impl WithDeserializer for AnyType {
     type Deserializer = quick_xml_deserialize::AnyTypeDeserializer;
 }
 pub type AnyUriType = String;
-pub type Base64BinaryType = String;
+pub type Base64BinaryType = Base64String;
 pub type BooleanType = bool;
 pub type ByteType = i8;
 pub type DateType = String;
@@ -182,7 +183,7 @@ pub type GMonthType = String;
 pub type GMonthDayType = String;
 pub type GYearType = String;
 pub type GYearMonthType = String;
-pub type HexBinaryType = String;
+pub type HexBinaryType = HexString;
 pub type IntType = i32;
 pub type IntegerType = i32;
 pub type LanguageType = String;

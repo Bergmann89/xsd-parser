@@ -1,9 +1,12 @@
+use std::convert::Infallible;
 use std::ops::Deref;
+use std::str::FromStr;
 use std::{borrow::Cow, ops::DerefMut};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+    WithDeserializerFromBytes, WithSerializeToBytes,
 };
 
 #[cfg(all(feature = "base64", any(feature = "quick-xml", feature = "serde")))]
@@ -47,6 +50,14 @@ impl From<Base64String> for String {
     }
 }
 
+impl FromStr for Base64String {
+    type Err = Infallible;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        Ok(Self(value.to_owned()))
+    }
+}
+
 impl Deref for Base64String {
     type Target = String;
 
@@ -75,6 +86,12 @@ impl DeserializeBytes for Base64String {
         Ok(Self(inner))
     }
 }
+
+#[cfg(feature = "quick-xml")]
+impl WithSerializeToBytes for Base64String {}
+
+#[cfg(feature = "quick-xml")]
+impl WithDeserializerFromBytes for Base64String {}
 
 /// Wrapper for base64Binary as decoded bytes.
 #[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
@@ -125,6 +142,12 @@ impl DeserializeBytes for Base64Binary {
         Ok(Self(inner))
     }
 }
+
+#[cfg(all(feature = "base64", feature = "quick-xml"))]
+impl WithSerializeToBytes for Base64Binary {}
+
+#[cfg(all(feature = "base64", feature = "quick-xml"))]
+impl WithDeserializerFromBytes for Base64Binary {}
 
 #[cfg(all(feature = "base64", feature = "serde"))]
 impl serde::Serialize for Base64Binary {

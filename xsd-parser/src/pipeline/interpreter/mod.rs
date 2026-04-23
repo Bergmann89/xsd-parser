@@ -196,6 +196,18 @@ impl<'a> Interpreter<'a> {
                 )?;
             }};
         }
+        macro_rules! add_custom {
+            ($src:expr, $dst:expr, $default:expr) => {{
+                let src = TypeIdent::type_($src).with_ns(xs);
+                let dst = TypeIdent::type_($dst).with_ns(NamespaceId::ANONYMOUS);
+                let ty = CustomMeta::new($dst)
+                    .include_from(concat!("::xsd_parser_types::xml::", $dst))
+                    .with_default($default);
+
+                self.state.add_type(dst.clone(), ty)?;
+                self.state.add_type(src, ReferenceMeta::new(dst))?;
+            }};
+        }
 
         /* Primitive Types */
 
@@ -219,8 +231,16 @@ impl<'a> Interpreter<'a> {
 
         /* Data related types */
 
-        add!("hexBinary", STRING);
-        add!("base64Binary", STRING);
+        add_custom!(
+            "hexBinary",
+            "HexString",
+            make_from_str_value_generator("::xsd_parser_types::xml::HexString")
+        );
+        add_custom!(
+            "base64Binary",
+            "Base64String",
+            make_from_str_value_generator("::xsd_parser_types::xml::Base64String")
+        );
 
         /* URL related types */
 

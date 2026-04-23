@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use xsd_parser_types::xml::Base64String;
 pub type DirectoryReq = DirectoryReqType;
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DirectoryReqType {
@@ -46,8 +47,8 @@ pub struct SignedInfoType {
 pub struct SignatureValueType {
     #[serde(default, rename = "@Id")]
     pub id: Option<String>,
-    #[serde(default, rename = "$text")]
-    pub content: String,
+    #[serde(rename = "$text")]
+    pub content: Base64String,
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct KeyInfoType {
@@ -107,7 +108,7 @@ pub struct ReferenceType {
     #[serde(rename = "DigestMethod")]
     pub digest_method: DigestMethodType,
     #[serde(rename = "DigestValue")]
-    pub digest_value: String,
+    pub digest_value: Base64String,
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct KeyValueType {
@@ -140,13 +141,13 @@ pub enum X509DataTypeContent {
     #[serde(rename = "X509IssuerSerial")]
     X509IssuerSerial(X509IssuerSerialType),
     #[serde(rename = "X509SKI")]
-    X509Ski(String),
+    X509Ski(Base64String),
     #[serde(rename = "X509SubjectName")]
     X509SubjectName(String),
     #[serde(rename = "X509Certificate")]
-    X509Certificate(String),
+    X509Certificate(Base64String),
     #[serde(rename = "X509CRL")]
-    X509Crl(String),
+    X509Crl(Base64String),
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PgpDataType {
@@ -156,9 +157,9 @@ pub struct PgpDataType {
 #[derive(Debug, Deserialize, Serialize)]
 pub enum PgpDataTypeContent {
     #[serde(rename = "PGPKeyID")]
-    PgpKeyId(String),
+    PgpKeyId(Base64String),
     #[serde(rename = "PGPKeyPacket")]
-    PgpKeyPacket(String),
+    PgpKeyPacket(Base64String),
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct SpkiDataType {
@@ -168,7 +169,7 @@ pub struct SpkiDataType {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct SpkiDataTypeContent {
     #[serde(rename = "SPKISexp")]
-    pub spki_sexp: String,
+    pub spki_sexp: Base64String,
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TransformsType {
@@ -183,26 +184,26 @@ pub struct DigestMethodType {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DsaKeyValueType {
     #[serde(default, rename = "P")]
-    pub p: Option<String>,
+    pub p: Option<Base64String>,
     #[serde(default, rename = "Q")]
-    pub q: Option<String>,
+    pub q: Option<Base64String>,
     #[serde(default, rename = "G")]
-    pub g: Option<String>,
+    pub g: Option<Base64String>,
     #[serde(rename = "Y")]
-    pub y: String,
+    pub y: Base64String,
     #[serde(default, rename = "J")]
-    pub j: Option<String>,
+    pub j: Option<Base64String>,
     #[serde(default, rename = "Seed")]
-    pub seed: Option<String>,
+    pub seed: Option<Base64String>,
     #[serde(default, rename = "PgenCounter")]
-    pub pgen_counter: Option<String>,
+    pub pgen_counter: Option<Base64String>,
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RsaKeyValueType {
     #[serde(rename = "Modulus")]
-    pub modulus: String,
+    pub modulus: Base64String,
     #[serde(rename = "Exponent")]
-    pub exponent: String,
+    pub exponent: Base64String,
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct X509IssuerSerialType {
