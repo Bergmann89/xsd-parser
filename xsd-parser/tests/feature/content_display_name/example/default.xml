@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Foo xmlns:tns="http://example.com" content="an attribute value">the text value</tns:Foo>

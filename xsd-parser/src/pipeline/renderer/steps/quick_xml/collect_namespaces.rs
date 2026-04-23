@@ -209,9 +209,11 @@ impl ComplexDataStruct<'_> {
 
         let field_calls: Vec<_> = match &self.mode {
             StructMode::Empty { .. } => Vec::new(),
-            StructMode::Content { .. } => {
+            StructMode::Content { content } => {
+                let field_ident = &content.field_ident;
+
                 vec![quote! {
-                    self.content.collect_namespaces(helper, bytes);
+                    self.#field_ident.collect_namespaces(helper, bytes);
                 }]
             }
             StructMode::All { elements, .. } | StructMode::Sequence { elements, .. } => elements

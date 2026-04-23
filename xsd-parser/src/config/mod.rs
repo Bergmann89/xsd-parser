@@ -51,6 +51,13 @@ pub struct Config {
 }
 
 impl Config {
+    /// Set the name to use for the generated content field of the generated types.
+    pub fn with_content_display_name<S: Into<String>>(mut self, name: S) -> Self {
+        self.generator.content_display_name = name.into();
+
+        self
+    }
+
     /// Adds the passed `schema` to the list of schemas to parse.
     pub fn with_schema<T>(mut self, schema: T) -> Self
     where

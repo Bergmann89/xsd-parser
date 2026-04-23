@@ -113,6 +113,7 @@ impl<'types> Generator<'types> {
             any_type: IdentPath::from_str("::xsd_parser_types::xml::AnyElement").unwrap(),
             any_attributes_type: IdentPath::from_str("::xsd_parser_types::xml::AnyAttributes")
                 .unwrap(),
+            content_display_name: String::from("content"),
         };
         let state = State {
             cache: BTreeMap::new(),
@@ -213,6 +214,13 @@ impl<'types> Generator<'types> {
         self.meta.any_attributes_type = path.try_into()?;
 
         Ok(self)
+    }
+
+    /// Set the name to use for the generated content field of the generated types.
+    pub fn content_display_name<S: Into<String>>(mut self, name: S) -> Self {
+        self.meta.content_display_name = name.into();
+
+        self
     }
 
     /// Add the passed [`GeneratorFlags`] flags the generator should use for generating the code.

@@ -458,6 +458,7 @@ impl ComplexDataStruct<'_> {
 
 impl ComplexDataContent<'_> {
     fn render_field_serde_xml_rs_v8(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let field_ident = &self.field_ident;
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
             .occurs
@@ -478,20 +479,20 @@ impl ComplexDataContent<'_> {
                 Some(quote! {
                     #( #[#extra_attributes] )*
                     #[serde(#default rename = "#text")]
-                    pub content: #enum_values_type,
+                    pub #field_ident: #enum_values_type,
                 })
             }
             Some((_, MetaTypeVariant::BuildIn(_) | MetaTypeVariant::Reference(_))) => {
                 Some(quote! {
                     #( #[#extra_attributes] )*
                     #[serde(#default rename = "#text")]
-                    pub content: #target_type,
+                    pub #field_ident: #target_type,
                 })
             }
             None | Some((_, _)) => Some(quote! {
                 #( #[#extra_attributes] )*
                 #[serde(#default rename = "#content")]
-                pub content: #target_type,
+                pub #field_ident: #target_type,
             }),
         }
     }

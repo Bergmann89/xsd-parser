@@ -53,6 +53,12 @@ pub struct GeneratorConfig {
     /// See [`Generator::any_attributes_type`](crate::Generator::any_attributes_type)
     /// for details.
     pub any_attributes_type: String,
+
+    /// Name to use for the generated content field of the generated types.
+    ///
+    /// See [`Generator::content_display_name`](crate::Generator::content_display_name)
+    /// for details.
+    pub content_display_name: String,
 }
 
 impl Default for GeneratorConfig {
@@ -69,6 +75,7 @@ impl Default for GeneratorConfig {
             nillable_type: "::xsd_parser_types::xml::Nillable".into(),
             any_type: "::xsd_parser_types::xml::AnyElement".into(),
             any_attributes_type: "::xsd_parser_types::xml::AnyAttributes".into(),
+            content_display_name: "content".into(),
         }
     }
 }

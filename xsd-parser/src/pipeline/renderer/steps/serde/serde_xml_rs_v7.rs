@@ -392,6 +392,7 @@ impl ComplexDataStruct<'_> {
 
 impl ComplexDataContent<'_> {
     fn render_field_serde_xml_rs_v7(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let field_ident = &self.field_ident;
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.make_type(ctx, &target_type, false)?;
         let extra_attributes = &self.extra_attributes;
@@ -402,7 +403,7 @@ impl ComplexDataContent<'_> {
         Some(quote! {
             #( #[#extra_attributes] )*
             #[serde(#default rename = "$value")]
-            pub content: #target_type,
+            pub #field_ident: #target_type,
         })
     }
 }

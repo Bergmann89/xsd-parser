@@ -196,6 +196,9 @@ pub struct ComplexDataContent<'types> {
     /// Maximum occurrence.
     pub max_occurs: MaxOccurs,
 
+    /// Field identifier of the element.
+    pub field_ident: Ident2,
+
     /// Actual target type of the content.
     pub target_type: PathData,
 
