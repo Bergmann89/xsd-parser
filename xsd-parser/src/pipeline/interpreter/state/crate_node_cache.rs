@@ -124,26 +124,28 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
                     schema_location: Some(schema_location),
                     ..
                 }) => {
-                    let base = **info.dependencies.get(schema_location).unwrap();
-
-                    self.process_schema(base)?;
+                    if let Some(base) = info.dependencies.get(schema_location) {
+                        self.process_schema(**base)?;
+                    }
                 }
                 C::Include(x) => {
-                    let base = **info.dependencies.get(&x.schema_location).unwrap();
-
-                    self.process_schema(base)?;
+                    if let Some(base) = info.dependencies.get(&x.schema_location) {
+                        self.process_schema(**base)?;
+                    }
                 }
                 C::Override(x) => {
-                    let base = **info.dependencies.get(&x.schema_location).unwrap();
-
-                    self.process_schema(base)?;
-                    self.process_override(x, base)?;
+                    if let Some(base) = info.dependencies.get(&x.schema_location) {
+                        let base = **base;
+                        self.process_schema(base)?;
+                        self.process_override(x, base)?;
+                    }
                 }
                 C::Redefine(x) => {
-                    let base = **info.dependencies.get(&x.schema_location).unwrap();
-
-                    self.process_schema(base)?;
-                    self.process_redefine(x, base)?;
+                    if let Some(base) = info.dependencies.get(&x.schema_location) {
+                        let base = **base;
+                        self.process_schema(base)?;
+                        self.process_redefine(x, base)?;
+                    }
                 }
                 _ => (),
             }
@@ -927,7 +929,8 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
 
         let ident = self
             .ident_cache
-            .resolve_for_schema(self.current_schema(), ident.clone())?;
+            .resolve_for_schema(self.current_schema(), ident.clone())
+            .or(self.ident_cache.resolve(ident))?;
 
         Ok(ident)
     }
