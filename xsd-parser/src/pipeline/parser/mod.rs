@@ -837,6 +837,7 @@ impl SchemasBuilder {
                     p.extend_from_slice(ext);
 
                     let prefix = NamespacePrefix(Cow::Owned(p));
+                    info.prefix = Some(prefix.clone());
                     self.schemas.known_prefixes.insert(prefix, *id);
                 }
             }
