@@ -1,3 +1,4 @@
+use xsd_parser_types::xml::Base64String;
 pub type CrossIndustryInvoice = CrossIndustryInvoiceType;
 #[derive(Debug)]
 pub struct CrossIndustryInvoiceType {
@@ -439,7 +440,7 @@ pub struct DeliveryTermsCodeType {
 pub struct BinaryObjectType {
     pub mime_code: String,
     pub filename: String,
-    pub content: String,
+    pub content: Base64String,
 }
 #[derive(Debug)]
 pub struct ReferenceCodeType {

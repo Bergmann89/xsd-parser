@@ -48556,10 +48556,13 @@ pub mod res {
 }
 pub mod signature {
     use std::borrow::Cow;
-    use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
+            SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+            WithSerializer,
+        },
+        xml::Base64String,
     };
     pub type Sianature = SianatureXElementType;
     #[derive(Debug)]
@@ -48735,7 +48738,7 @@ pub mod signature {
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoReferencesReferenceXElementType {
         pub file_ref: String,
-        pub check_value: String,
+        pub check_value: Base64String,
     }
     impl WithSerializer for SianatureSiqnedInfoReferencesReferenceXElementType {
         type Serializer<'x> =
@@ -48754,10 +48757,13 @@ pub mod signature {
     }
     pub mod quick_xml_deserialize {
         use core::mem::replace;
-        use xsd_parser_types::quick_xml::{
-            BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-            DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
-            RawByteStr, WithDeserializer,
+        use xsd_parser_types::{
+            quick_xml::{
+                BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact,
+                DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput,
+                Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+            },
+            xml::Base64String,
         };
         #[derive(Debug)]
         pub struct SianatureXElementTypeDeserializer {
@@ -50224,13 +50230,13 @@ pub mod signature {
         #[derive(Debug)]
         pub struct SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializer {
             file_ref: String,
-            check_value: Option<String>,
+            check_value: Option<Base64String>,
             state__: Box<SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState {
             Init__,
-            CheckValue(Option<<String as WithDeserializer>::Deserializer>),
+            CheckValue(Option<<Base64String as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -50274,7 +50280,7 @@ pub mod signature {
                 }
                 Ok(())
             }
-            fn store_check_value(&mut self, value: String) -> Result<(), Error> {
+            fn store_check_value(&mut self, value: Base64String) -> Result<(), Error> {
                 if self.check_value.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"CheckValue",
@@ -50286,7 +50292,7 @@ pub mod signature {
             fn handle_check_value<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, String>,
+                output: DeserializerOutput<'de, Base64String>,
                 fallback: &mut Option<
                     SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState,
                 >,
@@ -50428,9 +50434,12 @@ pub mod signature {
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+        use xsd_parser_types::{
+            quick_xml::{
+                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+                WithSerializer,
+            },
+            xml::Base64String,
         };
         #[derive(Debug)]
         pub struct SianatureXElementTypeSerializer<'ser> {
@@ -50877,7 +50886,7 @@ pub mod signature {
         #[derive(Debug)]
         pub(super) enum SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState<'ser> {
             Init__,
-            CheckValue(<String as WithSerializer>::Serializer<'ser>),
+            CheckValue(<Base64String as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -52493,9 +52502,12 @@ pub mod xs {
     use core::num::{NonZeroIsize, NonZeroUsize};
     use num::{BigInt, BigUint};
     use std::borrow::Cow;
-    use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
+    use xsd_parser_types::{
+        quick_xml::{
+            DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
+            WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
+        },
+        xml::{Base64String, HexString},
     };
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
@@ -52560,7 +52572,7 @@ pub mod xs {
         type Deserializer = quick_xml_deserialize::AnySimpleTypeXTypeDeserializer;
     }
     pub type AnyUriXType = String;
-    pub type Base64BinaryXType = String;
+    pub type Base64BinaryXType = Base64String;
     pub type BooleanXType = bool;
     pub type ByteXType = i8;
     pub type DateXType = String;
@@ -52574,7 +52586,7 @@ pub mod xs {
     pub type GMonthDayXType = String;
     pub type GYearXType = String;
     pub type GYearMonthXType = String;
-    pub type HexBinaryXType = String;
+    pub type HexBinaryXType = HexString;
     pub type IntXType = i32;
     pub type IntegerXType = BigInt;
     pub type LanguageXType = String;

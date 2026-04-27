@@ -1106,6 +1106,7 @@ pub mod res {
     }
 }
 pub mod signature {
+    use xsd_parser_types::xml::Base64String;
     pub type Sianature = SianatureXElementType;
     #[derive(Debug)]
     pub struct SianatureXElementType {
@@ -1151,7 +1152,7 @@ pub mod signature {
     #[derive(Debug)]
     pub struct SianatureSiqnedInfoReferencesReferenceXElementType {
         pub file_ref: String,
-        pub check_value: String,
+        pub check_value: Base64String,
     }
 }
 pub mod signatures {
@@ -1197,6 +1198,7 @@ pub mod version {
 pub mod xs {
     use core::num::{NonZeroIsize, NonZeroUsize};
     use num::{BigInt, BigUint};
+    use xsd_parser_types::xml::{Base64String, HexString};
     #[derive(Debug, Default)]
     pub struct EntitiesXType(pub Vec<String>);
     pub type EntityXType = String;
@@ -1215,7 +1217,7 @@ pub mod xs {
         pub content: String,
     }
     pub type AnyUriXType = String;
-    pub type Base64BinaryXType = String;
+    pub type Base64BinaryXType = Base64String;
     pub type BooleanXType = bool;
     pub type ByteXType = i8;
     pub type DateXType = String;
@@ -1229,7 +1231,7 @@ pub mod xs {
     pub type GMonthDayXType = String;
     pub type GYearXType = String;
     pub type GYearMonthXType = String;
-    pub type HexBinaryXType = String;
+    pub type HexBinaryXType = HexString;
     pub type IntXType = i32;
     pub type IntegerXType = BigInt;
     pub type LanguageXType = String;

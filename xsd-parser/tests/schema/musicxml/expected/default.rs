@@ -4167,7 +4167,7 @@ pub mod xs {
         pub content: ::std::string::String,
     }
     pub type AnyUri = ::std::string::String;
-    pub type Base64Binary = ::std::string::String;
+    pub type Base64Binary = ::xsd_parser_types::xml::Base64String;
     pub type Boolean = ::core::primitive::bool;
     pub type Byte = ::core::primitive::i8;
     pub type Date = ::std::string::String;
@@ -4181,7 +4181,7 @@ pub mod xs {
     pub type GMonthDay = ::std::string::String;
     pub type GYear = ::std::string::String;
     pub type GYearMonth = ::std::string::String;
-    pub type HexBinary = ::std::string::String;
+    pub type HexBinary = ::xsd_parser_types::xml::HexString;
     pub type Int = ::core::primitive::i32;
     pub type Integer = ::num::BigInt;
     pub type Language = ::std::string::String;

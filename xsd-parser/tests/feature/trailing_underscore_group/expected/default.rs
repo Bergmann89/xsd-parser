@@ -1,3 +1,4 @@
+use xsd_parser_types::xml::{Base64String, HexString};
 #[derive(Debug, Default)]
 pub struct ENTITIESType(pub Vec<String>);
 pub type ENTITYType = String;
@@ -16,7 +17,7 @@ pub type anySimpleTypeType = String;
 #[derive(Debug)]
 pub struct anyTypeType;
 pub type anyURIType = String;
-pub type base64BinaryType = String;
+pub type base64BinaryType = Base64String;
 pub type booleanType = bool;
 pub type byteType = i8;
 pub type dateType = String;
@@ -30,7 +31,7 @@ pub type gMonthType = String;
 pub type gMonthDayType = String;
 pub type gYearType = String;
 pub type gYearMonthType = String;
-pub type hexBinaryType = String;
+pub type hexBinaryType = HexString;
 pub type intType = i32;
 pub type integerType = i32;
 pub type languageType = String;

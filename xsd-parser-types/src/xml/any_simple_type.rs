@@ -10,6 +10,9 @@ use num::{BigInt, BigRational, BigUint};
 #[cfg(feature = "quick-xml")]
 use quick_xml::events::Event;
 
+use crate::quick_xml::{DeserializeBytes, SerializeBytes};
+use crate::xml::NamespacesShared;
+
 #[cfg(feature = "quick-xml")]
 use crate::{
     misc::{Namespace, NamespacePrefix},
@@ -18,10 +21,6 @@ use crate::{
         DeserializerEvent, DeserializerOutput, DeserializerResult, Error, ErrorKind,
         SerializeHelper, Serializer, WithDeserializer, WithSerializer,
     },
-};
-use crate::{
-    quick_xml::{DeserializeBytes, SerializeBytes},
-    xml::NamespacesShared,
 };
 
 use super::QName;
@@ -45,10 +44,10 @@ pub type Unsigned = BigUint;
 pub type Unsigned = usize;
 
 #[cfg(feature = "base64")]
-pub type Base64Binary = Vec<u8>;
+type Base64Binary = crate::xml::Base64Binary;
 
 #[cfg(not(feature = "base64"))]
-pub type Base64Binary = String;
+type Base64Binary = crate::xml::Base64String;
 
 /// Type that represents an `xs:anySimpleType` value.
 #[derive(Debug, Clone)]
@@ -599,14 +598,15 @@ fn parse_base64_binary(bytes: &str) -> Result<Base64Binary, Error> {
 
     Ok(BASE64_STANDARD
         .decode(bytes)
-        .map_err(|_| ErrorKind::InvalidData(bytes.as_bytes().to_vec().into()))?)
+        .map_err(|_| ErrorKind::InvalidData(bytes.as_bytes().to_vec().into()))?
+        .into())
 }
 
 #[inline]
 #[cfg(not(feature = "base64"))]
 #[allow(clippy::unnecessary_wraps)]
 fn parse_base64_binary(s: &str) -> Result<Base64Binary, Error> {
-    Ok(s.to_string())
+    Ok(s.to_string().into())
 }
 
 fn format_vec<X: Display>(items: &[X]) -> String {

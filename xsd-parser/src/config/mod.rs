@@ -548,6 +548,40 @@ impl Config {
         self.with_type(ident, meta)
     }
 
+    /// Add a type definition for `xs:hexBinary` that uses the `xsd_parser_types::xml::HexBinary` type..
+    pub fn with_hexbinary_type(self) -> Self {
+        self.with_hexbinary_type_from("::xsd_parser_types::xml::HexBinary")
+    }
+
+    /// Add a type definition for `xs:hexBinary` that uses the type defined at the passed `path`.
+    pub fn with_hexbinary_type_from(self, path: &str) -> Self {
+        let name = path.rsplit_once("::").map_or(path, |(_, name)| name);
+
+        let ident = (IdentType::Type, Namespace::XS, "hexBinary");
+        let meta = CustomMeta::new(name)
+            .include_from(path)
+            .with_namespace(Namespace::XS);
+
+        self.with_type(ident, meta)
+    }
+
+    /// Add a type definition for `xs:base64Binary` that uses the `xsd_parser_types::xml::Base64Binary` type.
+    pub fn with_base64binary_type(self) -> Self {
+        self.with_base64binary_type_from("::xsd_parser_types::xml::Base64Binary")
+    }
+
+    /// Add a type definition for `xs:Base64Binary` that uses the type defined at the passed `path`.
+    pub fn with_base64binary_type_from(self, path: &str) -> Self {
+        let name = path.rsplit_once("::").map_or(path, |(_, name)| name);
+
+        let ident = (IdentType::Type, Namespace::XS, "base64Binary");
+        let meta = CustomMeta::new(name)
+            .include_from(path)
+            .with_namespace(Namespace::XS);
+
+        self.with_type(ident, meta)
+    }
+
     /// Set the postfix that should be applied to the name of types.
     ///
     /// For details please refer to [`GeneratorConfig::type_postfix`].

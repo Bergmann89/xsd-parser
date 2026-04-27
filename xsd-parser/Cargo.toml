@@ -17,6 +17,9 @@ all-features = true
 # Enable support for web resolvers
 web-resolver = [ "reqwest" ]
 
+# Enable support for base64 encoding/decoding
+base64 = ["xsd-parser-types/base64"]
+
 # Helper feature to automatically update all code expectations of the tests
 update-expectations = [ ]
 
@@ -44,6 +47,7 @@ xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
 
 [dev-dependencies]
 clap = { workspace = true, features = [ "derive" ] }
+const-hex = { workspace = true }
 num = { workspace = true, features = [ "serde" ] }
 quick-xml = { workspace = true, features = [ "serialize" ]}
 regex = { workspace = true }

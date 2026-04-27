@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:tns="http://example.com"
-           targetNamespace="http://example.com"
-           elementFormDefault="unqualified">
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="unqualified">
 
     <xs:simpleType name="NegativeDecimal">
         <xs:restriction base="xs:decimal">
@@ -29,12 +29,26 @@
         </xs:restriction>
     </xs:simpleType>
 
+    <xs:simpleType name="HexType">
+        <xs:restriction base="xs:hexBinary">
+            <xs:length value="16"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Base64Type">
+        <xs:restriction base="xs:base64Binary">
+            <xs:length value="16"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:element name="Root">
         <xs:complexType>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="NegativeDecimal" type="tns:NegativeDecimal" />
-                <xs:element name="PositiveDecimal" type="tns:PositiveDecimal" />
-                <xs:element name="RestrictedString" type="tns:RestrictedString" />
+                <xs:element name="NegativeDecimal" type="tns:NegativeDecimal"/>
+                <xs:element name="PositiveDecimal" type="tns:PositiveDecimal"/>
+                <xs:element name="RestrictedString" type="tns:RestrictedString"/>
+                <xs:element name="HexType" type="tns:HexType"/>
+                <xs:element name="Base64Type" type="tns:Base64Type"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
