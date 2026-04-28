@@ -9,6 +9,7 @@ use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
     Config::test_default()
+        .without_parser_flags(ParserFlags::GENERATE_PREFIXES)
         .with_quick_xml_deserialize()
         .with_generate([(
             IdentType::Element,
