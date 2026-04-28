@@ -5,14 +5,12 @@ use xsd_parser_types::{
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
-pub const PREFIX_BAR_6: NamespacePrefix = NamespacePrefix::new_const(b"bar_6");
-pub const PREFIX_BAZ_7: NamespacePrefix = NamespacePrefix::new_const(b"baz_7");
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
 pub const NS_UNNAMED_5: Namespace = Namespace::new_const(b"Foo");
-pub const NS_BAR_6: Namespace = Namespace::new_const(b"Bar");
-pub const NS_BAZ_7: Namespace = Namespace::new_const(b"Baz");
+pub const NS_UNNAMED_6: Namespace = Namespace::new_const(b"Bar");
+pub const NS_UNNAMED_7: Namespace = Namespace::new_const(b"Baz");
 pub type Foo = FooType;
 #[derive(Debug)]
 pub struct FooType {
@@ -54,7 +52,7 @@ impl WithSerializer for Inner1Type {
         Ok(quick_xml_serialize::Inner1TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::Inner1TypeSerializerState::Init__),
-            name: name.unwrap_or("bar_6:Inner1"),
+            name: name.unwrap_or("Inner1"),
             is_root,
         })
     }
@@ -76,7 +74,7 @@ impl WithSerializer for Inner2Type {
         Ok(quick_xml_serialize::Inner2TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::Inner2TypeSerializerState::Init__),
-            name: name.unwrap_or("baz_7:Inner2"),
+            name: name.unwrap_or("Inner2"),
             is_root,
         })
     }
@@ -289,7 +287,7 @@ pub mod quick_xml_deserialize {
                     (S::Inner1(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_BAR_6),
+                            Some(&super::NS_UNNAMED_6),
                             b"Inner1",
                             false,
                         )?;
@@ -306,7 +304,7 @@ pub mod quick_xml_deserialize {
                     (S::Inner2(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_BAZ_7),
+                            Some(&super::NS_UNNAMED_7),
                             b"Inner2",
                             false,
                         )?;
@@ -481,7 +479,7 @@ pub mod quick_xml_deserialize {
                     (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_BAR_6),
+                            Some(&super::NS_UNNAMED_6),
                             b"A",
                             false,
                         )?;
@@ -655,7 +653,7 @@ pub mod quick_xml_deserialize {
                     (S::B(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_BAZ_7),
+                            Some(&super::NS_UNNAMED_7),
                             b"B",
                             false,
                         )?;
@@ -727,24 +725,12 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::Init__ => {
                         *self.state = FooTypeSerializerState::Inner1(WithSerializer::serializer(
                             &self.value.inner_1,
-                            Some("bar_6:Inner1"),
+                            Some("Inner1"),
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
-                        if self.is_root {
-                            helper.write_xmlns(
-                                &mut bytes,
-                                Some(&super::PREFIX_BAR_6),
-                                &super::NS_BAR_6,
-                            );
-                            helper.write_xmlns(
-                                &mut bytes,
-                                Some(&super::PREFIX_BAZ_7),
-                                &super::NS_BAZ_7,
-                            );
-                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Inner1(x) => match x.next(helper).transpose()? {
@@ -753,7 +739,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 FooTypeSerializerState::Inner2(WithSerializer::serializer(
                                     &self.value.inner_2,
-                                    Some("baz_7:Inner2"),
+                                    Some("Inner2"),
                                     false,
                                 )?)
                         }
@@ -810,18 +796,12 @@ pub mod quick_xml_serialize {
                     Inner1TypeSerializerState::Init__ => {
                         *self.state = Inner1TypeSerializerState::A(WithSerializer::serializer(
                             &self.value.a,
-                            Some("bar_6:A"),
+                            Some("A"),
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        if self.is_root {
-                            helper.write_xmlns(
-                                &mut bytes,
-                                Some(&super::PREFIX_BAR_6),
-                                &super::NS_BAR_6,
-                            );
-                        }
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_6);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     Inner1TypeSerializerState::A(x) => match x.next(helper).transpose()? {
@@ -876,18 +856,12 @@ pub mod quick_xml_serialize {
                     Inner2TypeSerializerState::Init__ => {
                         *self.state = Inner2TypeSerializerState::B(WithSerializer::serializer(
                             &self.value.b,
-                            Some("baz_7:B"),
+                            Some("B"),
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        if self.is_root {
-                            helper.write_xmlns(
-                                &mut bytes,
-                                Some(&super::PREFIX_BAZ_7),
-                                &super::NS_BAZ_7,
-                            );
-                        }
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_7);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     Inner2TypeSerializerState::B(x) => match x.next(helper).transpose()? {
