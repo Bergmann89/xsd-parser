@@ -43,7 +43,7 @@ pub use self::custom::{ValueRenderer, ValueRendererBox};
 pub use self::error::Error;
 pub use self::meta::MetaData;
 pub use self::steps::{
-    DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
+    DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep, FlattenedContentHelpersRenderStep,
     NamespaceSerialization, PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
     QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep,
     SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep, TypesRenderStep,
