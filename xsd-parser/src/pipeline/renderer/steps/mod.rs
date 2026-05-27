@@ -1,6 +1,6 @@
 mod defaults;
 mod enum_const;
-mod flattened;
+mod content_helper;
 mod namespace_const;
 mod prefix_const;
 mod quick_xml;
@@ -25,7 +25,7 @@ use super::Context;
 
 pub use self::defaults::DefaultsRenderStep;
 pub use self::enum_const::EnumConstantsRenderStep;
-pub use self::flattened::FlattenedContentHelpersRenderStep;
+pub use self::content_helper::ContentHelpersRenderStep;
 pub use self::namespace_const::NamespaceConstantsRenderStep;
 pub use self::prefix_const::PrefixConstantsRenderStep;
 pub use self::quick_xml::{

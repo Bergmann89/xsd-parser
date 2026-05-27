@@ -1,10 +1,10 @@
-use xsd_parser::{pipeline::renderer::FlattenedContentHelpersRenderStep, Config, IdentType};
+use xsd_parser::{pipeline::renderer::ContentHelpersRenderStep, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
 fn config() -> Config {
     Config::test_default()
-        .with_render_step(FlattenedContentHelpersRenderStep)
+        .with_render_step(ContentHelpersRenderStep)
         .with_generate([(IdentType::Element, "tns:Foo")])
 }
 
