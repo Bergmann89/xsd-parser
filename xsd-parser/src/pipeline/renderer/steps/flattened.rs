@@ -77,8 +77,17 @@ fn render_helpers_for_complex_enum(
 
     let methods = enum_type.elements.iter().map(|e| {
         let variant_ident = &e.variant_ident;
-        let method_ident = snake_case_ident(variant_ident);
-        let mut_method_ident = format_ident!("{}_mut", method_ident);
+        let method_ident = crate::models::KEYWORDS
+            .iter()
+            .find_map(|(key, value)| {
+                if variant_ident == key {
+                    Some(format_ident!("{value}"))
+                } else {
+                    None
+                }
+            })
+            .unwrap_or(snake_case_ident(variant_ident));
+        let mut_method_ident = format_ident!("{method_ident}_mut");
         let target_ty = ctx.resolve_type_for_module(&e.target_type);
         let option = ctx.resolve_build_in("::core::option::Option");
 
