@@ -1,4 +1,3 @@
-use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -15,7 +14,6 @@ use crate::pipeline::renderer::{Context, RenderStep, RenderStepType};
 ///   impl Foo {
 ///     pub fn private_note(&self) -> Option<&String> { ... }
 ///   }
-/// Enabled via [`RendererFlags::FLATTENED_CONTENT_HELPERS`].
 #[derive(Debug, Clone, Copy)]
 pub struct ContentHelpersRenderStep;
 
