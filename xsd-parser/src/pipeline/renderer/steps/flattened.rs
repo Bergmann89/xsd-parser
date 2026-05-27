@@ -57,7 +57,7 @@ impl RenderStep for FlattenedContentHelpersRenderStep {
                 enum_type,
             ),
             ComplexData::Struct { .. } => {
-                // Struct content (e.g. a sequence) — no enum variants to flatten
+                // Struct content (e.g. a sequence) - no enum variants to flatten
                 return;
             }
         };
