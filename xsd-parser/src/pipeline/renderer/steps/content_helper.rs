@@ -77,16 +77,7 @@ fn render_helpers_for_complex_enum(
 
     let methods = enum_type.elements.iter().map(|e| {
         let variant_ident = &e.variant_ident;
-        let method_ident = crate::models::KEYWORDS
-            .iter()
-            .find_map(|(key, value)| {
-                if variant_ident == key {
-                    Some(format_ident!("{value}"))
-                } else {
-                    None
-                }
-            })
-            .unwrap_or(snake_case_ident(variant_ident));
+        let method_ident = &e.field_ident;
         let mut_method_ident = format_ident!("{method_ident}_mut");
         let target_ty = ctx.resolve_type_for_module(&e.target_type);
         let option = ctx.resolve_build_in("::core::option::Option");
@@ -118,9 +109,4 @@ fn render_helpers_for_complex_enum(
             #( #methods )*
         }
     }
-}
-
-/// Convert an identifier to a snake_case method name identifier.
-fn snake_case_ident(ident: &proc_macro2::Ident) -> proc_macro2::Ident {
-    format_ident!("{}", ident.to_string().to_snake_case())
 }
