@@ -125,26 +125,6 @@ bitflags! {
         ///
         /// See [`RENDER_DOCS`](Self::RENDER_DOCS) for details.
         const RENDER_VARIANT_DOCS = 1 << 3;
-
-        /// The renderer generates ergonomic helper accessor methods for
-        /// flattened struct content fields (i.e. `content: Vec<FooContent>`).
-        ///
-        /// For each variant of the inner enum `FooContent`, a method is
-        /// generated on the outer struct that returns `Option<&T>` by
-        /// finding the first matching variant in the `content` vector.
-        ///
-        /// Example: given
-        /// ```ignore
-        /// pub struct Foo { pub content: Vec<FooContent>, ... }
-        /// pub enum FooContent { PrivateNote(String), ... }
-        /// ```
-        /// this flag enables generating:
-        /// ```ignore
-        /// impl Foo {
-        ///     pub fn private_note(&self) -> Option<&String> { ... }
-        /// }
-        /// ```
-        const FLATTENED_CONTENT_HELPERS = 1 << 4;
     }
 }
 
@@ -215,14 +195,6 @@ pub enum RenderStep {
     /// that the serializer can discover which XML namespaces are actually needed
     /// at runtime before writing the root start element.
     QuickXmlCollectNamespaces,
-
-    /// Renderer that generates ergonomic helper accessors for flattened
-    /// struct content fields.
-    ///
-    /// This step is enabled via the [`RendererFlags::FLATTENED_CONTENT_HELPERS`]
-    /// renderer flag. It generates one convenience method per variant on the
-    /// outer struct that returns `Option<&T>` for the first matching variant.
-    FlattenedContentHelpers,
 }
 
 /// Helper trait to deal with custom render steps.
@@ -278,7 +250,6 @@ impl RenderStepConfig for RenderStep {
             Self::QuickXmlSerialize { .. } => RenderStepType::ExtraImpls,
             Self::QuickXmlDeserialize { .. } => RenderStepType::ExtraImpls,
             Self::QuickXmlCollectNamespaces => RenderStepType::ExtraImpls,
-            Self::FlattenedContentHelpers => RenderStepType::ExtraImpls,
         }
     }
 
@@ -288,8 +259,7 @@ impl RenderStepConfig for RenderStep {
 
     fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, EnumConstantsRenderStep, FlattenedContentHelpersRenderStep,
-            NamespaceConstantsRenderStep,
+            DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
             PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
             QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
             SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
@@ -321,14 +291,12 @@ impl RenderStepConfig for RenderStep {
                 Box::new(QuickXmlDeserializeRenderStep { boxed_deserializer })
             }
             Self::QuickXmlCollectNamespaces => Box::new(QuickXmlCollectNamespacesRenderStep),
-            Self::FlattenedContentHelpers => Box::new(FlattenedContentHelpersRenderStep),
         }
     }
 
     fn is_mutual_exclusive_to(&self, other: &dyn RenderStepConfig) -> bool {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, EnumConstantsRenderStep, FlattenedContentHelpersRenderStep,
-            NamespaceConstantsRenderStep,
+            DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
             PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
             QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
             SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
@@ -357,7 +325,6 @@ impl RenderStepConfig for RenderStep {
             (Self::QuickXmlSerialize { .. }, Some(Self::QuickXmlSerialize { .. })) => true,
             (Self::QuickXmlDeserialize { .. }, Some(Self::QuickXmlDeserialize { .. })) => true,
             (Self::QuickXmlCollectNamespaces, Some(Self::QuickXmlCollectNamespaces)) => true,
-            (Self::FlattenedContentHelpers, Some(Self::FlattenedContentHelpers)) => true,
             (Self::Types, None) => other_id == TypeId::of::<TypesRenderStep>(),
             (
                 Self::TypesSerdeXmlRs {
@@ -392,9 +359,6 @@ impl RenderStepConfig for RenderStep {
             (Self::QuickXmlCollectNamespaces, None) => {
                 other_id == TypeId::of::<QuickXmlCollectNamespacesRenderStep>()
             }
-            (Self::FlattenedContentHelpers, None) => {
-                other_id == TypeId::of::<FlattenedContentHelpersRenderStep>()
-            }
             _ => false,
         }
     }
@@ -416,8 +380,7 @@ impl RenderStep {
             | (Self::WithNamespaceTrait, Self::WithNamespaceTrait)
             | (Self::QuickXmlSerialize { .. }, Self::QuickXmlSerialize { .. })
             | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. })
-            | (Self::QuickXmlCollectNamespaces, Self::QuickXmlCollectNamespaces)
-            | (Self::FlattenedContentHelpers, Self::FlattenedContentHelpers) => true,
+            | (Self::QuickXmlCollectNamespaces, Self::QuickXmlCollectNamespaces) => true,
             (_, _) => false,
         }
     }
