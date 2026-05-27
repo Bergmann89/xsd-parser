@@ -75,14 +75,17 @@ fn render_helpers_for_complex_enum(
 ) -> TokenStream {
     let enum_ident = &enum_type.base.type_ident;
 
-    let methods = enum_type.elements.iter().map(|e| {
+    let methods = enum_type.elements.iter().filter_map(|e| {
+        if e.occurs != Occurs::Single {
+            return None;
+        }
         let variant_ident = &e.variant_ident;
         let method_ident = &e.field_ident;
         let mut_method_ident = format_ident!("{method_ident}_mut");
         let target_ty = ctx.resolve_type_for_module(&e.target_type);
         let option = ctx.resolve_build_in("::core::option::Option");
 
-        quote! {
+        let out = quote! {
             #[inline]
             pub fn #method_ident(&self) -> #option<&#target_ty> {
                 self.#content_field_ident.iter().find_map(|x| {
@@ -101,7 +104,8 @@ fn render_helpers_for_complex_enum(
                     }
                 })
             }
-        }
+        };
+        Some(out)
     });
 
     quote! {
