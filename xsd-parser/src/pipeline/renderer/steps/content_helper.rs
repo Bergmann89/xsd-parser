@@ -17,9 +17,9 @@ use crate::pipeline::renderer::{Context, RenderStep, RenderStepType};
 ///   }
 /// Enabled via [`RendererFlags::FLATTENED_CONTENT_HELPERS`].
 #[derive(Debug, Clone, Copy)]
-pub struct FlattenedContentHelpersRenderStep;
+pub struct ContentHelpersRenderStep;
 
-impl RenderStep for FlattenedContentHelpersRenderStep {
+impl RenderStep for ContentHelpersRenderStep {
     fn render_step_type(&self) -> RenderStepType {
         RenderStepType::ExtraImpls
     }
