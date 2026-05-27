@@ -97,7 +97,7 @@ where
 
 /// List of keywords that needs to be replaced by something else.
 /// This list needs to be sorted, because we use it in [`core::slice::binary_search_by`]
-const KEYWORDS: &[(&str, &str)] = &[
+pub(crate) const KEYWORDS: &[(&str, &str)] = &[
     ("Self", "Self_"),
     ("abstract", "abstract_"),
     ("as", "as_"),
