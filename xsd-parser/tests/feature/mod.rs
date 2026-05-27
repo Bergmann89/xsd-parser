@@ -19,6 +19,7 @@ mod complex_type_with_repeated_content;
 mod content_display_name;
 mod custom_type;
 mod defaultable_content;
+mod flattened_content_helpers;
 mod derive;
 mod documentation;
 mod duplicate_idents;
