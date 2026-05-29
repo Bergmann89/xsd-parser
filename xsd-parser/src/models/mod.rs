@@ -30,4 +30,3 @@ pub use self::naming::{
     format_ident, format_unknown_variant, make_type_name, unify_string, ExplicitNameBuilder,
     ExplicitNaming, NameBuilder, Naming,
 };
-pub(crate) use naming::KEYWORDS;
