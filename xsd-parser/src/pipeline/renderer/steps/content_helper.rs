@@ -79,7 +79,8 @@ fn render_helpers_for_complex_enum(
         }
         let variant_ident = &e.variant_ident;
         let method_ident = &e.field_ident;
-        let mut_method_ident = format_ident!("{method_ident}_mut");
+        let mut_method = format!("{}_mut", method_ident).replace("__", "_");
+        let mut_method_ident = format_ident!("{mut_method}");
         let target_ty = ctx.resolve_type_for_module(&e.target_type);
         let option = ctx.resolve_build_in("::core::option::Option");
 
