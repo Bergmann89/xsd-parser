@@ -85,7 +85,10 @@ pub enum IdentType {
     NillableContent = 8,
 
     /// One concrete element in a substitution group.
-    DynamicElement = 9,
+    SubstitutionElement = 9,
+
+    /// Represents a concrete type a dynamic type can have.
+    DynamicVariant = 10,
 }
 
 /* TypeIdent */
@@ -336,7 +339,8 @@ fn fmt_ident(
         Some(IdentType::AttributeGroup) => write!(f, "AttributeGroup(")?,
         Some(IdentType::Enumeration) => write!(f, "Enumeration(")?,
         Some(IdentType::NillableContent) => write!(f, "NillableContent(")?,
-        Some(IdentType::DynamicElement) => write!(f, "DynamicElement(")?,
+        Some(IdentType::SubstitutionElement) => write!(f, "SubstitutionElement(")?,
+        Some(IdentType::DynamicVariant) => write!(f, "DynamicVariant(")?,
     }
 
     if f.sign_minus() {

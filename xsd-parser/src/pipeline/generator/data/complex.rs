@@ -632,7 +632,7 @@ impl<'types> ComplexDataElement<'types> {
             }
             ElementMetaVariant::Type { type_, mode } => {
                 let mixed = mixed && *mode == ElementMode::Element;
-                let nillable = meta.nillable
+                let nillable = meta.is_nillable()
                     && ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
 
                 if occurs == Occurs::Single
@@ -686,7 +686,7 @@ impl<'types> ComplexDataElement<'types> {
             ident: ElementIdent::named(ident),
             variant: ElementMetaVariant::Text,
             form: FormChoiceType::Unqualified,
-            nillable: false,
+            flags: Default::default(),
             min_occurs: 0,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -737,7 +737,7 @@ impl<'types> ComplexDataElement<'types> {
                 mode: ElementMode::Group,
             },
             form: FormChoiceType::Unqualified,
-            nillable: false,
+            flags: Default::default(),
             min_occurs,
             max_occurs,
             display_name: None,

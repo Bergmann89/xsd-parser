@@ -30,6 +30,7 @@ impl State<'_> {
         let mut processor = TypeProcessor::new(
             self.schemas,
             &mut self.types,
+            &self.dynamic_types,
             &self.node_cache,
             &mut self.ident_cache,
         );

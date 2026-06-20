@@ -3,9 +3,10 @@ use std::ops::Deref;
 
 use bit_set::BitSet;
 
+use crate::models::meta::DeriveRelationship;
 use crate::models::{
     data::PathData,
-    meta::{DynamicMeta, MetaType, MetaTypeVariant, MetaTypes},
+    meta::{MetaType, MetaTypeVariant, MetaTypes},
     TypeIdent,
 };
 
@@ -15,7 +16,7 @@ use crate::models::{
 pub(super) struct State<'types> {
     pub cache: BTreeMap<TypeIdent, TypeRef>,
     pub pending: VecDeque<PendingType<'types>>,
-    pub trait_infos: Option<TraitInfos>,
+    pub trait_infos: TraitInfos,
     pub loop_detection: LoopDetection,
 }
 
@@ -61,67 +62,38 @@ pub(super) struct TraitInfos(BTreeMap<TypeIdent, TraitInfo>);
 
 impl TraitInfos {
     #[must_use]
-    pub(super) fn new(types: &MetaTypes) -> Self {
-        let mut ret = Self(BTreeMap::new());
+    pub(super) fn empty() -> Self {
+        Self(BTreeMap::new())
+    }
 
-        for (base_ident, ty) in types.items.iter() {
-            let MetaTypeVariant::Dynamic(ai) = &ty.variant else {
+    pub(super) fn update(&mut self, types: &MetaTypes, ident: &TypeIdent) {
+        if let Some(base_type) = types.items.get(ident) {
+            self.update_impl(types, ident, base_type);
+        }
+    }
+
+    fn update_impl(&mut self, types: &MetaTypes, base_ident: &TypeIdent, base_ty: &MetaType) {
+        let MetaTypeVariant::Dynamic(meta) = &base_ty.variant else {
+            return;
+        };
+
+        for meta in meta.derived_types.values() {
+            let info = self.0.entry(meta.type_.clone()).or_default();
+
+            info.traits_to_impl.insert(base_ident.clone());
+
+            let Some(derived_ty) = types.items.get(&meta.type_) else {
                 continue;
             };
 
-            for meta in &ai.derived_types {
-                ret.0
-                    .entry(meta.type_.clone())
-                    .or_default()
-                    .traits_all
-                    .insert(base_ident.clone());
+            let MetaTypeVariant::Dynamic(_) = &derived_ty.variant else {
+                continue;
+            };
 
-                #[allow(clippy::single_match)]
-                match types.get_variant(&meta.type_) {
-                    Some(MetaTypeVariant::Dynamic(DynamicMeta {
-                        type_: Some(type_ident),
-                        ..
-                    })) => {
-                        ret.0
-                            .entry(type_ident.clone())
-                            .or_default()
-                            .traits_all
-                            .insert(base_ident.clone());
-                    }
-                    _ => (),
-                }
-            }
-        }
-
-        for ident in ret.0.keys().cloned().collect::<Vec<_>>() {
-            let mut traits_second_level = BTreeSet::new();
-
-            ret.collect_traits(&ident, 0, &mut traits_second_level);
-
-            let info = ret.0.get_mut(&ident).unwrap();
-            info.traits_direct = info
-                .traits_all
-                .difference(&traits_second_level)
-                .cloned()
-                .collect();
-        }
-
-        ret
-    }
-
-    fn collect_traits(
-        &self,
-        ident: &TypeIdent,
-        depth: usize,
-        traits_second_level: &mut BTreeSet<TypeIdent>,
-    ) {
-        if depth > 1 {
-            traits_second_level.insert(ident.clone());
-        }
-
-        if let Some(info) = self.0.get(ident) {
-            for trait_ in &info.traits_all {
-                self.collect_traits(trait_, depth + 1, traits_second_level);
+            if base_ident.type_ == meta.type_.type_
+                && meta.relationship == DeriveRelationship::DirectChild
+            {
+                info.traits_to_derive.insert(base_ident.clone());
             }
         }
     }
@@ -139,8 +111,8 @@ impl Deref for TraitInfos {
 
 #[derive(Default, Debug)]
 pub(super) struct TraitInfo {
-    pub traits_all: BTreeSet<TypeIdent>,
-    pub traits_direct: BTreeSet<TypeIdent>,
+    pub traits_to_impl: BTreeSet<TypeIdent>,
+    pub traits_to_derive: BTreeSet<TypeIdent>,
 }
 
 /* LoopDetection */

@@ -5,6 +5,7 @@ use std::ops::{Deref, DerefMut};
 use quick_xml::events::{BytesStart, Event};
 
 use crate::misc::Namespace;
+use crate::traits::WithNamespace;
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
@@ -12,7 +13,6 @@ use crate::quick_xml::{
     DeserializerOutput, DeserializerResult, Error, ErrorKind, SerializeHelper, Serializer,
     WithDeserializer, WithSerializer,
 };
-use crate::traits::WithNamespace;
 
 /// Implements a nillable XML element.
 ///

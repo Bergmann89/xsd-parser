@@ -25,8 +25,10 @@ pub use self::attribute::{AnyAttributeMeta, AttributeMeta, AttributeMetaVariant,
 pub use self::base::Base;
 pub use self::complex::{ComplexMeta, GroupMeta};
 pub use self::custom::{CustomMeta, CustomMetaNamespace};
-pub use self::dynamic::{DerivedTypeMeta, DynamicMeta};
-pub use self::element::{AnyMeta, ElementMeta, ElementMetaVariant, ElementMode, ElementsMeta};
+pub use self::dynamic::{DeriveRelationship, DerivedTypeMeta, DynamicMeta};
+pub use self::element::{
+    AnyMeta, ElementMeta, ElementMetaFlags, ElementMetaVariant, ElementMode, ElementsMeta,
+};
 pub use self::enumeration::{EnumerationMeta, EnumerationMetaVariant, EnumerationMetaVariants};
 pub use self::reference::ReferenceMeta;
 pub use self::simple::{SimpleMeta, WhiteSpace};

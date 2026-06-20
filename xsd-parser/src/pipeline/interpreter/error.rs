@@ -42,7 +42,7 @@ pub enum Error {
     /// Expected dynamic element.
     ///
     /// Expected the specified element to be dynamic because it is referenced
-    /// as substitution group.
+    /// as substitution group or within a dynamic type.
     #[error("Expected dynamic element: {0}!")]
     ExpectedDynamicElement(TypeIdent),
 

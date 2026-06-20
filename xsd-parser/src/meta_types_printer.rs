@@ -191,12 +191,16 @@ impl<'a> MetaTypesPrinter<'a> {
                         .as_ref()
                         .map_or_else(|| String::from("None"), ToString::to_string)
                 );
+
                 indentln!("derived_types:");
-
                 s.level += 1;
-
-                for meta in &*x.derived_types {
-                    indentln!("{}", meta.type_);
+                for (key, value) in &x.derived_types {
+                    indentln!(
+                        "{key}={},relationship={:?},display_name={:?}",
+                        value.type_,
+                        value.relationship,
+                        value.display_name
+                    );
                 }
 
                 s.level -= 2;
@@ -240,7 +244,7 @@ impl<'a> MetaTypesPrinter<'a> {
 
                     indentln!("ident={}", x.ident);
                     indentln!("form={:?}", x.form);
-                    indentln!("nillable={:?}", x.nillable);
+                    indentln!("flags={:?}", x.flags);
                     indentln!("min_occurs={}", x.min_occurs);
                     indentln!("max_occurs={:?}", x.max_occurs);
 

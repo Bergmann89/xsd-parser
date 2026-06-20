@@ -92,6 +92,26 @@ impl<'a> Interpreter<'a> {
         Ok(self)
     }
 
+    /// Add a type identifier to the list of types that should be interpreted as
+    /// dynamic types.
+    ///
+    /// While some languages (like C++, C# or Java) have good support for dynamic
+    /// types and type inheritance in general, others (like C or Rust) don't. To
+    /// be able to generate code for this languages as well, dynamic types are
+    /// interpreted slightly differently. Since the XML schema does not provide
+    /// any information about which types are dynamic and which are not (except
+    /// if it is explicitly marked as abstract), the user have to provide this
+    /// information manually.
+    #[instrument(level = "trace", skip(self))]
+    pub fn with_dynamic_type<I>(mut self, ident: I) -> Self
+    where
+        I: Into<TypeIdent> + Debug,
+    {
+        self.state.add_dynamic_type(ident);
+
+        self
+    }
+
     /// Add a simple type definition to the resulting [`MetaTypes`] structure using
     /// `ident` as identifier for the new type and `type_` as target type for the
     /// type definition.

@@ -230,6 +230,11 @@ pub fn exec_interpreter_with_ident_cache(
         interpreter = interpreter.with_type(ident, ty)?;
     }
 
+    for ident in config.dynamic_types {
+        let ident = ident.resolve(schemas)?;
+        interpreter = interpreter.with_dynamic_type(ident);
+    }
+
     let (types, ident_cache) = interpreter.finish()?;
 
     if let Some(output) = config.debug_output {
@@ -285,7 +290,8 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
     );
     exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
     exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
-    exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamic_to_choice);
+    exec!(MERGE_DYNAMIC_TYPES, merge_dynamic_types);
+    exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamics_to_choices);
     exec!(FLATTEN_COMPLEX_TYPES, flatten_complex_types);
     exec!(FLATTEN_UNIONS, flatten_unions);
     exec!(MERGE_ENUM_UNIONS, merge_enum_unions);
@@ -384,7 +390,11 @@ pub fn exec_generator_with_ident_cache<'types>(
         config.type_postfix.nillable_content,
     );
     generator = generator.with_type_postfix(
-        IdentType::DynamicElement,
+        IdentType::SubstitutionElement,
+        config.type_postfix.dynamic_element.clone(),
+    );
+    generator = generator.with_type_postfix(
+        IdentType::DynamicVariant,
         config.type_postfix.dynamic_element,
     );
 

@@ -511,7 +511,18 @@ pub mod page {
         pub back_color: Option<Box<CtColorXType>>,
     }
     #[derive(Debug)]
-    pub struct CtGraphicUnitXType {
+    pub enum CtGraphicUnitXType {
+        CtText(CtTextXType),
+        CtPageBlockTextObject(CtPageBlockTextObjectXElementType),
+        CtPath(CtPathXType),
+        CtPageBlockPathObject(CtPageBlockPathObjectXElementType),
+        CtImage(CtImageXType),
+        CtPageBlockImageObject(CtPageBlockImageObjectXElementType),
+        CtComposite(CtCompositeXType),
+        CtPageBlockCompositeObject(CtPageBlockCompositeObjectXElementType),
+    }
+    #[derive(Debug)]
+    pub struct CtGraphicUnitDyn {
         pub boundary: String,
         pub name: Option<String>,
         pub visible: bool,
@@ -728,28 +739,6 @@ pub mod page {
         pub color: Box<CtColorXType>,
     }
     #[derive(Debug)]
-    pub struct CtImageBorderXElementType {
-        pub line_width: f64,
-        pub horizonal_corner_radius: f64,
-        pub vertical_corner_radius: f64,
-        pub dash_offset: f64,
-        pub dash_pattern: Option<String>,
-        pub border_color: Option<CtColorXType>,
-    }
-    #[derive(Debug)]
-    pub struct CtLaGouraudShdPointXElementType {
-        pub x: Option<f64>,
-        pub y: Option<f64>,
-        pub color: Box<CtColorXType>,
-    }
-    #[derive(Debug)]
-    pub enum CtLayerTypeXType {
-        Body,
-        Background,
-        Foreground,
-        Custom,
-    }
-    #[derive(Debug)]
     pub struct CtPageBlockTextObjectXElementType {
         pub boundary: String,
         pub name: Option<String>,
@@ -848,6 +837,28 @@ pub mod page {
         pub id: u32,
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
+    }
+    #[derive(Debug)]
+    pub struct CtImageBorderXElementType {
+        pub line_width: f64,
+        pub horizonal_corner_radius: f64,
+        pub vertical_corner_radius: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub border_color: Option<CtColorXType>,
+    }
+    #[derive(Debug)]
+    pub struct CtLaGouraudShdPointXElementType {
+        pub x: Option<f64>,
+        pub y: Option<f64>,
+        pub color: Box<CtColorXType>,
+    }
+    #[derive(Debug)]
+    pub enum CtLayerTypeXType {
+        Body,
+        Background,
+        Foreground,
+        Custom,
     }
     #[derive(Debug)]
     pub struct CtPageBlockPageBlockXElementType {

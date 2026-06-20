@@ -192,7 +192,7 @@ impl DerefMut for AttributesMeta {
 
 impl TypeEq for AttributesMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
-        TypeEq::type_hash_slice(&self.0, hasher, types);
+        TypeEq::type_hash_iter(&self.0, hasher, types);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {

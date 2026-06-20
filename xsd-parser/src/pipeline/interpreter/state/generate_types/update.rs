@@ -1,4 +1,4 @@
-use crate::models::meta::{AttributeMeta, ElementMeta};
+use crate::models::meta::{AttributeMeta, ElementMeta, ElementMetaFlags};
 use crate::models::schema::xs::{AttributeType, ElementType, GroupType};
 
 pub(super) trait Update<T> {
@@ -36,7 +36,10 @@ impl Update<ElementType> for ElementMeta {
     fn update(&mut self, other: &ElementType) {
         self.min_occurs = other.min_occurs;
         self.max_occurs = other.max_occurs;
-        self.nillable.update(&other.nillable);
+
+        if let Some(nillable) = &other.nillable {
+            self.flags.set(ElementMetaFlags::NILLABLE, *nillable);
+        }
     }
 }
 

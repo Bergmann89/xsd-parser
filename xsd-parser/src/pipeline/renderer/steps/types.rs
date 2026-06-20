@@ -43,6 +43,7 @@ impl UnionData<'_> {
             variants,
             ..
         } = self;
+
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
         let trait_impls = render_trait_impls(type_ident, trait_impls);
@@ -94,12 +95,13 @@ impl DynamicData<'_> {
             type_ident,
             trait_ident,
             sub_traits,
+            trait_impls,
             ..
         } = self;
 
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
-        let trait_impls = render_trait_impls(type_ident, &[]);
+        let trait_impls = render_trait_impls(type_ident, trait_impls);
         let dyn_traits = sub_traits.as_ref().map_or_else(
             || get_dyn_type_traits(ctx, []),
             |traits| format_traits(traits.iter().map(|x| ctx.resolve_type_for_module(x))),
@@ -117,6 +119,12 @@ impl DynamicData<'_> {
             pub trait #trait_ident: #dyn_traits { }
 
             #( #trait_impls )*
+
+            impl #type_ident {
+                pub fn new<T: #trait_ident + 'static>(value: T) -> Self {
+                    Self(Box::new(value))
+                }
+            }
         };
 
         ctx.current_module().append(code);

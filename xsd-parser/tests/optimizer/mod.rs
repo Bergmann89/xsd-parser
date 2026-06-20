@@ -174,3 +174,17 @@ fn replace_xs_any_type_with_any_element() {
             .with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT),
     );
 }
+
+#[test]
+fn merge_dynamic_types() {
+    optimizer_test_with_config(
+        "tests/optimizer/merge_dynamic_types.xsd",
+        "tests/optimizer/expected0/merge_dynamic_types.rs",
+        "tests/optimizer/expected1/merge_dynamic_types.rs",
+        [(IdentType::Element, "tns:animal")],
+        OptimizerFlags::MERGE_DYNAMIC_TYPES,
+        Config::test_default()
+            .with_dynamic_type((IdentType::Type, "tns:animal"))
+            .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT),
+    );
+}

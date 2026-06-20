@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <element name="list">
+        <complexType>
+            <sequence>
+                <element ref="tns:animal" minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+        </complexType>
+    </element>
+
+    <element name="animal" type="tns:animal" />
+    <element name="dog" type="tns:dog" substitutionGroup="tns:animal" />
+    <element name="labrador" type="tns:labrador" substitutionGroup="tns:dog" />
+
+    <complexType name="animal">
+        <attribute name="id" type="xs:int" use="required" />
+    </complexType>
+
+    <complexType name="dog">
+        <complexContent>
+            <extension base="tns:animal">
+                <attribute name="name" type="xs:string" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="labrador">
+        <complexContent>
+            <extension base="tns:dog">
+                <attribute name="color" type="xs:string" use="required" />
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

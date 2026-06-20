@@ -1,0 +1,9 @@
+<list xmlns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <animal id="1" />
+    <dog id="2" name="Rex" />
+    <labrador id="3" name="Buddy" color="black" />
+
+    <animal xsi:nil="true" />
+    <dog xsi:nil="true" />
+    <labrador xsi:nil="true" />
+</list>

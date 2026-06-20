@@ -1,4 +1,8 @@
-use xsd_parser_types::xml::{Base64String, HexString};
+use core::fmt::Debug;
+use xsd_parser_types::{
+    xml::{Base64String, HexString},
+    AsAny,
+};
 pub type OpenDrive = OpenDriveXElementType;
 #[derive(Debug)]
 pub struct OpenDriveXElementType {
@@ -11,7 +15,15 @@ pub struct OpenDriveXElementType {
     pub g_additional_data: Vec<OpenDriveGAdditionalDataXType>,
 }
 #[derive(Debug)]
-pub struct OpenDriveElementXType;
+pub struct OpenDriveElementXType(pub Box<dyn OpenDriveElementXTypeTrait>);
+pub trait OpenDriveElementXTypeTrait: Debug + AsAny {}
+impl OpenDriveElementXType {
+    pub fn new<T: OpenDriveElementXTypeTrait + 'static>(value: T) -> Self {
+        Self(Box::new(value))
+    }
+}
+#[derive(Debug)]
+pub struct OpenDriveElementDyn;
 #[derive(Debug)]
 pub enum EDataQualityRawDataPostProcessingXType {
     Raw,
@@ -92,6 +104,7 @@ pub struct THeaderXType {
     pub offset: Option<THeaderOffsetXType>,
     pub g_additional_data: Vec<THeaderGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for THeaderXType {}
 #[derive(Debug)]
 pub struct THeaderGeoReferenceXType {
     pub g_additional_data: Vec<THeaderGeoReferenceGAdditionalDataXType>,
@@ -104,6 +117,7 @@ pub struct THeaderOffsetXType {
     pub hdg_attrib: f32,
     pub g_additional_data: Vec<THeaderOffsetGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for THeaderOffsetXType {}
 #[derive(Debug)]
 pub struct TIncludeXType {
     pub file_attrib: String,
@@ -141,6 +155,7 @@ pub struct TRoadRailroadXType {
     pub switch: Vec<TRoadRailroadSwitchXType>,
     pub g_additional_data: Vec<TRoadRailroadGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadRailroadXType {}
 #[derive(Debug)]
 pub struct TRoadRailroadSwitchXType {
     pub name_attrib: String,
@@ -151,6 +166,7 @@ pub struct TRoadRailroadSwitchXType {
     pub partner: Option<TRoadRailroadSwitchPartnerXType>,
     pub g_additional_data: Vec<TRoadRailroadSwitchGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadRailroadSwitchXType {}
 #[derive(Debug)]
 pub struct TRoadRailroadSwitchMainTrackXType {
     pub id_attrib: String,
@@ -158,12 +174,14 @@ pub struct TRoadRailroadSwitchMainTrackXType {
     pub dir_attrib: EElementDirXType,
     pub g_additional_data: Vec<TRoadRailroadSwitchMainTrackGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadRailroadSwitchMainTrackXType {}
 #[derive(Debug)]
 pub struct TRoadRailroadSwitchPartnerXType {
     pub name_attrib: Option<String>,
     pub id_attrib: String,
     pub g_additional_data: Vec<TRoadRailroadSwitchPartnerGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadRailroadSwitchPartnerXType {}
 #[derive(Debug)]
 pub struct TRoadRailroadSwitchSideTrackXType {
     pub id_attrib: String,
@@ -171,6 +189,7 @@ pub struct TRoadRailroadSwitchSideTrackXType {
     pub dir_attrib: EElementDirXType,
     pub g_additional_data: Vec<TRoadRailroadSwitchSideTrackGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadRailroadSwitchSideTrackXType {}
 #[derive(Debug)]
 pub struct TStationXType {
     pub name_attrib: String,
@@ -179,6 +198,7 @@ pub struct TStationXType {
     pub platform: Vec<TStationPlatformXType>,
     pub g_additional_data: Vec<TStationGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TStationXType {}
 #[derive(Debug)]
 pub struct TStationPlatformXType {
     pub name_attrib: Option<String>,
@@ -186,6 +206,7 @@ pub struct TStationPlatformXType {
     pub segment: Vec<TStationPlatformSegmentXType>,
     pub g_additional_data: Vec<TStationPlatformGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TStationPlatformXType {}
 #[derive(Debug)]
 pub struct TStationPlatformSegmentXType {
     pub road_id_attrib: String,
@@ -193,6 +214,7 @@ pub struct TStationPlatformSegmentXType {
     pub s_end_attrib: f64,
     pub side_attrib: EStationPlatformSegmentSideXType,
 }
+impl OpenDriveElementXTypeTrait for TStationPlatformSegmentXType {}
 #[derive(Debug)]
 pub enum EContactPointXType {
     Start,
@@ -236,6 +258,7 @@ pub struct TJunctionXType {
     pub surface: Option<TJunctionSurfaceXType>,
     pub g_additional_data: Vec<TJunctionGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TJunctionXType {}
 #[derive(Debug)]
 pub struct TJunctionGroupXType {
     pub name_attrib: Option<String>,
@@ -244,10 +267,12 @@ pub struct TJunctionGroupXType {
     pub junction_reference: Vec<TJunctionGroupJunctionReferenceXType>,
     pub g_additional_data: Vec<TJunctionGroupGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TJunctionGroupXType {}
 #[derive(Debug)]
 pub struct TJunctionGroupJunctionReferenceXType {
     pub junction_attrib: String,
 }
+impl OpenDriveElementXTypeTrait for TJunctionGroupJunctionReferenceXType {}
 #[derive(Debug)]
 pub struct TJunctionConnectionXType {
     pub id_attrib: String,
@@ -259,17 +284,20 @@ pub struct TJunctionConnectionXType {
     pub successor: Option<TJunctionPredecessorSuccessorXType>,
     pub lane_link: Vec<TJunctionConnectionLaneLinkXType>,
 }
+impl OpenDriveElementXTypeTrait for TJunctionConnectionXType {}
 #[derive(Debug)]
 pub struct TJunctionConnectionLaneLinkXType {
     pub from_attrib: i32,
     pub to_attrib: i32,
 }
+impl OpenDriveElementXTypeTrait for TJunctionConnectionLaneLinkXType {}
 #[derive(Debug)]
 pub struct TJunctionControllerXType {
     pub id_attrib: String,
     pub type_attrib: Option<String>,
     pub sequence_attrib: Option<usize>,
 }
+impl OpenDriveElementXTypeTrait for TJunctionControllerXType {}
 #[derive(Debug)]
 pub struct TJunctionPredecessorSuccessorXType {
     pub element_type_attrib: String,
@@ -277,16 +305,19 @@ pub struct TJunctionPredecessorSuccessorXType {
     pub element_s_attrib: f64,
     pub element_dir_attrib: EElementDirXType,
 }
+impl OpenDriveElementXTypeTrait for TJunctionPredecessorSuccessorXType {}
 #[derive(Debug)]
 pub struct TJunctionPriorityXType {
     pub high_attrib: Option<String>,
     pub low_attrib: Option<String>,
 }
+impl OpenDriveElementXTypeTrait for TJunctionPriorityXType {}
 #[derive(Debug)]
 pub struct TJunctionSurfaceXType {
     pub crg: Vec<TJunctionSurfaceCrgXType>,
     pub g_additional_data: Vec<TJunctionSurfaceGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TJunctionSurfaceXType {}
 #[derive(Debug)]
 pub struct TJunctionSurfaceCrgXType {
     pub file_attrib: String,
@@ -295,6 +326,7 @@ pub struct TJunctionSurfaceCrgXType {
     pub z_offset_attrib: Option<f64>,
     pub z_scale_attrib: Option<f64>,
 }
+impl OpenDriveElementXTypeTrait for TJunctionSurfaceCrgXType {}
 #[derive(Debug)]
 pub enum ERoadSignalsSignalReferenceElementTypeXType {
     Object,
@@ -308,17 +340,20 @@ pub struct TControllerXType {
     pub control: Vec<TControllerControlXType>,
     pub g_additional_data: Vec<TControllerGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TControllerXType {}
 #[derive(Debug)]
 pub struct TControllerControlXType {
     pub signal_id_attrib: String,
     pub type_attrib: Option<String>,
 }
+impl OpenDriveElementXTypeTrait for TControllerControlXType {}
 #[derive(Debug)]
 pub struct TRoadSignalsXType {
     pub signal: Vec<TRoadSignalsSignalXType>,
     pub signal_reference: Vec<TRoadSignalsSignalReference2>,
     pub g_additional_data: Vec<TRoadSignalsGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSignalsXType {}
 #[derive(Debug)]
 pub struct TRoadSignalsSignalXType {
     pub s_attrib: f64,
@@ -346,6 +381,7 @@ pub struct TRoadSignalsSignalXType {
     pub content_91: Option<TRoadSignalsSignalContent91XType>,
     pub g_additional_data: Vec<TRoadSignalsSignalGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSignalsSignalXType {}
 #[derive(Debug)]
 pub struct TRoadSignalsSignalReference2 {
     pub s_attrib: f64,
@@ -355,11 +391,13 @@ pub struct TRoadSignalsSignalReference2 {
     pub validity: Vec<TRoadObjectsObjectLaneValidityXType>,
     pub g_additional_data: Vec<TRoadSignalsSignalReferenceGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSignalsSignalReference2 {}
 #[derive(Debug)]
 pub struct TRoadSignalsSignalDependencyXType {
     pub id_attrib: String,
     pub type_attrib: Option<String>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSignalsSignalDependencyXType {}
 #[derive(Debug)]
 pub struct TRoadSignalsSignalPositionInertialXType {
     pub x_attrib: f64,
@@ -369,6 +407,7 @@ pub struct TRoadSignalsSignalPositionInertialXType {
     pub pitch_attrib: Option<f64>,
     pub roll_attrib: Option<f64>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSignalsSignalPositionInertialXType {}
 #[derive(Debug)]
 pub struct TRoadSignalsSignalPositionRoadXType {
     pub road_id_attrib: String,
@@ -379,12 +418,14 @@ pub struct TRoadSignalsSignalPositionRoadXType {
     pub pitch_attrib: Option<f64>,
     pub roll_attrib: Option<f64>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSignalsSignalPositionRoadXType {}
 #[derive(Debug)]
 pub struct TRoadSignalsSignalReferenceXType {
     pub element_type_attrib: ERoadSignalsSignalReferenceElementTypeXType,
     pub element_id_attrib: String,
     pub type_attrib: Option<String>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSignalsSignalReferenceXType {}
 #[derive(Debug)]
 pub enum ECountryCodeXType {
     String(String),
@@ -469,11 +510,13 @@ pub struct TRoadXType {
     pub railroad: Option<TRoadRailroadXType>,
     pub g_additional_data: Vec<TRoadGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadXType {}
 #[derive(Debug)]
 pub struct TRoadElevationProfileXType {
     pub elevation: Vec<TRoadElevationProfileElevationXType>,
     pub g_additional_data: Vec<TRoadElevationProfileGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadElevationProfileXType {}
 #[derive(Debug)]
 pub struct TRoadElevationProfileElevationXType {
     pub s_attrib: f64,
@@ -482,12 +525,14 @@ pub struct TRoadElevationProfileElevationXType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadElevationProfileElevationXType {}
 #[derive(Debug)]
 pub struct TRoadLateralProfileXType {
     pub superelevation: Vec<TRoadLateralProfileSuperelevationXType>,
     pub shape: Vec<TRoadLateralProfileShapeXType>,
     pub g_additional_data: Vec<TRoadLateralProfileGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLateralProfileXType {}
 #[derive(Debug)]
 pub struct TRoadLateralProfileShapeXType {
     pub s_attrib: f64,
@@ -497,6 +542,7 @@ pub struct TRoadLateralProfileShapeXType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadLateralProfileShapeXType {}
 #[derive(Debug)]
 pub struct TRoadLateralProfileSuperelevationXType {
     pub s_attrib: f64,
@@ -505,12 +551,14 @@ pub struct TRoadLateralProfileSuperelevationXType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadLateralProfileSuperelevationXType {}
 #[derive(Debug)]
 pub struct TRoadLinkXType {
     pub predecessor: Option<TRoadLinkPredecessorSuccessorXType>,
     pub successor: Option<TRoadLinkPredecessorSuccessorXType>,
     pub g_additional_data: Vec<TRoadLinkGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLinkXType {}
 #[derive(Debug)]
 pub struct TRoadLinkPredecessorSuccessorXType {
     pub element_id_attrib: String,
@@ -519,11 +567,13 @@ pub struct TRoadLinkPredecessorSuccessorXType {
     pub element_s_attrib: Option<f64>,
     pub element_dir_attrib: Option<String>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLinkPredecessorSuccessorXType {}
 #[derive(Debug)]
 pub struct TRoadPlanViewXType {
     pub geometry: Vec<TRoadPlanViewGeometryXType>,
     pub g_additional_data: Vec<TRoadPlanViewGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadPlanViewXType {}
 #[derive(Debug)]
 pub struct TRoadPlanViewGeometryXType {
     pub s_attrib: f64,
@@ -533,6 +583,7 @@ pub struct TRoadPlanViewGeometryXType {
     pub length_attrib: String,
     pub content: TRoadPlanViewGeometryXTypeContent,
 }
+impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometryXType {}
 #[derive(Debug)]
 pub enum TRoadPlanViewGeometryXTypeContent {
     Line(TRoadPlanViewGeometryLineXType),
@@ -546,8 +597,10 @@ pub enum TRoadPlanViewGeometryXTypeContent {
 pub struct TRoadPlanViewGeometryArcXType {
     pub curvature_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometryArcXType {}
 #[derive(Debug)]
 pub struct TRoadPlanViewGeometryLineXType;
+impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometryLineXType {}
 #[derive(Debug)]
 pub struct TRoadPlanViewGeometryParamPoly3XType {
     pub au_attrib: f64,
@@ -560,6 +613,7 @@ pub struct TRoadPlanViewGeometryParamPoly3XType {
     pub dv_attrib: f64,
     pub p_range_attrib: EParamPoly3PRangeXType,
 }
+impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometryParamPoly3XType {}
 #[derive(Debug)]
 pub struct TRoadPlanViewGeometryPoly3XType {
     pub a_attrib: f64,
@@ -567,16 +621,19 @@ pub struct TRoadPlanViewGeometryPoly3XType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometryPoly3XType {}
 #[derive(Debug)]
 pub struct TRoadPlanViewGeometrySpiralXType {
     pub curv_start_attrib: f64,
     pub curv_end_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometrySpiralXType {}
 #[derive(Debug)]
 pub struct TRoadSurfaceXType {
     pub crg: Vec<TRoadSurfaceCrgXType>,
     pub g_additional_data: Vec<TRoadSurfaceGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSurfaceXType {}
 #[derive(Debug)]
 pub struct TRoadSurfaceCrgXType {
     pub file_attrib: String,
@@ -591,6 +648,7 @@ pub struct TRoadSurfaceCrgXType {
     pub z_scale_attrib: Option<f64>,
     pub h_offset_attrib: Option<f64>,
 }
+impl OpenDriveElementXTypeTrait for TRoadSurfaceCrgXType {}
 #[derive(Debug)]
 pub struct TRoadTypeXType {
     pub s_attrib: f64,
@@ -599,11 +657,13 @@ pub struct TRoadTypeXType {
     pub speed: Option<TRoadTypeSpeedXType>,
     pub g_additional_data: Vec<TRoadTypeGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadTypeXType {}
 #[derive(Debug)]
 pub struct TRoadTypeSpeedXType {
     pub max_attrib: TMaxSpeedXType,
     pub unit_attrib: Option<EUnitSpeedXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadTypeSpeedXType {}
 #[derive(Debug)]
 pub enum EBorderTypeXType {
     Concrete,
@@ -692,6 +752,7 @@ pub struct TRoadObjectsXType {
     pub bridge: Vec<TRoadObjectsBridgeXType>,
     pub g_additional_data: Vec<TRoadObjectsGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsBridgeXType {
     pub s_attrib: f64,
@@ -702,6 +763,7 @@ pub struct TRoadObjectsBridgeXType {
     pub validity: Vec<TRoadObjectsObjectLaneValidityXType>,
     pub g_additional_data: Vec<TRoadObjectsBridgeGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsBridgeXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectXType {
     pub t_attrib: f64,
@@ -731,6 +793,7 @@ pub struct TRoadObjectsObjectXType {
     pub borders: Option<TRoadObjectsObjectBordersXType>,
     pub g_additional_data: Vec<TRoadObjectsObjectGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectReferenceXType {
     pub s_attrib: f64,
@@ -742,11 +805,13 @@ pub struct TRoadObjectsObjectReferenceXType {
     pub validity: Vec<TRoadObjectsObjectLaneValidityXType>,
     pub g_additional_data: Vec<TRoadObjectsObjectReferenceGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectReferenceXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectBordersXType {
     pub border: Vec<TRoadObjectsObjectBordersBorderXType>,
     pub g_additional_data: Vec<TRoadObjectsObjectBordersGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectBordersXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectBordersBorderXType {
     pub width_attrib: f64,
@@ -756,11 +821,13 @@ pub struct TRoadObjectsObjectBordersBorderXType {
     pub corner_reference: Vec<TRoadObjectsObjectMarkingsMarkingCornerReferenceXType>,
     pub g_additional_data: Vec<TRoadObjectsObjectBordersBorderGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectBordersBorderXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectMarkingsXType {
     pub marking: Vec<TRoadObjectsObjectMarkingsMarkingXType>,
     pub g_additional_data: Vec<TRoadObjectsObjectMarkingsGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectMarkingsXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectMarkingsMarkingXType {
     pub side_attrib: Option<ESideTypeXType>,
@@ -775,21 +842,25 @@ pub struct TRoadObjectsObjectMarkingsMarkingXType {
     pub corner_reference: Vec<TRoadObjectsObjectMarkingsMarkingCornerReferenceXType>,
     pub g_additional_data: Vec<TRoadObjectsObjectMarkingsMarkingGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectMarkingsMarkingXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectMarkingsMarkingCornerReferenceXType {
     pub id_attrib: usize,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectMarkingsMarkingCornerReferenceXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectMaterialXType {
     pub surface_attrib: Option<String>,
     pub friction_attrib: Option<f64>,
     pub roughness_attrib: Option<f64>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectMaterialXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectOutlinesXType {
     pub outline: Vec<TRoadObjectsObjectOutlinesOutlineXType>,
     pub g_additional_data: Vec<TRoadObjectsObjectOutlinesGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectOutlinesXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectOutlinesOutlineXType {
     pub id_attrib: Option<usize>,
@@ -800,6 +871,7 @@ pub struct TRoadObjectsObjectOutlinesOutlineXType {
     pub content_61: Option<TRoadObjectsObjectOutlinesOutlineContent61XType>,
     pub g_additional_data: Vec<TRoadObjectsObjectOutlinesOutlineGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectOutlinesOutlineXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectOutlinesOutlineCornerLocalXType {
     pub u_attrib: f64,
@@ -808,6 +880,7 @@ pub struct TRoadObjectsObjectOutlinesOutlineCornerLocalXType {
     pub height_attrib: f64,
     pub id_attrib: Option<usize>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectOutlinesOutlineCornerLocalXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectOutlinesOutlineCornerRoadXType {
     pub s_attrib: f64,
@@ -816,11 +889,13 @@ pub struct TRoadObjectsObjectOutlinesOutlineCornerRoadXType {
     pub height_attrib: f64,
     pub id_attrib: Option<usize>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectOutlinesOutlineCornerRoadXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectParkingSpaceXType {
     pub access_attrib: ERoadObjectsObjectParkingSpaceAccessXType,
     pub restrictions_attrib: Option<String>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectParkingSpaceXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectRepeatXType {
     pub s_attrib: f64,
@@ -839,6 +914,7 @@ pub struct TRoadObjectsObjectRepeatXType {
     pub radius_start_attrib: Option<f64>,
     pub radius_end_attrib: Option<f64>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectRepeatXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsTunnelXType {
     pub s_attrib: f64,
@@ -851,6 +927,7 @@ pub struct TRoadObjectsTunnelXType {
     pub validity: Vec<TRoadObjectsObjectLaneValidityXType>,
     pub g_additional_data: Vec<TRoadObjectsTunnelGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsTunnelXType {}
 #[derive(Debug)]
 pub enum EAccessRestrictionTypeXType {
     Simulator,
@@ -958,6 +1035,7 @@ pub struct TRoadLanesXType {
     pub lane_section: Vec<TRoadLanesLaneSectionXType>,
     pub g_additional_data: Vec<TRoadLanesGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneOffsetXType {
     pub s_attrib: f64,
@@ -966,6 +1044,7 @@ pub struct TRoadLanesLaneOffsetXType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneOffsetXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionXType {
     pub s_attrib: f64,
@@ -975,11 +1054,13 @@ pub struct TRoadLanesLaneSectionXType {
     pub right: Option<TRoadLanesLaneSectionRightXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionCenterXType {
     pub lane: Vec<TRoadLanesLaneSectionCenterLaneXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionCenterGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionCenterXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionCenterLaneXType {
     pub type_attrib: ELaneTypeXType,
@@ -995,16 +1076,19 @@ pub struct TRoadLanesLaneSectionCenterLaneXType {
     pub rule: Vec<TRoadLanesLaneSectionLrLaneRuleXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLrLaneGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionCenterLaneXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneLinkXType {
     pub predecessor: Vec<TRoadLanesLaneSectionLcrLaneLinkPredecessorSuccessorXType>,
     pub successor: Vec<TRoadLanesLaneSectionLcrLaneLinkPredecessorSuccessorXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLcrLaneLinkGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneLinkXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneLinkPredecessorSuccessorXType {
     pub id_attrib: i32,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneLinkPredecessorSuccessorXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneRoadMarkXType {
     pub s_offset_attrib: f64,
@@ -1020,11 +1104,13 @@ pub struct TRoadLanesLaneSectionLcrLaneRoadMarkXType {
     pub explicit: Option<TRoadLanesLaneSectionLcrLaneRoadMarkExplicitXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneRoadMarkXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneRoadMarkExplicitXType {
     pub line: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkExplicitLineXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkExplicitGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneRoadMarkExplicitXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneRoadMarkExplicitLineXType {
     pub length_attrib: String,
@@ -1033,6 +1119,7 @@ pub struct TRoadLanesLaneSectionLcrLaneRoadMarkExplicitLineXType {
     pub rule_attrib: Option<ERoadMarkRuleXType>,
     pub width_attrib: Option<String>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneRoadMarkExplicitLineXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneRoadMarkSwayXType {
     pub ds_attrib: f64,
@@ -1041,6 +1128,7 @@ pub struct TRoadLanesLaneSectionLcrLaneRoadMarkSwayXType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneRoadMarkSwayXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneRoadMarkTypeXType {
     pub name_attrib: String,
@@ -1048,6 +1136,7 @@ pub struct TRoadLanesLaneSectionLcrLaneRoadMarkTypeXType {
     pub line: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkTypeLineXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkTypeGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneRoadMarkTypeXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLcrLaneRoadMarkTypeLineXType {
     pub length_attrib: String,
@@ -1058,11 +1147,13 @@ pub struct TRoadLanesLaneSectionLcrLaneRoadMarkTypeLineXType {
     pub width_attrib: Option<String>,
     pub color_attrib: Option<ERoadMarkColorXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLcrLaneRoadMarkTypeLineXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLeftXType {
     pub lane: Vec<TRoadLanesLaneSectionLeftLaneXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLeftGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLeftXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLeftLaneXType {
     pub type_attrib: ELaneTypeXType,
@@ -1078,6 +1169,7 @@ pub struct TRoadLanesLaneSectionLeftLaneXType {
     pub rule: Vec<TRoadLanesLaneSectionLrLaneRuleXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLrLaneGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLeftLaneXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneXType {
     pub type_attrib: ELaneTypeXType,
@@ -1092,12 +1184,14 @@ pub struct TRoadLanesLaneSectionLrLaneXType {
     pub rule: Vec<TRoadLanesLaneSectionLrLaneRuleXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLrLaneGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneAccessXType {
     pub s_offset_attrib: f64,
     pub rule_attrib: Option<ERoadLanesLaneSectionLrLaneAccessRuleXType>,
     pub restriction_attrib: EAccessRestrictionTypeXType,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneAccessXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneBorderXType {
     pub s_offset_attrib: f64,
@@ -1106,12 +1200,14 @@ pub struct TRoadLanesLaneSectionLrLaneBorderXType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneBorderXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneHeightXType {
     pub s_offset_attrib: f64,
     pub inner_attrib: f64,
     pub outer_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneHeightXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneMaterialXType {
     pub s_offset_attrib: f64,
@@ -1119,17 +1215,20 @@ pub struct TRoadLanesLaneSectionLrLaneMaterialXType {
     pub friction_attrib: f64,
     pub roughness_attrib: Option<f64>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneMaterialXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneRuleXType {
     pub s_offset_attrib: f64,
     pub value_attrib: String,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneRuleXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneSpeedXType {
     pub s_offset_attrib: f64,
     pub max_attrib: f64,
     pub unit_attrib: Option<EUnitSpeedXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneSpeedXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionLrLaneWidthXType {
     pub s_offset_attrib: f64,
@@ -1138,11 +1237,13 @@ pub struct TRoadLanesLaneSectionLrLaneWidthXType {
     pub c_attrib: f64,
     pub d_attrib: f64,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionLrLaneWidthXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionRightXType {
     pub lane: Vec<TRoadLanesLaneSectionRightLaneXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionRightGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionRightXType {}
 #[derive(Debug)]
 pub struct TRoadLanesLaneSectionRightLaneXType {
     pub type_attrib: ELaneTypeXType,
@@ -1158,11 +1259,13 @@ pub struct TRoadLanesLaneSectionRightLaneXType {
     pub rule: Vec<TRoadLanesLaneSectionLrLaneRuleXType>,
     pub g_additional_data: Vec<TRoadLanesLaneSectionLrLaneGAdditionalDataXType>,
 }
+impl OpenDriveElementXTypeTrait for TRoadLanesLaneSectionRightLaneXType {}
 #[derive(Debug)]
 pub struct TRoadObjectsObjectLaneValidityXType {
     pub from_lane_attrib: i32,
     pub to_lane_attrib: i32,
 }
+impl OpenDriveElementXTypeTrait for TRoadObjectsObjectLaneValidityXType {}
 #[derive(Debug, Default)]
 pub struct EntitiesXType(pub Vec<String>);
 pub type EntityXType = String;

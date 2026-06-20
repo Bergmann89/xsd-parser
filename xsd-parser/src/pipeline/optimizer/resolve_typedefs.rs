@@ -60,7 +60,7 @@ impl Optimizer {
                 MetaTypeVariant::Dynamic(x) => {
                     x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
 
-                    for meta in &mut x.derived_types {
+                    for meta in x.derived_types.values_mut() {
                         meta.type_ = typedefs.resolve(&meta.type_).clone();
                     }
                 }
@@ -96,18 +96,6 @@ impl Optimizer {
                     }
                 }
                 _ => (),
-            }
-        }
-
-        for type_ in self.types.items.values_mut() {
-            let MetaTypeVariant::Dynamic(di) = &mut type_.variant else {
-                continue;
-            };
-
-            for meta in &mut di.derived_types {
-                if let Some(new_type) = replaced_references.get(&meta.type_) {
-                    meta.type_ = new_type.clone();
-                }
             }
         }
 
