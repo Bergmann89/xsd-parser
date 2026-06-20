@@ -43,7 +43,7 @@ indexmap = { workspace = true, optional = true }
 num = { workspace = true, optional = true }
 quick-xml = { workspace = true, optional = true, features = ["encoding"] }
 regex = { workspace = true, optional = true }
-serde = { workspace = true, optional = true }
+serde = { workspace = true, optional = true, features = ["derive"] }
 thiserror = { workspace = true, optional = true }
 tokio = { workspace = true, optional = true }
 
