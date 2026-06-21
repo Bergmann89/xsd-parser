@@ -38,7 +38,7 @@ impl RenderStep for ContentHelpersRenderStep {
         };
         if content.occurs != Occurs::DynamicList {
             return;
-        };
+        }
 
         // The content enum is stored inline as content_type of ComplexData::Struct
         let Some(content_type) = content_type else {
