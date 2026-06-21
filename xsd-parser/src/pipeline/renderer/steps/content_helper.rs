@@ -7,13 +7,13 @@ use crate::pipeline::renderer::{Context, RenderStep, RenderStepType};
 /// RenderStep that generates ergonomic helper accessors for flattened struct content.
 ///
 /// This targets the pattern:
-///   pub struct Foo { pub content: Vec<FooContent>, ... }
-///   pub enum FooContent { PrivateNote(String), ... }
+///   `pub struct Foo { pub content: Vec<FooContent>, ... }`
+///   `pub enum FooContent { PrivateNote(String), ... }`
 ///
 /// and generates:
-///   impl Foo {
-///     pub fn private_note(&self) -> Option<&String> { ... }
-///   }
+///   `impl Foo {`
+///   `  pub fn private_note(&self) -> Option<&String> { ... }`
+///   `}`
 #[derive(Debug, Clone, Copy)]
 pub struct ContentHelpersRenderStep;
 
