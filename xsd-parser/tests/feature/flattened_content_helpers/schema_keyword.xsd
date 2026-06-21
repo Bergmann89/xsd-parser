@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <xs:complexType name="KeywordFooType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="type" type="xs:string" />
+            <xs:element name="match" type="xs:int" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:element name="KeywordFoo" type="tns:KeywordFooType" />
+</xs:schema>

@@ -16,3 +16,14 @@ fn generate_default() {
         config(),
     );
 }
+
+#[test]
+fn generate_keyword() {
+    generate_test(
+        "tests/feature/flattened_content_helpers/schema_keyword.xsd",
+        "tests/feature/flattened_content_helpers/expected/keyword.rs",
+        Config::test_default()
+            .with_render_step(ContentHelpersRenderStep)
+            .with_generate([(IdentType::Element, "tns:KeywordFoo")]),
+    );
+}
