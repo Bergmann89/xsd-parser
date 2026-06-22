@@ -841,6 +841,17 @@ impl IdentQuadruple {
     }
 }
 
+impl From<TypeIdent> for IdentQuadruple {
+    fn from(value: TypeIdent) -> Self {
+        Self {
+            ns: Some(NamespaceIdent::Id(value.ns)),
+            schema: Some(SchemaIdent::Id(value.schema)),
+            name: value.name.into(),
+            type_: value.type_,
+        }
+    }
+}
+
 impl<X> From<(IdentType, X)> for IdentQuadruple
 where
     X: AsRef<str>,

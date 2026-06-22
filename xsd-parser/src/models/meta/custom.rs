@@ -6,7 +6,9 @@ use std::hash::{Hash, Hasher};
 use xsd_parser_types::misc::Namespace;
 
 use crate::config::NamespaceId;
-use crate::pipeline::generator::{ValueGenerator, ValueGeneratorBox};
+use crate::pipeline::generator::{
+    CustomGenerator, CustomGeneratorBox, ValueGenerator, ValueGeneratorBox,
+};
 
 /// Type information for a custom defined type.
 pub struct CustomMeta {
@@ -23,6 +25,11 @@ pub struct CustomMeta {
     /// This is used to translate default values specified in the XSD schema,
     /// to suitable rust code.
     pub default: Option<ValueGeneratorBox>,
+
+    /// The generator step that is execute if a custom type is processed by the generator.
+    ///
+    /// This can be used to add custom code to the generated code for a custom type.
+    pub generator: Option<CustomGeneratorBox>,
 
     /// The namespaces needed by this custom type.
     pub namespaces: Vec<CustomMetaNamespace>,
@@ -42,6 +49,7 @@ impl CustomMeta {
             name: name.into(),
             include: None,
             default: None,
+            generator: None,
             namespaces: Vec::new(),
             allow_any: false,
         }
@@ -76,6 +84,14 @@ impl CustomMeta {
     #[must_use]
     pub fn with_default<X: ValueGenerator>(mut self, x: X) -> Self {
         self.default = Some(Box::new(x));
+
+        self
+    }
+
+    /// Set the generator step that is execute if a custom type is processed by the generator.
+    #[must_use]
+    pub fn with_generator<X: CustomGenerator>(mut self, x: X) -> Self {
+        self.generator = Some(Box::new(x));
 
         self
     }
@@ -120,6 +136,10 @@ impl Clone for CustomMeta {
             name: self.name.clone(),
             include: self.include.clone(),
             default: self.default.as_ref().map(|x| ValueGenerator::clone(&**x)),
+            generator: self
+                .generator
+                .as_ref()
+                .map(|x| CustomGenerator::clone(&**x)),
             namespaces: self.namespaces.clone(),
             allow_any: self.allow_any,
         }
@@ -132,6 +152,7 @@ impl Debug for CustomMeta {
             .field("name", &self.name)
             .field("include", &self.include)
             .field("default", &self.default.is_some())
+            .field("generator", &self.generator.is_some())
             .field("namespaces", &self.namespaces)
             .field("allow_any", &self.allow_any)
             .finish()

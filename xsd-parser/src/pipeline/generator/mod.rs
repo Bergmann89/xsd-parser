@@ -44,11 +44,14 @@ use crate::models::{
 use crate::traits::Naming;
 
 pub use self::context::Context;
-pub use self::custom::{ValueGenerator, ValueGeneratorBox, ValueGeneratorMode};
+pub use self::custom::{
+    CustomGenerator, CustomGeneratorBox, ValueGenerator, ValueGeneratorBox, ValueGeneratorMode,
+};
 pub use self::error::Error;
 pub use self::meta::MetaData;
+pub use self::state::TypeRef;
 
-use self::state::{LoopDetection, PendingType, State, TraitInfos, TypeRef};
+use self::state::{LoopDetection, PendingType, State, TraitInfos};
 
 /// Configurable Rust code generator for schema-derived type information.
 ///

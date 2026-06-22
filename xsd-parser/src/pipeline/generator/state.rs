@@ -30,11 +30,18 @@ pub(super) struct PendingType<'types> {
 
 /* TypeRef */
 
+/// Reference to a type that is processed by the generator.
+///
+/// It mainly carries the resolved [`PathData`] of the type, which can be used
+/// to reference the type from the generated code.
 #[derive(Debug)]
-pub(super) struct TypeRef {
-    pub id: usize,
+pub struct TypeRef {
+    pub(super) id: usize,
+
+    /// Resolved path of the type.
     pub path: PathData,
-    pub reachable: BitSet<u64>,
+
+    pub(super) reachable: BitSet<u64>,
 }
 
 impl TypeRef {
