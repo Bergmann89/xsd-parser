@@ -1,3 +1,4 @@
+mod content_helper;
 mod defaults;
 mod enum_const;
 mod namespace_const;
@@ -22,6 +23,7 @@ use crate::models::{
 
 use super::Context;
 
+pub use self::content_helper::ContentHelpersRenderStep;
 pub use self::defaults::DefaultsRenderStep;
 pub use self::enum_const::EnumConstantsRenderStep;
 pub use self::namespace_const::NamespaceConstantsRenderStep;

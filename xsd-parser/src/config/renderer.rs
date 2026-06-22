@@ -195,6 +195,17 @@ pub enum RenderStep {
     /// that the serializer can discover which XML namespaces are actually needed
     /// at runtime before writing the root start element.
     QuickXmlCollectNamespaces,
+
+    /// Renderer that generates ergonomic helper accessors for flattened struct content.
+    ///
+    /// This targets the pattern:
+    /// `pub struct Foo { pub content: Vec<FooContent>, ... }`
+    /// `pub enum FooContent { PrivateNote(String), ... }`
+    /// and generates:
+    /// `impl Foo {`
+    /// `  pub fn private_note(&self) -> Option<&String> { ... }`
+    /// `}`
+    ContentHelpers,
 }
 
 /// Helper trait to deal with custom render steps.
@@ -250,6 +261,7 @@ impl RenderStepConfig for RenderStep {
             Self::QuickXmlSerialize { .. } => RenderStepType::ExtraImpls,
             Self::QuickXmlDeserialize { .. } => RenderStepType::ExtraImpls,
             Self::QuickXmlCollectNamespaces => RenderStepType::ExtraImpls,
+            Self::ContentHelpers => RenderStepType::ExtraImpls,
         }
     }
 
@@ -259,11 +271,11 @@ impl RenderStepConfig for RenderStep {
 
     fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
-            PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
-            QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
-            SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
-            TypesRenderStep, WithNamespaceTraitRenderStep,
+            ContentHelpersRenderStep, DefaultsRenderStep, EnumConstantsRenderStep,
+            NamespaceConstantsRenderStep, PrefixConstantsRenderStep,
+            QuickXmlCollectNamespacesRenderStep, QuickXmlDeserializeRenderStep,
+            QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
+            SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
         };
 
         match *self {
@@ -291,16 +303,17 @@ impl RenderStepConfig for RenderStep {
                 Box::new(QuickXmlDeserializeRenderStep { boxed_deserializer })
             }
             Self::QuickXmlCollectNamespaces => Box::new(QuickXmlCollectNamespacesRenderStep),
+            Self::ContentHelpers => Box::new(ContentHelpersRenderStep),
         }
     }
 
     fn is_mutual_exclusive_to(&self, other: &dyn RenderStepConfig) -> bool {
         use crate::pipeline::renderer::{
-            DefaultsRenderStep, EnumConstantsRenderStep, NamespaceConstantsRenderStep,
-            PrefixConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
-            QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep,
-            SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
-            TypesRenderStep, WithNamespaceTraitRenderStep,
+            ContentHelpersRenderStep, DefaultsRenderStep, EnumConstantsRenderStep,
+            NamespaceConstantsRenderStep, PrefixConstantsRenderStep,
+            QuickXmlCollectNamespacesRenderStep, QuickXmlDeserializeRenderStep,
+            QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
+            SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
         };
 
         if self
@@ -359,6 +372,7 @@ impl RenderStepConfig for RenderStep {
             (Self::QuickXmlCollectNamespaces, None) => {
                 other_id == TypeId::of::<QuickXmlCollectNamespacesRenderStep>()
             }
+            (Self::ContentHelpers, None) => other_id == TypeId::of::<ContentHelpersRenderStep>(),
             _ => false,
         }
     }
@@ -380,7 +394,8 @@ impl RenderStep {
             | (Self::WithNamespaceTrait, Self::WithNamespaceTrait)
             | (Self::QuickXmlSerialize { .. }, Self::QuickXmlSerialize { .. })
             | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. })
-            | (Self::QuickXmlCollectNamespaces, Self::QuickXmlCollectNamespaces) => true,
+            | (Self::QuickXmlCollectNamespaces, Self::QuickXmlCollectNamespaces)
+            | (Self::ContentHelpers, Self::ContentHelpers) => true,
             (_, _) => false,
         }
     }

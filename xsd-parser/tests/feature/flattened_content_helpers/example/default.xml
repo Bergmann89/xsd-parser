@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Foo xmlns="http://example.com">
+    <Bar>hello</Bar>
+    <Baz>42</Baz>
+    <Bar>world</Bar>
+</Foo>
