@@ -1,5 +1,6 @@
 mod complex;
 mod constrains;
+mod custom;
 mod dynamic;
 mod enumeration;
 mod reference;
@@ -13,22 +14,14 @@ use std::mem::swap;
 use crate::config::GeneratorFlags;
 use crate::models::{
     code::IdentPath,
-    data::{BuildInData, CustomData, PathData},
-    meta::{BuildInMeta, CustomMeta},
+    data::{BuildInData, PathData},
+    meta::BuildInMeta,
 };
 
 use super::Context;
 
 impl<'types> BuildInData<'types> {
     fn new(meta: &'types BuildInMeta) -> Self {
-        Self {
-            meta: Cow::Borrowed(meta),
-        }
-    }
-}
-
-impl<'types> CustomData<'types> {
-    fn new(meta: &'types CustomMeta) -> Self {
         Self {
             meta: Cow::Borrowed(meta),
         }

@@ -3,7 +3,7 @@
 use std::collections::{hash_map::Entry, HashMap, HashSet};
 use std::ops::Not;
 
-use proc_macro2::{Ident as Ident2, TokenStream};
+use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::config::TypedefMode;
@@ -15,11 +15,11 @@ use crate::models::{
         ReferenceData, SimpleData, StructMode, UnionData, UnionTypeVariant,
     },
     meta::{
-        ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes,
-        WhiteSpace,
+        ComplexMeta, DeriveRelationship, ElementMeta, ElementMetaFlags, ElementMetaVariant,
+        ElementMode, MetaTypeVariant, MetaTypes, WhiteSpace,
     },
     schema::{xs::Use, MaxOccurs},
-    TypeIdent,
+    IdentType, TypeIdent,
 };
 
 use super::super::super::{
@@ -209,16 +209,21 @@ impl DynamicData<'_> {
             ..
         } = self;
 
-        let variants = derived_types.iter().map(|x| {
+        let mut duplicates = HashSet::new();
+        let variants = derived_types.iter().filter_map(|x| {
+            if !duplicates.insert((&x.key.ns, &x.key.name, &x.meta.type_)) {
+                return None;
+            }
+
             let target_type = ctx.resolve_type_for_deserialize_module(&x.target_type);
             let variant_ident = &x.variant_ident;
 
             let with_deserializer =
                 resolve_ident!(ctx, "::xsd_parser_types::quick_xml::WithDeserializer");
 
-            quote! {
+            Some(quote! {
                 #variant_ident(<#target_type as #with_deserializer>::Deserializer),
-            }
+            })
         });
 
         let code = quote! {
@@ -231,6 +236,7 @@ impl DynamicData<'_> {
         ctx.quick_xml_deserialize().append(code);
     }
 
+    #[expect(clippy::too_many_lines)]
     fn render_deserializer_impls(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -268,22 +274,74 @@ impl DynamicData<'_> {
             boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
         let deref_self = config.boxed_deserializer.then(|| quote!(*));
 
-        let variants_init = derived_types
+        /* init */
+
+        let variants_init_type = derived_types
             .iter()
-            .map(|x| x.render_deserializer_init(ctx, type_ident, deserializer_ident));
-        let variants_next = derived_types
+            .filter_map(|x| x.render_deserializer_init_type(ctx, type_ident, deserializer_ident))
+            .collect::<Vec<_>>();
+        let variants_init_element = derived_types
             .iter()
-            .map(|x| x.render_deserializer_next(ctx, type_ident, deserializer_ident));
-        let variants_finish = derived_types.iter().map(|x| {
+            .filter_map(|x| x.render_deserializer_init_element(ctx, type_ident, deserializer_ident))
+            .collect::<Vec<_>>();
+        let variants_init_type = variants_init_type.is_empty().not().then(|| {
+            let qname = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::QName");
+            let get_qname = quote!(#qname(&type_name));
+            let get_type_name = quote!(type_name);
+            let matcher = make_type_element_matcher(ctx, &get_qname, &get_type_name);
+            let body = if let Some(default) = self.get_default_type_name(ctx) {
+                quote! {
+                    let type_name = helper.get_dynamic_type_from_attrib(&event)?.unwrap_or(#default).into_owned();
+
+                    #( #variants_init_type )*
+                }
+            } else {
+                quote! {
+                    if let Some(type_name) = helper.get_dynamic_type_from_attrib(&event)? {
+                        let type_name = type_name.into_owned();
+
+                        #( #variants_init_type )*
+                    }
+                }
+            };
+
+            quote! {
+                if #matcher {
+                    #body
+                }
+            }
+        });
+
+        /* next */
+
+        let mut duplicates = HashSet::new();
+        let variants_next = derived_types.iter().filter_map(|x| {
+            if !duplicates.insert((&x.key.ns, &x.key.name, &x.meta.type_)) {
+                return None;
+            }
+
+            Some(x.render_deserializer_next(ctx, type_ident, deserializer_ident))
+        });
+
+        /* finish */
+
+        let mut duplicates = HashSet::new();
+        let variants_finish = derived_types.iter().filter_map(|x| {
+            if !duplicates.insert((&x.key.ns, &x.key.name, &x.meta.type_)) {
+                return None;
+            }
+
             let variant_ident = &x.variant_ident;
 
             let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
             ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
-            quote! {
+            Some(quote! {
                 #boxed_deserializer_ident::#variant_ident(x) => Ok(super::#type_ident(#box_::new(x.finish(helper)?))),
-            }
+            })
         });
+
+        /* compile code */
 
         let code = quote! {
             impl<'de> #deserializer<'de, super::#type_ident> for #deserializer_type {
@@ -291,7 +349,7 @@ impl DynamicData<'_> {
                     helper: &mut #deserialize_helper,
                     event: #event<'de>,
                 ) -> #deserializer_result<'de, super::#type_ident> {
-                    let Some(type_name) = helper.get_dynamic_type_name(&event)? else {
+                    let Some(type_name) = helper.get_dynamic_type_from_tag(&event) else {
                         return Ok(#deserializer_output {
                             artifact: #deserializer_artifact::None,
                             event: #deserializer_event::None,
@@ -300,7 +358,8 @@ impl DynamicData<'_> {
                     };
                     let type_name = type_name.into_owned();
 
-                    #( #variants_init )*
+                    #variants_init_type
+                    #( #variants_init_element )*
 
                     Ok(#deserializer_output {
                         artifact: #deserializer_artifact::None,
@@ -332,9 +391,52 @@ impl DynamicData<'_> {
 
         ctx.quick_xml_deserialize().append(code);
     }
+
+    fn get_default_type_name(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let default = self.derived_types.iter().find(|x| {
+            x.key.type_ == IdentType::Type
+                && x.meta.relationship == DeriveRelationship::ConcreteType
+        })?;
+
+        let ident = &default.key;
+        let s_name = ident.name.to_string();
+        let b_name = Literal::byte_string(s_name.as_bytes());
+
+        let cow = resolve_quick_xml_ident!(ctx, "::alloc::borrow::Cow");
+
+        Some(quote! {
+            #cow::Borrowed(#b_name)
+        })
+    }
 }
 
-impl DerivedType {
+impl DerivedType<'_> {
+    fn render_deserializer_init_element(
+        &self,
+        ctx: &Context<'_, '_>,
+        type_ident: &Ident2,
+        deserializer_ident: &Ident2,
+    ) -> Option<TokenStream> {
+        if self.key.type_ == IdentType::Element {
+            Some(self.render_deserializer_init(ctx, type_ident, deserializer_ident))
+        } else {
+            None
+        }
+    }
+
+    fn render_deserializer_init_type(
+        &self,
+        ctx: &Context<'_, '_>,
+        type_ident: &Ident2,
+        deserializer_ident: &Ident2,
+    ) -> Option<TokenStream> {
+        if self.key.type_ == IdentType::Type {
+            Some(self.render_deserializer_init(ctx, type_ident, deserializer_ident))
+        } else {
+            None
+        }
+    }
+
     fn render_deserializer_init(
         &self,
         ctx: &Context<'_, '_>,
@@ -342,7 +444,7 @@ impl DerivedType {
         deserializer_ident: &Ident2,
     ) -> TokenStream {
         let Self {
-            ident,
+            key,
             b_name,
             target_type,
             variant_ident,
@@ -390,7 +492,7 @@ impl DerivedType {
             .meta
             .types
             .modules
-            .get(&ident.ns)
+            .get(&key.ns)
             .and_then(|x| x.make_ns_const())
         {
             let ns_name = ctx.resolve_type_for_deserialize_module(&path);
@@ -1061,10 +1163,15 @@ impl ComplexDataEnum<'_> {
             .elements
             .iter()
             .find_map(|x| x.deserializer_enum_variant_init_text(ctx));
-        let elements = self
+        let elements_by_tag = self
             .elements
             .iter()
-            .filter_map(|x| x.deserializer_enum_variant_init_element(ctx))
+            .filter_map(|x| x.deserializer_enum_variant_init_element_by_tag(ctx))
+            .collect::<Vec<_>>();
+        let elements_by_type = self
+            .elements
+            .iter()
+            .filter_map(|x| x.deserializer_enum_variant_init_element_by_type(ctx))
             .collect::<Vec<_>>();
         let groups = self
             .elements
@@ -1077,7 +1184,7 @@ impl ComplexDataEnum<'_> {
             .filter_map(|x| x.deserializer_enum_variant_init_any(ctx))
             .collect::<Vec<_>>();
 
-        let x = if elements.is_empty() {
+        let x = if elements_by_tag.is_empty() && elements_by_type.is_empty() {
             quote!(_)
         } else {
             quote!(x)
@@ -1094,6 +1201,33 @@ impl ComplexDataEnum<'_> {
             )
         };
 
+        let elements_by_type = elements_by_type.is_empty().not().then(|| {
+            let get_qname = quote!(x.name());
+            let get_type_name = quote!(x.name().local_name().as_ref());
+            let matcher = make_type_element_matcher(ctx, &get_qname, &get_type_name);
+            let body = if let Some(default) = self.get_default_type_name(ctx) {
+                quote! {
+                    let type_name = helper.get_dynamic_type_from_attrib_bytes(x)?.unwrap_or(#default).into_owned();
+
+                    #( #elements_by_type )*
+                }
+            } else {
+                quote! {
+                    if let Some(type_name) = helper.get_dynamic_type_from_attrib_bytes(x)? {
+                        let type_name = type_name.into_owned();
+
+                        #( #elements_by_type )*
+                    }
+                }
+            };
+
+            quote! {
+                if #matcher {
+                    #body
+                }
+            }
+        });
+
         quote! {
             fn find_suitable<'de>(
                 &mut self,
@@ -1104,7 +1238,8 @@ impl ComplexDataEnum<'_> {
                 #allow_any_decl
 
                 if let #event::Start(#x) | #event::Empty(#x) = &event {
-                    #( #elements )*
+                    #( #elements_by_tag )*
+                    #elements_by_type
                     #( #groups )*
                     #( #any )*
                 }
@@ -1116,6 +1251,21 @@ impl ComplexDataEnum<'_> {
                 Ok(#element_handler_output::return_to_parent(event, #allow_any_result))
             }
         }
+    }
+
+    fn get_default_type_name(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let default = self
+            .elements
+            .iter()
+            .find(|x| x.meta().flags.contains(ElementMetaFlags::DEFAULT_ELEMENT))?;
+
+        let b_name = &default.b_name;
+
+        let cow = resolve_quick_xml_ident!(ctx, "::alloc::borrow::Cow");
+
+        Some(quote! {
+            #cow::Borrowed(#b_name)
+        })
     }
 
     fn render_deserializer_fn_from_bytes_start(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
@@ -2951,6 +3101,8 @@ impl ComplexDataElement<'_> {
         &self,
         ctx: &Context<'_, '_>,
         call_handler: &TokenStream,
+        get_qname: &TokenStream,
+        get_type_name: &TokenStream,
     ) -> Option<TokenStream> {
         if !self.treat_as_element() {
             return None;
@@ -2981,13 +3133,13 @@ impl ComplexDataElement<'_> {
             let ns_name = ctx.resolve_type_for_deserialize_module(&path);
 
             Some(quote! {
-                if matches!(helper.resolve_local_name(x.name(), &#ns_name), Some(#b_name)) {
+                if matches!(helper.resolve_local_name(#get_qname, &#ns_name), Some(#b_name)) {
                     #body
                 }
             })
         } else {
             Some(quote! {
-                if x.name().local_name().as_ref() == #b_name {
+                if #get_type_name == #b_name {
                     #body
                 }
             })
@@ -3070,13 +3222,56 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_enum_variant_init_element(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+    fn deserializer_enum_variant_init_element_by_type(
+        &self,
+        ctx: &Context<'_, '_>,
+    ) -> Option<TokenStream> {
+        if self
+            .meta()
+            .flags
+            .contains(ElementMetaFlags::IDENTIFY_BY_TYPE)
+        {
+            let qname = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::QName");
+
+            let get_qname = quote!(#qname(&type_name));
+            let get_type_name = quote!(type_name);
+
+            self.deserializer_enum_variant_init_element(ctx, &get_qname, &get_type_name)
+        } else {
+            None
+        }
+    }
+
+    fn deserializer_enum_variant_init_element_by_tag(
+        &self,
+        ctx: &Context<'_, '_>,
+    ) -> Option<TokenStream> {
+        if self
+            .meta()
+            .flags
+            .contains(ElementMetaFlags::IDENTIFY_BY_TAG)
+        {
+            let get_qname = quote!(x.name());
+            let get_type_name = quote!(x.name().local_name().as_ref());
+
+            self.deserializer_enum_variant_init_element(ctx, &get_qname, &get_type_name)
+        } else {
+            None
+        }
+    }
+
+    fn deserializer_enum_variant_init_element(
+        &self,
+        ctx: &Context<'_, '_>,
+        get_qname: &TokenStream,
+        get_type_name: &TokenStream,
+    ) -> Option<TokenStream> {
         let default = resolve_build_in!(ctx, "::core::default::Default");
 
         let handler_ident = self.handler_ident();
         let call_handler = quote!(self.#handler_ident(helper, #default::default(), None, output));
 
-        self.deserializer_init_element(ctx, &call_handler)
+        self.deserializer_init_element(ctx, &call_handler, get_qname, get_type_name)
     }
 
     fn deserializer_enum_variant_init_group(
@@ -3626,8 +3821,10 @@ impl ComplexDataElement<'_> {
     fn deserializer_struct_field_init_element(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let handler_ident = self.handler_ident();
         let call_handler = quote!(self.#handler_ident(helper, output, &mut *fallback));
+        let get_qname = quote!(x.name());
+        let get_type_name = quote!(x.name().local_name().as_ref());
 
-        self.deserializer_init_element(ctx, &call_handler)
+        self.deserializer_init_element(ctx, &call_handler, &get_qname, &get_type_name)
     }
 
     fn deserializer_struct_field_init_group(
@@ -4248,13 +4445,7 @@ impl MaxOccurs {
     }
 }
 
-fn boxed_deserializer_ident(is_boxed: bool, deserializer_ident: &Ident2) -> Ident2 {
-    if is_boxed {
-        deserializer_ident.clone()
-    } else {
-        format_ident!("Self")
-    }
-}
+/* DefaultableCache */
 
 #[derive(Default, Debug)]
 struct DefaultableCache {
@@ -4381,6 +4572,45 @@ impl DefaultableCache {
                     Defaultable::None
                 }
             }
+        }
+    }
+}
+
+/* Helper */
+
+fn boxed_deserializer_ident(is_boxed: bool, deserializer_ident: &Ident2) -> Ident2 {
+    if is_boxed {
+        deserializer_ident.clone()
+    } else {
+        format_ident!("Self")
+    }
+}
+
+fn make_type_element_matcher(
+    ctx: &Context<'_, '_>,
+    get_qname: &TokenStream,
+    get_type_name: &TokenStream,
+) -> TokenStream {
+    let ident = ctx.ident;
+    let s_name = ident.name.to_string();
+    let b_name = Literal::byte_string(s_name.as_bytes());
+
+    if let Some(path) = ctx
+        .types
+        .meta
+        .types
+        .modules
+        .get(&ident.ns)
+        .and_then(|x| x.make_ns_const())
+    {
+        let ns_name = ctx.resolve_type_for_deserialize_module(&path);
+
+        quote! {
+            matches!(helper.resolve_local_name(#get_qname, &#ns_name), Some(#b_name))
+        }
+    } else {
+        quote! {
+            #get_type_name == #b_name
         }
     }
 }

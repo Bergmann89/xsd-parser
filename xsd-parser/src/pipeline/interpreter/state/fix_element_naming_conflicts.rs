@@ -106,7 +106,7 @@ impl IdentSlice for DynamicMeta {
     }
 
     fn get_ident(&self, index: usize) -> (NamespaceId, &str) {
-        let type_ = &self.derived_types[index].type_;
+        let type_ = self.derived_types.as_slice().get_index(index).unwrap().0;
         (type_.ns, type_.name.as_str())
     }
 

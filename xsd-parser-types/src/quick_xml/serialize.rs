@@ -512,6 +512,146 @@ where
     }
 }
 
+/* XsiTypeSerializer */
+
+/// A [`Serializer`] that wraps another (boxed) serializer to serialize a value
+/// of a dynamic type that is dispatched via the `xsi:type` attribute.
+///
+/// The wrapped serializer emits the value using the element name of its actual
+/// (concrete) type. This serializer rewrites the resulting element so that it
+/// uses the dynamic type's base element `name` and moves the original element
+/// name into a `xsi:type` attribute instead. If the value is already using the
+/// base element name (i.e. it is the base type itself) no `xsi:type` attribute
+/// is added.
+#[derive(Debug)]
+pub struct XsiTypeSerializer<'ser, T> {
+    inner: T,
+    name: &'ser str,
+    is_root: bool,
+    state: XsiTypeState,
+}
+
+#[derive(Debug)]
+enum XsiTypeState {
+    /// The serializer was just created, no event was emitted yet.
+    Init,
+
+    /// The opening element was not emitted yet.
+    Pending,
+
+    /// The opening element was emitted, waiting for the matching closing
+    /// element. The contained value is the current nesting depth.
+    Open(usize),
+
+    /// The opening (and closing) element was emitted.
+    Done,
+}
+
+impl<'ser, T> XsiTypeSerializer<'ser, T> {
+    /// Create a new [`XsiTypeSerializer`] that wraps the passed `inner`
+    /// serializer and rewrites the emitted element to use the passed base
+    /// element `name`.
+    #[must_use]
+    pub fn new(inner: T, name: &'ser str, is_root: bool) -> Self {
+        Self {
+            inner,
+            name,
+            is_root,
+            state: XsiTypeState::Init,
+        }
+    }
+
+    /// Rewrite the opening element so that it uses the base element name and
+    /// references its original (concrete) name via a `xsi:type` attribute.
+    fn rewrite(&self, bytes: BytesStart<'ser>, helper: &mut SerializeHelper) -> BytesStart<'ser> {
+        // The value uses the base element name already, so it is the base type
+        // and does not need a `xsi:type` attribute.
+        if bytes.name().as_ref() == self.name.as_bytes() {
+            return bytes;
+        }
+
+        let type_name = bytes.name().as_ref().to_owned();
+
+        let mut new = BytesStart::new(self.name);
+
+        if self.is_root {
+            helper.write_xmlns(&mut new, Some(&NamespacePrefix::XSI), &Namespace::XSI);
+        }
+
+        new.push_attribute((&b"xsi:type"[..], &type_name[..]));
+        new.extend_attributes(bytes.attributes().filter_map(|attr| {
+            let attr = attr.ok()?;
+
+            if attr.key.as_ref() == b"xsi:type" || attr.key.as_ref() == b"xmlns:xsi" {
+                None
+            } else {
+                Some(attr)
+            }
+        }));
+
+        new
+    }
+}
+
+impl<'ser, T> Serializer<'ser> for XsiTypeSerializer<'ser, T>
+where
+    T: Serializer<'ser>,
+{
+    fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+        let event = match self.inner.next(helper)? {
+            Ok(event) => event,
+            Err(error) => return Some(Err(error)),
+        };
+
+        if matches!(self.state, XsiTypeState::Init) {
+            self.state = XsiTypeState::Pending;
+            helper.begin_ns_scope();
+        }
+
+        if matches!(self.state, XsiTypeState::Pending) {
+            return Some(Ok(match event {
+                Event::Empty(bytes) => {
+                    let bytes = self.rewrite(bytes, helper);
+                    self.state = XsiTypeState::Done;
+
+                    Event::Empty(bytes)
+                }
+                Event::Start(bytes) => {
+                    let bytes = self.rewrite(bytes, helper);
+                    self.state = XsiTypeState::Open(1);
+
+                    Event::Start(bytes)
+                }
+                other => {
+                    self.state = XsiTypeState::Done;
+
+                    other
+                }
+            }));
+        }
+
+        if let XsiTypeState::Open(depth) = &mut self.state {
+            match &event {
+                Event::Start(_) => *depth += 1,
+                Event::End(_) => {
+                    *depth -= 1;
+
+                    if *depth == 0 {
+                        self.state = XsiTypeState::Done;
+
+                        helper.end_ns_scope();
+
+                        return Some(Ok(Event::End(BytesEnd::new(self.name))));
+                    }
+                }
+                _ => (),
+            }
+        }
+
+        Some(Ok(event))
+    }
+}
+
 /// Trait for collecting namespaces of a type and all its sub-types.
 ///
 /// Implement this trait to allow the dynamic serialization mode to discover which

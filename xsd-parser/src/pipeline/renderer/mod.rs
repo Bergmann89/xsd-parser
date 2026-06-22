@@ -27,15 +27,13 @@ mod steps;
 use std::fmt::{Debug, Display};
 use std::str::FromStr;
 
-use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::config::{DynTypeTraits, RendererFlags};
 use crate::models::{
     code::{IdentPath, Module},
-    data::{DataTypeVariant, DataTypes, Occurs, PathData},
-    meta::ModuleMeta,
+    data::{DataTypeVariant, DataTypes, Occurs},
 };
 
 pub use self::context::{Context, ValueKey, Values};
@@ -322,30 +320,6 @@ impl RenderStepType {
     #[must_use]
     pub fn is_mutual_exclusive_to(&self, other: Self) -> bool {
         matches!((self, other), (Self::Types, Self::Types))
-    }
-}
-
-impl ModuleMeta {
-    pub(super) fn make_ns_const(&self) -> Option<PathData> {
-        self.namespace.as_ref()?;
-        let name = self.name().map_or_else(
-            || format!("UNNAMED_{}", self.namespace_id.0),
-            |name| name.as_str().to_screaming_snake_case(),
-        );
-        let ident = format_ident!("NS_{name}");
-        let path = IdentPath::from_parts([], ident);
-
-        Some(PathData::from_path(path))
-    }
-
-    pub(super) fn make_prefix_const(&self) -> Option<PathData> {
-        self.namespace.as_ref()?;
-        let name = self.name()?;
-        let name = name.as_str().to_screaming_snake_case();
-        let ident = format_ident!("PREFIX_{name}");
-        let path = IdentPath::from_parts([], ident);
-
-        Some(PathData::from_path(path))
     }
 }
 

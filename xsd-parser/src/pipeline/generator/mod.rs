@@ -44,11 +44,14 @@ use crate::models::{
 use crate::traits::Naming;
 
 pub use self::context::Context;
-pub use self::custom::{ValueGenerator, ValueGeneratorBox, ValueGeneratorMode};
+pub use self::custom::{
+    CustomGenerator, CustomGeneratorBox, ValueGenerator, ValueGeneratorBox, ValueGeneratorMode,
+};
 pub use self::error::Error;
 pub use self::meta::MetaData;
+pub use self::state::TypeRef;
 
-use self::state::{LoopDetection, PendingType, State, TraitInfos, TypeRef};
+use self::state::{LoopDetection, PendingType, State, TraitInfos};
 
 /// Configurable Rust code generator for schema-derived type information.
 ///
@@ -103,7 +106,8 @@ impl<'types> Generator<'types> {
                 String::new(),               // BuildIn = 6
                 String::new(),               // Enumeration = 7
                 String::from("NotNil"),      // NillableContent = 8
-                String::from("Dyn"),         // DynamicElement = 9
+                String::from("Dyn"),         // SubstitutionElement = 9
+                String::from("Dyn"),         // DynamicVariant = 10
             ],
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
@@ -118,7 +122,7 @@ impl<'types> Generator<'types> {
         let state = State {
             cache: BTreeMap::new(),
             pending: VecDeque::new(),
-            trait_infos: None,
+            trait_infos: TraitInfos::empty(),
             loop_detection: LoopDetection::default(),
         };
 
@@ -442,6 +446,8 @@ impl<'types> State<'types> {
             Entry::Occupied(e) => Ok(e.into_mut()),
             Entry::Vacant(e) => {
                 let id = self.loop_detection.next_id(e.key().clone());
+
+                self.trait_infos.update(meta.types, e.key());
 
                 Self::create_type_ref(id, &*meta.naming, &mut self.pending, e, meta, ident)
             }

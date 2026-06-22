@@ -2357,6 +2357,8 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "num",
+ "proc-macro2",
+ "quote",
  "xsd-parser",
  "xsd-parser-types",
 ]

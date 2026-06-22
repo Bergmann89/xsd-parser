@@ -20,9 +20,12 @@ use crate::models::{
         EnumerationDataVariant, EnumerationVariantValue, Occurs, PathData, ReferenceData,
         SimpleData, TagName, UnionData, UnionTypeVariant,
     },
-    meta::{CustomMetaNamespace, ElementMetaVariant, MetaTypeVariant, MetaTypes},
+    meta::{
+        CustomMetaNamespace, DeriveRelationship, DerivedTypeMeta, ElementMeta, ElementMetaFlags,
+        ElementMetaVariant, MetaTypeVariant, MetaTypes,
+    },
     schema::{xs::FormChoiceType, NamespaceId},
-    TypeIdent,
+    IdentType, TypeIdent,
 };
 
 use super::super::super::{
@@ -224,6 +227,9 @@ impl DynamicData<'_> {
         let boxed_serializer =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::BoxedSerializer");
 
+        let dynamic_type_serializer = self.render_dynamic_type_serializer(ctx);
+        let dynamic_element_serializer = self.render_dynamic_element_serializer(ctx);
+
         let code = quote! {
             impl #with_serializer for #type_ident {
                 type Serializer<'x> = #boxed_serializer<'x>;
@@ -233,7 +239,8 @@ impl DynamicData<'_> {
                     name: #option<&'ser #str_>,
                     is_root: #bool_
                 ) -> #result<Self::Serializer<'ser>, #error> {
-                    let _name = name;
+                    #dynamic_type_serializer
+                    #( #dynamic_element_serializer )*
 
                     self.0.serializer(None, is_root)
                 }
@@ -241,6 +248,64 @@ impl DynamicData<'_> {
         };
 
         ctx.current_module().append(code);
+    }
+
+    fn render_dynamic_type_serializer(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        filter_dynamic_types(&self.derived_types, |x| (&x.key, &x.meta))
+            .map(|x| {
+                let target_type = ctx.resolve_type_for_module(&x.target_type);
+
+                quote!((*self.0).as_any().is::<#target_type>())
+            })
+            .fold(None, |acc, condition| {
+                Some(if let Some(acc) = acc {
+                    quote!(#acc || #condition)
+                } else {
+                    condition
+                })
+            })
+            .map(|condition| {
+                let config = ctx.get_ref::<SerializerConfig>();
+                let tag_name = self
+                    .tag_name
+                    .get_for_default_namespace(&config.default_namespace);
+                let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+                let xsi_type_serializer =
+                    resolve_ident!(ctx, "::xsd_parser_types::quick_xml::XsiTypeSerializer");
+
+                quote! {
+                    if #condition {
+                        return Ok(#box_::new(#xsi_type_serializer::new(
+                            self.0.serializer(None, is_root)?,
+                            name.unwrap_or(#tag_name),
+                            is_root,
+                        )));
+                    }
+                }
+            })
+    }
+
+    fn render_dynamic_element_serializer<'x, 'a>(
+        &'x self,
+        ctx: &'x Context<'a, '_>,
+    ) -> impl Iterator<Item = TokenStream> + use<'x, 'a> {
+        self.derived_types.iter().filter_map(move |x| {
+            if x.key.type_ != IdentType::Element {
+                return None;
+            }
+
+            let target_type = ctx.resolve_type_for_module(&x.target_type);
+            let config = ctx.get_ref::<SerializerConfig>();
+            let tag_name = x
+                .tag_name
+                .get_for_default_namespace(&config.default_namespace);
+
+            Some(quote! {
+                if (*self.0).as_any().is::<#target_type>() {
+                    return self.0.serializer(Some(#tag_name), is_root);
+                }
+            })
+        })
     }
 }
 
@@ -855,7 +920,7 @@ impl ComplexDataEnum<'_> {
         let state_variants = self
             .elements
             .iter()
-            .map(|x| x.render_serializer_state_variant(ctx));
+            .filter_map(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.represents_element().then(|| {
             quote! {
                 End__,
@@ -877,6 +942,12 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_serializer_impl(&self, ctx: &mut Context<'_, '_>) {
+        let config = ctx.get_ref::<SerializerConfig>();
+        let element_name = self.tag_name.as_ref().map_or_else(
+            || ctx.ident.name.to_string(),
+            |x| x.get_for_default_namespace(&config.default_namespace),
+        );
+
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
 
@@ -904,6 +975,7 @@ impl ComplexDataEnum<'_> {
                 ctx,
                 &self.serializer_state_ident,
                 !self.is_content(),
+                &element_name,
             );
 
             quote! {
@@ -1240,16 +1312,23 @@ impl ComplexDataContent<'_> {
 }
 
 impl ComplexDataElement<'_> {
-    fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
-        let serializer = self
-            .occurs
-            .make_serializer_type(ctx, &target_type, self.need_indirection);
+        let mut serializer =
+            self.occurs
+                .make_serializer_type(ctx, &target_type, self.need_indirection)?;
 
-        quote! {
-            #variant_ident(#serializer),
+        if self.meta().use_dynamic_type_serializer() {
+            let xsi_type_serializer =
+                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::XsiTypeSerializer");
+
+            serializer = quote!(#xsi_type_serializer<'ser, #serializer>);
         }
+
+        Some(quote! {
+            #variant_ident(#serializer),
+        })
     }
 
     fn render_serializer_enum_state_init(
@@ -1257,6 +1336,7 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         state_ident: &Ident2,
         forward_root: bool,
+        dynamic_type: &str,
     ) -> TokenStream {
         let value = match self.occurs {
             Occurs::None => unreachable!(),
@@ -1267,7 +1347,13 @@ impl ComplexDataElement<'_> {
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(&x[..]),
         };
 
-        self.render_serializer_state_init(ctx, state_ident, &value, forward_root)
+        self.render_serializer_state_init(
+            ctx,
+            state_ident,
+            &value,
+            forward_root,
+            Some(dynamic_type),
+        )
     }
 
     fn render_serializer_struct_state_init(
@@ -1288,7 +1374,7 @@ impl ComplexDataElement<'_> {
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(&self.value.#field_ident[..]),
         };
 
-        self.render_serializer_state_init(ctx, state_ident, &value, false)
+        self.render_serializer_state_init(ctx, state_ident, &value, false, None)
     }
 
     fn render_serializer_state_init(
@@ -1297,6 +1383,7 @@ impl ComplexDataElement<'_> {
         state_ident: &Ident2,
         value: &TokenStream,
         forward_root: bool,
+        dynamic_type: Option<&str>,
     ) -> TokenStream {
         let config = ctx.get_ref::<SerializerConfig>();
         let field_name = self
@@ -1316,16 +1403,14 @@ impl ComplexDataElement<'_> {
             .then(|| quote!(None))
             .unwrap_or_else(|| quote!(Some(#field_name)));
 
-        match self.occurs {
+        let mut serializer = match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
                 let with_serializer =
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::WithSerializer");
 
                 quote! {
-                    *self.state = #state_ident::#variant_ident(
-                        #with_serializer::serializer(#value, #element_name, #is_root)?
-                    )
+                    #with_serializer::serializer(#value, #element_name, #is_root)?
                 }
             }
             Occurs::StaticList(_) if self.need_indirection => {
@@ -1335,12 +1420,10 @@ impl ComplexDataElement<'_> {
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::IterSerializer");
 
                 quote! {
-                    *self.state = #state_ident::#variant_ident(
-                        #iter_serializer::new(
-                            #deref_iter::new(#value),
-                            #element_name,
-                            #is_root
-                        )
+                    #iter_serializer::new(
+                        #deref_iter::new(#value),
+                        #element_name,
+                        #is_root
                     )
                 }
             }
@@ -1349,16 +1432,39 @@ impl ComplexDataElement<'_> {
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::IterSerializer");
 
                 quote! {
-                    *self.state = #state_ident::#variant_ident(
-                        #iter_serializer::new(
-                            #value,
-                            #element_name,
-                            #is_root
-                        )
+                    #iter_serializer::new(
+                        #value,
+                        #element_name,
+                        #is_root
                     )
                 }
             }
+        };
+
+        if let Some(dynamic_type) = dynamic_type {
+            if self.meta().use_dynamic_type_serializer() {
+                let xsi_type_serializer = resolve_quick_xml_ident!(
+                    ctx,
+                    "::xsd_parser_types::quick_xml::XsiTypeSerializer"
+                );
+
+                serializer =
+                    quote!(#xsi_type_serializer::new(#serializer, #dynamic_type, #is_root));
+            }
         }
+
+        quote!(*self.state = #state_ident::#variant_ident(#serializer))
+    }
+}
+
+impl ElementMeta {
+    fn use_dynamic_type_serializer(&self) -> bool {
+        self.flags.contains(ElementMetaFlags::IDENTIFY_BY_TYPE)
+            && !self.flags.contains(ElementMetaFlags::DEFAULT_ELEMENT)
+            && (self
+                .flags
+                .contains(ElementMetaFlags::PREFER_IDENTIFY_BY_TYPE)
+                || !self.flags.contains(ElementMetaFlags::IDENTIFY_BY_TAG))
     }
 }
 
@@ -1520,8 +1626,18 @@ impl NamespaceCollector {
                     }
                 }
                 MetaTypeVariant::Dynamic(x) => {
-                    for meta in &x.derived_types {
+                    for meta in x.derived_types.values() {
                         self.merge(&mut state, types, &meta.type_, default_ns);
+                    }
+
+                    let has_dynamic_types = filter_dynamic_types(&x.derived_types, |x| *x)
+                        .next()
+                        .is_some();
+
+                    if has_dynamic_types {
+                        if let Some(id) = self.xsi_namespace {
+                            Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                        }
                     }
                 }
                 MetaTypeVariant::All(x)
@@ -1531,9 +1647,18 @@ impl NamespaceCollector {
                         if let ElementMetaVariant::Type { type_, .. } = &el.variant {
                             self.merge(&mut state, types, type_, default_ns);
                         }
-                        if self.nillable_type_support && el.nillable {
+
+                        if self.nillable_type_support && el.is_nillable() {
                             if let Some(id) = self.xsi_namespace {
                                 Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                            }
+                        }
+
+                        if let MetaTypeVariant::Choice(_) = &ty.variant {
+                            if el.use_dynamic_type_serializer() {
+                                if let Some(id) = self.xsi_namespace {
+                                    Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
+                                }
                             }
                         }
                     }
@@ -1691,4 +1816,41 @@ impl NamespaceCollector {
             }
         }
     }
+}
+
+/* Helper */
+
+fn filter_dynamic_types<'a, I, F>(
+    iter: &'a I,
+    f: F,
+) -> impl Iterator<Item = <&'a I as IntoIterator>::Item>
+where
+    &'a I: IntoIterator + 'a,
+    F: Fn(&<&'a I as IntoIterator>::Item) -> (&'a TypeIdent, &'a DerivedTypeMeta),
+{
+    let derived_elements = iter
+        .into_iter()
+        .filter_map(|x| {
+            let (key, meta) = f(&x);
+
+            if key.type_ == IdentType::Element {
+                Some(&meta.type_)
+            } else {
+                None
+            }
+        })
+        .collect::<HashSet<_>>();
+
+    iter.into_iter().filter_map(move |x| {
+        let (key, meta) = f(&x);
+
+        if key.type_ != IdentType::Type
+            || meta.relationship == DeriveRelationship::ConcreteType
+            || derived_elements.contains(&meta.type_)
+        {
+            return None;
+        }
+
+        Some(x)
+    })
 }

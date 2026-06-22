@@ -1,0 +1,6 @@
+<list xmlns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <cat id="1" breed="Bengal" />
+
+    <dog xsi:type="labrador" id="2" name="Buddy" color="black" />
+    <dog xsi:type="beagle" id="3" name="Max" age="3" />
+</list>

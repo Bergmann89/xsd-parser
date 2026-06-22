@@ -120,5 +120,10 @@ bitflags! {
         ///
         /// See [`replace_xs_any_type_with_any_element`](crate::Optimizer::replace_xs_any_type_with_any_element) for details.
         const REPLACE_XS_ANY_TYPE_WITH_ANY_ELEMENT = 1 << 16;
+
+        /// Whether to merge dynamic types or not.
+        ///
+        /// See [`merge_dynamic_types`](crate::Optimizer::merge_dynamic_types) for details.
+        const MERGE_DYNAMIC_TYPES = 1 << 17;
     }
 }

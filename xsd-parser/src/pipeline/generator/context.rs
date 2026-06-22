@@ -9,7 +9,7 @@ use xsd_parser_types::xml::NamespacesShared;
 use crate::config::GeneratorFlags;
 use crate::models::{
     code::{ModuleIdent, ModulePath},
-    data::Occurs,
+    data::{Occurs, PathData},
     meta::{BuildInMeta, MetaTypeVariant},
     schema::xs::Use,
     TypeIdent,
@@ -38,6 +38,60 @@ impl<'a, 'types> Context<'a, 'types> {
     #[must_use]
     pub fn namespaces(&self) -> Option<&NamespacesShared<'static>> {
         self.namespaces.last()
+    }
+
+    /// Get the [`TypeRef`] for the passed `ident`, creating it (and scheduling
+    /// the type for generation) if it does not exist yet.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors raised while creating the type reference.
+    pub fn get_or_create_type_ref(&mut self, ident: &TypeIdent) -> Result<&TypeRef, Error> {
+        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
+
+        Ok(type_ref)
+    }
+
+    /// Like [`get_or_create_type_ref`](Self::get_or_create_type_ref), but also
+    /// marks the type as reachable by value if `by_value` is set.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors raised while creating the type reference.
+    pub fn get_or_create_type_ref_for_value(
+        &mut self,
+        ident: &TypeIdent,
+        by_value: bool,
+    ) -> Result<&TypeRef, Error> {
+        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
+
+        if by_value {
+            type_ref.reachable.union_with(&self.reachable);
+        }
+
+        Ok(type_ref)
+    }
+
+    /// Like [`get_or_create_type_ref`](Self::get_or_create_type_ref), but for an
+    /// element. Returns the [`TypeRef`] together with a flag that indicates if
+    /// the type needs to be boxed.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors raised while creating the type reference.
+    pub fn get_or_create_type_ref_for_element(
+        &mut self,
+        ident: &TypeIdent,
+        by_value: bool,
+    ) -> Result<(&TypeRef, bool), Error> {
+        let boxed = by_value && need_box(&mut self.reachable, &self.state.cache, self.meta, ident);
+        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
+
+        if !boxed {
+            type_ref.reachable.union_with(&self.reachable);
+        }
+
+        Ok((type_ref, boxed))
     }
 
     pub(super) fn new(
@@ -70,46 +124,8 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     pub(super) fn get_trait_infos(&mut self) -> &TraitInfos {
-        self.state
-            .trait_infos
-            .get_or_insert_with(|| TraitInfos::new(self.meta.types))
+        &self.state.trait_infos
     }
-
-    pub(super) fn get_or_create_type_ref(&mut self, ident: &TypeIdent) -> Result<&TypeRef, Error> {
-        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
-
-        Ok(type_ref)
-    }
-
-    pub(super) fn get_or_create_type_ref_for_value(
-        &mut self,
-        ident: &TypeIdent,
-        by_value: bool,
-    ) -> Result<&TypeRef, Error> {
-        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
-
-        if by_value {
-            type_ref.reachable.union_with(&self.reachable);
-        }
-
-        Ok(type_ref)
-    }
-
-    pub(super) fn get_or_create_type_ref_for_element(
-        &mut self,
-        ident: &TypeIdent,
-        by_value: bool,
-    ) -> Result<(&TypeRef, bool), Error> {
-        let boxed = by_value && need_box(&mut self.reachable, &self.state.cache, self.meta, ident);
-        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
-
-        if !boxed {
-            type_ref.reachable.union_with(&self.reachable);
-        }
-
-        Ok((type_ref, boxed))
-    }
-
     pub(super) fn make_trait_impls(&mut self) -> Result<Vec<TokenStream>, Error> {
         let ident = self.ident.clone();
         let current_module = self.current_module();
@@ -118,7 +134,7 @@ impl<'a, 'types> Context<'a, 'types> {
         self.get_trait_infos()
             .get(&ident)
             .into_iter()
-            .flat_map(|info| &info.traits_all)
+            .flat_map(|info| &info.traits_to_impl)
             .cloned()
             .collect::<Vec<_>>()
             .into_iter()
@@ -131,6 +147,35 @@ impl<'a, 'types> Context<'a, 'types> {
                 Ok(trait_ident)
             })
             .collect::<Result<Vec<_>, _>>()
+    }
+
+    pub(super) fn make_traits_derive(&mut self) -> Result<Option<Vec<PathData>>, Error> {
+        let ident = self.ident.clone();
+
+        self.get_trait_infos()
+            .get(&ident)
+            .and_then(|info| {
+                if info.traits_to_derive.is_empty() {
+                    None
+                } else {
+                    Some(info.traits_to_derive.clone())
+                }
+            })
+            .map(|traits_to_derive| {
+                traits_to_derive
+                    .iter()
+                    .map(|ident| {
+                        self.get_or_create_type_ref(ident).map(|x| {
+                            let ident = format_ident!("{}Trait", x.path.ident());
+
+                            let target_type = (*x.path).clone().with_ident(ident);
+
+                            PathData::from_path(target_type)
+                        })
+                    })
+                    .collect::<Result<Vec<_>, _>>()
+            })
+            .transpose()
     }
 
     #[allow(clippy::too_many_lines)]

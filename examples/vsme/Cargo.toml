@@ -16,6 +16,8 @@ xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
 
 [build-dependencies]
 anyhow = { workspace = true }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
 xsd-parser = { workspace = true }
 
 [lints]

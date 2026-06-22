@@ -21,7 +21,7 @@ impl<'types> DataType<'types> {
         let derive = ConfigValue::Default;
         let variant = match &meta.variant {
             M::BuildIn(x) => D::BuildIn(BuildInData::new(x)),
-            M::Custom(x) => D::Custom(CustomData::new(x)),
+            M::Custom(x) => D::Custom(CustomData::new(x, ctx)?),
             M::Union(x) => D::Union(UnionData::new(x, ctx)?),
             M::Dynamic(x) => D::Dynamic(DynamicData::new(x, ctx)?),
             M::Reference(x) => D::Reference(ReferenceData::new(x, ctx)?),

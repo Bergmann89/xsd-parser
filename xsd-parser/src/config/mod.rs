@@ -260,16 +260,7 @@ impl Config {
 
     /// Enable code generation for [`quick_xml`] serialization.
     pub fn with_quick_xml_serialize(self) -> Self {
-        self.with_render_steps([
-            RenderStep::Types,
-            RenderStep::Defaults,
-            RenderStep::PrefixConstants,
-            RenderStep::NamespaceConstants,
-            RenderStep::QuickXmlSerialize {
-                namespaces: NamespaceSerialization::Global,
-                default_namespace: None,
-            },
-        ])
+        self.with_quick_xml_serialize_config(NamespaceSerialization::Global, None)
     }
 
     /// Enable code generation for [`quick_xml`] serialization.
@@ -503,6 +494,33 @@ impl Config {
         M: Into<MetaType>,
     {
         self.interpreter.types.push((ident.into(), meta.into()));
+
+        self
+    }
+
+    /// Add a list of types to be interpreted as dynamic types to the interpreter.
+    ///
+    /// For details please refer to [`InterpreterConfig::dynamic_types`].
+    pub fn with_dynamic_types<I>(mut self, types: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<IdentQuadruple>,
+    {
+        for ident in types {
+            self.interpreter.dynamic_types.push(ident.into());
+        }
+
+        self
+    }
+
+    /// Add a type to be interpreted as a dynamic type to the interpreter.
+    ///
+    /// For details please refer to [`InterpreterConfig::dynamic_types`].
+    pub fn with_dynamic_type<T>(mut self, ident: T) -> Self
+    where
+        T: Into<IdentQuadruple>,
+    {
+        self.interpreter.dynamic_types.push(ident.into());
 
         self
     }
@@ -820,6 +838,17 @@ impl IdentQuadruple {
             name,
             type_,
         })
+    }
+}
+
+impl From<TypeIdent> for IdentQuadruple {
+    fn from(value: TypeIdent) -> Self {
+        Self {
+            ns: Some(NamespaceIdent::Id(value.ns)),
+            schema: Some(SchemaIdent::Id(value.schema)),
+            name: value.name.into(),
+            type_: value.type_,
+        }
     }
 }
 

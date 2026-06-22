@@ -1,0 +1,7 @@
+<list xmlns="http://example.com">
+    <animal id="1" />
+    <dog id="2" name="Max" />
+    <labrador id="3" name="Charlie" color="yellow" />
+    <dog id="4" name="Rex" />
+    <labrador id="5" name="Buddy" color="black" />
+</list>

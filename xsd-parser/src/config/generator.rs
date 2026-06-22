@@ -325,7 +325,7 @@ pub struct TypePostfix {
     /// Postfix for the type that is used as content for [`Nillable`](xsd_parser_types::xml::Nillable) elements.
     pub nillable_content: String,
 
-    /// Postfix for concrete elements in a substitution group.
+    /// Postfix for concrete elements in a substitution group or concrete types of a dynamic type.
     pub dynamic_element: String,
 }
 

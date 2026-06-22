@@ -21494,7 +21494,36 @@ pub mod page {
         type Deserializer = quick_xml_deserialize::CtGouraudShdXTypeDeserializer;
     }
     #[derive(Debug)]
-    pub struct CtGraphicUnitXType {
+    pub enum CtGraphicUnitXType {
+        CtText(CtTextXType),
+        CtPageBlockTextObject(CtPageBlockTextObjectXElementType),
+        CtPath(CtPathXType),
+        CtPageBlockPathObject(CtPageBlockPathObjectXElementType),
+        CtImage(CtImageXType),
+        CtPageBlockImageObject(CtPageBlockImageObjectXElementType),
+        CtComposite(CtCompositeXType),
+        CtPageBlockCompositeObject(CtPageBlockCompositeObjectXElementType),
+    }
+    impl WithSerializer for CtGraphicUnitXType {
+        type Serializer<'x> = quick_xml_serialize::CtGraphicUnitXTypeSerializer<'x>;
+        fn serializer<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            let _name = name;
+            Ok(quick_xml_serialize::CtGraphicUnitXTypeSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::CtGraphicUnitXTypeSerializerState::Init__),
+                is_root,
+            })
+        }
+    }
+    impl WithDeserializer for CtGraphicUnitXType {
+        type Deserializer = quick_xml_deserialize::CtGraphicUnitXTypeDeserializer;
+    }
+    #[derive(Debug)]
+    pub struct CtGraphicUnitDyn {
         pub boundary: String,
         pub name: Option<String>,
         pub visible: bool,
@@ -21510,7 +21539,7 @@ pub mod page {
         pub actions: Option<CtGraphicUnitActionsXElementType>,
         pub clips: Option<CtGraphicUnitClipsXElementType>,
     }
-    impl CtGraphicUnitXType {
+    impl CtGraphicUnitDyn {
         #[must_use]
         pub fn default_visible() -> bool {
             true
@@ -21540,23 +21569,23 @@ pub mod page {
             255i32
         }
     }
-    impl WithSerializer for CtGraphicUnitXType {
-        type Serializer<'x> = quick_xml_serialize::CtGraphicUnitXTypeSerializer<'x>;
+    impl WithSerializer for CtGraphicUnitDyn {
+        type Serializer<'x> = quick_xml_serialize::CtGraphicUnitDynSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok(quick_xml_serialize::CtGraphicUnitXTypeSerializer {
+            Ok(quick_xml_serialize::CtGraphicUnitDynSerializer {
                 value: self,
-                state: Box::new(quick_xml_serialize::CtGraphicUnitXTypeSerializerState::Init__),
+                state: Box::new(quick_xml_serialize::CtGraphicUnitDynSerializerState::Init__),
                 name: name.unwrap_or("CT_GraphicUnit"),
                 is_root,
             })
         }
     }
-    impl WithDeserializer for CtGraphicUnitXType {
-        type Deserializer = quick_xml_deserialize::CtGraphicUnitXTypeDeserializer;
+    impl WithDeserializer for CtGraphicUnitDyn {
+        type Deserializer = quick_xml_deserialize::CtGraphicUnitDynDeserializer;
     }
     #[derive(Debug)]
     pub struct CtImageXType {
@@ -22370,116 +22399,6 @@ pub mod page {
         type Deserializer = quick_xml_deserialize::CtGouraudShdPointXElementTypeDeserializer;
     }
     #[derive(Debug)]
-    pub struct CtImageBorderXElementType {
-        pub line_width: f64,
-        pub horizonal_corner_radius: f64,
-        pub vertical_corner_radius: f64,
-        pub dash_offset: f64,
-        pub dash_pattern: Option<String>,
-        pub border_color: Option<CtColorXType>,
-    }
-    impl CtImageBorderXElementType {
-        #[must_use]
-        pub fn default_line_width() -> f64 {
-            0.353f64
-        }
-        #[must_use]
-        pub fn default_horizonal_corner_radius() -> f64 {
-            0f64
-        }
-        #[must_use]
-        pub fn default_vertical_corner_radius() -> f64 {
-            0f64
-        }
-        #[must_use]
-        pub fn default_dash_offset() -> f64 {
-            0f64
-        }
-    }
-    impl WithSerializer for CtImageBorderXElementType {
-        type Serializer<'x> = quick_xml_serialize::CtImageBorderXElementTypeSerializer<'x>;
-        fn serializer<'ser>(
-            &'ser self,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok(quick_xml_serialize::CtImageBorderXElementTypeSerializer {
-                value: self,
-                state: Box::new(
-                    quick_xml_serialize::CtImageBorderXElementTypeSerializerState::Init__,
-                ),
-                name: name.unwrap_or("CtImageBorder"),
-                is_root,
-            })
-        }
-    }
-    impl WithDeserializer for CtImageBorderXElementType {
-        type Deserializer = quick_xml_deserialize::CtImageBorderXElementTypeDeserializer;
-    }
-    #[derive(Debug)]
-    pub struct CtLaGouraudShdPointXElementType {
-        pub x: Option<f64>,
-        pub y: Option<f64>,
-        pub color: Box<CtColorXType>,
-    }
-    impl WithSerializer for CtLaGouraudShdPointXElementType {
-        type Serializer<'x> = quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializer<'x>;
-        fn serializer<'ser>(
-            &'ser self,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok(
-                quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializer {
-                    value: self,
-                    state: Box::new(
-                        quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializerState::Init__,
-                    ),
-                    name: name.unwrap_or("CtLaGouraudShdPoint"),
-                    is_root,
-                },
-            )
-        }
-    }
-    impl WithDeserializer for CtLaGouraudShdPointXElementType {
-        type Deserializer = quick_xml_deserialize::CtLaGouraudShdPointXElementTypeDeserializer;
-    }
-    #[derive(Debug)]
-    pub enum CtLayerTypeXType {
-        Body,
-        Background,
-        Foreground,
-        Custom,
-    }
-    impl SerializeBytes for CtLayerTypeXType {
-        fn serialize_bytes(
-            &self,
-            helper: &mut SerializeHelper,
-        ) -> Result<Option<Cow<'_, str>>, Error> {
-            match self {
-                Self::Body => Ok(Some(Cow::Borrowed("Body"))),
-                Self::Background => Ok(Some(Cow::Borrowed("Background"))),
-                Self::Foreground => Ok(Some(Cow::Borrowed("Foreground"))),
-                Self::Custom => Ok(Some(Cow::Borrowed("Custom"))),
-            }
-        }
-    }
-    impl WithSerializeToBytes for CtLayerTypeXType {}
-    impl DeserializeBytes for CtLayerTypeXType {
-        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
-            match bytes {
-                b"Body" => Ok(Self::Body),
-                b"Background" => Ok(Self::Background),
-                b"Foreground" => Ok(Self::Foreground),
-                b"Custom" => Ok(Self::Custom),
-                x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
-                    RawByteStr::from_slice(x),
-                ))),
-            }
-        }
-    }
-    impl WithDeserializerFromBytes for CtLayerTypeXType {}
-    #[derive(Debug)]
     pub struct CtPageBlockTextObjectXElementType {
         pub boundary: String,
         pub name: Option<String>,
@@ -22810,6 +22729,116 @@ pub mod page {
         type Deserializer =
             quick_xml_deserialize::CtPageBlockCompositeObjectXElementTypeDeserializer;
     }
+    #[derive(Debug)]
+    pub struct CtImageBorderXElementType {
+        pub line_width: f64,
+        pub horizonal_corner_radius: f64,
+        pub vertical_corner_radius: f64,
+        pub dash_offset: f64,
+        pub dash_pattern: Option<String>,
+        pub border_color: Option<CtColorXType>,
+    }
+    impl CtImageBorderXElementType {
+        #[must_use]
+        pub fn default_line_width() -> f64 {
+            0.353f64
+        }
+        #[must_use]
+        pub fn default_horizonal_corner_radius() -> f64 {
+            0f64
+        }
+        #[must_use]
+        pub fn default_vertical_corner_radius() -> f64 {
+            0f64
+        }
+        #[must_use]
+        pub fn default_dash_offset() -> f64 {
+            0f64
+        }
+    }
+    impl WithSerializer for CtImageBorderXElementType {
+        type Serializer<'x> = quick_xml_serialize::CtImageBorderXElementTypeSerializer<'x>;
+        fn serializer<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok(quick_xml_serialize::CtImageBorderXElementTypeSerializer {
+                value: self,
+                state: Box::new(
+                    quick_xml_serialize::CtImageBorderXElementTypeSerializerState::Init__,
+                ),
+                name: name.unwrap_or("CtImageBorder"),
+                is_root,
+            })
+        }
+    }
+    impl WithDeserializer for CtImageBorderXElementType {
+        type Deserializer = quick_xml_deserialize::CtImageBorderXElementTypeDeserializer;
+    }
+    #[derive(Debug)]
+    pub struct CtLaGouraudShdPointXElementType {
+        pub x: Option<f64>,
+        pub y: Option<f64>,
+        pub color: Box<CtColorXType>,
+    }
+    impl WithSerializer for CtLaGouraudShdPointXElementType {
+        type Serializer<'x> = quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializer<'x>;
+        fn serializer<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok(
+                quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializer {
+                    value: self,
+                    state: Box::new(
+                        quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializerState::Init__,
+                    ),
+                    name: name.unwrap_or("CtLaGouraudShdPoint"),
+                    is_root,
+                },
+            )
+        }
+    }
+    impl WithDeserializer for CtLaGouraudShdPointXElementType {
+        type Deserializer = quick_xml_deserialize::CtLaGouraudShdPointXElementTypeDeserializer;
+    }
+    #[derive(Debug)]
+    pub enum CtLayerTypeXType {
+        Body,
+        Background,
+        Foreground,
+        Custom,
+    }
+    impl SerializeBytes for CtLayerTypeXType {
+        fn serialize_bytes(
+            &self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Cow<'_, str>>, Error> {
+            match self {
+                Self::Body => Ok(Some(Cow::Borrowed("Body"))),
+                Self::Background => Ok(Some(Cow::Borrowed("Background"))),
+                Self::Foreground => Ok(Some(Cow::Borrowed("Foreground"))),
+                Self::Custom => Ok(Some(Cow::Borrowed("Custom"))),
+            }
+        }
+    }
+    impl WithSerializeToBytes for CtLayerTypeXType {}
+    impl DeserializeBytes for CtLayerTypeXType {
+        fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
+            match bytes {
+                b"Body" => Ok(Self::Body),
+                b"Background" => Ok(Self::Background),
+                b"Foreground" => Ok(Self::Foreground),
+                b"Custom" => Ok(Self::Custom),
+                x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
+                    RawByteStr::from_slice(x),
+                ))),
+            }
+        }
+    }
+    impl WithDeserializerFromBytes for CtLayerTypeXType {}
     #[derive(Debug)]
     pub struct CtPageBlockPageBlockXElementType {
         pub id: u32,
@@ -23253,7 +23282,7 @@ pub mod page {
         use xsd_parser_types::quick_xml::{
             BytesStart, ContentDeserializer, DeserializeHelper, Deserializer, DeserializerArtifact,
             DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-            ErrorKind, Event, RawByteStr, WithDeserializer,
+            ErrorKind, Event, QName, RawByteStr, WithDeserializer,
         };
         #[derive(Debug)]
         pub struct CtAxialShdXTypeDeserializer {
@@ -25325,6 +25354,871 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtGraphicUnitXTypeDeserializer {
+            state__: Box<CtGraphicUnitXTypeDeserializerState>,
+        }
+        #[derive(Debug)]
+        pub enum CtGraphicUnitXTypeDeserializerState {
+            Init__ , CtText (Option < super :: CtTextXType > , Option << super :: CtTextXType as WithDeserializer > :: Deserializer > , Option << super :: CtTextXType as WithDeserializer > :: Deserializer > ,) , CtPageBlockTextObject (Option < super :: CtPageBlockTextObjectXElementType > , Option << super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer > ,) , CtPath (Option < super :: CtPathXType > , Option << super :: CtPathXType as WithDeserializer > :: Deserializer > , Option << super :: CtPathXType as WithDeserializer > :: Deserializer > ,) , CtPageBlockPathObject (Option < super :: CtPageBlockPathObjectXElementType > , Option << super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer > ,) , CtImage (Option < super :: CtImageXType > , Option << super :: CtImageXType as WithDeserializer > :: Deserializer > , Option << super :: CtImageXType as WithDeserializer > :: Deserializer > ,) , CtPageBlockImageObject (Option < super :: CtPageBlockImageObjectXElementType > , Option << super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer > ,) , CtComposite (Option < super :: CtCompositeXType > , Option << super :: CtCompositeXType as WithDeserializer > :: Deserializer > , Option << super :: CtCompositeXType as WithDeserializer > :: Deserializer > ,) , CtPageBlockCompositeObject (Option < super :: CtPageBlockCompositeObjectXElementType > , Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer > ,) , Done__ (super :: CtGraphicUnitXType) , Unknown__ , }
+        impl CtGraphicUnitXTypeDeserializer {
+            fn find_suitable<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                if let Event::Start(x) | Event::Empty(x) = &event {
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        Some(b"CT_GraphicUnit")
+                    ) {
+                        if let Some(type_name) = helper.get_dynamic_type_from_attrib_bytes(x)? {
+                            let type_name = type_name.into_owned();
+                            if matches!(
+                                helper.resolve_local_name(
+                                    QName(&type_name),
+                                    &super::super::NS_UNNAMED_5
+                                ),
+                                Some(b"CT_Text")
+                            ) {
+                                let output =
+                                    <super::CtTextXType as WithDeserializer>::init(helper, event)?;
+                                return self.handle_ct_text(
+                                    helper,
+                                    Default::default(),
+                                    None,
+                                    output,
+                                );
+                            }
+                            if matches!(
+                                helper.resolve_local_name(
+                                    QName(&type_name),
+                                    &super::super::NS_UNNAMED_5
+                                ),
+                                Some(b"CT_Path")
+                            ) {
+                                let output =
+                                    <super::CtPathXType as WithDeserializer>::init(helper, event)?;
+                                return self.handle_ct_path(
+                                    helper,
+                                    Default::default(),
+                                    None,
+                                    output,
+                                );
+                            }
+                            if matches!(
+                                helper.resolve_local_name(
+                                    QName(&type_name),
+                                    &super::super::NS_UNNAMED_5
+                                ),
+                                Some(b"CT_Image")
+                            ) {
+                                let output =
+                                    <super::CtImageXType as WithDeserializer>::init(helper, event)?;
+                                return self.handle_ct_image(
+                                    helper,
+                                    Default::default(),
+                                    None,
+                                    output,
+                                );
+                            }
+                            if matches!(
+                                helper.resolve_local_name(
+                                    QName(&type_name),
+                                    &super::super::NS_UNNAMED_5
+                                ),
+                                Some(b"CT_Composite")
+                            ) {
+                                let output = <super::CtCompositeXType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
+                                return self.handle_ct_composite(
+                                    helper,
+                                    Default::default(),
+                                    None,
+                                    output,
+                                );
+                            }
+                        }
+                    }
+                }
+                *self.state__ = CtGraphicUnitXTypeDeserializerState::Init__;
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
+            }
+            fn finish_state(
+                helper: &mut DeserializeHelper,
+                state: CtGraphicUnitXTypeDeserializerState,
+            ) -> Result<super::CtGraphicUnitXType, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                match state {
+                    S::Init__ => Err(ErrorKind::MissingContent.into()),
+                    S::CtText(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_text(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtText(
+                            helper.finish_element("CT_Text", values)?,
+                        ))
+                    }
+                    S::CtPageBlockTextObject(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_page_block_text_object(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtPageBlockTextObject(
+                            helper.finish_element("CtPageBlockTextObject", values)?,
+                        ))
+                    }
+                    S::CtPath(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_path(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtPath(
+                            helper.finish_element("CT_Path", values)?,
+                        ))
+                    }
+                    S::CtPageBlockPathObject(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_page_block_path_object(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtPageBlockPathObject(
+                            helper.finish_element("CtPageBlockPathObject", values)?,
+                        ))
+                    }
+                    S::CtImage(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_image(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtImage(
+                            helper.finish_element("CT_Image", values)?,
+                        ))
+                    }
+                    S::CtPageBlockImageObject(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_page_block_image_object(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtPageBlockImageObject(
+                            helper.finish_element("CtPageBlockImageObject", values)?,
+                        ))
+                    }
+                    S::CtComposite(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_composite(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtComposite(
+                            helper.finish_element("CT_Composite", values)?,
+                        ))
+                    }
+                    S::CtPageBlockCompositeObject(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_ct_page_block_composite_object(&mut values, value)?;
+                        }
+                        Ok(super::CtGraphicUnitXType::CtPageBlockCompositeObject(
+                            helper.finish_element("CtPageBlockCompositeObject", values)?,
+                        ))
+                    }
+                    S::Done__(data) => Ok(data),
+                    _ => unreachable!(),
+                }
+            }
+            fn store_ct_text(
+                values: &mut Option<super::CtTextXType>,
+                value: super::CtTextXType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CT_Text",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_ct_page_block_text_object(
+                values: &mut Option<super::CtPageBlockTextObjectXElementType>,
+                value: super::CtPageBlockTextObjectXElementType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CtPageBlockTextObject",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_ct_path(
+                values: &mut Option<super::CtPathXType>,
+                value: super::CtPathXType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CT_Path",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_ct_page_block_path_object(
+                values: &mut Option<super::CtPageBlockPathObjectXElementType>,
+                value: super::CtPageBlockPathObjectXElementType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CtPageBlockPathObject",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_ct_image(
+                values: &mut Option<super::CtImageXType>,
+                value: super::CtImageXType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CT_Image",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_ct_page_block_image_object(
+                values: &mut Option<super::CtPageBlockImageObjectXElementType>,
+                value: super::CtPageBlockImageObjectXElementType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CtPageBlockImageObject",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_ct_composite(
+                values: &mut Option<super::CtCompositeXType>,
+                value: super::CtCompositeXType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CT_Composite",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_ct_page_block_composite_object(
+                values: &mut Option<super::CtPageBlockCompositeObjectXElementType>,
+                value: super::CtPageBlockCompositeObjectXElementType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CtPageBlockCompositeObject",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn handle_ct_text<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtTextXType>,
+                fallback: Option<<super::CtTextXType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::CtTextXType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_text(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_text(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::CtText(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CtText(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_ct_page_block_text_object<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtPageBlockTextObjectXElementType>,
+                fallback: Option<
+                    <super::CtPageBlockTextObjectXElementType as WithDeserializer>::Deserializer,
+                >,
+                output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_page_block_text_object(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_page_block_text_object(&mut values, data)?;
+                        let data = Self::finish_state(
+                            helper,
+                            S::CtPageBlockTextObject(values, None, None),
+                        )?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CtPageBlockTextObject(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_ct_path<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtPathXType>,
+                fallback: Option<<super::CtPathXType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::CtPathXType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_path(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_path(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::CtPath(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CtPath(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_ct_page_block_path_object<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtPageBlockPathObjectXElementType>,
+                fallback: Option<
+                    <super::CtPageBlockPathObjectXElementType as WithDeserializer>::Deserializer,
+                >,
+                output: DeserializerOutput<'de, super::CtPageBlockPathObjectXElementType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_page_block_path_object(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_page_block_path_object(&mut values, data)?;
+                        let data = Self::finish_state(
+                            helper,
+                            S::CtPageBlockPathObject(values, None, None),
+                        )?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CtPageBlockPathObject(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_ct_image<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtImageXType>,
+                fallback: Option<<super::CtImageXType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::CtImageXType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_image(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_image(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::CtImage(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CtImage(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_ct_page_block_image_object<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtPageBlockImageObjectXElementType>,
+                fallback: Option<
+                    <super::CtPageBlockImageObjectXElementType as WithDeserializer>::Deserializer,
+                >,
+                output: DeserializerOutput<'de, super::CtPageBlockImageObjectXElementType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_page_block_image_object(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_page_block_image_object(&mut values, data)?;
+                        let data = Self::finish_state(
+                            helper,
+                            S::CtPageBlockImageObject(values, None, None),
+                        )?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CtPageBlockImageObject(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_ct_composite<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtCompositeXType>,
+                fallback: Option<<super::CtCompositeXType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::CtCompositeXType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_composite(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_composite(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::CtComposite(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CtComposite(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_ct_page_block_composite_object<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtPageBlockCompositeObjectXElementType>,
+                fallback : Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer >,
+                output: DeserializerOutput<'de, super::CtPageBlockCompositeObjectXElementType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_ct_page_block_composite_object(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_ct_page_block_composite_object(&mut values, data)?;
+                        let data = Self::finish_state(
+                            helper,
+                            S::CtPageBlockCompositeObject(values, None, None),
+                        )?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ =
+                            S::CtPageBlockCompositeObject(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+        }
+        impl<'de> Deserializer<'de, super::CtGraphicUnitXType> for CtGraphicUnitXTypeDeserializer {
+            fn init(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
+                let deserializer = Self {
+                    state__: Box::new(CtGraphicUnitXTypeDeserializerState::Init__),
+                };
+                let mut output = deserializer.next(helper, event)?;
+                output.artifact = match output.artifact {
+                    DeserializerArtifact::Deserializer(x)
+                        if matches!(&*x.state__, CtGraphicUnitXTypeDeserializerState::Init__) =>
+                    {
+                        DeserializerArtifact::None
+                    }
+                    artifact => artifact,
+                };
+                Ok(output)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let mut event = event;
+                let (event, allow_any) = loop {
+                    let state = replace(&mut *self.state__, S::Unknown__);
+                    event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
+                        (S::CtText(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_text(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtPageBlockTextObject(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_text_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtPath(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_path(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtPageBlockPathObject(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_path_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtImage(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_image(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockImageObject(values, fallback, Some(deserializer)),
+                            event,
+                        ) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_image_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtComposite(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_composite(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockCompositeObject(values, fallback, Some(deserializer)),
+                            event,
+                        ) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_composite_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state, event @ Event::End(_)) => {
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(Self::finish_state(
+                                    helper, state,
+                                )?),
+                                event: DeserializerEvent::Continue(event),
+                                allow_any: false,
+                            });
+                        }
+                        (S::Init__, event) => match self.find_suitable(helper, event)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        },
+                        (
+                            S::CtText(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Text",
+                                true,
+                            )?;
+                            match self.handle_ct_text(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockTextObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockTextObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_text_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPath(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Path",
+                                true,
+                            )?;
+                            match self.handle_ct_path(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockPathObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockPathObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_path_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtImage(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Image",
+                                true,
+                            )?;
+                            match self.handle_ct_image(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockImageObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockImageObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_image_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtComposite(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Composite",
+                                true,
+                            )?;
+                            match self.handle_ct_composite(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockCompositeObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockCompositeObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_composite_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state @ S::Done__(_), event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                    }
+                };
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
+                    DeserializerArtifact::Data(self.finish(helper)?)
+                } else {
+                    DeserializerArtifact::Deserializer(self)
+                };
+                Ok(DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                })
+            }
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::CtGraphicUnitXType, Error> {
+                Self::finish_state(helper, *self.state__)
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtGraphicUnitDynDeserializer {
             boundary: String,
             name: Option<String>,
             visible: bool,
@@ -25339,10 +26233,10 @@ pub mod page {
             alpha: i32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
-            state__: Box<CtGraphicUnitXTypeDeserializerState>,
+            state__: Box<CtGraphicUnitDynDeserializerState>,
         }
         #[derive(Debug)]
-        enum CtGraphicUnitXTypeDeserializerState {
+        enum CtGraphicUnitDynDeserializerState {
             Init__,
             Actions(
                 Option<<super::CtGraphicUnitActionsXElementType as WithDeserializer>::Deserializer>,
@@ -25353,7 +26247,7 @@ pub mod page {
             Done__,
             Unknown__,
         }
-        impl CtGraphicUnitXTypeDeserializer {
+        impl CtGraphicUnitDynDeserializer {
             fn from_bytes_start(
                 helper: &mut DeserializeHelper,
                 bytes_start: &BytesStart<'_>,
@@ -25440,30 +26334,30 @@ pub mod page {
                     boundary: boundary
                         .ok_or_else(|| ErrorKind::MissingAttribute("Boundary".into()))?,
                     name: name,
-                    visible: visible.unwrap_or_else(super::CtGraphicUnitXType::default_visible),
+                    visible: visible.unwrap_or_else(super::CtGraphicUnitDyn::default_visible),
                     ctm: ctm,
                     draw_param: draw_param,
                     line_width: line_width
-                        .unwrap_or_else(super::CtGraphicUnitXType::default_line_width),
-                    cap: cap.unwrap_or_else(super::CtGraphicUnitXType::default_cap),
-                    join: join.unwrap_or_else(super::CtGraphicUnitXType::default_join),
+                        .unwrap_or_else(super::CtGraphicUnitDyn::default_line_width),
+                    cap: cap.unwrap_or_else(super::CtGraphicUnitDyn::default_cap),
+                    join: join.unwrap_or_else(super::CtGraphicUnitDyn::default_join),
                     miter_limit: miter_limit
-                        .unwrap_or_else(super::CtGraphicUnitXType::default_miter_limit),
+                        .unwrap_or_else(super::CtGraphicUnitDyn::default_miter_limit),
                     dash_offset: dash_offset
-                        .unwrap_or_else(super::CtGraphicUnitXType::default_dash_offset),
+                        .unwrap_or_else(super::CtGraphicUnitDyn::default_dash_offset),
                     dash_pattern: dash_pattern,
-                    alpha: alpha.unwrap_or_else(super::CtGraphicUnitXType::default_alpha),
+                    alpha: alpha.unwrap_or_else(super::CtGraphicUnitDyn::default_alpha),
                     actions: None,
                     clips: None,
-                    state__: Box::new(CtGraphicUnitXTypeDeserializerState::Init__),
+                    state__: Box::new(CtGraphicUnitDynDeserializerState::Init__),
                 })
             }
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: CtGraphicUnitXTypeDeserializerState,
+                state: CtGraphicUnitDynDeserializerState,
             ) -> Result<(), Error> {
-                use CtGraphicUnitXTypeDeserializerState as S;
+                use CtGraphicUnitDynDeserializerState as S;
                 match state {
                     S::Actions(Some(deserializer)) => {
                         self.store_actions(deserializer.finish(helper)?)?
@@ -25503,9 +26397,9 @@ pub mod page {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
-                fallback: &mut Option<CtGraphicUnitXTypeDeserializerState>,
+                fallback: &mut Option<CtGraphicUnitDynDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtGraphicUnitXTypeDeserializerState as S;
+                use CtGraphicUnitDynDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -25536,9 +26430,9 @@ pub mod page {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
-                fallback: &mut Option<CtGraphicUnitXTypeDeserializerState>,
+                fallback: &mut Option<CtGraphicUnitDynDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtGraphicUnitXTypeDeserializerState as S;
+                use CtGraphicUnitDynDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -25566,19 +26460,19 @@ pub mod page {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::CtGraphicUnitXType> for CtGraphicUnitXTypeDeserializer {
+        impl<'de> Deserializer<'de, super::CtGraphicUnitDyn> for CtGraphicUnitDynDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
+            ) -> DeserializerResult<'de, super::CtGraphicUnitDyn> {
                 helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
             }
             fn next(
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
-                use CtGraphicUnitXTypeDeserializerState as S;
+            ) -> DeserializerResult<'de, super::CtGraphicUnitDyn> {
+                use CtGraphicUnitDynDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -25681,13 +26575,13 @@ pub mod page {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::CtGraphicUnitXType, Error> {
+            ) -> Result<super::CtGraphicUnitDyn, Error> {
                 let state = replace(
                     &mut *self.state__,
-                    CtGraphicUnitXTypeDeserializerState::Unknown__,
+                    CtGraphicUnitDynDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::CtGraphicUnitXType {
+                Ok(super::CtGraphicUnitDyn {
                     boundary: self.boundary,
                     name: self.name,
                     visible: self.visible,
@@ -31898,455 +32792,6 @@ pub mod page {
             }
         }
         #[derive(Debug)]
-        pub struct CtImageBorderXElementTypeDeserializer {
-            line_width: f64,
-            horizonal_corner_radius: f64,
-            vertical_corner_radius: f64,
-            dash_offset: f64,
-            dash_pattern: Option<String>,
-            border_color: Option<super::CtColorXType>,
-            state__: Box<CtImageBorderXElementTypeDeserializerState>,
-        }
-        #[derive(Debug)]
-        enum CtImageBorderXElementTypeDeserializerState {
-            Init__,
-            BorderColor(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
-            Done__,
-            Unknown__,
-        }
-        impl CtImageBorderXElementTypeDeserializer {
-            fn from_bytes_start(
-                helper: &mut DeserializeHelper,
-                bytes_start: &BytesStart<'_>,
-            ) -> Result<Self, Error> {
-                let mut line_width: Option<f64> = None;
-                let mut horizonal_corner_radius: Option<f64> = None;
-                let mut vertical_corner_radius: Option<f64> = None;
-                let mut dash_offset: Option<f64> = None;
-                let mut dash_pattern: Option<String> = None;
-                for attrib in helper.filter_xmlns_attributes(bytes_start) {
-                    let attrib = attrib?;
-                    if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
-                        Some(b"LineWidth")
-                    ) {
-                        helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
-                    } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
-                        Some(b"HorizonalCornerRadius")
-                    ) {
-                        helper.read_attrib(
-                            &mut horizonal_corner_radius,
-                            b"HorizonalCornerRadius",
-                            &attrib.value,
-                        )?;
-                    } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
-                        Some(b"VerticalCornerRadius")
-                    ) {
-                        helper.read_attrib(
-                            &mut vertical_corner_radius,
-                            b"VerticalCornerRadius",
-                            &attrib.value,
-                        )?;
-                    } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
-                        Some(b"DashOffset")
-                    ) {
-                        helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
-                    } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
-                        Some(b"DashPattern")
-                    ) {
-                        helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
-                    } else {
-                        helper.raise_unexpected_attrib_checked(&attrib)?;
-                    }
-                }
-                Ok(Self {
-                    line_width: line_width
-                        .unwrap_or_else(super::CtImageBorderXElementType::default_line_width),
-                    horizonal_corner_radius: horizonal_corner_radius.unwrap_or_else(
-                        super::CtImageBorderXElementType::default_horizonal_corner_radius,
-                    ),
-                    vertical_corner_radius: vertical_corner_radius.unwrap_or_else(
-                        super::CtImageBorderXElementType::default_vertical_corner_radius,
-                    ),
-                    dash_offset: dash_offset
-                        .unwrap_or_else(super::CtImageBorderXElementType::default_dash_offset),
-                    dash_pattern: dash_pattern,
-                    border_color: None,
-                    state__: Box::new(CtImageBorderXElementTypeDeserializerState::Init__),
-                })
-            }
-            fn finish_state(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                state: CtImageBorderXElementTypeDeserializerState,
-            ) -> Result<(), Error> {
-                use CtImageBorderXElementTypeDeserializerState as S;
-                match state {
-                    S::BorderColor(Some(deserializer)) => {
-                        self.store_border_color(deserializer.finish(helper)?)?
-                    }
-                    _ => (),
-                }
-                Ok(())
-            }
-            fn store_border_color(&mut self, value: super::CtColorXType) -> Result<(), Error> {
-                if self.border_color.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"BorderColor",
-                    )))?;
-                }
-                self.border_color = Some(value);
-                Ok(())
-            }
-            fn handle_border_color<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::CtColorXType>,
-                fallback: &mut Option<CtImageBorderXElementTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtImageBorderXElementTypeDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    *self.state__ = S::Done__;
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                }
-                if let Some(fallback) = fallback.take() {
-                    self.finish_state(helper, fallback)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        self.store_border_color(data)?;
-                        *self.state__ = S::Done__;
-                        Ok(ElementHandlerOutput::from_event(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(S::BorderColor(Some(deserializer)));
-                        *self.state__ = S::Done__;
-                        Ok(ElementHandlerOutput::from_event(event, allow_any))
-                    }
-                }
-            }
-        }
-        impl<'de> Deserializer<'de, super::CtImageBorderXElementType>
-            for CtImageBorderXElementTypeDeserializer
-        {
-            fn init(
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtImageBorderXElementType> {
-                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next(
-                mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtImageBorderXElementType> {
-                use CtImageBorderXElementTypeDeserializerState as S;
-                let mut event = event;
-                let mut fallback = None;
-                let mut allow_any_element = false;
-                let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state__, S::Unknown__);
-                    event = match (state, event) {
-                        (S::Unknown__, _) => unreachable!(),
-                        (S::BorderColor(Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_border_color(helper, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                            }
-                        }
-                        (_, Event::End(_)) => {
-                            if let Some(fallback) = fallback.take() {
-                                self.finish_state(helper, fallback)?;
-                            }
-                            return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
-                                event: DeserializerEvent::None,
-                                allow_any: false,
-                            });
-                        }
-                        (S::Init__, event) => {
-                            fallback.get_or_insert(S::Init__);
-                            *self.state__ = S::BorderColor(None);
-                            event
-                        }
-                        (S::BorderColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"BorderColor",
-                                true,
-                            )?;
-                            match self.handle_border_color(helper, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                            }
-                        }
-                        (S::Done__, event) => {
-                            *self.state__ = S::Done__;
-                            break (DeserializerEvent::Continue(event), allow_any_element);
-                        }
-                        (state, event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Break(event), false);
-                        }
-                    }
-                };
-                if let Some(fallback) = fallback {
-                    *self.state__ = fallback;
-                }
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Deserializer(self),
-                    event,
-                    allow_any,
-                })
-            }
-            fn finish(
-                mut self,
-                helper: &mut DeserializeHelper,
-            ) -> Result<super::CtImageBorderXElementType, Error> {
-                let state = replace(
-                    &mut *self.state__,
-                    CtImageBorderXElementTypeDeserializerState::Unknown__,
-                );
-                self.finish_state(helper, state)?;
-                Ok(super::CtImageBorderXElementType {
-                    line_width: self.line_width,
-                    horizonal_corner_radius: self.horizonal_corner_radius,
-                    vertical_corner_radius: self.vertical_corner_radius,
-                    dash_offset: self.dash_offset,
-                    dash_pattern: self.dash_pattern,
-                    border_color: self.border_color,
-                })
-            }
-        }
-        #[derive(Debug)]
-        pub struct CtLaGouraudShdPointXElementTypeDeserializer {
-            x: Option<f64>,
-            y: Option<f64>,
-            color: Option<super::CtColorXType>,
-            state__: Box<CtLaGouraudShdPointXElementTypeDeserializerState>,
-        }
-        #[derive(Debug)]
-        enum CtLaGouraudShdPointXElementTypeDeserializerState {
-            Init__,
-            Color(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
-            Done__,
-            Unknown__,
-        }
-        impl CtLaGouraudShdPointXElementTypeDeserializer {
-            fn from_bytes_start(
-                helper: &mut DeserializeHelper,
-                bytes_start: &BytesStart<'_>,
-            ) -> Result<Self, Error> {
-                let mut x: Option<f64> = None;
-                let mut y: Option<f64> = None;
-                for attrib in helper.filter_xmlns_attributes(bytes_start) {
-                    let attrib = attrib?;
-                    if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
-                        Some(b"X")
-                    ) {
-                        helper.read_attrib(&mut x, b"X", &attrib.value)?;
-                    } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
-                        Some(b"y")
-                    ) {
-                        helper.read_attrib(&mut y, b"y", &attrib.value)?;
-                    } else {
-                        helper.raise_unexpected_attrib_checked(&attrib)?;
-                    }
-                }
-                Ok(Self {
-                    x: x,
-                    y: y,
-                    color: None,
-                    state__: Box::new(CtLaGouraudShdPointXElementTypeDeserializerState::Init__),
-                })
-            }
-            fn finish_state(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                state: CtLaGouraudShdPointXElementTypeDeserializerState,
-            ) -> Result<(), Error> {
-                use CtLaGouraudShdPointXElementTypeDeserializerState as S;
-                match state {
-                    S::Color(Some(deserializer)) => {
-                        self.store_color(deserializer.finish(helper)?)?
-                    }
-                    _ => (),
-                }
-                Ok(())
-            }
-            fn store_color(&mut self, value: super::CtColorXType) -> Result<(), Error> {
-                if self.color.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"Color",
-                    )))?;
-                }
-                self.color = Some(value);
-                Ok(())
-            }
-            fn handle_color<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::CtColorXType>,
-                fallback: &mut Option<CtLaGouraudShdPointXElementTypeDeserializerState>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtLaGouraudShdPointXElementTypeDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    fallback.get_or_insert(S::Color(None));
-                    if matches!(&fallback, Some(S::Init__)) {
-                        return Ok(ElementHandlerOutput::break_(event, allow_any));
-                    } else {
-                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                    }
-                }
-                if let Some(fallback) = fallback.take() {
-                    self.finish_state(helper, fallback)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        self.store_color(data)?;
-                        *self.state__ = S::Done__;
-                        Ok(ElementHandlerOutput::from_event(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        fallback.get_or_insert(S::Color(Some(deserializer)));
-                        *self.state__ = S::Done__;
-                        Ok(ElementHandlerOutput::from_event(event, allow_any))
-                    }
-                }
-            }
-        }
-        impl<'de> Deserializer<'de, super::CtLaGouraudShdPointXElementType>
-            for CtLaGouraudShdPointXElementTypeDeserializer
-        {
-            fn init(
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtLaGouraudShdPointXElementType> {
-                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
-            }
-            fn next(
-                mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtLaGouraudShdPointXElementType> {
-                use CtLaGouraudShdPointXElementTypeDeserializerState as S;
-                let mut event = event;
-                let mut fallback = None;
-                let mut allow_any_element = false;
-                let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state__, S::Unknown__);
-                    event = match (state, event) {
-                        (S::Unknown__, _) => unreachable!(),
-                        (S::Color(Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_color(helper, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                            }
-                        }
-                        (_, Event::End(_)) => {
-                            if let Some(fallback) = fallback.take() {
-                                self.finish_state(helper, fallback)?;
-                            }
-                            return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
-                                event: DeserializerEvent::None,
-                                allow_any: false,
-                            });
-                        }
-                        (S::Init__, event) => {
-                            fallback.get_or_insert(S::Init__);
-                            *self.state__ = S::Color(None);
-                            event
-                        }
-                        (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"Color",
-                                true,
-                            )?;
-                            match self.handle_color(helper, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                            }
-                        }
-                        (S::Done__, event) => {
-                            *self.state__ = S::Done__;
-                            break (DeserializerEvent::Continue(event), allow_any_element);
-                        }
-                        (state, event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Break(event), false);
-                        }
-                    }
-                };
-                if let Some(fallback) = fallback {
-                    *self.state__ = fallback;
-                }
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Deserializer(self),
-                    event,
-                    allow_any,
-                })
-            }
-            fn finish(
-                mut self,
-                helper: &mut DeserializeHelper,
-            ) -> Result<super::CtLaGouraudShdPointXElementType, Error> {
-                let state = replace(
-                    &mut *self.state__,
-                    CtLaGouraudShdPointXElementTypeDeserializerState::Unknown__,
-                );
-                self.finish_state(helper, state)?;
-                Ok(super::CtLaGouraudShdPointXElementType {
-                    x: self.x,
-                    y: self.y,
-                    color: Box::new(helper.finish_element("Color", self.color)?),
-                })
-            }
-        }
-        #[derive(Debug)]
         pub struct CtPageBlockTextObjectXElementTypeDeserializer {
             boundary: String,
             name: Option<String>,
@@ -35003,6 +35448,455 @@ pub mod page {
                     id: self.id,
                     actions: self.actions,
                     clips: self.clips,
+                })
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtImageBorderXElementTypeDeserializer {
+            line_width: f64,
+            horizonal_corner_radius: f64,
+            vertical_corner_radius: f64,
+            dash_offset: f64,
+            dash_pattern: Option<String>,
+            border_color: Option<super::CtColorXType>,
+            state__: Box<CtImageBorderXElementTypeDeserializerState>,
+        }
+        #[derive(Debug)]
+        enum CtImageBorderXElementTypeDeserializerState {
+            Init__,
+            BorderColor(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
+            Done__,
+            Unknown__,
+        }
+        impl CtImageBorderXElementTypeDeserializer {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                let mut line_width: Option<f64> = None;
+                let mut horizonal_corner_radius: Option<f64> = None;
+                let mut vertical_corner_radius: Option<f64> = None;
+                let mut dash_offset: Option<f64> = None;
+                let mut dash_pattern: Option<String> = None;
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                    let attrib = attrib?;
+                    if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        Some(b"LineWidth")
+                    ) {
+                        helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
+                    } else if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        Some(b"HorizonalCornerRadius")
+                    ) {
+                        helper.read_attrib(
+                            &mut horizonal_corner_radius,
+                            b"HorizonalCornerRadius",
+                            &attrib.value,
+                        )?;
+                    } else if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        Some(b"VerticalCornerRadius")
+                    ) {
+                        helper.read_attrib(
+                            &mut vertical_corner_radius,
+                            b"VerticalCornerRadius",
+                            &attrib.value,
+                        )?;
+                    } else if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        Some(b"DashOffset")
+                    ) {
+                        helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
+                    } else if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        Some(b"DashPattern")
+                    ) {
+                        helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
+                    } else {
+                        helper.raise_unexpected_attrib_checked(&attrib)?;
+                    }
+                }
+                Ok(Self {
+                    line_width: line_width
+                        .unwrap_or_else(super::CtImageBorderXElementType::default_line_width),
+                    horizonal_corner_radius: horizonal_corner_radius.unwrap_or_else(
+                        super::CtImageBorderXElementType::default_horizonal_corner_radius,
+                    ),
+                    vertical_corner_radius: vertical_corner_radius.unwrap_or_else(
+                        super::CtImageBorderXElementType::default_vertical_corner_radius,
+                    ),
+                    dash_offset: dash_offset
+                        .unwrap_or_else(super::CtImageBorderXElementType::default_dash_offset),
+                    dash_pattern: dash_pattern,
+                    border_color: None,
+                    state__: Box::new(CtImageBorderXElementTypeDeserializerState::Init__),
+                })
+            }
+            fn finish_state(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                state: CtImageBorderXElementTypeDeserializerState,
+            ) -> Result<(), Error> {
+                use CtImageBorderXElementTypeDeserializerState as S;
+                match state {
+                    S::BorderColor(Some(deserializer)) => {
+                        self.store_border_color(deserializer.finish(helper)?)?
+                    }
+                    _ => (),
+                }
+                Ok(())
+            }
+            fn store_border_color(&mut self, value: super::CtColorXType) -> Result<(), Error> {
+                if self.border_color.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"BorderColor",
+                    )))?;
+                }
+                self.border_color = Some(value);
+                Ok(())
+            }
+            fn handle_border_color<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                output: DeserializerOutput<'de, super::CtColorXType>,
+                fallback: &mut Option<CtImageBorderXElementTypeDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtImageBorderXElementTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    *self.state__ = S::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        self.store_border_color(data)?;
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        fallback.get_or_insert(S::BorderColor(Some(deserializer)));
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
+                    }
+                }
+            }
+        }
+        impl<'de> Deserializer<'de, super::CtImageBorderXElementType>
+            for CtImageBorderXElementTypeDeserializer
+        {
+            fn init(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtImageBorderXElementType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtImageBorderXElementType> {
+                use CtImageBorderXElementTypeDeserializerState as S;
+                let mut event = event;
+                let mut fallback = None;
+                let mut allow_any_element = false;
+                let (event, allow_any) = loop {
+                    let state = replace(&mut *self.state__, S::Unknown__);
+                    event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
+                        (S::BorderColor(Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_border_color(helper, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
+                        (_, Event::End(_)) => {
+                            if let Some(fallback) = fallback.take() {
+                                self.finish_state(helper, fallback)?;
+                            }
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
+                                event: DeserializerEvent::None,
+                                allow_any: false,
+                            });
+                        }
+                        (S::Init__, event) => {
+                            fallback.get_or_insert(S::Init__);
+                            *self.state__ = S::BorderColor(None);
+                            event
+                        }
+                        (S::BorderColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"BorderColor",
+                                true,
+                            )?;
+                            match self.handle_border_color(helper, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
+                        (S::Done__, event) => {
+                            *self.state__ = S::Done__;
+                            break (DeserializerEvent::Continue(event), allow_any_element);
+                        }
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
+                    }
+                };
+                if let Some(fallback) = fallback {
+                    *self.state__ = fallback;
+                }
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event,
+                    allow_any,
+                })
+            }
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::CtImageBorderXElementType, Error> {
+                let state = replace(
+                    &mut *self.state__,
+                    CtImageBorderXElementTypeDeserializerState::Unknown__,
+                );
+                self.finish_state(helper, state)?;
+                Ok(super::CtImageBorderXElementType {
+                    line_width: self.line_width,
+                    horizonal_corner_radius: self.horizonal_corner_radius,
+                    vertical_corner_radius: self.vertical_corner_radius,
+                    dash_offset: self.dash_offset,
+                    dash_pattern: self.dash_pattern,
+                    border_color: self.border_color,
+                })
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtLaGouraudShdPointXElementTypeDeserializer {
+            x: Option<f64>,
+            y: Option<f64>,
+            color: Option<super::CtColorXType>,
+            state__: Box<CtLaGouraudShdPointXElementTypeDeserializerState>,
+        }
+        #[derive(Debug)]
+        enum CtLaGouraudShdPointXElementTypeDeserializerState {
+            Init__,
+            Color(Option<<super::CtColorXType as WithDeserializer>::Deserializer>),
+            Done__,
+            Unknown__,
+        }
+        impl CtLaGouraudShdPointXElementTypeDeserializer {
+            fn from_bytes_start(
+                helper: &mut DeserializeHelper,
+                bytes_start: &BytesStart<'_>,
+            ) -> Result<Self, Error> {
+                let mut x: Option<f64> = None;
+                let mut y: Option<f64> = None;
+                for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                    let attrib = attrib?;
+                    if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        Some(b"X")
+                    ) {
+                        helper.read_attrib(&mut x, b"X", &attrib.value)?;
+                    } else if matches!(
+                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        Some(b"y")
+                    ) {
+                        helper.read_attrib(&mut y, b"y", &attrib.value)?;
+                    } else {
+                        helper.raise_unexpected_attrib_checked(&attrib)?;
+                    }
+                }
+                Ok(Self {
+                    x: x,
+                    y: y,
+                    color: None,
+                    state__: Box::new(CtLaGouraudShdPointXElementTypeDeserializerState::Init__),
+                })
+            }
+            fn finish_state(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                state: CtLaGouraudShdPointXElementTypeDeserializerState,
+            ) -> Result<(), Error> {
+                use CtLaGouraudShdPointXElementTypeDeserializerState as S;
+                match state {
+                    S::Color(Some(deserializer)) => {
+                        self.store_color(deserializer.finish(helper)?)?
+                    }
+                    _ => (),
+                }
+                Ok(())
+            }
+            fn store_color(&mut self, value: super::CtColorXType) -> Result<(), Error> {
+                if self.color.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"Color",
+                    )))?;
+                }
+                self.color = Some(value);
+                Ok(())
+            }
+            fn handle_color<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                output: DeserializerOutput<'de, super::CtColorXType>,
+                fallback: &mut Option<CtLaGouraudShdPointXElementTypeDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtLaGouraudShdPointXElementTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    fallback.get_or_insert(S::Color(None));
+                    if matches!(&fallback, Some(S::Init__)) {
+                        return Ok(ElementHandlerOutput::break_(event, allow_any));
+                    } else {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        self.store_color(data)?;
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        fallback.get_or_insert(S::Color(Some(deserializer)));
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
+                    }
+                }
+            }
+        }
+        impl<'de> Deserializer<'de, super::CtLaGouraudShdPointXElementType>
+            for CtLaGouraudShdPointXElementTypeDeserializer
+        {
+            fn init(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtLaGouraudShdPointXElementType> {
+                helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtLaGouraudShdPointXElementType> {
+                use CtLaGouraudShdPointXElementTypeDeserializerState as S;
+                let mut event = event;
+                let mut fallback = None;
+                let mut allow_any_element = false;
+                let (event, allow_any) = loop {
+                    let state = replace(&mut *self.state__, S::Unknown__);
+                    event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
+                        (S::Color(Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_color(helper, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
+                        (_, Event::End(_)) => {
+                            if let Some(fallback) = fallback.take() {
+                                self.finish_state(helper, fallback)?;
+                            }
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(self.finish(helper)?),
+                                event: DeserializerEvent::None,
+                                allow_any: false,
+                            });
+                        }
+                        (S::Init__, event) => {
+                            fallback.get_or_insert(S::Init__);
+                            *self.state__ = S::Color(None);
+                            event
+                        }
+                        (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"Color",
+                                true,
+                            )?;
+                            match self.handle_color(helper, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
+                        (S::Done__, event) => {
+                            *self.state__ = S::Done__;
+                            break (DeserializerEvent::Continue(event), allow_any_element);
+                        }
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Break(event), false);
+                        }
+                    }
+                };
+                if let Some(fallback) = fallback {
+                    *self.state__ = fallback;
+                }
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event,
+                    allow_any,
+                })
+            }
+            fn finish(
+                mut self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::CtLaGouraudShdPointXElementType, Error> {
+                let state = replace(
+                    &mut *self.state__,
+                    CtLaGouraudShdPointXElementTypeDeserializerState::Unknown__,
+                );
+                self.finish_state(helper, state)?;
+                Ok(super::CtLaGouraudShdPointXElementType {
+                    x: self.x,
+                    y: self.y,
+                    color: Box::new(helper.finish_element("Color", self.color)?),
                 })
             }
         }
@@ -37707,7 +38601,7 @@ pub mod page {
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
             BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            WithSerializer, XsiTypeSerializer,
         };
         #[derive(Debug)]
         pub struct CtAxialShdXTypeSerializer<'ser> {
@@ -38331,11 +39225,217 @@ pub mod page {
         pub struct CtGraphicUnitXTypeSerializer<'ser> {
             pub(super) value: &'ser super::CtGraphicUnitXType,
             pub(super) state: Box<CtGraphicUnitXTypeSerializerState<'ser>>,
-            pub(super) name: &'ser str,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
         pub(super) enum CtGraphicUnitXTypeSerializerState<'ser> {
+            Init__,
+            CtText(
+                XsiTypeSerializer<'ser, <super::CtTextXType as WithSerializer>::Serializer<'ser>>,
+            ),
+            CtPageBlockTextObject(
+                <super::CtPageBlockTextObjectXElementType as WithSerializer>::Serializer<'ser>,
+            ),
+            CtPath(
+                XsiTypeSerializer<'ser, <super::CtPathXType as WithSerializer>::Serializer<'ser>>,
+            ),
+            CtPageBlockPathObject(
+                <super::CtPageBlockPathObjectXElementType as WithSerializer>::Serializer<'ser>,
+            ),
+            CtImage(
+                XsiTypeSerializer<'ser, <super::CtImageXType as WithSerializer>::Serializer<'ser>>,
+            ),
+            CtPageBlockImageObject(
+                <super::CtPageBlockImageObjectXElementType as WithSerializer>::Serializer<'ser>,
+            ),
+            CtComposite(
+                XsiTypeSerializer<
+                    'ser,
+                    <super::CtCompositeXType as WithSerializer>::Serializer<'ser>,
+                >,
+            ),
+            CtPageBlockCompositeObject(
+                <super::CtPageBlockCompositeObjectXElementType as WithSerializer>::Serializer<'ser>,
+            ),
+            Done__,
+            Phantom__(&'ser ()),
+        }
+        impl<'ser> CtGraphicUnitXTypeSerializer<'ser> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
+                loop {
+                    match &mut *self.state {
+                        CtGraphicUnitXTypeSerializerState::Init__ => match self.value {
+                            super::CtGraphicUnitXType::CtText(x) => {
+                                *self.state = CtGraphicUnitXTypeSerializerState::CtText(
+                                    XsiTypeSerializer::new(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CT_Text"),
+                                            self.is_root,
+                                        )?,
+                                        "CT_GraphicUnit",
+                                        self.is_root,
+                                    ),
+                                )
+                            }
+                            super::CtGraphicUnitXType::CtPageBlockTextObject(x) => {
+                                *self.state =
+                                    CtGraphicUnitXTypeSerializerState::CtPageBlockTextObject(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CtPageBlockTextObject"),
+                                            self.is_root,
+                                        )?,
+                                    )
+                            }
+                            super::CtGraphicUnitXType::CtPath(x) => {
+                                *self.state = CtGraphicUnitXTypeSerializerState::CtPath(
+                                    XsiTypeSerializer::new(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CT_Path"),
+                                            self.is_root,
+                                        )?,
+                                        "CT_GraphicUnit",
+                                        self.is_root,
+                                    ),
+                                )
+                            }
+                            super::CtGraphicUnitXType::CtPageBlockPathObject(x) => {
+                                *self.state =
+                                    CtGraphicUnitXTypeSerializerState::CtPageBlockPathObject(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CtPageBlockPathObject"),
+                                            self.is_root,
+                                        )?,
+                                    )
+                            }
+                            super::CtGraphicUnitXType::CtImage(x) => {
+                                *self.state = CtGraphicUnitXTypeSerializerState::CtImage(
+                                    XsiTypeSerializer::new(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CT_Image"),
+                                            self.is_root,
+                                        )?,
+                                        "CT_GraphicUnit",
+                                        self.is_root,
+                                    ),
+                                )
+                            }
+                            super::CtGraphicUnitXType::CtPageBlockImageObject(x) => {
+                                *self.state =
+                                    CtGraphicUnitXTypeSerializerState::CtPageBlockImageObject(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CtPageBlockImageObject"),
+                                            self.is_root,
+                                        )?,
+                                    )
+                            }
+                            super::CtGraphicUnitXType::CtComposite(x) => {
+                                *self.state = CtGraphicUnitXTypeSerializerState::CtComposite(
+                                    XsiTypeSerializer::new(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CT_Composite"),
+                                            self.is_root,
+                                        )?,
+                                        "CT_GraphicUnit",
+                                        self.is_root,
+                                    ),
+                                )
+                            }
+                            super::CtGraphicUnitXType::CtPageBlockCompositeObject(x) => {
+                                *self.state =
+                                    CtGraphicUnitXTypeSerializerState::CtPageBlockCompositeObject(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CtPageBlockCompositeObject"),
+                                            self.is_root,
+                                        )?,
+                                    )
+                            }
+                        },
+                        CtGraphicUnitXTypeSerializerState::CtText(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::CtPageBlockTextObject(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::CtPath(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::CtPageBlockPathObject(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::CtImage(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::CtPageBlockImageObject(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::CtComposite(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::CtPageBlockCompositeObject(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtGraphicUnitXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtGraphicUnitXTypeSerializerState::Done__ => return Ok(None),
+                        CtGraphicUnitXTypeSerializerState::Phantom__(_) => unreachable!(),
+                    }
+                }
+            }
+        }
+        impl<'ser> Serializer<'ser> for CtGraphicUnitXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
+                    Ok(Some(event)) => Some(Ok(event)),
+                    Ok(None) => None,
+                    Err(error) => {
+                        *self.state = CtGraphicUnitXTypeSerializerState::Done__;
+                        Some(Err(error))
+                    }
+                }
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtGraphicUnitDynSerializer<'ser> {
+            pub(super) value: &'ser super::CtGraphicUnitDyn,
+            pub(super) state: Box<CtGraphicUnitDynSerializerState<'ser>>,
+            pub(super) name: &'ser str,
+            pub(super) is_root: bool,
+        }
+        #[derive(Debug)]
+        pub(super) enum CtGraphicUnitDynSerializerState<'ser> {
             Init__,
             Actions(
                 IterSerializer<
@@ -38355,16 +39455,16 @@ pub mod page {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> CtGraphicUnitXTypeSerializer<'ser> {
+        impl<'ser> CtGraphicUnitDynSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        CtGraphicUnitXTypeSerializerState::Init__ => {
+                        CtGraphicUnitDynSerializerState::Init__ => {
                             *self.state =
-                                CtGraphicUnitXTypeSerializerState::Actions(IterSerializer::new(
+                                CtGraphicUnitDynSerializerState::Actions(IterSerializer::new(
                                     self.value.actions.as_ref(),
                                     Some("Actions"),
                                     false,
@@ -38406,44 +39506,43 @@ pub mod page {
                             helper.write_attrib(&mut bytes, "Alpha", &self.value.alpha)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CtGraphicUnitXTypeSerializerState::Actions(x) => {
+                        CtGraphicUnitDynSerializerState::Actions(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state = CtGraphicUnitXTypeSerializerState::Clips(
-                                        IterSerializer::new(
+                                    *self.state =
+                                        CtGraphicUnitDynSerializerState::Clips(IterSerializer::new(
                                             self.value.clips.as_ref(),
                                             Some("Clips"),
                                             false,
-                                        ),
-                                    )
+                                        ))
                                 }
                             }
                         }
-                        CtGraphicUnitXTypeSerializerState::Clips(x) => {
+                        CtGraphicUnitDynSerializerState::Clips(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = CtGraphicUnitXTypeSerializerState::End__,
+                                None => *self.state = CtGraphicUnitDynSerializerState::End__,
                             }
                         }
-                        CtGraphicUnitXTypeSerializerState::End__ => {
-                            *self.state = CtGraphicUnitXTypeSerializerState::Done__;
+                        CtGraphicUnitDynSerializerState::End__ => {
+                            *self.state = CtGraphicUnitDynSerializerState::Done__;
                             helper.end_ns_scope();
                             return Ok(Some(Event::End(BytesEnd::new(self.name))));
                         }
-                        CtGraphicUnitXTypeSerializerState::Done__ => return Ok(None),
-                        CtGraphicUnitXTypeSerializerState::Phantom__(_) => unreachable!(),
+                        CtGraphicUnitDynSerializerState::Done__ => return Ok(None),
+                        CtGraphicUnitDynSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for CtGraphicUnitXTypeSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for CtGraphicUnitDynSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = CtGraphicUnitXTypeSerializerState::Done__;
+                        *self.state = CtGraphicUnitDynSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -40232,173 +41331,6 @@ pub mod page {
             }
         }
         #[derive(Debug)]
-        pub struct CtImageBorderXElementTypeSerializer<'ser> {
-            pub(super) value: &'ser super::CtImageBorderXElementType,
-            pub(super) state: Box<CtImageBorderXElementTypeSerializerState<'ser>>,
-            pub(super) name: &'ser str,
-            pub(super) is_root: bool,
-        }
-        #[derive(Debug)]
-        pub(super) enum CtImageBorderXElementTypeSerializerState<'ser> {
-            Init__,
-            BorderColor(
-                IterSerializer<'ser, Option<&'ser super::CtColorXType>, super::CtColorXType>,
-            ),
-            End__,
-            Done__,
-            Phantom__(&'ser ()),
-        }
-        impl<'ser> CtImageBorderXElementTypeSerializer<'ser> {
-            fn next_event(
-                &mut self,
-                helper: &mut SerializeHelper,
-            ) -> Result<Option<Event<'ser>>, Error> {
-                loop {
-                    match &mut *self.state {
-                        CtImageBorderXElementTypeSerializerState::Init__ => {
-                            *self.state = CtImageBorderXElementTypeSerializerState::BorderColor(
-                                IterSerializer::new(
-                                    self.value.border_color.as_ref(),
-                                    Some("BorderColor"),
-                                    false,
-                                ),
-                            );
-                            let mut bytes = BytesStart::new(self.name);
-                            helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
-                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
-                            helper.write_attrib(
-                                &mut bytes,
-                                "HorizonalCornerRadius",
-                                &self.value.horizonal_corner_radius,
-                            )?;
-                            helper.write_attrib(
-                                &mut bytes,
-                                "VerticalCornerRadius",
-                                &self.value.vertical_corner_radius,
-                            )?;
-                            helper.write_attrib(
-                                &mut bytes,
-                                "DashOffset",
-                                &self.value.dash_offset,
-                            )?;
-                            helper.write_attrib_opt(
-                                &mut bytes,
-                                "DashPattern",
-                                &self.value.dash_pattern,
-                            )?;
-                            return Ok(Some(Event::Start(bytes)));
-                        }
-                        CtImageBorderXElementTypeSerializerState::BorderColor(x) => match x
-                            .next(helper)
-                            .transpose()?
-                        {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = CtImageBorderXElementTypeSerializerState::End__,
-                        },
-                        CtImageBorderXElementTypeSerializerState::End__ => {
-                            *self.state = CtImageBorderXElementTypeSerializerState::Done__;
-                            helper.end_ns_scope();
-                            return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                        }
-                        CtImageBorderXElementTypeSerializerState::Done__ => return Ok(None),
-                        CtImageBorderXElementTypeSerializerState::Phantom__(_) => unreachable!(),
-                    }
-                }
-            }
-        }
-        impl<'ser> Serializer<'ser> for CtImageBorderXElementTypeSerializer<'ser> {
-            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
-                match self.next_event(helper) {
-                    Ok(Some(event)) => Some(Ok(event)),
-                    Ok(None) => None,
-                    Err(error) => {
-                        *self.state = CtImageBorderXElementTypeSerializerState::Done__;
-                        Some(Err(error))
-                    }
-                }
-            }
-        }
-        #[derive(Debug)]
-        pub struct CtLaGouraudShdPointXElementTypeSerializer<'ser> {
-            pub(super) value: &'ser super::CtLaGouraudShdPointXElementType,
-            pub(super) state: Box<CtLaGouraudShdPointXElementTypeSerializerState<'ser>>,
-            pub(super) name: &'ser str,
-            pub(super) is_root: bool,
-        }
-        #[derive(Debug)]
-        pub(super) enum CtLaGouraudShdPointXElementTypeSerializerState<'ser> {
-            Init__,
-            Color(<super::CtColorXType as WithSerializer>::Serializer<'ser>),
-            End__,
-            Done__,
-            Phantom__(&'ser ()),
-        }
-        impl<'ser> CtLaGouraudShdPointXElementTypeSerializer<'ser> {
-            fn next_event(
-                &mut self,
-                helper: &mut SerializeHelper,
-            ) -> Result<Option<Event<'ser>>, Error> {
-                loop {
-                    match &mut *self.state {
-                        CtLaGouraudShdPointXElementTypeSerializerState::Init__ => {
-                            *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Color(
-                                WithSerializer::serializer(
-                                    &*self.value.color,
-                                    Some("Color"),
-                                    false,
-                                )?,
-                            );
-                            let mut bytes = BytesStart::new(self.name);
-                            helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
-                            helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
-                            helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
-                            return Ok(Some(Event::Start(bytes)));
-                        }
-                        CtLaGouraudShdPointXElementTypeSerializerState::Color(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        CtLaGouraudShdPointXElementTypeSerializerState::End__
-                                }
-                            }
-                        }
-                        CtLaGouraudShdPointXElementTypeSerializerState::End__ => {
-                            *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Done__;
-                            helper.end_ns_scope();
-                            return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                        }
-                        CtLaGouraudShdPointXElementTypeSerializerState::Done__ => return Ok(None),
-                        CtLaGouraudShdPointXElementTypeSerializerState::Phantom__(_) => {
-                            unreachable!()
-                        }
-                    }
-                }
-            }
-        }
-        impl<'ser> Serializer<'ser> for CtLaGouraudShdPointXElementTypeSerializer<'ser> {
-            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
-                match self.next_event(helper) {
-                    Ok(Some(event)) => Some(Ok(event)),
-                    Ok(None) => None,
-                    Err(error) => {
-                        *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Done__;
-                        Some(Err(error))
-                    }
-                }
-            }
-        }
-        #[derive(Debug)]
         pub struct CtPageBlockTextObjectXElementTypeSerializer<'ser> {
             pub(super) value: &'ser super::CtPageBlockTextObjectXElementType,
             pub(super) state: Box<CtPageBlockTextObjectXElementTypeSerializerState<'ser>>,
@@ -41048,6 +41980,173 @@ pub mod page {
                     Ok(None) => None,
                     Err(error) => {
                         *self.state = CtPageBlockCompositeObjectXElementTypeSerializerState::Done__;
+                        Some(Err(error))
+                    }
+                }
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtImageBorderXElementTypeSerializer<'ser> {
+            pub(super) value: &'ser super::CtImageBorderXElementType,
+            pub(super) state: Box<CtImageBorderXElementTypeSerializerState<'ser>>,
+            pub(super) name: &'ser str,
+            pub(super) is_root: bool,
+        }
+        #[derive(Debug)]
+        pub(super) enum CtImageBorderXElementTypeSerializerState<'ser> {
+            Init__,
+            BorderColor(
+                IterSerializer<'ser, Option<&'ser super::CtColorXType>, super::CtColorXType>,
+            ),
+            End__,
+            Done__,
+            Phantom__(&'ser ()),
+        }
+        impl<'ser> CtImageBorderXElementTypeSerializer<'ser> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
+                loop {
+                    match &mut *self.state {
+                        CtImageBorderXElementTypeSerializerState::Init__ => {
+                            *self.state = CtImageBorderXElementTypeSerializerState::BorderColor(
+                                IterSerializer::new(
+                                    self.value.border_color.as_ref(),
+                                    Some("BorderColor"),
+                                    false,
+                                ),
+                            );
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
+                            helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "HorizonalCornerRadius",
+                                &self.value.horizonal_corner_radius,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "VerticalCornerRadius",
+                                &self.value.vertical_corner_radius,
+                            )?;
+                            helper.write_attrib(
+                                &mut bytes,
+                                "DashOffset",
+                                &self.value.dash_offset,
+                            )?;
+                            helper.write_attrib_opt(
+                                &mut bytes,
+                                "DashPattern",
+                                &self.value.dash_pattern,
+                            )?;
+                            return Ok(Some(Event::Start(bytes)));
+                        }
+                        CtImageBorderXElementTypeSerializerState::BorderColor(x) => match x
+                            .next(helper)
+                            .transpose()?
+                        {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = CtImageBorderXElementTypeSerializerState::End__,
+                        },
+                        CtImageBorderXElementTypeSerializerState::End__ => {
+                            *self.state = CtImageBorderXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
+                            return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                        }
+                        CtImageBorderXElementTypeSerializerState::Done__ => return Ok(None),
+                        CtImageBorderXElementTypeSerializerState::Phantom__(_) => unreachable!(),
+                    }
+                }
+            }
+        }
+        impl<'ser> Serializer<'ser> for CtImageBorderXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
+                    Ok(Some(event)) => Some(Ok(event)),
+                    Ok(None) => None,
+                    Err(error) => {
+                        *self.state = CtImageBorderXElementTypeSerializerState::Done__;
+                        Some(Err(error))
+                    }
+                }
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtLaGouraudShdPointXElementTypeSerializer<'ser> {
+            pub(super) value: &'ser super::CtLaGouraudShdPointXElementType,
+            pub(super) state: Box<CtLaGouraudShdPointXElementTypeSerializerState<'ser>>,
+            pub(super) name: &'ser str,
+            pub(super) is_root: bool,
+        }
+        #[derive(Debug)]
+        pub(super) enum CtLaGouraudShdPointXElementTypeSerializerState<'ser> {
+            Init__,
+            Color(<super::CtColorXType as WithSerializer>::Serializer<'ser>),
+            End__,
+            Done__,
+            Phantom__(&'ser ()),
+        }
+        impl<'ser> CtLaGouraudShdPointXElementTypeSerializer<'ser> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
+                loop {
+                    match &mut *self.state {
+                        CtLaGouraudShdPointXElementTypeSerializerState::Init__ => {
+                            *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Color(
+                                WithSerializer::serializer(
+                                    &*self.value.color,
+                                    Some("Color"),
+                                    false,
+                                )?,
+                            );
+                            let mut bytes = BytesStart::new(self.name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns_for_tag(
+                                &mut bytes,
+                                self.name,
+                                &super::super::NS_UNNAMED_5,
+                            );
+                            helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
+                            helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
+                            return Ok(Some(Event::Start(bytes)));
+                        }
+                        CtLaGouraudShdPointXElementTypeSerializerState::Color(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        CtLaGouraudShdPointXElementTypeSerializerState::End__
+                                }
+                            }
+                        }
+                        CtLaGouraudShdPointXElementTypeSerializerState::End__ => {
+                            *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Done__;
+                            helper.end_ns_scope();
+                            return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                        }
+                        CtLaGouraudShdPointXElementTypeSerializerState::Done__ => return Ok(None),
+                        CtLaGouraudShdPointXElementTypeSerializerState::Phantom__(_) => {
+                            unreachable!()
+                        }
+                    }
+                }
+            }
+        }
+        impl<'ser> Serializer<'ser> for CtLaGouraudShdPointXElementTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
+                    Ok(Some(event)) => Some(Ok(event)),
+                    Ok(None) => None,
+                    Err(error) => {
+                        *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Done__;
                         Some(Err(error))
                     }
                 }

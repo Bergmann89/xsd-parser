@@ -277,34 +277,14 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
         if let Some(substitution_group) = &ty.substitution_group {
             let mut ident = self.owner.current_ident().clone();
-            ident.type_ = IdentType::DynamicElement;
+            ident.type_ = IdentType::SubstitutionElement;
 
             let type_ = self.finish_mut()?;
             self.owner.add_type(ident.clone(), type_, false)?;
 
             init_any!(self, Reference, ReferenceMeta::new(ident), true);
 
-            self.walk_substitution_groups(substitution_group, |processor, base_ident| {
-                let ident = processor.owner.current_ident().clone();
-                let base_ty = processor
-                    .owner
-                    .get_substitution_group_element_mut(base_ident);
-
-                if let MetaTypeVariant::Reference(ti) = &mut base_ty.variant {
-                    base_ty.variant = MetaTypeVariant::Dynamic(DynamicMeta {
-                        type_: Some(ti.type_.clone()),
-                        derived_types: vec![DerivedTypeMeta::new(ti.type_.clone())],
-                    });
-                }
-
-                let MetaTypeVariant::Dynamic(ai) = &mut base_ty.variant else {
-                    return Err(Error::ExpectedDynamicElement(base_ident.clone()));
-                };
-
-                ai.derived_types.push(DerivedTypeMeta::new(ident));
-
-                Ok(())
-            })?;
+            self.walk_substitution_groups(substitution_group, prepare_substitution_group)?;
         }
 
         if ty.abstract_ {
@@ -316,6 +296,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
             let ai = init_any!(self, Dynamic);
             ai.type_ = type_;
+            ai.is_abstract = true;
         }
 
         Ok(())
@@ -374,12 +355,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
         for c in &ty.content {
             ret = match c {
                 C::OpenContent(_) | C::Assert(_) => Ok(()),
-                C::ComplexContent(x) => {
-                    let ci = get_or_init_any!(self, ComplexType);
-                    ci.is_dynamic = ty.abstract_;
-
-                    self.apply_complex_content(x)
-                }
+                C::ComplexContent(x) => self.apply_complex_content(x),
                 C::SimpleContent(x) => self.apply_simple_content(x),
                 C::All(x) => self.apply_all(x, x.min_occurs, x.max_occurs),
                 C::Choice(x) => self.apply_choice(x, x.min_occurs, x.max_occurs),
@@ -401,6 +377,52 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
         if ty.mixed.is_some() {
             self.owner.pop_stack();
+        }
+
+        let ci = get_or_init_any!(self, ComplexType);
+        let mut base = ci.base.clone().into_ident();
+
+        let current_ident = self.owner.current_ident().clone();
+
+        let mut ident = current_ident.clone();
+        let is_dynamic = ty.abstract_ || self.owner.is_dynamic(&ident);
+
+        if is_dynamic {
+            ident.type_ = IdentType::DynamicVariant;
+
+            let type_ = self.finish_mut()?;
+            self.owner.add_type(ident.clone(), type_, false)?;
+
+            let dm = init_any!(self, Dynamic, DynamicMeta::default(), true);
+            dm.is_abstract = ty.abstract_;
+            dm.type_ = Some(ident.clone());
+
+            if !dm.is_abstract {
+                dm.derived_types
+                    .entry(current_ident.clone())
+                    .or_insert_with(|| DerivedTypeMeta::new_concrete(ident.clone()));
+            }
+        }
+
+        let mut is_direct = true;
+        while let Some(base_ident) = base.take() {
+            let base_ty = self.owner.get_type_mut(&base_ident);
+
+            match &mut base_ty.variant {
+                MetaTypeVariant::Dynamic(dm) => {
+                    dm.derived_types
+                        .entry(current_ident.clone())
+                        .or_insert_with(|| DerivedTypeMeta::new_child(ident.clone(), is_direct));
+
+                    base.clone_from(&dm.type_);
+                }
+                MetaTypeVariant::ComplexType(ci) => {
+                    base = ci.base.clone().into_ident();
+                }
+                _ => (),
+            }
+
+            is_direct = false;
         }
 
         ret
@@ -1315,26 +1337,27 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
     #[instrument(err, level = "trace", skip(self, f))]
     fn walk_substitution_groups<F>(&mut self, groups: &QNameList, mut f: F) -> Result<(), Error>
     where
-        F: FnMut(&mut Self, &TypeIdent) -> Result<(), Error>,
+        F: FnMut(&mut Self, &TypeIdent, usize) -> Result<(), Error>,
     {
         fn inner<'x, 'y, 'z, F>(
             processor: &mut VariantProcessor<'x, 'y, 'z>,
             groups: &QNameList,
+            depth: usize,
             f: &mut F,
         ) -> Result<(), Error>
         where
-            F: FnMut(&mut VariantProcessor<'x, 'y, 'z>, &TypeIdent) -> Result<(), Error>,
+            F: FnMut(&mut VariantProcessor<'x, 'y, 'z>, &TypeIdent, usize) -> Result<(), Error>,
         {
             for head in &groups.0 {
                 let ident = processor
                     .owner
                     .resolve_type_ident(head, IdentType::Element)?;
 
-                f(processor, &ident)?;
+                f(processor, &ident, depth)?;
 
                 processor.with_element_node(ident, |processor, element, _ident| {
                     if let Some(groups) = &element.substitution_group {
-                        inner(processor, groups, f)?;
+                        inner(processor, groups, depth + 1, f)?;
                     }
 
                     Ok(())
@@ -1344,7 +1367,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             Ok(())
         }
 
-        inner(self, groups, &mut f)
+        inner(self, groups, 0, &mut f)
     }
 
     fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>
@@ -1698,4 +1721,54 @@ impl ElementsMeta {
             }
         }
     }
+}
+
+/* Helper */
+
+fn prepare_substitution_group(
+    processor: &mut VariantProcessor<'_, '_, '_>,
+    base_ident: &TypeIdent,
+    depth: usize,
+) -> Result<(), Error> {
+    let current_ident = processor.owner.current_ident().clone();
+    let base_ty = processor
+        .owner
+        .get_substitution_group_element_mut(base_ident);
+    let mut helper_type = None;
+
+    if let MetaTypeVariant::Reference(ti) = &mut base_ty.variant {
+        if !ti.is_simple() {
+            let mut helper_ident = base_ident.clone();
+            helper_ident.type_ = IdentType::SubstitutionElement;
+
+            let type_ = MetaType::from(ti.clone());
+            ti.type_ = helper_ident.clone();
+
+            helper_type = Some((helper_ident, type_));
+        }
+
+        let mut meta = DynamicMeta {
+            type_: Some(ti.type_.clone()),
+            ..Default::default()
+        };
+        meta.derived_types
+            .entry(base_ident.clone())
+            .or_insert_with(|| DerivedTypeMeta::new_concrete(ti.type_.clone()));
+
+        base_ty.variant = MetaTypeVariant::Dynamic(meta);
+    }
+
+    let MetaTypeVariant::Dynamic(meta) = &mut base_ty.variant else {
+        return Err(Error::ExpectedDynamicElement(base_ident.clone()));
+    };
+
+    meta.derived_types
+        .entry(current_ident.clone())
+        .or_insert_with(|| DerivedTypeMeta::new_child(current_ident, depth == 0));
+
+    if let Some((ident, type_)) = helper_type {
+        processor.owner.add_type(ident, type_, false)?;
+    }
+
+    Ok(())
 }

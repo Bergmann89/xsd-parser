@@ -950,11 +950,65 @@ impl DeserializeHelper {
         &self,
         event: &'a Event<'_>,
     ) -> Result<Option<Cow<'a, [u8]>>, Error> {
+        if let Some(name) = self.get_dynamic_type_from_attrib(event)? {
+            return Ok(Some(name));
+        }
+
+        Ok(self.get_dynamic_type_from_tag(event))
+    }
+
+    /// Extract the type name of a dynamic type from the xml tag name of the
+    /// passed event.
+    ///
+    /// This is used to dispatch dynamic types that are identified by the
+    /// element name (e.g. substitution groups). Returns `None` if the event
+    /// is not a [`Event::Start`] or [`Event::Empty`].
+    #[must_use]
+    pub fn get_dynamic_type_from_tag<'a>(&self, event: &'a Event<'_>) -> Option<Cow<'a, [u8]>> {
+        let (Event::Start(b) | Event::Empty(b)) = &event else {
+            return None;
+        };
+
+        Some(Cow::Borrowed(b.name().0))
+    }
+
+    /// Extract the type name of a dynamic type from the `xsi:type` attribute of
+    /// the passed event.
+    ///
+    /// This is used to dispatch dynamic types that are identified by their type
+    /// (e.g. abstract types resolved via the `xsi:type` attribute). Returns
+    /// `None` if the event is not a [`Event::Start`] or [`Event::Empty`], or if
+    /// the tag does not carry a `xsi:type` attribute.
+    ///
+    /// # Errors
+    ///
+    /// Raise an error if the attributes of the tag could not be resolved.
+    pub fn get_dynamic_type_from_attrib<'a>(
+        &self,
+        event: &'a Event<'_>,
+    ) -> Result<Option<Cow<'a, [u8]>>, Error> {
         let (Event::Start(b) | Event::Empty(b)) = &event else {
             return Ok(None);
         };
 
-        let attrib = b
+        self.get_dynamic_type_from_attrib_bytes(b)
+    }
+
+    /// Extract the type name of a dynamic type from the `xsi:type` attribute of
+    /// the passed `BytesStart`.
+    ///
+    /// This is used to dispatch dynamic types that are identified by their type
+    /// (e.g. abstract types resolved via the `xsi:type` attribute). Returns
+    /// `None` if the tag does not carry a `xsi:type` attribute.
+    ///
+    /// # Errors
+    ///
+    /// Raise an error if the attributes of the tag could not be resolved.
+    pub fn get_dynamic_type_from_attrib_bytes<'a>(
+        &self,
+        bytes: &'a BytesStart<'_>,
+    ) -> Result<Option<Cow<'a, [u8]>>, Error> {
+        let attrib = bytes
             .attributes()
             .find(|attrib| {
                 let Ok(attrib) = attrib else { return false };
@@ -969,9 +1023,7 @@ impl DeserializeHelper {
             })
             .transpose()?;
 
-        let name = attrib.map_or_else(|| Cow::Borrowed(b.name().0), |attrib| attrib.value);
-
-        Ok(Some(name))
+        Ok(attrib.map(|attrib| attrib.value))
     }
 
     /// Initializes a deserializer from the passed `event`.

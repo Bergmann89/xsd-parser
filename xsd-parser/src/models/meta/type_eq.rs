@@ -15,11 +15,17 @@ pub trait TypeEq: Sized {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes);
 
     /// Feeds a slice of this value into the given [`Hasher`].
-    fn type_hash_slice<H: Hasher>(slice: &[Self], hasher: &mut H, types: &MetaTypes) {
-        hasher.write_usize(slice.len());
+    fn type_hash_iter<T: IntoIterator<Item = Self>, H: Hasher>(
+        slice: T,
+        hasher: &mut H,
+        types: &MetaTypes,
+    ) {
+        let mut count = 0;
         for item in slice {
             item.type_hash(hasher, types);
+            count += 1;
         }
+        hasher.write_usize(count);
     }
 
     /// Check if this instance is equal to the `other` instance using the passed
@@ -27,11 +33,10 @@ pub trait TypeEq: Sized {
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool;
 
     /// Check if the two passed iterators contain type equal elements.
-    fn type_eq_iter<'a, X, Y>(x: X, y: Y, types: &MetaTypes) -> bool
+    fn type_eq_iter<X, Y>(x: X, y: Y, types: &MetaTypes) -> bool
     where
-        Self: 'a,
-        X: IntoIterator<Item = &'a Self>,
-        Y: IntoIterator<Item = &'a Self>,
+        X: IntoIterator<Item = Self>,
+        Y: IntoIterator<Item = Self>,
     {
         let mut x = x.into_iter();
         let mut y = y.into_iter();
@@ -40,7 +45,7 @@ pub trait TypeEq: Sized {
             match (x.next(), y.next()) {
                 (None, None) => return true,
                 (Some(x), Some(y)) => {
-                    if !x.type_eq(y, types) {
+                    if !x.type_eq(&y, types) {
                         return false;
                     }
                 }
@@ -60,6 +65,34 @@ impl TypeEq for TypeIdent {
         let b = types.get_resolved_ident(other).unwrap_or(other);
 
         a.eq(b)
+    }
+}
+
+impl<T> TypeEq for &T
+where
+    T: TypeEq,
+{
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
+        (*self).type_hash(hasher, types);
+    }
+
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
+        (*self).type_eq(*other, types)
+    }
+}
+
+impl<T1, T2> TypeEq for (T1, T2)
+where
+    T1: TypeEq,
+    T2: TypeEq,
+{
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
+        self.0.type_hash(hasher, types);
+        self.1.type_hash(hasher, types);
+    }
+
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
+        self.0.type_eq(&other.0, types) && self.1.type_eq(&other.1, types)
     }
 }
 

@@ -3,6 +3,8 @@
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
+use bitflags::bitflags;
+
 use crate::models::{
     schema::{
         xs::{
@@ -27,8 +29,8 @@ pub struct ElementMeta {
     /// The form of this element.
     pub form: FormChoiceType,
 
-    /// Wether the element is nillable or not.
-    pub nillable: bool,
+    /// Different flags that can be set on this element.
+    pub flags: ElementMetaFlags,
 
     /// Minimum occurrence of the field.
     pub min_occurs: MinOccurs,
@@ -41,6 +43,33 @@ pub struct ElementMeta {
 
     /// Documentation of the element extracted from `xs:documentation` nodes.
     pub documentation: Vec<String>,
+}
+
+bitflags! {
+    /// Different flags that can be set on an [`ElementMeta`].
+    #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
+    pub struct ElementMetaFlags: u32 {
+        /// Indicates that the element is nillable.
+        const NILLABLE = 1 << 0;
+
+        /// If no `xsi:type` attribute is present, this element should be used as default element.
+        const DEFAULT_ELEMENT = 1 << 1;
+
+        /// Indicates that the element should be identified by its tag name.
+        const IDENTIFY_BY_TAG = 1 << 2;
+
+        /// Indicates that the element should be identified by the `xsi:type` attribute.
+        const IDENTIFY_BY_TYPE = 1 << 3;
+
+        /// Indicates that the element should prefer identification by the `xsi:type` attribute.
+        const PREFER_IDENTIFY_BY_TYPE = 1 << 4;
+    }
+}
+
+impl Default for ElementMetaFlags {
+    fn default() -> Self {
+        Self::IDENTIFY_BY_TAG
+    }
 }
 
 /// Variant of a [`ElementMeta`]
@@ -109,7 +138,7 @@ impl ElementMeta {
             ident,
             variant: ElementMetaVariant::Type { type_, mode },
             form,
-            nillable: false,
+            flags: ElementMetaFlags::default(),
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -124,7 +153,7 @@ impl ElementMeta {
             ident,
             variant: ElementMetaVariant::Any { meta },
             form: FormChoiceType::Unqualified,
-            nillable: false,
+            flags: ElementMetaFlags::default(),
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -139,7 +168,7 @@ impl ElementMeta {
             ident,
             variant: ElementMetaVariant::Text,
             form: FormChoiceType::Unqualified,
-            nillable: false,
+            flags: ElementMetaFlags::default(),
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -151,6 +180,12 @@ impl ElementMeta {
     #[must_use]
     pub fn is_text(&self) -> bool {
         matches!(&self.variant, ElementMetaVariant::Text)
+    }
+
+    /// Returns `true` if this element is nillable, `false` otherwise.
+    #[must_use]
+    pub fn is_nillable(&self) -> bool {
+        self.flags.contains(ElementMetaFlags::NILLABLE)
     }
 
     /// Returns `true` if this element represents an `xs:any` element, `false` otherwise.
@@ -176,7 +211,7 @@ impl TypeEq for ElementMeta {
             ident,
             variant,
             form,
-            nillable,
+            flags,
             min_occurs,
             max_occurs,
             display_name,
@@ -186,7 +221,7 @@ impl TypeEq for ElementMeta {
         ident.hash(hasher);
         variant.type_hash(hasher, types);
         form.hash(hasher);
-        nillable.hash(hasher);
+        flags.hash(hasher);
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
         display_name.hash(hasher);
@@ -198,7 +233,7 @@ impl TypeEq for ElementMeta {
             ident,
             variant,
             form,
-            nillable,
+            flags,
             min_occurs,
             max_occurs,
             display_name,
@@ -208,7 +243,7 @@ impl TypeEq for ElementMeta {
         ident.eq(&other.ident)
             && variant.type_eq(&other.variant, types)
             && form.eq(&other.form)
-            && nillable.eq(&other.nillable)
+            && flags.eq(&other.flags)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
             && display_name.eq(&other.display_name)
@@ -258,7 +293,7 @@ impl DerefMut for ElementsMeta {
 
 impl TypeEq for ElementsMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
-        TypeEq::type_hash_slice(&self.0, hasher, types);
+        TypeEq::type_hash_iter(&self.0, hasher, types);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {

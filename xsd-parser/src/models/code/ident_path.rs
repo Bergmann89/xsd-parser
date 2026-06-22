@@ -273,6 +273,12 @@ impl ToTokens for IdentPath {
 }
 
 impl ModulePath {
+    /// Creates a new [`ModulePath`] instance that represents the root module.
+    #[must_use]
+    pub fn root() -> Self {
+        Self::default()
+    }
+
     /// Create a new [`ModulePath`] instance from the passed namespace id `ns` and the
     /// `types` information.
     ///

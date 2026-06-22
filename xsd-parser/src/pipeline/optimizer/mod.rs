@@ -19,6 +19,7 @@ mod empty_unions;
 mod flatten_complex_type;
 mod flatten_unions;
 mod merge_choice_cardinality;
+mod merge_dynamic_types;
 mod merge_enum_unions;
 mod misc;
 mod remove_duplicates;
@@ -81,6 +82,12 @@ pub enum Error {
     /// Is raised if a type is expected to be a complex type, but it is not.
     #[error("The type is not a complex type: {0}!")]
     ExpectedComplexType(TypeIdent),
+
+    /// The type is not a dynamic type.
+    ///
+    /// Is raised if a type is expected to be a dynamic type, but it is not.
+    #[error("The type is not a dynamic type: {0}!")]
+    ExpectedDynamicType(TypeIdent),
 
     /// The complex type is missing a content type.
     ///

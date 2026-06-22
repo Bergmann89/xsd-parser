@@ -16,6 +16,11 @@ pub struct InterpreterConfig {
     /// See [`with_type`](crate::Interpreter::with_type) for more details.
     pub types: Vec<(IdentQuadruple, MetaType)>,
 
+    /// List of types to be interpreted as dynamic types.
+    ///
+    /// See [`with_dynamic_type`](crate::Interpreter::with_dynamic_type) for more details.
+    pub dynamic_types: Vec<IdentQuadruple>,
+
     /// Additional flags to control the interpreter.
     pub flags: InterpreterFlags,
 
@@ -30,6 +35,7 @@ impl Default for InterpreterConfig {
     fn default() -> Self {
         Self {
             types: vec![],
+            dynamic_types: vec![],
             debug_output: None,
             flags: InterpreterFlags::BUILDIN_TYPES
                 | InterpreterFlags::DEFAULT_TYPEDEFS
@@ -43,6 +49,7 @@ impl Clone for InterpreterConfig {
     fn clone(&self) -> Self {
         Self {
             types: self.types.clone(),
+            dynamic_types: self.dynamic_types.clone(),
             debug_output: self.debug_output.clone(),
             flags: self.flags.clone(),
             naming: self.naming.as_deref().map(Naming::clone_boxed),

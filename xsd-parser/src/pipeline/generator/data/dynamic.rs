@@ -4,8 +4,9 @@ use proc_macro2::Literal;
 use quote::format_ident;
 
 use crate::models::{
-    data::{DerivedType, DynamicData, PathData},
-    meta::{DerivedTypeMeta, DynamicMeta, MetaTypeVariant},
+    data::{DerivedType, DynamicData, TagName},
+    meta::{DerivedTypeMeta, DynamicMeta},
+    TypeIdent,
 };
 
 use super::super::{Context, Error};
@@ -17,30 +18,15 @@ impl<'types> DynamicData<'types> {
     ) -> Result<Self, Error> {
         let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_ident = format_ident!("{type_ident}Trait");
-        let ident = ctx.ident.clone();
-        let sub_traits = ctx
-            .get_trait_infos()
-            .get(&ident)
-            .map(|info| info.traits_direct.clone())
-            .map(|traits_direct| {
-                traits_direct
-                    .iter()
-                    .map(|ident| {
-                        ctx.get_or_create_type_ref(ident).map(|x| {
-                            let ident = format_ident!("{}Trait", x.path.ident());
+        let trait_impls = ctx.make_trait_impls()?;
+        let sub_traits = ctx.make_traits_derive()?;
+        let form = ctx.types.get_form(ctx.ident);
+        let tag_name = TagName::new(ctx.types, ctx.ident.ns, &ctx.ident.name, form);
 
-                            let target_type = (*x.path).clone().with_ident(ident);
-
-                            PathData::from_path(target_type)
-                        })
-                    })
-                    .collect::<Result<Vec<_>, _>>()
-            })
-            .transpose()?;
         let derived_types = meta
             .derived_types
             .iter()
-            .map(|x| make_derived_type_data(ctx, x))
+            .map(|(type_, meta)| make_derived_type_data(ctx, type_, meta))
             .collect::<Result<Vec<_>, _>>()?;
 
         let meta = Cow::Borrowed(meta);
@@ -51,6 +37,8 @@ impl<'types> DynamicData<'types> {
             type_ident,
             trait_ident,
             deserializer_ident,
+            trait_impls,
+            tag_name,
             sub_traits,
             derived_types,
         })
@@ -59,34 +47,29 @@ impl<'types> DynamicData<'types> {
 
 fn make_derived_type_data<'types>(
     ctx: &mut Context<'_, 'types>,
+    key: &'types TypeIdent,
     meta: &'types DerivedTypeMeta,
-) -> Result<DerivedType, Error> {
-    let s_name = meta.type_.name.to_string();
+) -> Result<DerivedType<'types>, Error> {
+    let s_name = key.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());
+    let form = ctx.types.get_form(key);
+    let tag_name = TagName::new(ctx.types, key.ns, &key.name, form);
 
-    let ty = ctx
-        .types
-        .items
-        .get(&meta.type_)
-        .ok_or_else(|| Error::UnknownType(meta.type_.clone()))?;
-
-    let base_ident = if let MetaTypeVariant::Dynamic(di) = &ty.variant {
-        di.type_.clone()
-    } else {
-        None
-    };
-
-    let ident = base_ident.unwrap_or(meta.type_.clone());
-    let target_ref = ctx.get_or_create_type_ref(&ident)?;
+    let key = key.clone();
+    let target_ref = ctx.get_or_create_type_ref(&meta.type_)?;
     let target_type = target_ref.path.clone();
     let variant_ident = ctx
         .types
         .naming
-        .format_variant_ident(&ident.name, meta.display_name.as_deref());
+        .format_variant_ident(&key.name, meta.display_name.as_deref());
+
+    let meta = Cow::Borrowed(meta);
 
     Ok(DerivedType {
-        ident,
+        key,
+        meta,
         b_name,
+        tag_name,
         target_type,
         variant_ident,
     })

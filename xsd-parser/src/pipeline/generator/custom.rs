@@ -1,8 +1,51 @@
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 
+use crate::models::meta::CustomMeta;
 use crate::pipeline::renderer::ValueRenderer;
 
 use super::{Context, Error};
+
+/// Boxed version of [`CustomGenerator`].
+pub type CustomGeneratorBox = Box<dyn CustomGenerator>;
+
+impl Debug for CustomGeneratorBox {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        f.debug_struct("CustomGeneratorBox").finish()
+    }
+}
+
+/// Implements a custom generator step that is execute if a custom type is
+/// processed by the generator.
+pub trait CustomGenerator: 'static {
+    /// Execute this generator step.
+    fn exec<'types>(
+        &self,
+        ctx: &mut Context<'_, 'types>,
+        meta: &'types CustomMeta,
+    ) -> Result<(), Error>;
+
+    /// Clone this instance and return it as a box.
+    fn clone(&self) -> Box<dyn CustomGenerator>;
+}
+
+impl<X> CustomGenerator for X
+where
+    X: for<'types> Fn(&mut Context<'_, 'types>, &'types CustomMeta) -> Result<(), Error>
+        + Clone
+        + 'static,
+{
+    fn exec<'types>(
+        &self,
+        ctx: &mut Context<'_, 'types>,
+        meta: &'types CustomMeta,
+    ) -> Result<(), Error> {
+        (*self)(ctx, meta)
+    }
+
+    fn clone(&self) -> Box<dyn CustomGenerator> {
+        Box::new(self.clone())
+    }
+}
 
 /// Boxed version of [`ValueGenerator`].
 pub type ValueGeneratorBox = Box<dyn ValueGenerator>;

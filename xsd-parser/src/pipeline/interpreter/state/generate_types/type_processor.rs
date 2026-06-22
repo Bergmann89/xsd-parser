@@ -1,4 +1,4 @@
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::{borrow::Cow, collections::btree_map::Entry};
 
 use tracing::instrument;
@@ -19,6 +19,7 @@ pub(super) struct TypeProcessor<'state, 'schema> {
     schemas: &'schema Schemas,
 
     types: &'state mut MetaTypes,
+    dynamic_types: &'state HashSet<TypeIdent>,
     node_cache: &'state NodeCache<'schema>,
     ident_cache: &'state mut IdentCache,
 }
@@ -27,6 +28,7 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
     pub(super) fn new(
         schemas: &'schema Schemas,
         types: &'state mut MetaTypes,
+        dynamic_types: &'state HashSet<TypeIdent>,
         node_cache: &'state NodeCache<'schema>,
         ident_cache: &'state mut IdentCache,
     ) -> Self {
@@ -36,6 +38,7 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
 
             schemas,
             types,
+            dynamic_types,
             node_cache,
             ident_cache,
         }
@@ -121,18 +124,32 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
         &mut self,
         ident: &TypeIdent,
     ) -> Option<&MetaTypeVariant> {
-        match self.get_variant(ident) {
-            MetaTypeVariant::Enumeration(_)
-            | MetaTypeVariant::BuildIn(_)
-            | MetaTypeVariant::Custom(_)
-            | MetaTypeVariant::Union(_)
-            | MetaTypeVariant::Reference(_)
-            | MetaTypeVariant::SimpleType(_) => None,
-            ty @ (MetaTypeVariant::ComplexType(_)
-            | MetaTypeVariant::All(_)
-            | MetaTypeVariant::Choice(_)
-            | MetaTypeVariant::Sequence(_)
-            | MetaTypeVariant::Dynamic(_)) => Some(ty),
+        let mut ident = Cow::Borrowed(ident);
+
+        loop {
+            match self.types.get_variant(&ident) {
+                None => {
+                    // Hard dependencies should be available here
+                    panic!("Unable to get type for {ident}");
+                }
+                Some(
+                    MetaTypeVariant::Enumeration(_)
+                    | MetaTypeVariant::BuildIn(_)
+                    | MetaTypeVariant::Custom(_)
+                    | MetaTypeVariant::Union(_)
+                    | MetaTypeVariant::Reference(_)
+                    | MetaTypeVariant::SimpleType(_),
+                ) => return None,
+                Some(
+                    ty @ (MetaTypeVariant::ComplexType(_)
+                    | MetaTypeVariant::All(_)
+                    | MetaTypeVariant::Choice(_)
+                    | MetaTypeVariant::Sequence(_)),
+                ) => return Some(ty),
+                Some(MetaTypeVariant::Dynamic(dt)) => {
+                    ident = Cow::Owned(dt.type_.clone().expect("Dynamic type to have base type"));
+                }
+            }
         }
     }
 
@@ -242,6 +259,10 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
                 }
             })
             .unwrap_or_default()
+    }
+
+    pub(super) fn is_dynamic(&self, ident: &TypeIdent) -> bool {
+        self.dynamic_types.contains(ident)
     }
 
     pub(super) fn group_cache(&self) -> Option<&HashMap<TypeIdent, TypeIdent>> {

@@ -1,9 +1,13 @@
 use std::collections::BTreeMap;
 
+use inflector::Inflector;
+use quote::format_ident;
 use xsd_parser_types::misc::Namespace;
 
 use crate::models::{
-    schema::{NamespaceId, SchemaId},
+    code::IdentPath,
+    data::PathData,
+    schema::{xs::FormChoiceType, NamespaceId, SchemaId},
     Name, Naming, TypeIdent,
 };
 use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
@@ -68,6 +72,16 @@ impl MetaTypes {
     #[must_use]
     pub fn name_builder(&self) -> Box<dyn NameBuilderTrait> {
         self.naming.builder()
+    }
+
+    /// Get the form of the passed `ident` falling back to [`FormChoiceType::Unqualified`]
+    /// if the type could not be found or the form was not set for the type.
+    #[must_use]
+    pub fn get_form(&self, ident: &TypeIdent) -> FormChoiceType {
+        self.items
+            .get(ident)
+            .and_then(|x| x.form)
+            .unwrap_or(FormChoiceType::Unqualified)
     }
 
     /// Get the identifier and the type of the passed `ident` with all single
@@ -145,6 +159,32 @@ impl ModuleMeta {
     #[must_use]
     pub fn prefix(&self) -> Option<&Name> {
         self.prefix.as_ref().or(self.name.as_ref())
+    }
+
+    /// Create a path to the contstant that represents the namespace of this module.
+    #[must_use]
+    pub fn make_ns_const(&self) -> Option<PathData> {
+        self.namespace.as_ref()?;
+        let name = self.name().map_or_else(
+            || format!("UNNAMED_{}", self.namespace_id.0),
+            |name| name.as_str().to_screaming_snake_case(),
+        );
+        let ident = format_ident!("NS_{name}");
+        let path = IdentPath::from_parts([], ident);
+
+        Some(PathData::from_path(path))
+    }
+
+    /// Create a path to the contstant that represents the prefix of this module.
+    #[must_use]
+    pub fn make_prefix_const(&self) -> Option<PathData> {
+        self.namespace.as_ref()?;
+        let name = self.name()?;
+        let name = name.as_str().to_screaming_snake_case();
+        let ident = format_ident!("PREFIX_{name}");
+        let path = IdentPath::from_parts([], ident);
+
+        Some(PathData::from_path(path))
     }
 }
 
