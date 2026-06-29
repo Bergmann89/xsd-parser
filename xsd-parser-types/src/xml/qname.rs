@@ -2,9 +2,11 @@ use std::borrow::Cow;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
 
+#[cfg(feature = "quick-xml")]
 use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
 
 use crate::misc::{format_utf8_slice, Namespace};
+#[cfg(feature = "quick-xml")]
 use crate::quick_xml::{WithDeserializerFromBytes, WithSerializeToBytes};
 
 #[cfg(feature = "quick-xml")]
@@ -152,6 +154,7 @@ impl SerializeBytes for QName {
     }
 }
 
+#[cfg(feature = "quick-xml")]
 impl WithSerializeToBytes for QName {}
 
 #[cfg(feature = "quick-xml")]
@@ -161,6 +164,7 @@ impl DeserializeBytes for QName {
     }
 }
 
+#[cfg(feature = "quick-xml")]
 impl WithDeserializerFromBytes for QName {}
 
 #[allow(clippy::missing_fields_in_debug)]

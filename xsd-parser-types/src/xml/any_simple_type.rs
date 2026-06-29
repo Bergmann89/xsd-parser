@@ -10,6 +10,7 @@ use num::{BigInt, BigRational, BigUint};
 #[cfg(feature = "quick-xml")]
 use quick_xml::events::Event;
 
+#[cfg(feature = "quick-xml")]
 use crate::quick_xml::{DeserializeBytes, SerializeBytes};
 use crate::xml::NamespacesShared;
 
@@ -216,6 +217,7 @@ impl WithDeserializer for AnySimpleType {
     type Deserializer = AnySimpleTypeDeserializer;
 }
 
+#[cfg(feature = "quick-xml")]
 impl SerializeBytes for AnySimpleType {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         let _helper = helper;
@@ -224,6 +226,7 @@ impl SerializeBytes for AnySimpleType {
     }
 }
 
+#[cfg(feature = "quick-xml")]
 impl DeserializeBytes for AnySimpleType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         Self::deserialize_str(helper, from_utf8(bytes)?)
@@ -603,7 +606,7 @@ fn parse_base64_binary(bytes: &str) -> Result<Base64Binary, Error> {
 }
 
 #[inline]
-#[cfg(not(feature = "base64"))]
+#[cfg(all(feature = "quick-xml", not(feature = "base64")))]
 #[allow(clippy::unnecessary_wraps)]
 fn parse_base64_binary(s: &str) -> Result<Base64Binary, Error> {
     Ok(s.to_string().into())

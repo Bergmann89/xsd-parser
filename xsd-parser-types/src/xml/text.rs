@@ -65,6 +65,7 @@ impl DerefMut for Text {
     }
 }
 
+#[cfg(feature = "quick-xml")]
 impl WithSerializer for Text {
     type Serializer<'x> = TextSerializer<'x>;
 
@@ -80,11 +81,13 @@ impl WithSerializer for Text {
     }
 }
 
+#[cfg(feature = "quick-xml")]
 impl WithDeserializer for Text {
     type Deserializer = TextDeserializer;
 }
 
 /// Implemented the [`Serializer`](crate::quick_xml::Serializer) trait for [`Text`].
+#[cfg(feature = "quick-xml")]
 #[derive(Debug)]
 pub enum TextSerializer<'ser> {
     /// Emit events for the contained text value.
@@ -97,6 +100,7 @@ pub enum TextSerializer<'ser> {
     Done,
 }
 
+#[cfg(feature = "quick-xml")]
 impl<'ser> Serializer<'ser> for TextSerializer<'ser> {
     fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         let _helper = helper;
@@ -111,6 +115,7 @@ impl<'ser> Serializer<'ser> for TextSerializer<'ser> {
 }
 
 /// Implemented the [`Deserializer`] trait for [`Text`].
+#[cfg(feature = "quick-xml")]
 #[derive(Debug)]
 pub enum TextDeserializer {
     /// Init the deserializer
@@ -123,6 +128,7 @@ pub enum TextDeserializer {
     },
 }
 
+#[cfg(feature = "quick-xml")]
 impl<'de> Deserializer<'de, Text> for TextDeserializer {
     fn init(helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, Text> {
         Self::Init.next(helper, event)
