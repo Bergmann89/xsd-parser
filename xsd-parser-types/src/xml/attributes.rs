@@ -4,17 +4,32 @@ use std::ops::{Deref, DerefMut};
 
 use encoding_rs::{Encoding, UTF_8};
 use indexmap::{map::Entry, IndexMap};
+#[cfg(feature = "quick-xml")]
 use quick_xml::{
     encoding::decode,
     escape::{resolve_predefined_entity, unescape_with},
     events::attributes::Attribute,
     name::QName,
 };
+#[cfg(not(feature = "quick-xml"))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct QName<'a>(pub &'a [u8]);
 
 use crate::misc::{format_utf8_slice, RawByteStr};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{Error, ErrorKind};
+
+#[cfg(not(feature = "quick-xml"))]
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct Attribute<'a> {
+    /// The key to uniquely define the attribute.
+    ///
+    /// If [`Attributes::with_checks`] is turned off, the key might not be unique.
+    pub key: QName<'a>,
+    /// The raw value of the attribute.
+    pub value: Cow<'a, [u8]>,
+}
 
 /// Represents a list of unstructured XML attributes.
 #[derive(Default, Debug, Clone, Eq, PartialEq)]
@@ -33,6 +48,7 @@ impl<'a> Attributes<'a> {
     ///
     /// Raises a [`DuplicateAttribute`](ErrorKind::DuplicateAttribute) error if
     /// the passed attribute is already part of the list.
+    #[cfg(feature = "quick-xml")]
     pub fn push(&mut self, attrib: Attribute<'_>) -> Result<(), Error> {
         let key = Key(Cow::Owned(attrib.key.0.to_owned()));
 
@@ -154,6 +170,7 @@ impl Borrow<[u8]> for Key<'_> {
 #[derive(Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Value<'a>(pub Cow<'a, [u8]>);
 
+#[cfg(feature = "quick-xml")]
 impl Value<'_> {
     /// Return the unescaped value using UTF-8 encoding.
     ///

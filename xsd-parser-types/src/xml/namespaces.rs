@@ -5,6 +5,7 @@ use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 use std::sync::Arc;
 
+#[cfg(feature = "quick-xml")]
 use quick_xml::name::{Namespace, PrefixDeclaration};
 
 use crate::misc::format_utf8_slice;
@@ -76,6 +77,7 @@ where
 #[derive(Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Key<'a>(pub Cow<'a, [u8]>);
 
+#[cfg(feature = "quick-xml")]
 impl Key<'_> {
     /// Get the key value as [`PrefixDeclaration`].
     #[must_use]
@@ -140,6 +142,7 @@ impl Borrow<[u8]> for Key<'_> {
 #[derive(Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Value<'a>(pub Cow<'a, [u8]>);
 
+#[cfg(feature = "quick-xml")]
 impl Value<'_> {
     /// Get the namespace as [`Namespace`].
     #[inline]

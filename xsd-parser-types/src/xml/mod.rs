@@ -23,14 +23,20 @@ pub use self::attributes::{
     AnyAttributes, Attributes, Key as AttributeKey, Value as AttributeValue,
 };
 pub use self::element::{AnyElement, AnyElements, Element, Elements};
-pub use self::mixed::{Mixed, MixedDeserializer, MixedSerializer};
+pub use self::mixed::Mixed;
+#[cfg(feature = "quick-xml")]
+pub use self::mixed::{MixedDeserializer, MixedSerializer};
 pub use self::namespace_scope::NamespaceScope;
 pub use self::namespaces::{
     Key as NamespaceKey, Namespaces, NamespacesShared, Value as NamespaceValue,
 };
-pub use self::nillable::{Nillable, NillableDeserializer, NillableSerializer};
+pub use self::nillable::Nillable;
+#[cfg(feature = "quick-xml")]
+pub use self::nillable::{NillableDeserializer, NillableSerializer};
 pub use self::qname::QName;
-pub use self::text::{Text, TextDeserializer, TextSerializer};
+pub use self::text::Text;
+#[cfg(feature = "quick-xml")]
+pub use self::text::{TextDeserializer, TextSerializer};
 pub use self::value::Value;
 
 #[cfg(feature = "quick-xml")]

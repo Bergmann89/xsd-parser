@@ -1,10 +1,37 @@
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 
+#[cfg(feature = "quick-xml")]
 use quick_xml::events::{BytesCData, BytesText};
 
 use crate::misc::format_utf8_slice;
 
 use super::Element;
+
+#[cfg(not(feature = "quick-xml"))]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BytesText<'a>(std::borrow::Cow<'a, [u8]>);
+
+#[cfg(not(feature = "quick-xml"))]
+impl<'a> std::ops::Deref for BytesText<'a> {
+    type Target = [u8];
+
+    fn deref(&self) -> &[u8] {
+        &self.0
+    }
+}
+
+#[cfg(not(feature = "quick-xml"))]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct BytesCData<'a>(std::borrow::Cow<'a, [u8]>);
+
+#[cfg(not(feature = "quick-xml"))]
+impl<'a> std::ops::Deref for BytesCData<'a> {
+    type Target = [u8];
+
+    fn deref(&self) -> &[u8] {
+        &self.0
+    }
+}
 
 /// Represents unstructured XML data.
 ///
