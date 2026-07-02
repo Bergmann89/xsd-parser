@@ -676,7 +676,7 @@ pub struct DeserializeHelper {
 impl DeserializeHelper {
     /// Resolves a [`QName`] in the current context of the parsed XML.
     ///
-    /// For more details check [`quick_xml::NsReader::resolve`].
+    /// For more details check [`quick_xml::name::NamespaceResolver::resolve`].
     #[must_use]
     pub fn resolve<'n>(
         &self,
