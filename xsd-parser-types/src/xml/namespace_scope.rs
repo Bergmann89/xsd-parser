@@ -93,6 +93,7 @@ impl<T> NamespaceScope<T> {
     }
 }
 
+#[cfg(feature = "quick-xml")]
 impl<T> SerializeBytes for NamespaceScope<T>
 where
     T: SerializeBytes,
@@ -102,6 +103,7 @@ where
     }
 }
 
+#[cfg(feature = "quick-xml")]
 impl<T> DeserializeBytes for NamespaceScope<T>
 where
     T: DeserializeBytes,

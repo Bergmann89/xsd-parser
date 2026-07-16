@@ -11,7 +11,9 @@ use crate::quick_xml::{
     WithSerializer,
 };
 
-use super::text::{Text, TextDeserializer};
+use super::text::Text;
+#[cfg(feature = "quick-xml")]
+use super::text::TextDeserializer;
 
 /// Used to represent xml elements with mixed content
 #[derive(Default, Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd)]
