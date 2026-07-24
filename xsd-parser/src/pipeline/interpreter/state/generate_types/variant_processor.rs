@@ -242,6 +242,17 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
             if has_content {
                 ret?;
+
+                // If the element has a default value, propagate it to the
+                // inline complex type so the deserializer can use it when
+                // the element is present but has no text content.
+                if let Some(default) = &ty.default {
+                    let type_meta = self.owner.get_type_mut(&type_);
+                    if let MetaTypeVariant::ComplexType(ref mut meta) = type_meta.variant {
+                        meta.default = Some(default.clone());
+                    }
+                }
+
                 init_any!(self, Reference, ReferenceMeta::new(type_), true);
             } else {
                 // No actual type content found, default to `xs:anyType`

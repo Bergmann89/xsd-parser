@@ -59,6 +59,7 @@ impl<'types> ComplexData<'types> {
             MaxOccurs::Bounded(1),
             &[],
             &meta.elements,
+            None,
         )
     }
 
@@ -76,6 +77,7 @@ impl<'types> ComplexData<'types> {
             MaxOccurs::Bounded(1),
             &[],
             &meta.elements,
+            None,
         )
     }
 
@@ -93,6 +95,7 @@ impl<'types> ComplexData<'types> {
             MaxOccurs::Bounded(1),
             &[],
             &meta.elements,
+            None,
         )
     }
 
@@ -137,6 +140,7 @@ impl<'types> ComplexData<'types> {
             meta.max_occurs,
             &meta.attributes,
             elements,
+            meta.default.as_deref(),
         )
     }
 
@@ -150,10 +154,11 @@ impl<'types> ComplexData<'types> {
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
         elements: &'types [ElementMeta],
+        default: Option<&str>,
     ) -> Result<Self, Error> {
         match type_mode {
             TypeMode::Simple { simple_type } => {
-                Self::new_simple(ctx, form, simple_type, min_occurs, max_occurs, attributes)
+                Self::new_simple(ctx, form, simple_type, min_occurs, max_occurs, attributes, default)
             }
             TypeMode::Choice => Self::new_enum(
                 ctx, form, mixed_mode, min_occurs, max_occurs, attributes, elements,
@@ -171,6 +176,7 @@ impl<'types> ComplexData<'types> {
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
+        default: Option<&str>,
     ) -> Result<Self, Error> {
         let base = ComplexBase::new(ctx, form, ComplexFlags::empty())?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
@@ -187,6 +193,12 @@ impl<'types> ComplexData<'types> {
             })
             .collect::<Result<Vec<_>, _>>()?;
 
+        let default_value = default
+            .map(|default| {
+                ctx.make_value_renderer(simple_type, default, ValueGeneratorMode::Value)
+            })
+            .transpose()?;
+
         let content = ComplexDataContent {
             occurs,
             simple_type: Some(simple_type),
@@ -195,6 +207,7 @@ impl<'types> ComplexData<'types> {
             field_ident,
             target_type,
             extra_attributes: Vec::new(),
+            default_value,
         };
 
         let type_ = ComplexDataStruct {
@@ -321,6 +334,7 @@ impl<'types> ComplexData<'types> {
                 field_ident,
                 target_type,
                 extra_attributes: Vec::new(),
+                default_value: None,
             };
 
             StructMode::Content { content }
@@ -492,6 +506,7 @@ impl<'types> ComplexData<'types> {
                 field_ident,
                 target_type,
                 extra_attributes: Vec::new(),
+                default_value: None,
             };
 
             StructMode::Content { content }

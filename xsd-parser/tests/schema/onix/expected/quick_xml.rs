@@ -43546,6 +43546,12 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub content: List219,
     }
+    impl CopyrightTypeElementType {
+        #[must_use]
+        pub fn default_content() -> List219 {
+            List219::C
+        }
+    }
     impl WithSerializer for CopyrightTypeElementType {
         type Serializer<'x> = quick_xml_serialize::CopyrightTypeElementTypeSerializer<'x>;
         fn serializer<'ser>(
@@ -222631,6 +222637,15 @@ pub mod onix {
                 match replace(&mut *self.state__, S::Unknown__) {
                     S::Unknown__ => unreachable!(),
                     S::Init__ => {
+                        if matches!(&event, Event::Empty(_)) {
+                            self.store_content(super::CopyrightTypeElementType::default_content())?;
+                            let data = self.finish(helper)?;
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(data),
+                                event: DeserializerEvent::None,
+                                allow_any: false,
+                            });
+                        }
                         let output = ContentDeserializer::init(helper, event)?;
                         self.handle_content(helper, output)
                     }
