@@ -222504,6 +222504,7 @@ pub mod onix {
         #[derive(Debug)]
         enum CopyrightTypeElementTypeDeserializerState {
             Init__,
+            ContentInit__(<super::List219 as WithDeserializer>::Deserializer),
             Content__(<super::List219 as WithDeserializer>::Deserializer),
             Unknown__,
         }
@@ -222565,6 +222566,8 @@ pub mod onix {
             ) -> Result<(), Error> {
                 if let CopyrightTypeElementTypeDeserializerState::Content__(deserializer) = state {
                     self.store_content(deserializer.finish(helper)?)?;
+                } else if let CopyrightTypeElementTypeDeserializerState::ContentInit__(_) = state {
+                    self.store_content(super::CopyrightTypeElementType::default_content())?;
                 }
                 Ok(())
             }
@@ -222647,6 +222650,41 @@ pub mod onix {
                             });
                         }
                         let output = ContentDeserializer::init(helper, event)?;
+                        let DeserializerOutput {
+                            artifact,
+                            event,
+                            allow_any,
+                        } = output;
+                        match artifact {
+                            DeserializerArtifact::Deserializer(deserializer) => {
+                                *self.state__ = S::ContentInit__(deserializer);
+                                Ok(DeserializerOutput {
+                                    artifact: DeserializerArtifact::Deserializer(self),
+                                    event,
+                                    allow_any,
+                                })
+                            }
+                            artifact => self.handle_content(
+                                helper,
+                                DeserializerOutput {
+                                    artifact,
+                                    event,
+                                    allow_any,
+                                },
+                            ),
+                        }
+                    }
+                    S::ContentInit__(deserializer) => {
+                        if matches!(&event, Event::End(_)) {
+                            self.store_content(super::CopyrightTypeElementType::default_content())?;
+                            let data = self.finish(helper)?;
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(data),
+                                event: DeserializerEvent::None,
+                                allow_any: false,
+                            });
+                        }
+                        let output = deserializer.next(helper, event)?;
                         self.handle_content(helper, output)
                     }
                     S::Content__(deserializer) => {

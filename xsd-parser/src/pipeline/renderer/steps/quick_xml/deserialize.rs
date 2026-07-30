@@ -1606,9 +1606,20 @@ impl ComplexDataStruct<'_> {
                     }
                 });
 
+                // When simple content has a default value, add a `ContentInit__` state to
+                // intercept `Event::End` before any text has been seen (i.e. `<Bar></Bar>`)
+                // and fall back to the default instead of trying to parse an empty string.
+                let content_init =
+                    (content.is_simple() && content.default_value.is_some()).then(|| {
+                        quote! {
+                            ContentInit__(<#target_type as #with_deserializer>::Deserializer),
+                        }
+                    });
+
                 quote! {
                     Init__,
                     #next
+                    #content_init
                     Content__(<#target_type as #with_deserializer>::Deserializer),
                     #done
                     Unknown__,
@@ -1954,11 +1965,25 @@ impl ComplexDataStruct<'_> {
                     Ok(())
                 }
             }
-            StructMode::Content { .. } => {
+            StructMode::Content { content } => {
+                let type_ident = &self.type_ident;
+
+                // When a `ContentInit__` state exists (simple content + default value), handle
+                // the case where `finish_state` is called before any text content was received.
+                let content_init_arm = (content.is_simple() && content.default_value.is_some())
+                    .then(|| {
+                        quote! {
+                            else if let #deserializer_state_ident::ContentInit__(_) = state {
+                                self.store_content(super::#type_ident::default_content())?;
+                            }
+                        }
+                    });
+
                 quote! {
                     if let #deserializer_state_ident::Content__(deserializer) = state {
                         self.store_content(deserializer.finish(helper)?)?;
                     }
+                    #content_init_arm
 
                     Ok(())
                 }
@@ -2176,44 +2201,99 @@ impl ComplexDataStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
-        // If there's a content default value, generate a special handler for
-        // `Event::Empty` (i.e., a self-closing element like `<Bar Baz="x"/>`)
-        // that uses the default value instead of trying to parse empty content.
-        let empty_default_handler = content.default_value.is_some().then(|| {
+        let has_default = content.default_value.is_some();
+
+        if has_default {
+            // When a default value is present, we need to handle two self-closing forms:
+            //   1. `<Bar Baz="x"/>` → `Event::Empty`  — intercepted in `S::Init__`
+            //   2. `<Bar Baz="x"></Bar>` → `Event::Start` then `Event::End` with no text
+            //      — intercepted in the new `S::ContentInit__` state
+            //
+            // The `S::ContentInit__` state is entered from `S::Init__` when we receive a
+            // `Event::Start` (not `Event::Empty`). While in that state, a subsequent
+            // `Event::End` without any text uses `default_content()` rather than trying to
+            // parse an empty byte slice (which would fail for types like `bool`).
             let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
             let deserializer_event =
                 resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerEvent");
             let deserializer_output =
                 resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
-            let deserializer_artifact =
-                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerArtifact");
+            let deserializer_artifact = resolve_quick_xml_ident!(
+                ctx,
+                "::xsd_parser_types::quick_xml::DeserializerArtifact"
+            );
+
+            // Shared fragment: store the default and finish the deserializer.
+            let use_default = quote! {
+                self.store_content(super::#type_ident::default_content())?;
+                let data = self.finish(helper)?;
+                return Ok(#deserializer_output {
+                    artifact: #deserializer_artifact::Data(data),
+                    event: #deserializer_event::None,
+                    allow_any: false,
+                });
+            };
 
             quote! {
-                if matches!(&event, #event::Empty(_)) {
-                    self.store_content(super::#type_ident::default_content())?;
-                    let data = self.finish(helper)?;
-                    return Ok(#deserializer_output {
-                        artifact: #deserializer_artifact::Data(data),
-                        event: #deserializer_event::None,
-                        allow_any: false,
-                    });
+                use #deserializer_state_ident as S;
+
+                match #replace(&mut *self.state__, S::Unknown__) {
+                    S::Unknown__ => unreachable!(),
+                    S::Init__ => {
+                        // Self-closing tag: `<Bar Baz="x"/>` — use default immediately.
+                        if matches!(&event, #event::Empty(_)) {
+                            #use_default
+                        }
+                        // Opening tag: `<Bar Baz="x">` — enter ContentInit__ so that a
+                        // bare `</Bar>` can still fall back to the default.
+                        let output = #content_deserializer::init(helper, event)?;
+                        let #deserializer_output { artifact, event, allow_any } = output;
+                        match artifact {
+                            #deserializer_artifact::Deserializer(deserializer) => {
+                                *self.state__ = S::ContentInit__(deserializer);
+                                Ok(#deserializer_output {
+                                    artifact: #deserializer_artifact::Deserializer(self),
+                                    event,
+                                    allow_any,
+                                })
+                            }
+                            artifact => self.handle_content(
+                                helper,
+                                #deserializer_output { artifact, event, allow_any },
+                            ),
+                        }
+                    }
+                    S::ContentInit__(deserializer) => {
+                        // First event after the opening tag.
+                        // If it's an immediate `</Bar>` with no text, use the default.
+                        if matches!(&event, #event::End(_)) {
+                            #use_default
+                        }
+                        // Otherwise delegate to the inner deserializer; `handle_content`
+                        // will transition to `S::Content__` once text starts accumulating.
+                        let output = deserializer.next(helper, event)?;
+                        self.handle_content(helper, output)
+                    }
+                    S::Content__(deserializer) => {
+                        let output = deserializer.next(helper, event)?;
+                        self.handle_content(helper, output)
+                    }
                 }
             }
-        });
+        } else {
+            quote! {
+                use #deserializer_state_ident as S;
 
-        quote! {
-            use #deserializer_state_ident as S;
-
-            match #replace(&mut *self.state__, S::Unknown__) {
-                S::Unknown__ => unreachable!(),
-                S::Init__ => {
-                    #empty_default_handler
-                    let output = #content_deserializer::init(helper, event)?;
-                    self.handle_content(helper, output)
-                }
-                S::Content__(deserializer) => {
-                    let output = deserializer.next(helper, event)?;
-                    self.handle_content(helper, output)
+                match #replace(&mut *self.state__, S::Unknown__) {
+                    S::Unknown__ => unreachable!(),
+                    S::Init__ => {
+                        let output = #content_deserializer::init(helper, event)?;
+                        self.handle_content(helper, output)
+                    }
+                    S::Content__(deserializer) => {
+                        let output = deserializer.next(helper, event)?;
+                        self.handle_content(helper, output)
+                    }
                 }
             }
         }

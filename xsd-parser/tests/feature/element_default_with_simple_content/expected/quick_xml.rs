@@ -240,6 +240,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum FooBarTypeDeserializerState {
         Init__,
+        ContentInit__(<bool as WithDeserializer>::Deserializer),
         Content__(<bool as WithDeserializer>::Deserializer),
         Unknown__,
     }
@@ -270,6 +271,8 @@ pub mod quick_xml_deserialize {
         ) -> Result<(), Error> {
             if let FooBarTypeDeserializerState::Content__(deserializer) = state {
                 self.store_content(deserializer.finish(helper)?)?;
+            } else if let FooBarTypeDeserializerState::ContentInit__(_) = state {
+                self.store_content(super::FooBarType::default_content())?;
             }
             Ok(())
         }
@@ -350,6 +353,41 @@ pub mod quick_xml_deserialize {
                         });
                     }
                     let output = ContentDeserializer::init(helper, event)?;
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = output;
+                    match artifact {
+                        DeserializerArtifact::Deserializer(deserializer) => {
+                            *self.state__ = S::ContentInit__(deserializer);
+                            Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Deserializer(self),
+                                event,
+                                allow_any,
+                            })
+                        }
+                        artifact => self.handle_content(
+                            helper,
+                            DeserializerOutput {
+                                artifact,
+                                event,
+                                allow_any,
+                            },
+                        ),
+                    }
+                }
+                S::ContentInit__(deserializer) => {
+                    if matches!(&event, Event::End(_)) {
+                        self.store_content(super::FooBarType::default_content())?;
+                        let data = self.finish(helper)?;
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(data),
+                            event: DeserializerEvent::None,
+                            allow_any: false,
+                        });
+                    }
+                    let output = deserializer.next(helper, event)?;
                     self.handle_content(helper, output)
                 }
                 S::Content__(deserializer) => {

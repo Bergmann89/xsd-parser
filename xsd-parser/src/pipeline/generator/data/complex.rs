@@ -157,9 +157,15 @@ impl<'types> ComplexData<'types> {
         default: Option<&str>,
     ) -> Result<Self, Error> {
         match type_mode {
-            TypeMode::Simple { simple_type } => {
-                Self::new_simple(ctx, form, simple_type, min_occurs, max_occurs, attributes, default)
-            }
+            TypeMode::Simple { simple_type } => Self::new_simple(
+                ctx,
+                form,
+                simple_type,
+                min_occurs,
+                max_occurs,
+                attributes,
+                default,
+            ),
             TypeMode::Choice => Self::new_enum(
                 ctx, form, mixed_mode, min_occurs, max_occurs, attributes, elements,
             ),
@@ -194,9 +200,7 @@ impl<'types> ComplexData<'types> {
             .collect::<Result<Vec<_>, _>>()?;
 
         let default_value = default
-            .map(|default| {
-                ctx.make_value_renderer(simple_type, default, ValueGeneratorMode::Value)
-            })
+            .map(|default| ctx.make_value_renderer(simple_type, default, ValueGeneratorMode::Value))
             .transpose()?;
 
         let content = ComplexDataContent {

@@ -51,6 +51,23 @@ fn read_quick_xml_empty_element_uses_default() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_empty_explicit_element_uses_default() {
+    use quick_xml::Foo;
+
+    let obj = crate::utils::quick_xml_read_test::<Foo, _>(
+        "tests/feature/element_default_with_simple_content/example/empty_explicit.xml",
+    );
+
+    let bar = obj.bar.expect("bar should be present");
+    assert!(
+        !bar.content,
+        "expected default value false for explicit empty tags"
+    );
+    assert_eq!(bar.baz, "xxxx");
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml_with_content() {
     use quick_xml::Foo;
 
