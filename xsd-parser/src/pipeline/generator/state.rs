@@ -67,12 +67,9 @@ impl State<'_> {
     /// while a content type with only one owner is rendered as a type nested below
     /// that owner.
     ///
-    /// Mixed content is excluded for two reasons: A mixed parent parameterizes its
-    /// content type with `ComplexMeta::is_mixed`, so it can not be shared. And
-    /// `Optimizer::simplify_mixed_type` clears `ComplexMeta::is_mixed` but leaves
-    /// `GroupMeta::is_mixed` set, so the groups own flag may be stale. Referencing
-    /// such a group would generate it with `MixedMode::Group`, wrapping every element
-    /// in `Mixed<..>` on top of the `Text` element the optimizer already inserted.
+    /// Mixed content is excluded, because a mixed owner parameterizes its content
+    /// type with `ComplexMeta::is_mixed` and a mixed group renders every element
+    /// wrapped in `Mixed<..>`, so neither can be shared with a non mixed owner.
     pub(super) fn shared_content<'a>(
         &self,
         types: &'a MetaTypes,

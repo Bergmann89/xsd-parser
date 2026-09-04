@@ -272,18 +272,7 @@ pub mod cdf {
         pub lang: Option<String>,
         ///Used to manage inheritance.
         pub override_: bool,
-        pub content: Vec<HtmlTextWithSubTypeContent>,
-    }
-    /// The type for a string with optional XHTML elements,
-    ///and an @xml:lang attribute.
-    #[derive(Debug)]
-    pub enum HtmlTextWithSubTypeContent {
-        ///Specifies an xccdf:Value or
-        ///xccdf:plain-text element to be used for text
-        ///substitution
-        Sub(SubType),
-        Any(AnyElement),
-        Text(Text),
+        pub content: Vec<FixTextContent35Type>,
     }
     impl HtmlTextWithSubType {
         #[must_use]
@@ -306,28 +295,8 @@ pub mod cdf {
             })
         }
     }
-    impl WithSerializer for HtmlTextWithSubTypeContent {
-        type Serializer<'x> = quick_xml_serialize::HtmlTextWithSubTypeContentSerializer<'x>;
-        fn serializer<'ser>(
-            &'ser self,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self::Serializer<'ser>, Error> {
-            let _name = name;
-            let _is_root = is_root;
-            Ok(quick_xml_serialize::HtmlTextWithSubTypeContentSerializer {
-                value: self,
-                state: Box::new(
-                    quick_xml_serialize::HtmlTextWithSubTypeContentSerializerState::Init__,
-                ),
-            })
-        }
-    }
     impl WithDeserializer for HtmlTextWithSubType {
         type Deserializer = quick_xml_deserialize::HtmlTextWithSubTypeDeserializer;
-    }
-    impl WithDeserializer for HtmlTextWithSubTypeContent {
-        type Deserializer = quick_xml_deserialize::HtmlTextWithSubTypeContentDeserializer;
     }
     ///Data type for an xccdf:notice element.
     ///xccdf:notice elements are used to include legal notices (licensing
@@ -1672,6 +1641,33 @@ pub mod cdf {
     impl WithDeserializer for SubType {
         type Deserializer = quick_xml_deserialize::SubTypeDeserializer;
     }
+    #[derive(Debug)]
+    pub enum FixTextContent35Type {
+        ///Specifies an xccdf:Value or
+        ///xccdf:plain-text element to be used for text
+        ///substitution
+        Sub(SubType),
+        Any(AnyElement),
+        Text(Text),
+    }
+    impl WithSerializer for FixTextContent35Type {
+        type Serializer<'x> = quick_xml_serialize::FixTextContent35TypeSerializer<'x>;
+        fn serializer<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            let _name = name;
+            Ok(quick_xml_serialize::FixTextContent35TypeSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::FixTextContent35TypeSerializerState::Init__),
+                is_root,
+            })
+        }
+    }
+    impl WithDeserializer for FixTextContent35Type {
+        type Deserializer = quick_xml_deserialize::FixTextContent35TypeDeserializer;
+    }
     /// Type for a parameter used in the xccdf:model
     ///element, which records scoring model information. The contents of this type
     ///represent a name-value pair, where the name is recorded in the @name attribute and
@@ -2140,20 +2136,7 @@ pub mod cdf {
         ///A hint as to the nature of the
         ///warning.
         pub category: WarningCategoryEnumType,
-        pub content: Vec<WarningTypeContent>,
-    }
-    /// Data type for the xccdf:warning element under
-    ///the xccdf:Rule element. This element holds a note or caveat about the item
-    ///intended to convey important cautionary information for the xccdf:Benchmark
-    ///user.
-    #[derive(Debug)]
-    pub enum WarningTypeContent {
-        ///Specifies an xccdf:Value or
-        ///xccdf:plain-text element to be used for text
-        ///substitution
-        Sub(SubType),
-        Any(AnyElement),
-        Text(Text),
+        pub content: Vec<FixTextContent35Type>,
     }
     impl WarningType {
         #[must_use]
@@ -2180,26 +2163,8 @@ pub mod cdf {
             })
         }
     }
-    impl WithSerializer for WarningTypeContent {
-        type Serializer<'x> = quick_xml_serialize::WarningTypeContentSerializer<'x>;
-        fn serializer<'ser>(
-            &'ser self,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self::Serializer<'ser>, Error> {
-            let _name = name;
-            let _is_root = is_root;
-            Ok(quick_xml_serialize::WarningTypeContentSerializer {
-                value: self,
-                state: Box::new(quick_xml_serialize::WarningTypeContentSerializerState::Init__),
-            })
-        }
-    }
     impl WithDeserializer for WarningType {
         type Deserializer = quick_xml_deserialize::WarningTypeDeserializer;
-    }
-    impl WithDeserializer for WarningTypeContent {
-        type Deserializer = quick_xml_deserialize::WarningTypeContentDeserializer;
     }
     /// This type is for an element that has string content
     ///and a @selector attribute for use in tailoring.
@@ -2705,21 +2670,7 @@ pub mod cdf {
         ///The estimated complexity or difficulty of
         ///applying the fix to the target.
         pub complexity: RatingEnumType,
-        pub content: Vec<FixTextTypeContent>,
-    }
-    /// Data type for the xccdf:fixtext element, which
-    ///contains data that describes how to bring a target system into compliance with an
-    ///xccdf:Rule. Each xccdf:fixtext element may be associated with one or
-    ///more xccdf:fix elements through the @fixref attribute. The body holds
-    ///explanatory text about the fix procedures.
-    #[derive(Debug)]
-    pub enum FixTextTypeContent {
-        ///Specifies an xccdf:Value or
-        ///xccdf:plain-text element to be used for text
-        ///substitution
-        Sub(SubType),
-        Any(AnyElement),
-        Text(Text),
+        pub content: Vec<FixTextContent35Type>,
     }
     impl FixTextType {
         #[must_use]
@@ -2758,26 +2709,8 @@ pub mod cdf {
             })
         }
     }
-    impl WithSerializer for FixTextTypeContent {
-        type Serializer<'x> = quick_xml_serialize::FixTextTypeContentSerializer<'x>;
-        fn serializer<'ser>(
-            &'ser self,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self::Serializer<'ser>, Error> {
-            let _name = name;
-            let _is_root = is_root;
-            Ok(quick_xml_serialize::FixTextTypeContentSerializer {
-                value: self,
-                state: Box::new(quick_xml_serialize::FixTextTypeContentSerializerState::Init__),
-            })
-        }
-    }
     impl WithDeserializer for FixTextType {
         type Deserializer = quick_xml_deserialize::FixTextTypeDeserializer;
-    }
-    impl WithDeserializer for FixTextTypeContent {
-        type Deserializer = quick_xml_deserialize::FixTextTypeContentDeserializer;
     }
     /// Data type for the xccdf:fix element. The body
     ///of this element contains a command string, script, or other system modification
@@ -6721,14 +6654,14 @@ pub mod cdf {
         pub struct HtmlTextWithSubTypeDeserializer {
             lang: Option<String>,
             override_: bool,
-            content: Vec<super::HtmlTextWithSubTypeContent>,
+            content: Vec<super::FixTextContent35Type>,
             state__: Box<HtmlTextWithSubTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum HtmlTextWithSubTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::HtmlTextWithSubTypeContent as WithDeserializer>::Deserializer),
+            Content__(<super::FixTextContent35Type as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl HtmlTextWithSubTypeDeserializer {
@@ -6772,17 +6705,14 @@ pub mod cdf {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::HtmlTextWithSubTypeContent,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FixTextContent35Type) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::HtmlTextWithSubTypeContent>,
+                output: DeserializerOutput<'de, super::FixTextContent35Type>,
                 fallback: &mut Option<HtmlTextWithSubTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use HtmlTextWithSubTypeDeserializerState as S;
@@ -6850,10 +6780,9 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output =
-                                <super::HtmlTextWithSubTypeContent as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                            let output = <super::FixTextContent35Type as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6887,381 +6816,6 @@ pub mod cdf {
                     override_: self.override_,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
-            }
-        }
-        #[derive(Debug)]
-        pub struct HtmlTextWithSubTypeContentDeserializer {
-            state__: Box<HtmlTextWithSubTypeContentDeserializerState>,
-        }
-        #[derive(Debug)]
-        pub enum HtmlTextWithSubTypeContentDeserializerState {
-            Init__,
-            Sub(
-                Option<super::SubType>,
-                Option<<super::SubType as WithDeserializer>::Deserializer>,
-                Option<<super::SubType as WithDeserializer>::Deserializer>,
-            ),
-            Any(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Text(
-                Option<Text>,
-                Option<<Text as WithDeserializer>::Deserializer>,
-                Option<<Text as WithDeserializer>::Deserializer>,
-            ),
-            Done__(super::HtmlTextWithSubTypeContent),
-            Unknown__,
-        }
-        impl HtmlTextWithSubTypeContentDeserializer {
-            fn find_suitable<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                let mut event = event;
-                if let Event::Start(x) | Event::Empty(x) = &event {
-                    if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
-                        Some(b"sub")
-                    ) {
-                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
-                        return self.handle_sub(helper, Default::default(), None, output);
-                    }
-                    event = {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        match self.handle_any(helper, Default::default(), None, output)? {
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                            output => {
-                                return Ok(output);
-                            }
-                        }
-                    };
-                }
-                event = {
-                    let output = <Text as WithDeserializer>::init(helper, event)?;
-                    match self.handle_text(helper, Default::default(), None, output)? {
-                        ElementHandlerOutput::Continue { event, .. } => event,
-                        output => {
-                            return Ok(output);
-                        }
-                    }
-                };
-                *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Init__;
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
-            }
-            fn finish_state(
-                helper: &mut DeserializeHelper,
-                state: HtmlTextWithSubTypeContentDeserializerState,
-            ) -> Result<super::HtmlTextWithSubTypeContent, Error> {
-                use HtmlTextWithSubTypeContentDeserializerState as S;
-                match state {
-                    S::Init__ => Err(ErrorKind::MissingContent.into()),
-                    S::Sub(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_sub(&mut values, value)?;
-                        }
-                        Ok(super::HtmlTextWithSubTypeContent::Sub(
-                            helper.finish_element("sub", values)?,
-                        ))
-                    }
-                    S::Any(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_any(&mut values, value)?;
-                        }
-                        Ok(super::HtmlTextWithSubTypeContent::Any(
-                            helper.finish_element("any21", values)?,
-                        ))
-                    }
-                    S::Text(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_text(&mut values, value)?;
-                        }
-                        Ok(super::HtmlTextWithSubTypeContent::Text(
-                            helper.finish_element("text", values)?,
-                        ))
-                    }
-                    S::Done__(data) => Ok(data),
-                    _ => unreachable!(),
-                }
-            }
-            fn store_sub(
-                values: &mut Option<super::SubType>,
-                value: super::SubType,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"sub")))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any21",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn handle_sub<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<super::SubType>,
-                fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, super::SubType>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use HtmlTextWithSubTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sub(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Sub(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_any<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use HtmlTextWithSubTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_any(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Any(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_text<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<Text>,
-                fallback: Option<<Text as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, Text>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use HtmlTextWithSubTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_text(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Text(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-        }
-        impl<'de> Deserializer<'de, super::HtmlTextWithSubTypeContent>
-            for HtmlTextWithSubTypeContentDeserializer
-        {
-            fn init(
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::HtmlTextWithSubTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(HtmlTextWithSubTypeContentDeserializerState::Init__),
-                };
-                let mut output = deserializer.next(helper, event)?;
-                output.artifact = match output.artifact {
-                    DeserializerArtifact::Deserializer(x)
-                        if matches!(
-                            &*x.state__,
-                            HtmlTextWithSubTypeContentDeserializerState::Init__
-                        ) =>
-                    {
-                        DeserializerArtifact::None
-                    }
-                    artifact => artifact,
-                };
-                Ok(output)
-            }
-            fn next(
-                mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::HtmlTextWithSubTypeContent> {
-                use HtmlTextWithSubTypeContentDeserializerState as S;
-                let mut event = event;
-                let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state__, S::Unknown__);
-                    event = match (state, event) {
-                        (S::Unknown__, _) => unreachable!(),
-                        (S::Sub(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_sub(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Any(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_any(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Text(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state, event @ Event::End(_)) => {
-                            return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(Self::finish_state(
-                                    helper, state,
-                                )?),
-                                event: DeserializerEvent::Continue(event),
-                                allow_any: false,
-                            });
-                        }
-                        (S::Init__, event) => match self.find_suitable(helper, event)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        },
-                        (
-                            S::Sub(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_CDF),
-                                b"sub",
-                                false,
-                            )?;
-                            match self.handle_sub(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Any(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                            match self.handle_any(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Text(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = <Text as WithDeserializer>::init(helper, event)?;
-                            match self.handle_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state @ S::Done__(_), event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                        (state, event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                    }
-                };
-                let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                    DeserializerArtifact::Data(self.finish(helper)?)
-                } else {
-                    DeserializerArtifact::Deserializer(self)
-                };
-                Ok(DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                })
-            }
-            fn finish(
-                self,
-                helper: &mut DeserializeHelper,
-            ) -> Result<super::HtmlTextWithSubTypeContent, Error> {
-                Self::finish_state(helper, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -19034,6 +18588,376 @@ pub mod cdf {
             }
         }
         #[derive(Debug)]
+        pub struct FixTextContent35TypeDeserializer {
+            state__: Box<FixTextContent35TypeDeserializerState>,
+        }
+        #[derive(Debug)]
+        pub enum FixTextContent35TypeDeserializerState {
+            Init__,
+            Sub(
+                Option<super::SubType>,
+                Option<<super::SubType as WithDeserializer>::Deserializer>,
+                Option<<super::SubType as WithDeserializer>::Deserializer>,
+            ),
+            Any(
+                Option<AnyElement>,
+                Option<<AnyElement as WithDeserializer>::Deserializer>,
+                Option<<AnyElement as WithDeserializer>::Deserializer>,
+            ),
+            Text(
+                Option<Text>,
+                Option<<Text as WithDeserializer>::Deserializer>,
+                Option<<Text as WithDeserializer>::Deserializer>,
+            ),
+            Done__(super::FixTextContent35Type),
+            Unknown__,
+        }
+        impl FixTextContent35TypeDeserializer {
+            fn find_suitable<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                let mut event = event;
+                if let Event::Start(x) | Event::Empty(x) = &event {
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        Some(b"sub")
+                    ) {
+                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_sub(helper, Default::default(), None, output);
+                    }
+                    event = {
+                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
+                        match self.handle_any(helper, Default::default(), None, output)? {
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                            output => {
+                                return Ok(output);
+                            }
+                        }
+                    };
+                }
+                event = {
+                    let output = <Text as WithDeserializer>::init(helper, event)?;
+                    match self.handle_text(helper, Default::default(), None, output)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+                *self.state__ = FixTextContent35TypeDeserializerState::Init__;
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
+            }
+            fn finish_state(
+                helper: &mut DeserializeHelper,
+                state: FixTextContent35TypeDeserializerState,
+            ) -> Result<super::FixTextContent35Type, Error> {
+                use FixTextContent35TypeDeserializerState as S;
+                match state {
+                    S::Init__ => Err(ErrorKind::MissingContent.into()),
+                    S::Sub(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_sub(&mut values, value)?;
+                        }
+                        Ok(super::FixTextContent35Type::Sub(
+                            helper.finish_element("sub", values)?,
+                        ))
+                    }
+                    S::Any(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_any(&mut values, value)?;
+                        }
+                        Ok(super::FixTextContent35Type::Any(
+                            helper.finish_element("any21", values)?,
+                        ))
+                    }
+                    S::Text(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_text(&mut values, value)?;
+                        }
+                        Ok(super::FixTextContent35Type::Text(
+                            helper.finish_element("text", values)?,
+                        ))
+                    }
+                    S::Done__(data) => Ok(data),
+                    _ => unreachable!(),
+                }
+            }
+            fn store_sub(
+                values: &mut Option<super::SubType>,
+                value: super::SubType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"sub")))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"any21",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn handle_sub<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::SubType>,
+                fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::SubType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTextContent35TypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_sub(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_sub(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::Sub(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_any<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<AnyElement>,
+                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, AnyElement>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTextContent35TypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_any(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_any(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::Any(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_text<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<Text>,
+                fallback: Option<<Text as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, Text>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use FixTextContent35TypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_text(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_text(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::Text(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+        }
+        impl<'de> Deserializer<'de, super::FixTextContent35Type> for FixTextContent35TypeDeserializer {
+            fn init(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::FixTextContent35Type> {
+                let deserializer = Self {
+                    state__: Box::new(FixTextContent35TypeDeserializerState::Init__),
+                };
+                let mut output = deserializer.next(helper, event)?;
+                output.artifact = match output.artifact {
+                    DeserializerArtifact::Deserializer(x)
+                        if matches!(&*x.state__, FixTextContent35TypeDeserializerState::Init__) =>
+                    {
+                        DeserializerArtifact::None
+                    }
+                    artifact => artifact,
+                };
+                Ok(output)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::FixTextContent35Type> {
+                use FixTextContent35TypeDeserializerState as S;
+                let mut event = event;
+                let (event, allow_any) = loop {
+                    let state = replace(&mut *self.state__, S::Unknown__);
+                    event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
+                        (S::Sub(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_sub(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Any(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_any(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Text(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_text(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state, event @ Event::End(_)) => {
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(Self::finish_state(
+                                    helper, state,
+                                )?),
+                                event: DeserializerEvent::Continue(event),
+                                allow_any: false,
+                            });
+                        }
+                        (S::Init__, event) => match self.find_suitable(helper, event)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        },
+                        (
+                            S::Sub(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"sub",
+                                false,
+                            )?;
+                            match self.handle_sub(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::Any(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = <AnyElement as WithDeserializer>::init(helper, event)?;
+                            match self.handle_any(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::Text(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = <Text as WithDeserializer>::init(helper, event)?;
+                            match self.handle_text(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state @ S::Done__(_), event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                    }
+                };
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
+                    DeserializerArtifact::Data(self.finish(helper)?)
+                } else {
+                    DeserializerArtifact::Deserializer(self)
+                };
+                Ok(DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                })
+            }
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::FixTextContent35Type, Error> {
+                Self::finish_state(helper, *self.state__)
+            }
+        }
+        #[derive(Debug)]
         pub struct ParamTypeDeserializer {
             name: String,
             content: Option<String>,
@@ -20474,14 +20398,14 @@ pub mod cdf {
             lang: Option<String>,
             override_: bool,
             category: super::WarningCategoryEnumType,
-            content: Vec<super::WarningTypeContent>,
+            content: Vec<super::FixTextContent35Type>,
             state__: Box<WarningTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum WarningTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::WarningTypeContent as WithDeserializer>::Deserializer),
+            Content__(<super::FixTextContent35Type as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl WarningTypeDeserializer {
@@ -20531,14 +20455,14 @@ pub mod cdf {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::WarningTypeContent) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FixTextContent35Type) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::WarningTypeContent>,
+                output: DeserializerOutput<'de, super::FixTextContent35Type>,
                 fallback: &mut Option<WarningTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use WarningTypeDeserializerState as S;
@@ -20606,7 +20530,7 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::WarningTypeContent as WithDeserializer>::init(
+                            let output = <super::FixTextContent35Type as WithDeserializer>::init(
                                 helper, event,
                             )?;
                             match self.handle_content(helper, output, &mut fallback)? {
@@ -20640,376 +20564,6 @@ pub mod cdf {
                     category: self.category,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
-            }
-        }
-        #[derive(Debug)]
-        pub struct WarningTypeContentDeserializer {
-            state__: Box<WarningTypeContentDeserializerState>,
-        }
-        #[derive(Debug)]
-        pub enum WarningTypeContentDeserializerState {
-            Init__,
-            Sub(
-                Option<super::SubType>,
-                Option<<super::SubType as WithDeserializer>::Deserializer>,
-                Option<<super::SubType as WithDeserializer>::Deserializer>,
-            ),
-            Any(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Text(
-                Option<Text>,
-                Option<<Text as WithDeserializer>::Deserializer>,
-                Option<<Text as WithDeserializer>::Deserializer>,
-            ),
-            Done__(super::WarningTypeContent),
-            Unknown__,
-        }
-        impl WarningTypeContentDeserializer {
-            fn find_suitable<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                let mut event = event;
-                if let Event::Start(x) | Event::Empty(x) = &event {
-                    if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
-                        Some(b"sub")
-                    ) {
-                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
-                        return self.handle_sub(helper, Default::default(), None, output);
-                    }
-                    event = {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        match self.handle_any(helper, Default::default(), None, output)? {
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                            output => {
-                                return Ok(output);
-                            }
-                        }
-                    };
-                }
-                event = {
-                    let output = <Text as WithDeserializer>::init(helper, event)?;
-                    match self.handle_text(helper, Default::default(), None, output)? {
-                        ElementHandlerOutput::Continue { event, .. } => event,
-                        output => {
-                            return Ok(output);
-                        }
-                    }
-                };
-                *self.state__ = WarningTypeContentDeserializerState::Init__;
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
-            }
-            fn finish_state(
-                helper: &mut DeserializeHelper,
-                state: WarningTypeContentDeserializerState,
-            ) -> Result<super::WarningTypeContent, Error> {
-                use WarningTypeContentDeserializerState as S;
-                match state {
-                    S::Init__ => Err(ErrorKind::MissingContent.into()),
-                    S::Sub(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_sub(&mut values, value)?;
-                        }
-                        Ok(super::WarningTypeContent::Sub(
-                            helper.finish_element("sub", values)?,
-                        ))
-                    }
-                    S::Any(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_any(&mut values, value)?;
-                        }
-                        Ok(super::WarningTypeContent::Any(
-                            helper.finish_element("any21", values)?,
-                        ))
-                    }
-                    S::Text(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_text(&mut values, value)?;
-                        }
-                        Ok(super::WarningTypeContent::Text(
-                            helper.finish_element("text", values)?,
-                        ))
-                    }
-                    S::Done__(data) => Ok(data),
-                    _ => unreachable!(),
-                }
-            }
-            fn store_sub(
-                values: &mut Option<super::SubType>,
-                value: super::SubType,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"sub")))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any21",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn handle_sub<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<super::SubType>,
-                fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, super::SubType>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use WarningTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sub(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Sub(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_any<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use WarningTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_any(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Any(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_text<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<Text>,
-                fallback: Option<<Text as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, Text>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use WarningTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_text(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Text(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-        }
-        impl<'de> Deserializer<'de, super::WarningTypeContent> for WarningTypeContentDeserializer {
-            fn init(
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::WarningTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(WarningTypeContentDeserializerState::Init__),
-                };
-                let mut output = deserializer.next(helper, event)?;
-                output.artifact = match output.artifact {
-                    DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state__, WarningTypeContentDeserializerState::Init__) =>
-                    {
-                        DeserializerArtifact::None
-                    }
-                    artifact => artifact,
-                };
-                Ok(output)
-            }
-            fn next(
-                mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::WarningTypeContent> {
-                use WarningTypeContentDeserializerState as S;
-                let mut event = event;
-                let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state__, S::Unknown__);
-                    event = match (state, event) {
-                        (S::Unknown__, _) => unreachable!(),
-                        (S::Sub(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_sub(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Any(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_any(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Text(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state, event @ Event::End(_)) => {
-                            return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(Self::finish_state(
-                                    helper, state,
-                                )?),
-                                event: DeserializerEvent::Continue(event),
-                                allow_any: false,
-                            });
-                        }
-                        (S::Init__, event) => match self.find_suitable(helper, event)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        },
-                        (
-                            S::Sub(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_CDF),
-                                b"sub",
-                                false,
-                            )?;
-                            match self.handle_sub(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Any(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                            match self.handle_any(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Text(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = <Text as WithDeserializer>::init(helper, event)?;
-                            match self.handle_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state @ S::Done__(_), event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                        (state, event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                    }
-                };
-                let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                    DeserializerArtifact::Data(self.finish(helper)?)
-                } else {
-                    DeserializerArtifact::Deserializer(self)
-                };
-                Ok(DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                })
-            }
-            fn finish(
-                self,
-                helper: &mut DeserializeHelper,
-            ) -> Result<super::WarningTypeContent, Error> {
-                Self::finish_state(helper, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -22839,14 +22393,14 @@ pub mod cdf {
             strategy: super::FixStrategyEnumType,
             disruption: super::RatingEnumType,
             complexity: super::RatingEnumType,
-            content: Vec<super::FixTextTypeContent>,
+            content: Vec<super::FixTextContent35Type>,
             state__: Box<FixTextTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FixTextTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::FixTextTypeContent as WithDeserializer>::Deserializer),
+            Content__(<super::FixTextContent35Type as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl FixTextTypeDeserializer {
@@ -22924,14 +22478,14 @@ pub mod cdf {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::FixTextTypeContent) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FixTextContent35Type) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::FixTextTypeContent>,
+                output: DeserializerOutput<'de, super::FixTextContent35Type>,
                 fallback: &mut Option<FixTextTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use FixTextTypeDeserializerState as S;
@@ -22999,7 +22553,7 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::FixTextTypeContent as WithDeserializer>::init(
+                            let output = <super::FixTextContent35Type as WithDeserializer>::init(
                                 helper, event,
                             )?;
                             match self.handle_content(helper, output, &mut fallback)? {
@@ -23037,376 +22591,6 @@ pub mod cdf {
                     complexity: self.complexity,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
-            }
-        }
-        #[derive(Debug)]
-        pub struct FixTextTypeContentDeserializer {
-            state__: Box<FixTextTypeContentDeserializerState>,
-        }
-        #[derive(Debug)]
-        pub enum FixTextTypeContentDeserializerState {
-            Init__,
-            Sub(
-                Option<super::SubType>,
-                Option<<super::SubType as WithDeserializer>::Deserializer>,
-                Option<<super::SubType as WithDeserializer>::Deserializer>,
-            ),
-            Any(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Text(
-                Option<Text>,
-                Option<<Text as WithDeserializer>::Deserializer>,
-                Option<<Text as WithDeserializer>::Deserializer>,
-            ),
-            Done__(super::FixTextTypeContent),
-            Unknown__,
-        }
-        impl FixTextTypeContentDeserializer {
-            fn find_suitable<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                let mut event = event;
-                if let Event::Start(x) | Event::Empty(x) = &event {
-                    if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
-                        Some(b"sub")
-                    ) {
-                        let output = <super::SubType as WithDeserializer>::init(helper, event)?;
-                        return self.handle_sub(helper, Default::default(), None, output);
-                    }
-                    event = {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        match self.handle_any(helper, Default::default(), None, output)? {
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                            output => {
-                                return Ok(output);
-                            }
-                        }
-                    };
-                }
-                event = {
-                    let output = <Text as WithDeserializer>::init(helper, event)?;
-                    match self.handle_text(helper, Default::default(), None, output)? {
-                        ElementHandlerOutput::Continue { event, .. } => event,
-                        output => {
-                            return Ok(output);
-                        }
-                    }
-                };
-                *self.state__ = FixTextTypeContentDeserializerState::Init__;
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
-            }
-            fn finish_state(
-                helper: &mut DeserializeHelper,
-                state: FixTextTypeContentDeserializerState,
-            ) -> Result<super::FixTextTypeContent, Error> {
-                use FixTextTypeContentDeserializerState as S;
-                match state {
-                    S::Init__ => Err(ErrorKind::MissingContent.into()),
-                    S::Sub(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_sub(&mut values, value)?;
-                        }
-                        Ok(super::FixTextTypeContent::Sub(
-                            helper.finish_element("sub", values)?,
-                        ))
-                    }
-                    S::Any(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_any(&mut values, value)?;
-                        }
-                        Ok(super::FixTextTypeContent::Any(
-                            helper.finish_element("any21", values)?,
-                        ))
-                    }
-                    S::Text(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_text(&mut values, value)?;
-                        }
-                        Ok(super::FixTextTypeContent::Text(
-                            helper.finish_element("text", values)?,
-                        ))
-                    }
-                    S::Done__(data) => Ok(data),
-                    _ => unreachable!(),
-                }
-            }
-            fn store_sub(
-                values: &mut Option<super::SubType>,
-                value: super::SubType,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"sub")))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"any21",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn handle_sub<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<super::SubType>,
-                fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, super::SubType>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use FixTextTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_sub(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_sub(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Sub(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Sub(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_any<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use FixTextTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_any(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_any(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Any(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Any(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_text<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<Text>,
-                fallback: Option<<Text as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, Text>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use FixTextTypeContentDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_text(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_text(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Text(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Text(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-        }
-        impl<'de> Deserializer<'de, super::FixTextTypeContent> for FixTextTypeContentDeserializer {
-            fn init(
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::FixTextTypeContent> {
-                let deserializer = Self {
-                    state__: Box::new(FixTextTypeContentDeserializerState::Init__),
-                };
-                let mut output = deserializer.next(helper, event)?;
-                output.artifact = match output.artifact {
-                    DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state__, FixTextTypeContentDeserializerState::Init__) =>
-                    {
-                        DeserializerArtifact::None
-                    }
-                    artifact => artifact,
-                };
-                Ok(output)
-            }
-            fn next(
-                mut self,
-                helper: &mut DeserializeHelper,
-                event: Event<'de>,
-            ) -> DeserializerResult<'de, super::FixTextTypeContent> {
-                use FixTextTypeContentDeserializerState as S;
-                let mut event = event;
-                let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state__, S::Unknown__);
-                    event = match (state, event) {
-                        (S::Unknown__, _) => unreachable!(),
-                        (S::Sub(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_sub(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Any(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_any(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Text(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state, event @ Event::End(_)) => {
-                            return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(Self::finish_state(
-                                    helper, state,
-                                )?),
-                                event: DeserializerEvent::Continue(event),
-                                allow_any: false,
-                            });
-                        }
-                        (S::Init__, event) => match self.find_suitable(helper, event)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        },
-                        (
-                            S::Sub(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_CDF),
-                                b"sub",
-                                false,
-                            )?;
-                            match self.handle_sub(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Any(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                            match self.handle_any(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Text(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = <Text as WithDeserializer>::init(helper, event)?;
-                            match self.handle_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state @ S::Done__(_), event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                        (state, event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                    }
-                };
-                let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                    DeserializerArtifact::Data(self.finish(helper)?)
-                } else {
-                    DeserializerArtifact::Deserializer(self)
-                };
-                Ok(DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                })
-            }
-            fn finish(
-                self,
-                helper: &mut DeserializeHelper,
-            ) -> Result<super::FixTextTypeContent, Error> {
-                Self::finish_state(helper, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -29462,8 +28646,8 @@ pub mod cdf {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::HtmlTextWithSubTypeContent],
-                    super::HtmlTextWithSubTypeContent,
+                    &'ser [super::FixTextContent35Type],
+                    super::FixTextContent35Type,
                 >,
             ),
             End__,
@@ -29518,86 +28702,6 @@ pub mod cdf {
                     Ok(None) => None,
                     Err(error) => {
                         *self.state = HtmlTextWithSubTypeSerializerState::Done__;
-                        Some(Err(error))
-                    }
-                }
-            }
-        }
-        #[derive(Debug)]
-        pub struct HtmlTextWithSubTypeContentSerializer<'ser> {
-            pub(super) value: &'ser super::HtmlTextWithSubTypeContent,
-            pub(super) state: Box<HtmlTextWithSubTypeContentSerializerState<'ser>>,
-        }
-        #[derive(Debug)]
-        pub(super) enum HtmlTextWithSubTypeContentSerializerState<'ser> {
-            Init__,
-            Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
-            Any(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Text(<Text as WithSerializer>::Serializer<'ser>),
-            Done__,
-            Phantom__(&'ser ()),
-        }
-        impl<'ser> HtmlTextWithSubTypeContentSerializer<'ser> {
-            fn next_event(
-                &mut self,
-                helper: &mut SerializeHelper,
-            ) -> Result<Option<Event<'ser>>, Error> {
-                loop {
-                    match &mut *self.state {
-                        HtmlTextWithSubTypeContentSerializerState::Init__ => match self.value {
-                            super::HtmlTextWithSubTypeContent::Sub(x) => {
-                                *self.state = HtmlTextWithSubTypeContentSerializerState::Sub(
-                                    WithSerializer::serializer(x, Some("cdf:sub"), false)?,
-                                )
-                            }
-                            super::HtmlTextWithSubTypeContent::Any(x) => {
-                                *self.state = HtmlTextWithSubTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, None, false)?,
-                                )
-                            }
-                            super::HtmlTextWithSubTypeContent::Text(x) => {
-                                *self.state = HtmlTextWithSubTypeContentSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("text"), false)?,
-                                )
-                            }
-                        },
-                        HtmlTextWithSubTypeContentSerializerState::Sub(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state = HtmlTextWithSubTypeContentSerializerState::Done__
-                                }
-                            }
-                        }
-                        HtmlTextWithSubTypeContentSerializerState::Any(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state = HtmlTextWithSubTypeContentSerializerState::Done__
-                                }
-                            }
-                        }
-                        HtmlTextWithSubTypeContentSerializerState::Text(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state = HtmlTextWithSubTypeContentSerializerState::Done__
-                                }
-                            }
-                        }
-                        HtmlTextWithSubTypeContentSerializerState::Done__ => return Ok(None),
-                        HtmlTextWithSubTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                    }
-                }
-            }
-        }
-        impl<'ser> Serializer<'ser> for HtmlTextWithSubTypeContentSerializer<'ser> {
-            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
-                match self.next_event(helper) {
-                    Ok(Some(event)) => Some(Ok(event)),
-                    Ok(None) => None,
-                    Err(error) => {
-                        *self.state = HtmlTextWithSubTypeContentSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -31968,6 +31072,81 @@ pub mod cdf {
             }
         }
         #[derive(Debug)]
+        pub struct FixTextContent35TypeSerializer<'ser> {
+            pub(super) value: &'ser super::FixTextContent35Type,
+            pub(super) state: Box<FixTextContent35TypeSerializerState<'ser>>,
+            pub(super) is_root: bool,
+        }
+        #[derive(Debug)]
+        pub(super) enum FixTextContent35TypeSerializerState<'ser> {
+            Init__,
+            Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
+            Any(<AnyElement as WithSerializer>::Serializer<'ser>),
+            Text(<Text as WithSerializer>::Serializer<'ser>),
+            Done__,
+            Phantom__(&'ser ()),
+        }
+        impl<'ser> FixTextContent35TypeSerializer<'ser> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
+                loop {
+                    match &mut *self.state {
+                        FixTextContent35TypeSerializerState::Init__ => match self.value {
+                            super::FixTextContent35Type::Sub(x) => {
+                                *self.state = FixTextContent35TypeSerializerState::Sub(
+                                    WithSerializer::serializer(x, Some("cdf:sub"), self.is_root)?,
+                                )
+                            }
+                            super::FixTextContent35Type::Any(x) => {
+                                *self.state = FixTextContent35TypeSerializerState::Any(
+                                    WithSerializer::serializer(x, None, self.is_root)?,
+                                )
+                            }
+                            super::FixTextContent35Type::Text(x) => {
+                                *self.state = FixTextContent35TypeSerializerState::Text(
+                                    WithSerializer::serializer(x, Some("text"), self.is_root)?,
+                                )
+                            }
+                        },
+                        FixTextContent35TypeSerializerState::Sub(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTextContent35TypeSerializerState::Done__,
+                            }
+                        }
+                        FixTextContent35TypeSerializerState::Any(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTextContent35TypeSerializerState::Done__,
+                            }
+                        }
+                        FixTextContent35TypeSerializerState::Text(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTextContent35TypeSerializerState::Done__,
+                            }
+                        }
+                        FixTextContent35TypeSerializerState::Done__ => return Ok(None),
+                        FixTextContent35TypeSerializerState::Phantom__(_) => unreachable!(),
+                    }
+                }
+            }
+        }
+        impl<'ser> Serializer<'ser> for FixTextContent35TypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
+                    Ok(Some(event)) => Some(Ok(event)),
+                    Ok(None) => None,
+                    Err(error) => {
+                        *self.state = FixTextContent35TypeSerializerState::Done__;
+                        Some(Err(error))
+                    }
+                }
+            }
+        }
+        #[derive(Debug)]
         pub struct ParamTypeSerializer<'ser> {
             pub(super) value: &'ser super::ParamType,
             pub(super) state: Box<ParamTypeSerializerState<'ser>>,
@@ -32552,7 +31731,11 @@ pub mod cdf {
         pub(super) enum WarningTypeSerializerState<'ser> {
             Init__,
             Content__(
-                IterSerializer<'ser, &'ser [super::WarningTypeContent], super::WarningTypeContent>,
+                IterSerializer<
+                    'ser,
+                    &'ser [super::FixTextContent35Type],
+                    super::FixTextContent35Type,
+                >,
             ),
             End__,
             Done__,
@@ -32607,80 +31790,6 @@ pub mod cdf {
                     Ok(None) => None,
                     Err(error) => {
                         *self.state = WarningTypeSerializerState::Done__;
-                        Some(Err(error))
-                    }
-                }
-            }
-        }
-        #[derive(Debug)]
-        pub struct WarningTypeContentSerializer<'ser> {
-            pub(super) value: &'ser super::WarningTypeContent,
-            pub(super) state: Box<WarningTypeContentSerializerState<'ser>>,
-        }
-        #[derive(Debug)]
-        pub(super) enum WarningTypeContentSerializerState<'ser> {
-            Init__,
-            Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
-            Any(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Text(<Text as WithSerializer>::Serializer<'ser>),
-            Done__,
-            Phantom__(&'ser ()),
-        }
-        impl<'ser> WarningTypeContentSerializer<'ser> {
-            fn next_event(
-                &mut self,
-                helper: &mut SerializeHelper,
-            ) -> Result<Option<Event<'ser>>, Error> {
-                loop {
-                    match &mut *self.state {
-                        WarningTypeContentSerializerState::Init__ => match self.value {
-                            super::WarningTypeContent::Sub(x) => {
-                                *self.state = WarningTypeContentSerializerState::Sub(
-                                    WithSerializer::serializer(x, Some("cdf:sub"), false)?,
-                                )
-                            }
-                            super::WarningTypeContent::Any(x) => {
-                                *self.state = WarningTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, None, false)?,
-                                )
-                            }
-                            super::WarningTypeContent::Text(x) => {
-                                *self.state = WarningTypeContentSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("text"), false)?,
-                                )
-                            }
-                        },
-                        WarningTypeContentSerializerState::Sub(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = WarningTypeContentSerializerState::Done__,
-                            }
-                        }
-                        WarningTypeContentSerializerState::Any(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = WarningTypeContentSerializerState::Done__,
-                            }
-                        }
-                        WarningTypeContentSerializerState::Text(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = WarningTypeContentSerializerState::Done__,
-                            }
-                        }
-                        WarningTypeContentSerializerState::Done__ => return Ok(None),
-                        WarningTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                    }
-                }
-            }
-        }
-        impl<'ser> Serializer<'ser> for WarningTypeContentSerializer<'ser> {
-            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
-                match self.next_event(helper) {
-                    Ok(Some(event)) => Some(Ok(event)),
-                    Ok(None) => None,
-                    Err(error) => {
-                        *self.state = WarningTypeContentSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -33417,7 +32526,11 @@ pub mod cdf {
         pub(super) enum FixTextTypeSerializerState<'ser> {
             Init__,
             Content__(
-                IterSerializer<'ser, &'ser [super::FixTextTypeContent], super::FixTextTypeContent>,
+                IterSerializer<
+                    'ser,
+                    &'ser [super::FixTextContent35Type],
+                    super::FixTextContent35Type,
+                >,
             ),
             End__,
             Done__,
@@ -33484,80 +32597,6 @@ pub mod cdf {
                     Ok(None) => None,
                     Err(error) => {
                         *self.state = FixTextTypeSerializerState::Done__;
-                        Some(Err(error))
-                    }
-                }
-            }
-        }
-        #[derive(Debug)]
-        pub struct FixTextTypeContentSerializer<'ser> {
-            pub(super) value: &'ser super::FixTextTypeContent,
-            pub(super) state: Box<FixTextTypeContentSerializerState<'ser>>,
-        }
-        #[derive(Debug)]
-        pub(super) enum FixTextTypeContentSerializerState<'ser> {
-            Init__,
-            Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
-            Any(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Text(<Text as WithSerializer>::Serializer<'ser>),
-            Done__,
-            Phantom__(&'ser ()),
-        }
-        impl<'ser> FixTextTypeContentSerializer<'ser> {
-            fn next_event(
-                &mut self,
-                helper: &mut SerializeHelper,
-            ) -> Result<Option<Event<'ser>>, Error> {
-                loop {
-                    match &mut *self.state {
-                        FixTextTypeContentSerializerState::Init__ => match self.value {
-                            super::FixTextTypeContent::Sub(x) => {
-                                *self.state = FixTextTypeContentSerializerState::Sub(
-                                    WithSerializer::serializer(x, Some("cdf:sub"), false)?,
-                                )
-                            }
-                            super::FixTextTypeContent::Any(x) => {
-                                *self.state = FixTextTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, None, false)?,
-                                )
-                            }
-                            super::FixTextTypeContent::Text(x) => {
-                                *self.state = FixTextTypeContentSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("text"), false)?,
-                                )
-                            }
-                        },
-                        FixTextTypeContentSerializerState::Sub(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = FixTextTypeContentSerializerState::Done__,
-                            }
-                        }
-                        FixTextTypeContentSerializerState::Any(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = FixTextTypeContentSerializerState::Done__,
-                            }
-                        }
-                        FixTextTypeContentSerializerState::Text(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = FixTextTypeContentSerializerState::Done__,
-                            }
-                        }
-                        FixTextTypeContentSerializerState::Done__ => return Ok(None),
-                        FixTextTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                    }
-                }
-            }
-        }
-        impl<'ser> Serializer<'ser> for FixTextTypeContentSerializer<'ser> {
-            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
-                match self.next_event(helper) {
-                    Ok(Some(event)) => Some(Ok(event)),
-                    Ok(None) => None,
-                    Err(error) => {
-                        *self.state = FixTextTypeContentSerializerState::Done__;
                         Some(Err(error))
                     }
                 }

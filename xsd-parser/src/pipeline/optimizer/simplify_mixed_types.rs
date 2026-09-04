@@ -25,6 +25,9 @@ impl Optimizer {
     ///   get a suitable text field between each normal element to store the
     ///   mixed text.
     ///
+    /// Both operations make the text content explicit, so the mixed flag is cleared
+    /// on the complex type and on its content group afterwards.
+    ///
     /// # Errors
     ///
     /// Returns an error if the type identified by `ident` could not be found,
@@ -77,6 +80,8 @@ impl Optimizer {
                     gi.elements
                         .push(ElementMeta::text(ElementIdent::named("text")));
                 }
+
+                gi.is_mixed = false;
             }
             MetaTypeVariant::Sequence(gi) => {
                 let mut text_before = ElementMeta::text(ElementIdent::named("text_before"));
@@ -104,6 +109,8 @@ impl Optimizer {
                     .into_iter()
                     .chain(pairs.flatten())
                     .collect::<Result<Vec<_>, _>>()?;
+
+                gi.is_mixed = false;
             }
             _ => return Err(Error::UnexpectedContentType(ident)),
         }

@@ -3763,20 +3763,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<IllustrationsNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum IllustrationsNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -3875,20 +3862,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AudienceDescriptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum AudienceDescriptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4091,20 +4065,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<EventDescriptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum EventDescriptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4554,20 +4515,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<MarketPublishingStatusNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum MarketPublishingStatusNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4599,20 +4547,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<PromotionCampaignElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum PromotionCampaignElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4630,20 +4565,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<InitialPrintRunElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum InitialPrintRunElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4661,20 +4583,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<ReprintDetailElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum ReprintDetailElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4692,20 +4601,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<CopiesSoldElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum CopiesSoldElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -4723,20 +4619,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<BookClubAdoptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum BookClubAdoptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub enum SupplyDetailRefname {
@@ -8085,20 +7968,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<TitleStatementElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum TitleStatementElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -8187,20 +8057,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<ContributorStatementElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum ContributorStatementElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub enum NoContributorRefname {
@@ -8577,6 +8434,12 @@ pub mod onix {
         Ruby(RubyElementType),
     }
     #[derive(Debug)]
+    pub enum AncillaryContentDescriptionContent85 {
+        Block(BlockElement),
+        Inline(InlineElement),
+        Text(Text),
+    }
+    #[derive(Debug)]
     pub enum AncillaryContentRefname {
         AncillaryContent,
     }
@@ -8613,20 +8476,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum AncillaryContentDescriptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -8985,20 +8835,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<TextElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum TextElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9063,20 +8900,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<TextSourceDescriptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum TextSourceDescriptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9180,20 +9004,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<CitationNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum CitationNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9404,20 +9215,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<PrizeStatementElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum PrizeStatementElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9435,20 +9233,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<PrizeJuryElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum PrizeJuryElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub enum EventIdentifierRefname {
@@ -9692,20 +9477,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<WebsiteDescriptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum WebsiteDescriptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -9843,20 +9615,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<CopyrightStatementTextElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum CopyrightStatementTextElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub struct PublishingDetailContent272 {
@@ -9955,20 +9714,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<PublishingStatusNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum PublishingStatusNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub enum PublishingDateRefname {
@@ -10480,20 +10226,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<SalesRestrictionNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum SalesRestrictionNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -12221,20 +11954,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<BiographicalNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum BiographicalNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -12252,20 +11972,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<ContributorDescriptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum ContributorDescriptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -12398,20 +12105,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<EditionStatementElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum EditionStatementElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub enum NoEditionRefname {
@@ -14108,13 +13802,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<DdElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum DdElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub struct AbbrElementType {
@@ -14181,21 +13869,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<PreElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum PreElementTypeContent {
-        A(AElementType),
-        Br(BrElementType),
-        Span(AbbrElementType),
-        Bdo(BdoElementType),
-        Map(MapElementType),
-        Tt(AbbrElementType),
-        I(AbbrElementType),
-        B(AbbrElementType),
-        Phrase(PhraseElement),
-        Gloss(GlossElement),
-        Text(Text),
+        pub content: Vec<PreContent23>,
     }
     #[derive(Debug)]
     pub struct BlockquoteElementType {
@@ -14250,15 +13924,7 @@ pub mod onix {
         pub tabindex: Option<String>,
         pub onfocus: Option<String>,
         pub onblur: Option<String>,
-        pub content: Vec<AElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum AElementTypeContent {
-        Special(SpecialElement),
-        Fontstyle(FontstyleElement),
-        Phrase(PhraseElement),
-        Gloss(GlossElement),
-        Text(Text),
+        pub content: Vec<AContent25>,
     }
     #[derive(Debug)]
     pub struct BdoElementType {
@@ -15906,20 +15572,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<FeatureNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum FeatureNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
     pub enum ResourceVersionRefname {
@@ -16149,20 +15802,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<VenueNoteElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum VenueNoteElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -19805,20 +19445,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<ReligiousTextFeatureDescriptionElementTypeContent>,
-    }
-    ///Standard attributes for all ONIX data elements
-    ///● Date last changed or confirmed to be correct
-    ///● Source authority for the data element
-    ///● Type of organization that is the source authority
-    ///Language of textual data element
-    ///Note ONIX does not use the xml:lang attribute
-    ///Markup of textual data element (eg No markup [either Ascii, or 'according to the encoding'], HTML or XHTML)
-    #[derive(Debug)]
-    pub enum ReligiousTextFeatureDescriptionElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     ///Standard attributes for all ONIX data elements
     ///● Date last changed or confirmed to be correct
@@ -19873,6 +19500,20 @@ pub mod onix {
     #[derive(Debug)]
     pub enum GlossElement {
         Ruby(RubyElementType),
+    }
+    #[derive(Debug)]
+    pub enum PreContent23 {
+        A(AElementType),
+        Br(BrElementType),
+        Span(AbbrElementType),
+        Bdo(BdoElementType),
+        Map(MapElementType),
+        Tt(AbbrElementType),
+        I(AbbrElementType),
+        B(AbbrElementType),
+        Phrase(PhraseElement),
+        Gloss(GlossElement),
+        Text(Text),
     }
     #[derive(Debug)]
     pub enum TFrame {
@@ -19940,6 +19581,14 @@ pub mod onix {
         B(Box<AbbrElementType>),
         Big(Box<AbbrElementType>),
         Small(Box<AbbrElementType>),
+    }
+    #[derive(Debug)]
+    pub enum AContent25 {
+        Special(SpecialElement),
+        Fontstyle(FontstyleElement),
+        Phrase(PhraseElement),
+        Gloss(GlossElement),
+        Text(Text),
     }
     #[derive(Debug)]
     pub enum Ismap {
@@ -22555,15 +22204,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<RbElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum RbElementTypeContent {
-        A(AElementType),
-        Special(SpecialElement),
-        Fontstyle(FontstyleElement),
-        Phrase(PhraseElement),
-        Text(Text),
+        pub content: Vec<RbContent65>,
     }
     #[derive(Debug)]
     pub enum RubyContent60 {
@@ -23927,12 +23568,14 @@ pub mod onix {
         pub char: Option<String>,
         pub charoff: Option<String>,
         pub valign: Option<Valign>,
-        pub content: Vec<TdElementTypeContent>,
+        pub content: Vec<AncillaryContentDescriptionContent85>,
     }
     #[derive(Debug)]
-    pub enum TdElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
+    pub enum RbContent65 {
+        A(AElementType),
+        Special(SpecialElement),
+        Fontstyle(FontstyleElement),
+        Phrase(PhraseElement),
         Text(Text),
     }
     #[derive(Debug)]
@@ -23944,15 +23587,7 @@ pub mod onix {
         pub lang: Option<String>,
         pub dir: Option<Dir>,
         pub rbspan: Option<i32>,
-        pub content: Vec<RtElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum RtElementTypeContent {
-        A(AElementType),
-        Special(SpecialElement),
-        Fontstyle(FontstyleElement),
-        Phrase(PhraseElement),
-        Text(Text),
+        pub content: Vec<RbContent65>,
     }
     #[derive(Debug)]
     pub struct RubyContent61 {
