@@ -1,4 +1,3 @@
-use std::collections::BTreeMap;
 use std::ops::Deref;
 
 use bit_set::BitSet;
@@ -84,7 +83,7 @@ impl<'a, 'types> Context<'a, 'types> {
         ident: &TypeIdent,
         by_value: bool,
     ) -> Result<(&TypeRef, bool), Error> {
-        let boxed = by_value && need_box(&mut self.reachable, &self.state.cache, self.meta, ident);
+        let boxed = by_value && need_box(&mut self.reachable, self.state, self.meta, ident);
         let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
 
         if !boxed {
@@ -369,6 +368,12 @@ impl<'a, 'types> Context<'a, 'types> {
         })
     }
 
+    /// Forwards to [`State::shared_content`] for the type that is currently
+    /// processed.
+    pub(super) fn shared_content(&self) -> Option<&'types TypeIdent> {
+        self.state.shared_content(self.meta.types, self.ident)
+    }
+
     pub(super) fn push_namespaces(&mut self, namespaces: NamespacesShared<'static>) {
         self.namespaces.push(namespaces);
     }
@@ -388,7 +393,7 @@ impl<'types> Deref for Context<'_, 'types> {
 
 fn need_box(
     reachable: &mut BitSet<u64>,
-    cache: &BTreeMap<TypeIdent, TypeRef>,
+    state: &State<'_>,
     meta: &MetaData<'_>,
     ident: &TypeIdent,
 ) -> bool {
@@ -396,7 +401,7 @@ fn need_box(
         return false;
     };
 
-    let Some(type_ref) = cache.get(ident) else {
+    let Some(type_ref) = state.cache.get(ident) else {
         return false;
     };
 
@@ -411,27 +416,33 @@ fn need_box(
             let occurs = Occurs::from_occurs(x.min_occurs, x.max_occurs);
 
             if occurs.is_direct() {
-                ret = need_box(reachable, cache, meta, &x.type_);
+                ret = need_box(reachable, state, meta, &x.type_);
             }
         }
         MetaTypeVariant::Union(x) => {
             for var in x.types.iter() {
-                ret = ret || need_box(reachable, cache, meta, &var.type_);
+                ret = ret || need_box(reachable, state, meta, &var.type_);
             }
         }
         MetaTypeVariant::Enumeration(x) => {
             for var in x.variants.iter() {
                 if let Some(type_) = &var.type_ {
                     if var.use_ != Use::Prohibited {
-                        ret = ret || need_box(reachable, cache, meta, type_);
+                        ret = ret || need_box(reachable, state, meta, type_);
                     }
+                }
+            }
+        }
+        MetaTypeVariant::ComplexType(x) => {
+            if Occurs::from_occurs(x.min_occurs, x.max_occurs).is_direct() {
+                if let Some(content) = state.shared_content_of(meta.types, x) {
+                    ret = need_box(reachable, state, meta, content);
                 }
             }
         }
         MetaTypeVariant::All(_)
         | MetaTypeVariant::Choice(_)
         | MetaTypeVariant::Sequence(_)
-        | MetaTypeVariant::ComplexType(_)
         | MetaTypeVariant::Dynamic(_)
         | MetaTypeVariant::SimpleType(_)
         | MetaTypeVariant::BuildIn(_)

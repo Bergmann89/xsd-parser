@@ -1,3 +1,12 @@
+#[derive(Debug)]
+pub enum CtPageBlockTextObjectContent20XType {
+    Actions(page::CtGraphicUnitActionsXElementType),
+    Clips(page::CtGraphicUnitClipsXElementType),
+    FillColor(page::CtColorXType),
+    StrokeColor(page::CtColorXType),
+    CgTransform(page::CtCgTransformXType),
+    TextCode(page::CtTextTextCodeXElementType),
+}
 pub mod annotations {
     pub type Annotations = AnnotationsXElementType;
     #[derive(Debug)]
@@ -47,15 +56,7 @@ pub mod annotion {
     #[derive(Debug)]
     pub struct PageAnnotAnnotAppearanceXElementType {
         pub boundary: Option<String>,
-        pub content: Vec<PageAnnotAnnotAppearanceXElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum PageAnnotAnnotAppearanceXElementTypeContent {
-        TextObject(super::page::CtPageBlockTextObjectXElementType),
-        PathObject(super::page::CtPageBlockPathObjectXElementType),
-        ImageObject(super::page::CtPageBlockImageObjectXElementType),
-        CompositeObject(super::page::CtPageBlockCompositeObjectXElementType),
-        PageBlock(super::page::CtPageBlockPageBlockXElementType),
+        pub content: Vec<super::page::CtLayerContent9XType>,
     }
     #[derive(Debug)]
     pub struct PageAnnotAnnotParametersParameterXElementType {
@@ -570,27 +571,11 @@ pub mod page {
     pub struct CtLayerXType {
         pub type_: CtLayerTypeXType,
         pub draw_param: Option<u32>,
-        pub content: Vec<CtLayerXTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum CtLayerXTypeContent {
-        TextObject(CtPageBlockTextObjectXElementType),
-        PathObject(CtPageBlockPathObjectXElementType),
-        ImageObject(CtPageBlockImageObjectXElementType),
-        CompositeObject(CtPageBlockCompositeObjectXElementType),
-        PageBlock(CtPageBlockPageBlockXElementType),
+        pub content: Vec<CtLayerContent9XType>,
     }
     #[derive(Debug)]
     pub struct CtPageBlockXType {
-        pub content: Vec<CtPageBlockXTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum CtPageBlockXTypeContent {
-        TextObject(CtPageBlockTextObjectXElementType),
-        PathObject(CtPageBlockPathObjectXElementType),
-        ImageObject(CtPageBlockImageObjectXElementType),
-        CompositeObject(CtPageBlockCompositeObjectXElementType),
-        PageBlock(CtPageBlockPageBlockXElementType),
+        pub content: Vec<CtLayerContent9XType>,
     }
     #[derive(Debug)]
     pub struct CtPathXType {
@@ -662,16 +647,7 @@ pub mod page {
         pub char_direction: i32,
         pub weight: CtTextWeightXType,
         pub italic: bool,
-        pub content: Vec<CtTextXTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum CtTextXTypeContent {
-        Actions(CtGraphicUnitActionsXElementType),
-        Clips(CtGraphicUnitClipsXElementType),
-        FillColor(CtColorXType),
-        StrokeColor(CtColorXType),
-        CgTransform(CtCgTransformXType),
-        TextCode(CtTextTextCodeXElementType),
+        pub content: Vec<super::CtPageBlockTextObjectContent20XType>,
     }
     pub type Page = PageXElementType;
     #[derive(Debug)]
@@ -762,16 +738,7 @@ pub mod page {
         pub weight: CtTextWeightXType,
         pub italic: bool,
         pub id: u32,
-        pub content: Vec<CtPageBlockTextObjectXElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum CtPageBlockTextObjectXElementTypeContent {
-        Actions(CtGraphicUnitActionsXElementType),
-        Clips(CtGraphicUnitClipsXElementType),
-        FillColor(CtColorXType),
-        StrokeColor(CtColorXType),
-        CgTransform(CtCgTransformXType),
-        TextCode(CtTextTextCodeXElementType),
+        pub content: Vec<super::CtPageBlockTextObjectContent20XType>,
     }
     #[derive(Debug)]
     pub struct CtPageBlockPathObjectXElementType {
@@ -863,10 +830,10 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtPageBlockPageBlockXElementType {
         pub id: u32,
-        pub content: Vec<CtPageBlockPageBlockXElementTypeContent>,
+        pub content: Vec<CtLayerContent9XType>,
     }
     #[derive(Debug)]
-    pub enum CtPageBlockPageBlockXElementTypeContent {
+    pub enum CtLayerContent9XType {
         TextObject(CtPageBlockTextObjectXElementType),
         PathObject(CtPageBlockPathObjectXElementType),
         ImageObject(CtPageBlockImageObjectXElementType),
@@ -893,15 +860,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtPatternCellContentXElementType {
         pub thumbnail: Option<u32>,
-        pub content: Vec<CtPatternCellContentXElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum CtPatternCellContentXElementTypeContent {
-        TextObject(CtPageBlockTextObjectXElementType),
-        PathObject(CtPageBlockPathObjectXElementType),
-        ImageObject(CtPageBlockImageObjectXElementType),
-        CompositeObject(CtPageBlockCompositeObjectXElementType),
-        PageBlock(CtPageBlockPageBlockXElementType),
+        pub content: Vec<CtLayerContent9XType>,
     }
     #[derive(Debug)]
     pub enum CtTextWeightXType {
@@ -950,15 +909,7 @@ pub mod page {
         pub type_: CtLayerTypeXType,
         pub draw_param: Option<u32>,
         pub id: u32,
-        pub content: Vec<PageContentLayerXElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum PageContentLayerXElementTypeContent {
-        TextObject(CtPageBlockTextObjectXElementType),
-        PathObject(CtPageBlockPathObjectXElementType),
-        ImageObject(CtPageBlockImageObjectXElementType),
-        CompositeObject(CtPageBlockCompositeObjectXElementType),
-        PageBlock(CtPageBlockPageBlockXElementType),
+        pub content: Vec<CtLayerContent9XType>,
     }
 }
 pub mod res {

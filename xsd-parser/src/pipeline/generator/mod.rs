@@ -28,7 +28,7 @@ mod meta;
 mod state;
 
 use std::collections::btree_map::{Entry, VacantEntry};
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::VecDeque;
 use std::str::FromStr;
 
 use quote::format_ident;
@@ -51,7 +51,7 @@ pub use self::error::Error;
 pub use self::meta::MetaData;
 pub use self::state::TypeRef;
 
-use self::state::{LoopDetection, PendingType, State, TraitInfos};
+use self::state::{PendingType, State, TraitInfos};
 
 /// Configurable Rust code generator for schema-derived type information.
 ///
@@ -119,12 +119,7 @@ impl<'types> Generator<'types> {
                 .unwrap(),
             content_display_name: String::from("content"),
         };
-        let state = State {
-            cache: BTreeMap::new(),
-            pending: VecDeque::new(),
-            trait_infos: TraitInfos::empty(),
-            loop_detection: LoopDetection::default(),
-        };
+        let state = State::new(types);
 
         Self { meta, state }
     }
