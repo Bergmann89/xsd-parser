@@ -132,6 +132,30 @@ mod mixed {
     assert_shared_content!();
 }
 
+/* two_groups */
+
+// Two shared content types form a loop over `1..1` group references:
+// `GroupA` -> `NestedBeta` -> `GroupB` -> `NestedAlpha` -> `GroupA`. The `include!`
+// below only compiles if the lookahead walks the elements of a shared content type.
+#[test]
+fn generate_two_groups() {
+    let mut config = config();
+    config.generator.generate = Generate::All;
+
+    generate_test(
+        "tests/feature/shared_group_content/schema_two_groups.xsd",
+        "tests/feature/shared_group_content/expected/two_groups.rs",
+        config,
+    );
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod two_groups {
+    #![allow(unused_imports)]
+
+    include!("expected/two_groups.rs");
+}
+
 /* quick_xml */
 
 #[test]

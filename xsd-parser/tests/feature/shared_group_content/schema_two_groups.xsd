@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <xs:complexType name="AlphaType">
+        <xs:sequence>
+            <xs:group ref="tns:GroupA" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+
+        <xs:attribute name="alpha" type="xs:string" />
+    </xs:complexType>
+
+    <xs:complexType name="BetaType">
+        <xs:sequence>
+            <xs:group ref="tns:GroupB" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+
+        <xs:attribute name="beta" type="xs:string" />
+    </xs:complexType>
+
+    <xs:group name="GroupA">
+        <xs:choice>
+            <xs:element name="NestedBeta">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:group ref="tns:GroupB" minOccurs="1" maxOccurs="1" />
+                    </xs:sequence>
+
+                    <xs:attribute name="nestedBeta" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="LeafA" type="xs:string" />
+        </xs:choice>
+    </xs:group>
+
+    <xs:group name="GroupB">
+        <xs:choice>
+            <xs:element name="NestedAlpha">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:group ref="tns:GroupA" minOccurs="1" maxOccurs="1" />
+                    </xs:sequence>
+
+                    <xs:attribute name="nestedAlpha" type="xs:string" />
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="LeafB" type="xs:string" />
+        </xs:choice>
+    </xs:group>
+</xs:schema>
