@@ -9,7 +9,7 @@ use crate::config::GeneratorFlags;
 use crate::models::{
     code::{ModuleIdent, ModulePath},
     data::{Occurs, PathData},
-    meta::{BuildInMeta, MetaTypeVariant},
+    meta::{BuildInMeta, ElementMetaVariant, MetaTypeVariant},
     schema::xs::Use,
     TypeIdent,
 };
@@ -440,10 +440,18 @@ fn need_box(
                 }
             }
         }
-        MetaTypeVariant::All(_)
-        | MetaTypeVariant::Choice(_)
-        | MetaTypeVariant::Sequence(_)
-        | MetaTypeVariant::Dynamic(_)
+        MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
+            for element in x.elements.iter() {
+                let ElementMetaVariant::Type { type_, .. } = &element.variant else {
+                    continue;
+                };
+
+                if Occurs::from_occurs(element.min_occurs, element.max_occurs).is_direct() {
+                    ret = ret || need_box(reachable, state, meta, type_);
+                }
+            }
+        }
+        MetaTypeVariant::Dynamic(_)
         | MetaTypeVariant::SimpleType(_)
         | MetaTypeVariant::BuildIn(_)
         | MetaTypeVariant::Custom(_) => (),
