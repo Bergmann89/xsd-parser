@@ -273,8 +273,9 @@ impl<'types> ComplexData<'types> {
         let type_ident = &base.type_ident;
         let content_ident = format_ident!("{type_ident}Content");
         let has_content = occurs.is_some() && !elements.is_empty();
+        let shared_content = ctx.shared_content();
 
-        let content_type = has_content.then(|| {
+        let content_type = (has_content && shared_content.is_none()).then(|| {
             let type_ = ComplexDataEnum {
                 base: ComplexBase::new_empty(
                     content_ident.clone(),
@@ -307,11 +308,9 @@ impl<'types> ComplexData<'types> {
                 allow_any: false,
             }
         } else {
-            let type_ref = ctx.current_type_ref();
             let field_ident = format_ident!("{}", ctx.content_display_name);
-
-            let target_type = (*type_ref.path).clone().with_ident(content_ident.clone());
-            let target_type = PathData::from_path(target_type);
+            let target_type =
+                ctx.content_target_type(shared_content, &content_ident, occurs.is_direct())?;
 
             let content = ComplexDataContent {
                 occurs,
@@ -431,8 +430,9 @@ impl<'types> ComplexData<'types> {
         let type_ident = &base.type_ident;
         let content_ident = format_ident!("{type_ident}Content");
         let has_content = occurs.is_some() && !elements.is_empty();
+        let shared_content = ctx.shared_content();
 
-        let content_type = has_content.then(|| {
+        let content_type = (has_content && shared_content.is_none()).then(|| {
             let mode = match type_mode {
                 TypeMode::All => StructMode::All {
                     elements,
@@ -478,11 +478,9 @@ impl<'types> ComplexData<'types> {
                 allow_any: false,
             }
         } else {
-            let type_ref = ctx.current_type_ref();
             let field_ident = format_ident!("{}", ctx.content_display_name);
-
-            let target_type = (*type_ref.path).clone().with_ident(content_ident.clone());
-            let target_type = PathData::from_path(target_type);
+            let target_type =
+                ctx.content_target_type(shared_content, &content_ident, occurs.is_direct())?;
 
             let content = ComplexDataContent {
                 occurs,
@@ -863,6 +861,32 @@ impl Context<'_, '_> {
         } else {
             MixedMode::None
         }
+    }
+
+    /// Path of the content type to reference from the type that is currently
+    /// generated: `shared_content` if the content type is shared with other complex
+    /// types, which also schedules it for generation, otherwise the `content_ident`
+    /// type nested below the current type.
+    ///
+    /// `by_value` only applies to the shared content type, because a nested content
+    /// type is generated within the current type anyway.
+    fn content_target_type(
+        &mut self,
+        shared_content: Option<&TypeIdent>,
+        content_ident: &Ident2,
+        by_value: bool,
+    ) -> Result<PathData, Error> {
+        if let Some(ident) = shared_content {
+            let type_ref = self.get_or_create_type_ref_for_value(ident, by_value)?;
+
+            return Ok(type_ref.path.clone());
+        }
+
+        let path = (*self.current_type_ref().path)
+            .clone()
+            .with_ident(content_ident.clone());
+
+        Ok(PathData::from_path(path))
     }
 }
 

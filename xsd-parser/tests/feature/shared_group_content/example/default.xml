@@ -1,0 +1,4 @@
+<tns:Root xmlns:tns="http://example.com" attr1="a">
+    <ElementA attr1="inner-a"></ElementA>
+    <ElementB attr2="inner-b"></ElementB>
+</tns:Root>

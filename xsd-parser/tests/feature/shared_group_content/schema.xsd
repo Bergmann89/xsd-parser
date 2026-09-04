@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <xs:complexType name="ElementAType">
+        <xs:sequence>
+            <xs:group ref="tns:ChoiceGroup" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+
+        <xs:attribute name="attr1" type="xs:string" />
+    </xs:complexType>
+
+    <xs:complexType name="ElementBType">
+        <xs:sequence>
+            <xs:group ref="tns:ChoiceGroup" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+
+        <xs:attribute name="attr2" type="xs:string" />
+    </xs:complexType>
+
+    <xs:group name="ChoiceGroup">
+        <xs:choice>
+            <xs:element name="ElementA" type="tns:ElementAType" />
+            <xs:element name="ElementB" type="tns:ElementBType" />
+        </xs:choice>
+    </xs:group>
+</xs:schema>
