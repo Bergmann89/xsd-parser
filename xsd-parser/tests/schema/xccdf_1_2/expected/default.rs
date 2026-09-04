@@ -147,18 +147,7 @@ pub mod cdf {
         pub lang: Option<String>,
         ///Used to manage inheritance.
         pub override_: bool,
-        pub content: Vec<HtmlTextWithSubTypeContent>,
-    }
-    /// The type for a string with optional XHTML elements,
-    ///and an @xml:lang attribute.
-    #[derive(Debug)]
-    pub enum HtmlTextWithSubTypeContent {
-        ///Specifies an xccdf:Value or
-        ///xccdf:plain-text element to be used for text
-        ///substitution
-        Sub(SubType),
-        Any(AnyElement),
-        Text(Text),
+        pub content: Vec<FixTextContent35Type>,
     }
     ///Data type for an xccdf:notice element.
     ///xccdf:notice elements are used to include legal notices (licensing
@@ -1033,6 +1022,15 @@ pub mod cdf {
         ///under text substitution processing.
         pub use_: SubUseEnumType,
     }
+    #[derive(Debug)]
+    pub enum FixTextContent35Type {
+        ///Specifies an xccdf:Value or
+        ///xccdf:plain-text element to be used for text
+        ///substitution
+        Sub(SubType),
+        Any(AnyElement),
+        Text(Text),
+    }
     /// Type for a parameter used in the xccdf:model
     ///element, which records scoring model information. The contents of this type
     ///represent a name-value pair, where the name is recorded in the @name attribute and
@@ -1251,20 +1249,7 @@ pub mod cdf {
         ///A hint as to the nature of the
         ///warning.
         pub category: WarningCategoryEnumType,
-        pub content: Vec<WarningTypeContent>,
-    }
-    /// Data type for the xccdf:warning element under
-    ///the xccdf:Rule element. This element holds a note or caveat about the item
-    ///intended to convey important cautionary information for the xccdf:Benchmark
-    ///user.
-    #[derive(Debug)]
-    pub enum WarningTypeContent {
-        ///Specifies an xccdf:Value or
-        ///xccdf:plain-text element to be used for text
-        ///substitution
-        Sub(SubType),
-        Any(AnyElement),
-        Text(Text),
+        pub content: Vec<FixTextContent35Type>,
     }
     /// This type is for an element that has string content
     ///and a @selector attribute for use in tailoring.
@@ -1492,21 +1477,7 @@ pub mod cdf {
         ///The estimated complexity or difficulty of
         ///applying the fix to the target.
         pub complexity: RatingEnumType,
-        pub content: Vec<FixTextTypeContent>,
-    }
-    /// Data type for the xccdf:fixtext element, which
-    ///contains data that describes how to bring a target system into compliance with an
-    ///xccdf:Rule. Each xccdf:fixtext element may be associated with one or
-    ///more xccdf:fix elements through the @fixref attribute. The body holds
-    ///explanatory text about the fix procedures.
-    #[derive(Debug)]
-    pub enum FixTextTypeContent {
-        ///Specifies an xccdf:Value or
-        ///xccdf:plain-text element to be used for text
-        ///substitution
-        Sub(SubType),
-        Any(AnyElement),
-        Text(Text),
+        pub content: Vec<FixTextContent35Type>,
     }
     /// Data type for the xccdf:fix element. The body
     ///of this element contains a command string, script, or other system modification

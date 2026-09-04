@@ -109,6 +109,29 @@ mod all {
     assert_shared_content!();
 }
 
+/* mixed */
+
+// The owners are `mixed="true"`, so `SIMPLIFY_MIXED_TYPES` rewrites the text content
+// into a `Text` element and clears the mixed flag on the owners and on the shared
+// group. The group must be shared afterwards, not copied per owner.
+#[test]
+fn generate_mixed() {
+    generate_test(
+        "tests/feature/shared_group_content/schema_mixed.xsd",
+        "tests/feature/shared_group_content/expected/mixed.rs",
+        config(),
+    );
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod mixed {
+    #![allow(unused_imports)]
+
+    include!("expected/mixed.rs");
+
+    assert_shared_content!();
+}
+
 /* quick_xml */
 
 #[test]
