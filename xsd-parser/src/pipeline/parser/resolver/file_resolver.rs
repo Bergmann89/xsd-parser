@@ -1,6 +1,9 @@
 use std::ffi::OsStr;
 use std::fs::File;
-use std::io::{BufReader, Error};
+use std::io::BufReader;
+use std::io::Error as IoError;
+use std::path::PathBuf;
+use thiserror::Error;
 
 use url::Url;
 
@@ -18,9 +21,16 @@ impl FileResolver {
     }
 }
 
+#[derive(Debug, Error)]
+#[error("IO Error: {error} (path: {path})")]
+pub struct FileResolverError {
+    path: PathBuf,
+    error: IoError,
+}
+
 impl Resolver for FileResolver {
     type Buffer = BufReader<File>;
-    type Error = Error;
+    type Error = FileResolverError;
 
     fn resolve(&mut self, req: &ResolveRequest) -> ResolveResult<Self> {
         let url = if let Some(current) = &req.current_location {
@@ -37,7 +47,11 @@ impl Resolver for FileResolver {
             return Ok(None);
         };
 
-        let file = File::open(&path)?;
+        let file = match File::open(&path) {
+            Ok(file) => file,
+            Err(error) => return Err(FileResolverError { path, error }),
+        };
+
         let buffer = BufReader::new(file);
 
         let name = path
