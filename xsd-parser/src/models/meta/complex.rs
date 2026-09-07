@@ -46,6 +46,13 @@ pub struct ComplexMeta {
 
     /// List of attributes defined for this complex type.
     pub attributes: AttributesMeta,
+
+    /// Default value for the simple content of this complex type.
+    ///
+    /// This is set when an `xs:element` with a `default` attribute has an
+    /// inline complex type with `xs:simpleContent`. It defines the value to
+    /// use when the element is present but has no text content.
+    pub default: Option<String>,
 }
 
 /* GroupMeta */
@@ -194,6 +201,7 @@ impl Default for ComplexMeta {
             is_dynamic: false,
             is_mixed: false,
             attributes: AttributesMeta::default(),
+            default: None,
         }
     }
 }
@@ -208,6 +216,7 @@ impl TypeEq for ComplexMeta {
             is_dynamic,
             is_mixed: mixed_content,
             attributes,
+            default,
         } = self;
 
         base.type_hash(hasher, types);
@@ -217,6 +226,7 @@ impl TypeEq for ComplexMeta {
         is_dynamic.hash(hasher);
         mixed_content.hash(hasher);
         attributes.type_hash(hasher, types);
+        default.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
@@ -228,6 +238,7 @@ impl TypeEq for ComplexMeta {
             is_dynamic,
             is_mixed: mixed_content,
             attributes,
+            default,
         } = self;
 
         base.type_eq(&other.base, types)
@@ -237,5 +248,6 @@ impl TypeEq for ComplexMeta {
             && is_dynamic.eq(&other.is_dynamic)
             && mixed_content.eq(&other.is_mixed)
             && attributes.type_eq(&other.attributes, types)
+            && default.eq(&other.default)
     }
 }

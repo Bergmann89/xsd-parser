@@ -1,7 +1,10 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::models::data::{ComplexData, ComplexDataAttribute, ComplexDataStruct, DataTypeVariant};
+use crate::models::data::{
+    ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataStruct, DataTypeVariant,
+    StructMode,
+};
 
 use super::super::{Context, RenderStep, RenderStepType};
 
@@ -52,20 +55,28 @@ impl ComplexData<'_> {
 impl ComplexDataStruct<'_> {
     pub(crate) fn render_defaults(&self, ctx: &mut Context<'_, '_>) {
         let type_ident = &self.type_ident;
-        let mut has_attributes = false;
+
         let attribute_defaults = self
             .attributes
             .iter()
             .filter_map(|attrib| attrib.render_default_fn(ctx))
-            .inspect(|_| has_attributes = true);
+            .collect::<Vec<_>>();
+
+        let content_default = match &self.mode {
+            StructMode::Content { content } => content.render_default_content_fn(ctx),
+            _ => None,
+        };
+
+        let has_defaults = !attribute_defaults.is_empty() || content_default.is_some();
 
         let impl_ = quote! {
             impl #type_ident {
                 #( #attribute_defaults )*
+                #content_default
             }
         };
 
-        if has_attributes {
+        if has_defaults {
             ctx.current_module().append(impl_);
         }
     }
@@ -80,6 +91,20 @@ impl ComplexDataAttribute<'_> {
         Some(quote! {
             #[must_use]
             pub fn #default_fn_ident() -> #target_ident {
+                #default
+            }
+        })
+    }
+}
+
+impl ComplexDataContent<'_> {
+    fn render_default_content_fn(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let default = self.default_value.as_ref()?.render(ctx);
+        let target_ident = ctx.resolve_type_for_module(&self.target_type);
+
+        Some(quote! {
+            #[must_use]
+            pub fn default_content() -> #target_ident {
                 #default
             }
         })

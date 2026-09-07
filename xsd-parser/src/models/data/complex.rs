@@ -204,6 +204,11 @@ pub struct ComplexDataContent<'types> {
 
     /// Additional attributes that will be added to the element.
     pub extra_attributes: Vec<TokenStream>,
+
+    /// Default value for the content field, used when the element is present
+    /// but has no text content. Derived from the `default` attribute of the
+    /// enclosing `xs:element` in the XSD schema.
+    pub default_value: Option<ValueRendererBox>,
 }
 
 /// Contains the details of an XML element.
