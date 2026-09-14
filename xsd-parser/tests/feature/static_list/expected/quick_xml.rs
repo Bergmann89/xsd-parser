@@ -198,6 +198,16 @@ pub mod quick_xml_deserialize {
                 item: helper.finish_arr::<_, 5usize>(self.item)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Item")
+            ) {
+                return true;
+            }
+            false
+        }
     }
 }
 pub mod quick_xml_serialize {

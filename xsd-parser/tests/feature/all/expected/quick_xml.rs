@@ -390,6 +390,34 @@ pub mod quick_xml_deserialize {
                 twice_or_more: helper.finish_vec(2usize, None, self.twice_or_more)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Once")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Optional")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"OnceSpecify")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"TwiceOrMore")
+            ) {
+                return true;
+            }
+            false
+        }
     }
 }
 pub mod quick_xml_serialize {

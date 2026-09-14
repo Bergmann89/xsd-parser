@@ -214,6 +214,13 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::EnumType as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
+        }
     }
 }
 pub mod quick_xml_serialize {

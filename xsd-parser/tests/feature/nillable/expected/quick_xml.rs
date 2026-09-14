@@ -307,6 +307,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::A(None) => Some(S::A(None)),
+                S::B(None) => Some(S::B(None)),
+                S::C(None) => Some(S::C(None)),
+                S::D(None) => Some(S::D(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -454,6 +462,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -470,6 +482,34 @@ pub mod quick_xml_deserialize {
                 c: self.c,
                 d: self.d,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"A")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"B")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"C")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"D")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -619,6 +659,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::X(None) => Some(S::X(None)),
+                S::Y(None) => Some(S::Y(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -708,6 +754,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -722,6 +772,22 @@ pub mod quick_xml_deserialize {
                 x: helper.finish_element("X", self.x)?,
                 y: helper.finish_element("Y", self.y)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"X")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Y")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

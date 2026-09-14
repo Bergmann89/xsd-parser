@@ -187,6 +187,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Enum(None) => Some(S::Enum(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -247,6 +252,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -260,6 +269,16 @@ pub mod quick_xml_deserialize {
             Ok(super::FooType {
                 enum_: helper.finish_element("Enum", self.enum_)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Enum")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

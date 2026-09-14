@@ -293,6 +293,12 @@ pub mod tns {
                     let mut event = event;
                     let mut fallback = None;
                     let mut allow_any_element = false;
+                    let entry_state__ = match &*self.state__ {
+                        S::Init__ => Some(S::Init__),
+                        S::Name(None) => Some(S::Name(None)),
+                        S::Gender(None) => Some(S::Gender(None)),
+                        _ => None,
+                    };
                     let (event, allow_any) = loop {
                         let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                         event = match (state, event) {
@@ -369,6 +375,13 @@ pub mod tns {
                     };
                     if let Some(fallback) = fallback {
                         *self.state__ = fallback;
+                    } else if !matches!(
+                        event,
+                        ::xsd_parser_types::quick_xml::DeserializerEvent::None
+                    ) {
+                        if let Some(entry_state) = entry_state__ {
+                            *self.state__ = entry_state;
+                        }
                     }
                     Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                         artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(
@@ -392,6 +405,25 @@ pub mod tns {
                         name: helper.finish_element("name", self.name)?,
                         gender: helper.finish_element("gender", self.gender)?,
                     })
+                }
+                fn is_known_start_tag(
+                    helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+                    x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+                ) -> bool {
+                    let _ = helper;
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"name")
+                    ) {
+                        return true;
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"gender")
+                    ) {
+                        return true;
+                    }
+                    false
                 }
             }
         }
@@ -641,6 +673,11 @@ pub mod tns {
                     let mut event = event;
                     let mut fallback = None;
                     let mut allow_any_element = false;
+                    let entry_state__ = match &*self.state__ {
+                        S::Init__ => Some(S::Init__),
+                        S::Person(None) => Some(S::Person(None)),
+                        _ => None,
+                    };
                     let (event, allow_any) = loop {
                         let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                         event = match (state, event) {
@@ -700,6 +737,13 @@ pub mod tns {
                     };
                     if let Some(fallback) = fallback {
                         *self.state__ = fallback;
+                    } else if !matches!(
+                        event,
+                        ::xsd_parser_types::quick_xml::DeserializerEvent::None
+                    ) {
+                        if let Some(entry_state) = entry_state__ {
+                            *self.state__ = entry_state;
+                        }
                     }
                     Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                         artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(
@@ -722,6 +766,19 @@ pub mod tns {
                     Ok(super::PersonsType {
                         person: self.person,
                     })
+                }
+                fn is_known_start_tag(
+                    helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+                    x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+                ) -> bool {
+                    let _ = helper;
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"Person")
+                    ) {
+                        return true;
+                    }
+                    false
                 }
             }
         }
@@ -1004,6 +1061,11 @@ pub mod tns {
                     let mut event = event;
                     let mut fallback = None;
                     let mut allow_any_element = false;
+                    let entry_state__ = match &*self.state__ {
+                        S::Init__ => Some(S::Init__),
+                        S::Person(None) => Some(S::Person(None)),
+                        _ => None,
+                    };
                     let (event, allow_any) = loop {
                         let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                         event = match (state, event) {
@@ -1063,6 +1125,13 @@ pub mod tns {
                     };
                     if let Some(fallback) = fallback {
                         *self.state__ = fallback;
+                    } else if !matches!(
+                        event,
+                        ::xsd_parser_types::quick_xml::DeserializerEvent::None
+                    ) {
+                        if let Some(entry_state) = entry_state__ {
+                            *self.state__ = entry_state;
+                        }
                     }
                     Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                         artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(
@@ -1087,6 +1156,19 @@ pub mod tns {
                     Ok(super::AdvancedPersonsType {
                         person: self.person,
                     })
+                }
+                fn is_known_start_tag(
+                    helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+                    x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+                ) -> bool {
+                    let _ = helper;
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"Person")
+                    ) {
+                        return true;
+                    }
+                    false
                 }
             }
             #[derive(Debug)]
@@ -1459,6 +1541,14 @@ pub mod tns {
                     let mut event = event;
                     let mut fallback = None;
                     let mut allow_any_element = false;
+                    let entry_state__ = match &*self.state__ {
+                        S::Init__ => Some(S::Init__),
+                        S::Name(None) => Some(S::Name(None)),
+                        S::LastName(None) => Some(S::LastName(None)),
+                        S::Age(None) => Some(S::Age(None)),
+                        S::Gender(None) => Some(S::Gender(None)),
+                        _ => None,
+                    };
                     let (event, allow_any) = loop {
                         let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                         event = match (state, event) {
@@ -1569,6 +1659,13 @@ pub mod tns {
                     };
                     if let Some(fallback) = fallback {
                         *self.state__ = fallback;
+                    } else if !matches!(
+                        event,
+                        ::xsd_parser_types::quick_xml::DeserializerEvent::None
+                    ) {
+                        if let Some(entry_state) = entry_state__ {
+                            *self.state__ = entry_state;
+                        }
                     }
                     Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                         artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(
@@ -1594,6 +1691,37 @@ pub mod tns {
                         age: helper.finish_element("age", self.age)?,
                         gender: helper.finish_element("gender", self.gender)?,
                     })
+                }
+                fn is_known_start_tag(
+                    helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+                    x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+                ) -> bool {
+                    let _ = helper;
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"name")
+                    ) {
+                        return true;
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"lastName")
+                    ) {
+                        return true;
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"age")
+                    ) {
+                        return true;
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::super::NS_TNS),
+                        Some(b"gender")
+                    ) {
+                        return true;
+                    }
+                    false
                 }
             }
         }

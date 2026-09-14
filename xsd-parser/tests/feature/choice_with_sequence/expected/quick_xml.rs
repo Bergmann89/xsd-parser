@@ -380,6 +380,20 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::FooType, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::FooContent2Type as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            if <super::FooContent3Type as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct FooContent2TypeDeserializer {
@@ -536,6 +550,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Element1(None) => Some(S::Element1(None)),
+                S::Element2(None) => Some(S::Element2(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -625,6 +645,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -645,6 +669,22 @@ pub mod quick_xml_deserialize {
                 element_1: helper.finish_element("Element1", self.element_1)?,
                 element_2: helper.finish_element("Element2", self.element_2)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Element1")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Element2")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -802,6 +842,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Element3(None) => Some(S::Element3(None)),
+                S::Element4(None) => Some(S::Element4(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -891,6 +937,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -911,6 +961,22 @@ pub mod quick_xml_deserialize {
                 element_3: helper.finish_element("Element3", self.element_3)?,
                 element_4: helper.finish_element("Element4", self.element_4)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Element3")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Element4")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

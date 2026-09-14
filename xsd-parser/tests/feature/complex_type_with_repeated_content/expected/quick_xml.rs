@@ -203,6 +203,15 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::FooTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct FooTypeContentDeserializer {
@@ -391,6 +400,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::A(None) => Some(S::A(None)),
+                S::B(None) => Some(S::B(None)),
+                S::C(None) => Some(S::C(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -509,6 +525,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -530,6 +550,28 @@ pub mod quick_xml_deserialize {
                 b: self.b,
                 c: self.c,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"a")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"b")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"c")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

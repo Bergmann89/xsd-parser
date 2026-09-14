@@ -97,6 +97,26 @@ where
     ///
     /// Returns an [`struct@Error`] if the deserializer could not finish.
     fn finish(self, helper: &mut DeserializeHelper) -> Result<T, Error>;
+
+    /// Check whether the passed start or empty tag refers to an element that
+    /// is part of the content model of the type `T`.
+    ///
+    /// This is used by the deserialization driver to decide what to do with an
+    /// element that no deserializer consumed: if the tag is part of the
+    /// content model, the element violates the model (e.g. a duplicated or
+    /// misplaced element) and an [`ErrorKind::UnexpectedEvent`] error is
+    /// raised. If the tag is not part of the content model, the element is
+    /// unknown to the deserializer and is skipped silently (including all of
+    /// its nested content).
+    ///
+    /// The default implementation considers every tag as known, which means
+    /// unknown elements raise an error.
+    #[must_use]
+    fn is_known_start_tag(helper: &DeserializeHelper, bytes: &BytesStart<'_>) -> bool {
+        let _ = (helper, bytes);
+
+        true
+    }
 }
 
 /// Result type returned by the [`Deserializer`] trait.
@@ -1320,6 +1340,29 @@ where
                     self.skip_depth = Some(1);
                 }
             }
+            // Element that no deserializer in the chain consumed. If the tag
+            // is part of the content model of the deserializer, this is a
+            // content model violation (e.g. a duplicated or misplaced element)
+            // and is raised as an error. Otherwise the element is unknown to
+            // the deserializer and its subtree is skipped, so that documents
+            // with legacy or vendor specific extensions (outside of `xs:any`
+            // positions) can be processed.
+            Some(event @ (Event::Start(_) | Event::Empty(_))) => {
+                let is_known = match &event {
+                    Event::Start(x) | Event::Empty(x) => {
+                        T::Deserializer::is_known_start_tag(&self.helper, x)
+                    }
+                    _ => false,
+                };
+
+                if is_known {
+                    return Err(ErrorKind::UnexpectedEvent(event.into_owned()).into());
+                }
+
+                if matches!(event, Event::Start(_)) {
+                    self.skip_depth = Some(1);
+                }
+            }
             Some(Event::Text(text)) if text.decode()?.trim().is_empty() => (),
             Some(event) => return Err(ErrorKind::UnexpectedEvent(event.into_owned()).into()),
         }
@@ -1377,5 +1420,404 @@ where
                 return Ok(data);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::quick_xml::{DeserializeSync, SliceReader};
+    use std::mem::replace;
+
+    const NS: &[u8] = b"urn:test";
+
+    /// Test type that mirrors the state machine generated for a sequence with
+    /// a required element `A` and an optional element `B`. Elements that are
+    /// not part of the content model are returned to the caller unconsumed.
+    #[derive(Debug)]
+    struct TestType {
+        a: Option<String>,
+        b: Option<String>,
+    }
+
+    impl WithDeserializer for TestType {
+        type Deserializer = TestTypeDeserializer;
+    }
+
+    #[derive(Debug)]
+    enum TestTypeState {
+        Init__,
+        A(Option<<String as WithDeserializer>::Deserializer>),
+        B(Option<<String as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+
+    fn entry_state(state: &TestTypeState) -> Option<TestTypeState> {
+        use TestTypeState as S;
+
+        match state {
+            S::Init__ => Some(S::Init__),
+            S::A(None) => Some(S::A(None)),
+            S::B(None) => Some(S::B(None)),
+            _ => None,
+        }
+    }
+
+    #[derive(Debug)]
+    struct TestTypeDeserializer {
+        a: Option<String>,
+        b: Option<String>,
+        state__: Box<TestTypeState>,
+    }
+
+    impl TestTypeDeserializer {
+        fn finish_state(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            state: TestTypeState,
+        ) -> Result<(), Error> {
+            match state {
+                TestTypeState::A(Some(deserializer)) => {
+                    self.store_a(deserializer.finish(helper)?)?;
+                }
+                TestTypeState::B(Some(deserializer)) => {
+                    self.store_b(deserializer.finish(helper)?)?;
+                }
+                _ => (),
+            }
+
+            Ok(())
+        }
+
+        fn store_a(&mut self, value: String) -> Result<(), Error> {
+            if self.a.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"A")))?;
+            }
+
+            self.a = Some(value);
+
+            Ok(())
+        }
+
+        fn store_b(&mut self, value: String) -> Result<(), Error> {
+            if self.b.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"B")))?;
+            }
+
+            self.b = Some(value);
+
+            Ok(())
+        }
+
+        fn handle_a<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<TestTypeState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+
+            if artifact.is_none() {
+                fallback.get_or_insert(TestTypeState::A(None));
+
+                if matches!(&fallback, Some(TestTypeState::Init__)) {
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(helper, fallback)?;
+            }
+
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_a(data)?;
+                    *self.state__ = TestTypeState::B(None);
+
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    fallback.get_or_insert(TestTypeState::A(Some(deserializer)));
+                    *self.state__ = TestTypeState::B(None);
+
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+            }
+        }
+
+        fn handle_b<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<TestTypeState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+
+            if artifact.is_none() {
+                *self.state__ = TestTypeState::Done__;
+
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(helper, fallback)?;
+            }
+
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_b(data)?;
+                    *self.state__ = TestTypeState::Done__;
+
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    fallback.get_or_insert(TestTypeState::B(Some(deserializer)));
+                    *self.state__ = TestTypeState::Done__;
+
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+            }
+        }
+    }
+
+    impl<'de> Deserializer<'de, TestType> for TestTypeDeserializer {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, TestType> {
+            helper.init_deserializer_from_start_event(event, |_, _| {
+                Ok(TestTypeDeserializer {
+                    a: None,
+                    b: None,
+                    state__: Box::new(TestTypeState::Init__),
+                })
+            })
+        }
+
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, TestType> {
+            use TestTypeState as S;
+
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let entry_state__ = entry_state(&self.state__);
+
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state__, S::Unknown__);
+
+                event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
+                    (S::A(Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+
+                        match self.handle_a(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::B(Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+
+                        match self.handle_b(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(helper, fallback)?;
+                        }
+
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
+                            event: DeserializerEvent::None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state__ = S::A(None);
+
+                        event
+                    }
+                    (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output =
+                            helper.init_start_tag_deserializer(event, Some(NS), b"A", false)?;
+
+                        match self.handle_a(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::B(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output =
+                            helper.init_start_tag_deserializer(event, Some(NS), b"B", false)?;
+
+                        match self.handle_b(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::Done__, event) => {
+                        *self.state__ = S::Done__;
+
+                        break (DeserializerEvent::Continue(event), allow_any_element);
+                    }
+                    (state, event) => {
+                        *self.state__ = state;
+
+                        break (DeserializerEvent::Break(event), false);
+                    }
+                }
+            };
+
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
+            }
+
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<TestType, Error> {
+            let state = replace(&mut *self.state__, TestTypeState::Unknown__);
+            self.finish_state(helper, state)?;
+
+            Ok(TestType {
+                a: Some(helper.finish_element("A", self.a)?),
+                b: self.b,
+            })
+        }
+
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            matches!(
+                helper.resolve_local_name(x.name(), NS),
+                Some(name) if name == b"A" || name == b"B"
+            )
+        }
+    }
+
+    fn deserialize(xml: &str) -> Result<TestType, Error> {
+        TestType::deserialize(&mut SliceReader::new(xml))
+    }
+
+    #[test]
+    fn unknown_element_is_skipped() {
+        let obj = deserialize(
+            "<Root xmlns=\"urn:test\"><A>x</A><Unknown><Deep/><Deep2>t</Deep2></Unknown><B>y</B></Root>",
+        )
+        .unwrap();
+
+        assert_eq!(obj.a.as_deref(), Some("x"));
+        assert_eq!(obj.b.as_deref(), Some("y"));
+    }
+
+    #[test]
+    fn unknown_element_before_first_is_skipped() {
+        let obj = deserialize("<Root xmlns=\"urn:test\"><Unknown/><A>x</A></Root>").unwrap();
+
+        assert_eq!(obj.a.as_deref(), Some("x"));
+        assert_eq!(obj.b, None);
+    }
+
+    #[test]
+    fn unknown_nested_elements_are_skipped() {
+        let obj = deserialize(
+            "<Root xmlns=\"urn:test\"><Other xmlns=\"urn:other\"><Inner xmlns=\"urn:deep\"><Deep/></Inner></Other><A>x</A></Root>",
+        )
+        .unwrap();
+
+        assert_eq!(obj.a.as_deref(), Some("x"));
+        assert_eq!(obj.b, None);
+    }
+
+    #[test]
+    fn unknown_empty_element_is_skipped() {
+        let obj =
+            deserialize("<Root xmlns=\"urn:test\"><A>x</A><Unknown/><B>y</B></Root>").unwrap();
+
+        assert_eq!(obj.a.as_deref(), Some("x"));
+        assert_eq!(obj.b.as_deref(), Some("y"));
+    }
+
+    #[test]
+    fn missing_required_element_is_reported() {
+        let error = deserialize("<Root xmlns=\"urn:test\"><Unknown/></Root>").unwrap_err();
+
+        assert!(matches!(error.kind, ErrorKind::MissingElement(_)));
+    }
+
+    #[test]
+    fn known_element_out_of_place_is_rejected() {
+        // The second `A` element appears when the state machine already
+        // advanced past the `A` slot. The element is known to the content
+        // model, so it must not be skipped silently.
+        let error =
+            deserialize("<Root xmlns=\"urn:test\"><A>x</A><Unknown/><A>y</A></Root>").unwrap_err();
+
+        assert!(matches!(error.kind, ErrorKind::UnexpectedEvent(_)));
+    }
+
+    #[test]
+    fn eof_during_skip_is_rejected() {
+        let result = deserialize("<Root xmlns=\"urn:test\"><A>x</A><Unknown><Deep>");
+
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn unknown_event_after_done_is_rejected_for_known_tags() {
+        let error =
+            deserialize("<Root xmlns=\"urn:test\"><A>x</A><B>y</B><A>z</A></Root>").unwrap_err();
+
+        assert!(matches!(error.kind, ErrorKind::UnexpectedEvent(_)));
     }
 }

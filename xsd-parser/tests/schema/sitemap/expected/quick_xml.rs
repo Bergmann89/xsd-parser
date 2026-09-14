@@ -214,6 +214,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Url(None) => Some(S::Url(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -275,6 +280,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -288,6 +297,16 @@ pub mod quick_xml_deserialize {
             Ok(super::UrlsetType {
                 url: helper.finish_vec(1usize, None, self.url)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"url")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -533,6 +552,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Loc(None) => Some(S::Loc(None)),
+                S::Lastmod(None) => Some(S::Lastmod(None)),
+                S::Changefreq(None) => Some(S::Changefreq(None)),
+                S::Priority(None) => Some(S::Priority(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -681,6 +708,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -697,6 +728,34 @@ pub mod quick_xml_deserialize {
                 changefreq: self.changefreq,
                 priority: self.priority,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"loc")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"lastmod")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"changefreq")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"priority")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

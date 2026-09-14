@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <!-- Required A, optional Pos. Used for adversarial tests around the
+         unknown-element skip logic of the deserialization driver. -->
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="A" type="xs:string"/>
+                <xs:element name="Pos" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Bounded list slot to exercise the entry state capture of vec based
+         state machines. -->
+    <xs:element name="Max">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="A" type="xs:string" minOccurs="0" maxOccurs="2"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Complex child element to exercise unknowns while a nested
+         deserializer is in-flight. -->
+    <xs:complexType name="ChildType">
+        <xs:sequence>
+            <xs:element name="Inner" type="xs:string"/>
+            <xs:element name="Extra" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Outer">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Child" type="tns:ChildType"/>
+                <xs:element name="B" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Recursive type to exercise unknowns inside of recursive content. -->
+    <xs:complexType name="NodeType">
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="Kid" type="tns:NodeType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Node" type="tns:NodeType"/>
+
+    <!-- Indirectly recursive model group (group -> element -> type -> group).
+         The group references must be resolved by name checks to avoid
+         cyclic delegation in `is_known_start_tag`. -->
+    <xs:complexType name="ViaType">
+        <xs:sequence>
+            <xs:group ref="tns:RecGroup"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:group name="RecGroup">
+        <xs:sequence>
+            <xs:element name="V" type="xs:string"/>
+            <xs:element name="Via" type="tns:ViaType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:element name="GRoot">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:group ref="tns:RecGroup"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

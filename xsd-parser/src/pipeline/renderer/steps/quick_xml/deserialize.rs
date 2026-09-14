@@ -981,9 +981,30 @@ impl ComplexBase<'_> {
         ctx.current_module().append(code);
     }
 
+    fn render_deserializer_fn_is_known_start_tag(
+        _ctx: &Context<'_, '_>,
+        checks: &[TokenStream],
+    ) -> Option<TokenStream> {
+        if checks.is_empty() {
+            return None;
+        }
+
+        // The `BytesStart` import is registered by the caller that renders
+        // the `is_known_start_tag` function.
+
+        Some(quote! {
+            let _ = helper;
+
+            #( #checks )*
+
+            false
+        })
+    }
+
     fn render_deserializer_impl(
         &self,
         ctx: &mut Context<'_, '_>,
+        fn_is_known_start_tag: Option<&TokenStream>,
         fn_init: &TokenStream,
         fn_next: &TokenStream,
         fn_finish: &TokenStream,
@@ -1012,6 +1033,20 @@ impl ComplexBase<'_> {
         let deserializer_result =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerResult");
 
+        let is_known_start_tag = fn_is_known_start_tag.map(|x| {
+            let bytes_start =
+                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
+
+            quote! {
+                fn is_known_start_tag(
+                    helper: &#deserialize_helper,
+                    x: &#bytes_start<'_>,
+                ) -> bool {
+                    #x
+                }
+            }
+        });
+
         let code = quote! {
             impl<'de> #deserializer<'de, super::#type_ident> for #deserializer_type {
                 fn init(
@@ -1032,6 +1067,8 @@ impl ComplexBase<'_> {
                 fn finish(#mut_ self, helper: &mut #deserialize_helper) -> #result<super::#type_ident, #error> {
                     #fn_finish
                 }
+
+                #is_known_start_tag
             }
         };
 
@@ -1391,8 +1428,22 @@ impl ComplexDataEnum<'_> {
         let fn_next = self.render_deserializer_fn_next(ctx);
         let fn_finish = self.render_deserializer_fn_finish(ctx);
 
-        self.base
-            .render_deserializer_impl(ctx, &fn_init, &fn_next, &fn_finish, false);
+        let checks = self
+            .elements
+            .iter()
+            .filter_map(|x| x.deserializer_is_known_start_tag_check(ctx))
+            .collect::<Vec<_>>();
+        let fn_is_known_start_tag =
+            ComplexBase::render_deserializer_fn_is_known_start_tag(ctx, &checks);
+
+        self.base.render_deserializer_impl(
+            ctx,
+            fn_is_known_start_tag.as_ref(),
+            &fn_init,
+            &fn_next,
+            &fn_finish,
+            false,
+        );
     }
 
     fn render_deserializer_fn_init(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
@@ -2035,8 +2086,44 @@ impl ComplexDataStruct<'_> {
         let fn_next = self.render_deserializer_fn_next(ctx);
         let fn_finish = self.render_deserializer_fn_finish(ctx);
 
-        self.base
-            .render_deserializer_impl(ctx, &fn_init, &fn_next, &fn_finish, true);
+        let mut checks = self
+            .elements()
+            .iter()
+            .filter_map(|x| x.deserializer_is_known_start_tag_check(ctx))
+            .collect::<Vec<_>>();
+
+        // The content of a complex type is deserialized by the deserializer of
+        // the content type. Delegate the check to this deserializer, because
+        // only it knows the elements of the content.
+        if let StructMode::Content { content } = &self.mode {
+            let target_type = ctx.resolve_type_for_deserialize_module(&content.target_type);
+            let with_deserializer =
+                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::WithDeserializer");
+
+            ctx.add_quick_xml_deserialize_usings(
+                true,
+                ["::xsd_parser_types::quick_xml::Deserializer"],
+            );
+
+            checks.push(quote! {
+                if <#target_type as #with_deserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+            });
+        }
+
+        let fn_is_known_start_tag =
+            ComplexBase::render_deserializer_fn_is_known_start_tag(ctx, &checks);
+
+        self.base.render_deserializer_impl(
+            ctx,
+            fn_is_known_start_tag.as_ref(),
+            &fn_init,
+            &fn_next,
+            &fn_finish,
+            true,
+        );
     }
 
     fn render_deserializer_fn_init(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
@@ -2494,6 +2581,15 @@ impl ComplexDataStruct<'_> {
             }
         });
 
+        // Capture the state the deserializer was in when `next` was called.
+        // If the event is not consumed by any handler and is returned to the
+        // caller, the state is restored to this entry state. This keeps slots
+        // open that the handler loop advanced past while trying to find a
+        // handler for the event. Only `None` states are restored here; states
+        // with an in-flight deserializer are restored by the `fallback`
+        // mechanism below.
+        let entry_state = elements.iter().map(|x| &x.variant_ident);
+
         let init_set_any = allow_any.then(|| {
             quote! {
                 allow_any_element = true;
@@ -2551,6 +2647,12 @@ impl ComplexDataStruct<'_> {
             let mut allow_any_element = false;
             #any_retry
 
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                #( S::#entry_state(None) => Some(S::#entry_state(None)), )*
+                _ => None,
+            };
+
             let (event, allow_any) = loop {
                 let state = #replace(&mut *self.state__, S::Unknown__);
 
@@ -2588,6 +2690,14 @@ impl ComplexDataStruct<'_> {
 
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, #deserializer_event::None) {
+                // The event was not consumed by any handler and is returned
+                // to the caller. Restore the state the deserializer was in
+                // when the event was received, because the handler loop may
+                // have advanced past slots that did not match the event.
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
 
             Ok(#deserializer_output {
@@ -3252,6 +3362,78 @@ impl ComplexDataElement<'_> {
             Some(quote! {
                 if #get_type_name == #b_name {
                     #body
+                }
+            })
+        }
+    }
+
+    /// Render the check used by `is_known_start_tag` for this element.
+    ///
+    /// Returns `None` if the element does not contribute to the check (e.g.
+    /// `xs:any` or text elements) or if the element should be treated as
+    /// unknown (dynamic types that are identified by the `xsi:type`
+    /// attribute).
+    fn deserializer_is_known_start_tag_check(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        if self.treat_as_any() || self.treat_as_text() {
+            return None;
+        }
+
+        let with_deserializer =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::WithDeserializer");
+
+        // Group references are resolved by the deserializer of the referenced
+        // type, because only this deserializer knows the elements of the group.
+        // Note: XSD does not allow recursive model groups, so the delegation
+        // always terminates.
+        if self.treat_as_group() {
+            let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+
+            ctx.add_quick_xml_deserialize_usings(
+                true,
+                ["::xsd_parser_types::quick_xml::Deserializer"],
+            );
+
+            return Some(quote! {
+                if <#target_type as #with_deserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+            });
+        }
+
+        // Dynamic types are identified by their tag name or by the `xsi:type`
+        // attribute. If the deserializer was not able to dispatch the element,
+        // it is not known to this type and is treated as unknown.
+        if self.target_is_dynamic
+            && !self
+                .meta()
+                .flags
+                .contains(ElementMetaFlags::IDENTIFY_BY_TAG)
+        {
+            return None;
+        }
+
+        let b_name = &self.b_name;
+
+        if let Some(path) = ctx
+            .types
+            .meta
+            .types
+            .modules
+            .get(&self.meta().ident.ns)
+            .and_then(|x| x.make_ns_const())
+        {
+            let ns_name = ctx.resolve_type_for_deserialize_module(&path);
+
+            Some(quote! {
+                if matches!(helper.resolve_local_name(x.name(), &#ns_name), Some(#b_name)) {
+                    return true;
+                }
+            })
+        } else {
+            Some(quote! {
+                if x.name().local_name().as_ref() == #b_name {
+                    return true;
                 }
             })
         }

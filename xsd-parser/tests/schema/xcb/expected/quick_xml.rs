@@ -1352,6 +1352,15 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::XcbTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct XcbTypeContentDeserializer {
@@ -2485,6 +2494,46 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::XcbTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"request" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"event" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"eventcopy" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"error" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"errorcopy" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"struct" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"union" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"xidtype" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"xidunion" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enum" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"typedef" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"import" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct RequestTypeDeserializer {
@@ -2648,6 +2697,15 @@ pub mod quick_xml_deserialize {
                 combine_adjacent: self.combine_adjacent,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::RequestTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -3526,6 +3584,37 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::RequestTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"pad" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fd" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"exprfield" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"valueparam" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"switch" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"reply" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"doc" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct EventTypeDeserializer {
@@ -3695,6 +3784,15 @@ pub mod quick_xml_deserialize {
                 xge: self.xge,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::EventTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -4221,6 +4319,25 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::EventTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"pad" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fd" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"doc" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PacketStructCopyTypeDeserializer {
@@ -4470,6 +4587,11 @@ pub mod quick_xml_deserialize {
                 number: self.number,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: PacketStructTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -4920,6 +5042,22 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::PacketStructTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"pad" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fd" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct StructTypeDeserializer {
@@ -5067,6 +5205,15 @@ pub mod quick_xml_deserialize {
                 name: self.name,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::StructTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -5595,6 +5742,25 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::StructTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"pad" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fd" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"switch" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct XidtypeTypeDeserializer {
@@ -5775,6 +5941,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Type(None) => Some(S::Type(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -5831,6 +6002,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -5845,6 +6020,13 @@ pub mod quick_xml_deserialize {
                 name: self.name,
                 type_: helper.finish_vec(1usize, None, self.type_)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"type" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -5994,6 +6176,15 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::EnumTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct EnumTypeContentDeserializer {
@@ -6138,6 +6329,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Item(None) => Some(S::Item(None)),
+                S::Doc(None) => Some(S::Doc(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -6219,6 +6416,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -6239,6 +6440,16 @@ pub mod quick_xml_deserialize {
                 item: helper.finish_element("item", self.item)?,
                 doc: self.doc,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"item" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"doc" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -6662,6 +6873,15 @@ pub mod quick_xml_deserialize {
                 mask: self.mask,
                 content: self.content,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::ListTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -7440,6 +7660,34 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::ListTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"op" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fieldref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enumref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"popcount" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sumof" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct AnyTypeDeserializer {
@@ -7680,6 +7928,15 @@ pub mod quick_xml_deserialize {
                 mask: self.mask,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::ExprfieldTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -8461,6 +8718,34 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::ExprfieldTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"op" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fieldref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enumref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"popcount" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sumof" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ValueparamTypeDeserializer {
@@ -8707,6 +8992,15 @@ pub mod quick_xml_deserialize {
                 name: self.name,
                 content: helper.finish_vec(2usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::SwitchexprTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -9912,6 +10206,49 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::SwitchexprTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"op" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fieldref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enumref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"popcount" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sumof" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bitcase" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pad" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fd" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct RequestReplyTypeDeserializer {
@@ -10058,6 +10395,11 @@ pub mod quick_xml_deserialize {
             Ok(super::RequestReplyType {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: RequestReplyTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -10768,6 +11110,31 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::RequestReplyTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"pad" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fd" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"valueparam" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"switch" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"doc" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct DocTypeDeserializer {
@@ -10907,6 +11274,15 @@ pub mod quick_xml_deserialize {
             Ok(super::DocType {
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::DocTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -11524,6 +11900,28 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::DocTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"brief" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"description" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"example" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"error" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"see" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct EnumItemTypeDeserializer {
@@ -11673,6 +12071,15 @@ pub mod quick_xml_deserialize {
                 name: self.name,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::EnumItemTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -11948,6 +12355,16 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::EnumItemTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct OpTypeDeserializer {
@@ -12100,6 +12517,15 @@ pub mod quick_xml_deserialize {
                 op: self.op,
                 content: helper.finish_arr::<_, 2usize>(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::OpTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -12878,6 +13304,34 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::OpTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"op" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fieldref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enumref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"popcount" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sumof" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct UnopTypeDeserializer {
@@ -13027,6 +13481,15 @@ pub mod quick_xml_deserialize {
                 op: self.op,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::UnopTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -13805,6 +14268,34 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::UnopTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"op" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fieldref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enumref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"popcount" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sumof" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct EnumrefTypeDeserializer {
@@ -13931,6 +14422,13 @@ pub mod quick_xml_deserialize {
                 ref_: self.ref_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -14701,6 +15199,34 @@ pub mod quick_xml_deserialize {
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::PopcountType, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"op" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fieldref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enumref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"popcount" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sumof" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct SumofTypeDeserializer {
@@ -14917,6 +15443,15 @@ pub mod quick_xml_deserialize {
                 name: self.name,
                 content: helper.finish_vec(2usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::CaseexprTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -16122,6 +16657,49 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::CaseexprTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"op" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fieldref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"enumref" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"popcount" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sumof" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bit" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pad" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"field" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fd" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"switch" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct FieldTypeDeserializer {
@@ -16249,6 +16827,13 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ErrorTypeDeserializer {
@@ -16375,6 +16960,13 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]

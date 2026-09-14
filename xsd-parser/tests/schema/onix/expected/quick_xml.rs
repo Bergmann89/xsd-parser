@@ -71327,6 +71327,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Header(None) => Some(S::Header(None)),
+                    S::ProductOrNoProductChoice(None) => Some(S::ProductOrNoProductChoice(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -71425,6 +71431,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -71452,6 +71462,17 @@ pub mod onix {
                     product_or_no_product_choice: helper
                         .finish_element("Content68", self.product_or_no_product_choice)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Header")
+                ) {
+                    return true;
+                }
+                if < super :: ProductOrNoProductChoice as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -72010,6 +72031,19 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Sender(None) => Some(S::Sender(None)),
+                    S::Addressee(None) => Some(S::Addressee(None)),
+                    S::MessageNumber(None) => Some(S::MessageNumber(None)),
+                    S::MessageRepeat(None) => Some(S::MessageRepeat(None)),
+                    S::SentDateTime(None) => Some(S::SentDateTime(None)),
+                    S::MessageNote(None) => Some(S::MessageNote(None)),
+                    S::DefaultLanguageOfText(None) => Some(S::DefaultLanguageOfText(None)),
+                    S::DefaultPriceType(None) => Some(S::DefaultPriceType(None)),
+                    S::DefaultCurrencyCode(None) => Some(S::DefaultCurrencyCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -72327,6 +72361,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -72359,6 +72397,64 @@ pub mod onix {
                     default_price_type: self.default_price_type,
                     default_currency_code: self.default_currency_code,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Sender")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Addressee")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MessageNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MessageRepeat")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SentDateTime")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MessageNote")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DefaultLanguageOfText")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DefaultPriceType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DefaultCurrencyCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -72667,6 +72763,22 @@ pub mod onix {
             ) -> Result<super::ProductOrNoProductChoice, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoProduct")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Product")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SenderElementTypeDeserializer {
@@ -72970,6 +73082,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content302(None) => Some(S::Content302(None)),
+                    S::ContactName(None) => Some(S::ContactName(None)),
+                    S::TelephoneNumber(None) => Some(S::TelephoneNumber(None)),
+                    S::EmailAddress(None) => Some(S::EmailAddress(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -73113,6 +73233,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -73140,6 +73264,33 @@ pub mod onix {
                     telephone_number: self.telephone_number,
                     email_address: self.email_address,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::SenderContent302 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContactName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TelephoneNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EmailAddress")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -73444,6 +73595,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content70(None) => Some(S::Content70(None)),
+                    S::ContactName(None) => Some(S::ContactName(None)),
+                    S::TelephoneNumber(None) => Some(S::TelephoneNumber(None)),
+                    S::EmailAddress(None) => Some(S::EmailAddress(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -73588,6 +73747,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -73615,6 +73778,33 @@ pub mod onix {
                     telephone_number: self.telephone_number,
                     email_address: self.email_address,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::AddresseeContent70 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContactName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TelephoneNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EmailAddress")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -73790,6 +73980,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MessageRepeatElementTypeDeserializer {
@@ -73964,6 +74161,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SentDateTimeElementTypeDeserializer {
@@ -74137,6 +74341,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -74319,6 +74530,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DefaultLanguageOfTextElementTypeDeserializer {
@@ -74495,6 +74713,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List74 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DefaultPriceTypeElementTypeDeserializer {
@@ -74669,6 +74895,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List58 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -74845,6 +75079,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List96 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -75589,6 +75831,20 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpRecordMetadata(None) => Some(S::GpRecordMetadata(None)),
+                    S::GpProductNumbers(None) => Some(S::GpProductNumbers(None)),
+                    S::DescriptiveDetail(None) => Some(S::DescriptiveDetail(None)),
+                    S::CollateralDetail(None) => Some(S::CollateralDetail(None)),
+                    S::PromotionDetail(None) => Some(S::PromotionDetail(None)),
+                    S::ContentDetail(None) => Some(S::ContentDetail(None)),
+                    S::PublishingDetail(None) => Some(S::PublishingDetail(None)),
+                    S::RelatedMaterial(None) => Some(S::RelatedMaterial(None)),
+                    S::ProductionDetail(None) => Some(S::ProductionDetail(None)),
+                    S::ProductSupply(None) => Some(S::ProductSupply(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -75924,6 +76180,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -75959,6 +76219,60 @@ pub mod onix {
                     production_detail: self.production_detail,
                     product_supply: self.product_supply,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ProductGpRecordMetadata as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ProductGpProductNumbers as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DescriptiveDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollateralDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PromotionDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublishingDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RelatedMaterial")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductionDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductSupply")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -76261,6 +76575,21 @@ pub mod onix {
             ) -> Result<super::SenderContent302, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::SenderContent303 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SenderName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContactNameElementTypeDeserializer {
@@ -76432,6 +76761,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -76608,6 +76944,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EmailAddressElementTypeDeserializer {
@@ -76781,6 +77124,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -77091,6 +77441,21 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::AddresseeContent70, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::AddresseeContent71 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AddresseeName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -77467,6 +77832,16 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::RecordReference(None) => Some(S::RecordReference(None)),
+                    S::NotificationType(None) => Some(S::NotificationType(None)),
+                    S::DeletionText(None) => Some(S::DeletionText(None)),
+                    S::RecordSourceType(None) => Some(S::RecordSourceType(None)),
+                    S::RecordSourceIdentifier(None) => Some(S::RecordSourceIdentifier(None)),
+                    S::RecordSourceName(None) => Some(S::RecordSourceName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -77692,6 +78067,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -77718,6 +78097,46 @@ pub mod onix {
                     record_source_identifier: self.record_source_identifier,
                     record_source_name: self.record_source_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RecordReference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NotificationType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DeletionText")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RecordSourceType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RecordSourceIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RecordSourceName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -77878,6 +78297,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::Barcode(None) => Some(S::Barcode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -77970,6 +78395,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -77990,6 +78419,22 @@ pub mod onix {
                     product_identifier: helper.finish_vec(1usize, None, self.product_identifier)?,
                     barcode: self.barcode,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Barcode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -78621,6 +79066,20 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpProductForm(None) => Some(S::GpProductForm(None)),
+                    S::GpCollections(None) => Some(S::GpCollections(None)),
+                    S::GpTitles(None) => Some(S::GpTitles(None)),
+                    S::GpAuthorship(None) => Some(S::GpAuthorship(None)),
+                    S::GpEvents(None) => Some(S::GpEvents(None)),
+                    S::GpEditions(None) => Some(S::GpEditions(None)),
+                    S::GpLanguages(None) => Some(S::GpLanguages(None)),
+                    S::GpExtents(None) => Some(S::GpExtents(None)),
+                    S::GpSubjects(None) => Some(S::GpSubjects(None)),
+                    S::GpAudiences(None) => Some(S::GpAudiences(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -78920,6 +79379,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -78954,6 +79417,20 @@ pub mod onix {
                     gp_subjects: helper.finish_default(self.gp_subjects)?,
                     gp_audiences: helper.finish_default(self.gp_audiences)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: DescriptiveDetailGpProductForm as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: DescriptiveDetailGpCollections as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: DescriptiveDetailGpTitles as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: DescriptiveDetailGpAuthorship as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: DescriptiveDetailGpEvents as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: DescriptiveDetailGpEditions as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContentItemGpLanguages as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: DescriptiveDetailGpExtents as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContentItemGpSubjects as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: DescriptiveDetailGpAudiences as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -79155,6 +79632,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpDescriptionsAndMarketingResources(None) => {
+                        Some(S::GpDescriptionsAndMarketingResources(None))
+                    }
+                    S::GpPrizes(None) => Some(S::GpPrizes(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -79248,6 +79733,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -79274,6 +79763,12 @@ pub mod onix {
                         .finish_default(self.gp_descriptions_and_marketing_resources)?,
                     gp_prizes: helper.finish_default(self.gp_prizes)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CollateralDetailGpDescriptionsAndMarketingResources as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: CollateralDetailGpPrizes as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -79419,6 +79914,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PromotionalEvent(None) => Some(S::PromotionalEvent(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -79482,6 +79982,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -79506,6 +80010,16 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     promotional_event: self.promotional_event,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PromotionalEvent")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -79649,6 +80163,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ContentItem(None) => Some(S::ContentItem(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -79709,6 +80228,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -79733,6 +80256,16 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content_item: self.content_item,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentItem")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -79992,6 +80525,17 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpImprintsAndPublishers(None) => Some(S::GpImprintsAndPublishers(None)),
+                    S::GpPublishingStatusDatesAndCopyright(None) => {
+                        Some(S::GpPublishingStatusDatesAndCopyright(None))
+                    }
+                    S::GpSalesRightsAndRestrictions(None) => {
+                        Some(S::GpSalesRightsAndRestrictions(None))
+                    }
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -80128,6 +80672,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -80159,6 +80707,13 @@ pub mod onix {
                     gp_sales_rights_and_restrictions: helper
                         .finish_default(self.gp_sales_rights_and_restrictions)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PublishingDetailGpImprintsAndPublishers as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: PublishingDetailGpPublishingStatusDatesAndCopyright as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: PublishingDetailGpSalesRightsAndRestrictions as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -80350,6 +80905,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::RelatedWork(None) => Some(S::RelatedWork(None)),
+                    S::RelatedProduct(None) => Some(S::RelatedProduct(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -80439,6 +81000,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -80464,6 +81029,22 @@ pub mod onix {
                     related_work: self.related_work,
                     related_product: self.related_product,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RelatedWork")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RelatedProduct")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -80609,6 +81190,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductionManifest(None) => Some(S::ProductionManifest(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -80672,6 +81258,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -80696,6 +81286,16 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     production_manifest: self.production_manifest,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductionManifest")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -80992,6 +81592,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MarketReference(None) => Some(S::MarketReference(None)),
+                    S::Market(None) => Some(S::Market(None)),
+                    S::MarketPublishingDetail(None) => Some(S::MarketPublishingDetail(None)),
+                    S::SupplyDetail(None) => Some(S::SupplyDetail(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -81150,6 +81758,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -81177,6 +81789,34 @@ pub mod onix {
                     market_publishing_detail: self.market_publishing_detail,
                     supply_detail: self.supply_detail,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MarketReference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Market")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MarketPublishingDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyDetail")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -81340,6 +81980,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SenderIdentifier(None) => Some(S::SenderIdentifier(None)),
+                    S::SenderName(None) => Some(S::SenderName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -81432,6 +82078,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -81452,6 +82102,22 @@ pub mod onix {
                     sender_identifier: helper.finish_vec(1usize, None, self.sender_identifier)?,
                     sender_name: self.sender_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SenderIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SenderName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -81625,6 +82291,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AddresseeContent71Deserializer {
@@ -81789,6 +82462,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AddresseeIdentifier(None) => Some(S::AddresseeIdentifier(None)),
+                    S::AddresseeName(None) => Some(S::AddresseeName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -81881,6 +82560,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -81905,6 +82588,22 @@ pub mod onix {
                     )?,
                     addressee_name: self.addressee_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AddresseeIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AddresseeName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -82079,6 +82778,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -82255,6 +82961,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct NotificationTypeElementTypeDeserializer {
@@ -82429,6 +83142,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List1 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -82613,6 +83333,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RecordSourceTypeElementTypeDeserializer {
@@ -82787,6 +83514,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List3 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -83044,6 +83778,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::RecordSourceIdType(None) => Some(S::RecordSourceIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -83173,6 +83914,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -83200,6 +83945,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RecordSourceIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -83375,6 +84142,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -83632,6 +84406,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductIdType(None) => Some(S::ProductIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -83750,6 +84531,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -83777,6 +84562,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -83980,6 +84787,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::BarcodeType(None) => Some(S::BarcodeType(None)),
+                    S::PositionOnProduct(None) => Some(S::PositionOnProduct(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -84072,6 +84885,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -84097,6 +84914,22 @@ pub mod onix {
                     barcode_type: helper.finish_element("BarcodeType", self.barcode_type)?,
                     position_on_product: self.position_on_product,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BarcodeType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PositionOnProduct")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -84997,6 +85830,27 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductComposition(None) => Some(S::ProductComposition(None)),
+                    S::ProductForm(None) => Some(S::ProductForm(None)),
+                    S::ProductFormDetail(None) => Some(S::ProductFormDetail(None)),
+                    S::ProductFormFeature(None) => Some(S::ProductFormFeature(None)),
+                    S::ProductPackaging(None) => Some(S::ProductPackaging(None)),
+                    S::ProductFormDescription(None) => Some(S::ProductFormDescription(None)),
+                    S::TradeCategory(None) => Some(S::TradeCategory(None)),
+                    S::PrimaryContentType(None) => Some(S::PrimaryContentType(None)),
+                    S::ProductContentType(None) => Some(S::ProductContentType(None)),
+                    S::Measure(None) => Some(S::Measure(None)),
+                    S::CountryOfManufacture(None) => Some(S::CountryOfManufacture(None)),
+                    S::EpubTechnicalProtection(None) => Some(S::EpubTechnicalProtection(None)),
+                    S::EpubUsageConstraint(None) => Some(S::EpubUsageConstraint(None)),
+                    S::EpubLicense(None) => Some(S::EpubLicense(None)),
+                    S::MapScale(None) => Some(S::MapScale(None)),
+                    S::ProductClassification(None) => Some(S::ProductClassification(None)),
+                    S::ProductPart(None) => Some(S::ProductPart(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -85594,6 +86448,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -85630,6 +86488,112 @@ pub mod onix {
                     product_classification: self.product_classification,
                     product_part: self.product_part,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductComposition")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductForm")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormFeature")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductPackaging")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TradeCategory")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrimaryContentType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContentType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Measure")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountryOfManufacture")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubTechnicalProtection")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageConstraint")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicense")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MapScale")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductClassification")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductPart")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -85749,6 +86713,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content153(None) => Some(S::Content153(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -85807,6 +86776,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -85826,6 +86799,11 @@ pub mod onix {
                 Ok(super::DescriptiveDetailGpCollections {
                     content_153: self.content_153,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: DescriptiveDetailContent153 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -85994,6 +86972,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TitleDetail(None) => Some(S::TitleDetail(None)),
+                    S::Content154(None) => Some(S::Content154(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -86081,6 +87065,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -86101,6 +87089,17 @@ pub mod onix {
                     title_detail: helper.finish_vec(1usize, None, self.title_detail)?,
                     content_154: self.content_154,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleDetail")
+                ) {
+                    return true;
+                }
+                if < super :: DescriptiveDetailContent154 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -86415,6 +87414,17 @@ pub mod onix {
             ) -> Result<super::DescriptiveDetailGpAuthorship, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CollectionContent110 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoContributor")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DescriptiveDetailGpEventsDeserializer {
@@ -86523,6 +87533,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Event(None) => Some(S::Event(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -86583,6 +87598,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -86600,6 +87619,16 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::DescriptiveDetailGpEvents { event: self.event })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Event")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -86764,6 +87793,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content156(None) => Some(S::Content156(None)),
+                    S::ReligiousText(None) => Some(S::ReligiousText(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -86851,6 +87886,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -86871,6 +87910,17 @@ pub mod onix {
                     content_156: self.content_156,
                     religious_text: self.religious_text,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: DescriptiveDetailContent156 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReligiousText")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -86978,6 +88028,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Language(None) => Some(S::Language(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -87038,6 +88093,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -87057,6 +88116,16 @@ pub mod onix {
                 Ok(super::ContentItemGpLanguages {
                     language: self.language,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Language")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -87370,6 +88439,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Extent(None) => Some(S::Extent(None)),
+                    S::Illustrated(None) => Some(S::Illustrated(None)),
+                    S::NumberOfIllustrations(None) => Some(S::NumberOfIllustrations(None)),
+                    S::IllustrationsNote(None) => Some(S::IllustrationsNote(None)),
+                    S::AncillaryContent(None) => Some(S::AncillaryContent(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -87563,6 +88641,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -87586,6 +88668,40 @@ pub mod onix {
                     illustrations_note: self.illustrations_note,
                     ancillary_content: self.ancillary_content,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Extent")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Illustrated")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NumberOfIllustrations")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IllustrationsNote")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AncillaryContent")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -87742,6 +88858,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Subject(None) => Some(S::Subject(None)),
+                    S::NameAsSubject(None) => Some(S::NameAsSubject(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -87831,6 +88953,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -87851,6 +88977,22 @@ pub mod onix {
                     subject: self.subject,
                     name_as_subject: self.name_as_subject,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Subject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameAsSubject")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -88105,6 +89247,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Audience(None) => Some(S::Audience(None)),
+                    S::AudienceRange(None) => Some(S::AudienceRange(None)),
+                    S::AudienceDescription(None) => Some(S::AudienceDescription(None)),
+                    S::Complexity(None) => Some(S::Complexity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -88255,6 +89405,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -88277,6 +89431,34 @@ pub mod onix {
                     audience_description: self.audience_description,
                     complexity: self.complexity,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Audience")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceRange")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Complexity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -88475,6 +89657,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextContent(None) => Some(S::TextContent(None)),
+                    S::CitedContent(None) => Some(S::CitedContent(None)),
+                    S::SupportingResource(None) => Some(S::SupportingResource(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -88596,6 +89785,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -88618,6 +89811,28 @@ pub mod onix {
                     cited_content: self.cited_content,
                     supporting_resource: self.supporting_resource,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextContent")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CitedContent")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupportingResource")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -88727,6 +89942,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Prize(None) => Some(S::Prize(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -88787,6 +90007,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -88804,6 +90028,16 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CollateralDetailGpPrizes { prize: self.prize })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Prize")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -89472,6 +90706,21 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EventIdentifier(None) => Some(S::EventIdentifier(None)),
+                    S::EventType(None) => Some(S::EventType(None)),
+                    S::EventStatus(None) => Some(S::EventStatus(None)),
+                    S::ContentAudience(None) => Some(S::ContentAudience(None)),
+                    S::EventName(None) => Some(S::EventName(None)),
+                    S::Content256(None) => Some(S::Content256(None)),
+                    S::EventDescription(None) => Some(S::EventDescription(None)),
+                    S::EventOccurrence(None) => Some(S::EventOccurrence(None)),
+                    S::SupportingResource(None) => Some(S::SupportingResource(None)),
+                    S::EventSponsor(None) => Some(S::EventSponsor(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -89826,6 +91075,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -89860,6 +91113,71 @@ pub mod onix {
                     event_sponsor: self.event_sponsor,
                     website: self.website,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventStatus")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentAudience")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventName")
+                ) {
+                    return true;
+                }
+                if < super :: PromotionalEventContent256 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventOccurrence")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupportingResource")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventSponsor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -90549,6 +91867,24 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::LevelSequenceNumber(None) => Some(S::LevelSequenceNumber(None)),
+                    S::Content118(None) => Some(S::Content118(None)),
+                    S::EpubUsageConstraint(None) => Some(S::EpubUsageConstraint(None)),
+                    S::EpubLicense(None) => Some(S::EpubLicense(None)),
+                    S::Content119(None) => Some(S::Content119(None)),
+                    S::GpAuthorship(None) => Some(S::GpAuthorship(None)),
+                    S::GpLanguages(None) => Some(S::GpLanguages(None)),
+                    S::GpSubjects(None) => Some(S::GpSubjects(None)),
+                    S::GpDescriptionsAndMarketingResources(None) => {
+                        Some(S::GpDescriptionsAndMarketingResources(None))
+                    }
+                    S::Publisher(None) => Some(S::Publisher(None)),
+                    S::Content123(None) => Some(S::Content123(None)),
+                    S::GpRelatedMaterials(None) => Some(S::GpRelatedMaterials(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -90940,6 +92276,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -90976,6 +92316,42 @@ pub mod onix {
                     content_123: self.content_123,
                     gp_related_materials: helper.finish_default(self.gp_related_materials)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LevelSequenceNumber")
+                ) {
+                    return true;
+                }
+                if < super :: ContentItemContent118 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageConstraint")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicense")
+                ) {
+                    return true;
+                }
+                if < super :: ContentItemContent119 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContentItemGpAuthorship as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContentItemGpLanguages as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContentItemGpSubjects as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: CollateralDetailGpDescriptionsAndMarketingResources as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Publisher")
+                ) {
+                    return true;
+                }
+                if < super :: ContentItemContent123 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContentItemGpRelatedMaterials as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -91244,6 +92620,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content271(None) => Some(S::Content271(None)),
+                    S::CityOfPublication(None) => Some(S::CityOfPublication(None)),
+                    S::CountryOfPublication(None) => Some(S::CountryOfPublication(None)),
+                    S::ProductContact(None) => Some(S::ProductContact(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -91403,6 +92787,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -91425,6 +92813,29 @@ pub mod onix {
                     country_of_publication: self.country_of_publication,
                     product_contact: self.product_contact,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PublishingDetailContent271 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CityOfPublication")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountryOfPublication")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContact")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -91687,6 +93098,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content273(None) => Some(S::Content273(None)),
+                    S::PublishingDate(None) => Some(S::PublishingDate(None)),
+                    S::LatestReprintNumber(None) => Some(S::LatestReprintNumber(None)),
+                    S::Content274(None) => Some(S::Content274(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -91840,6 +93259,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -91863,6 +93286,24 @@ pub mod onix {
                     latest_reprint_number: self.latest_reprint_number,
                     content_274: self.content_274,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PublishingDetailContent273 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublishingDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LatestReprintNumber")
+                ) {
+                    return true;
+                }
+                if < super :: ContentItemContent123 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -91990,6 +93431,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content275(None) => Some(S::Content275(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -92048,6 +93494,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -92067,6 +93517,11 @@ pub mod onix {
                 Ok(super::PublishingDetailGpSalesRightsAndRestrictions {
                     content_275: self.content_275,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PublishingDetailContent275 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -92278,6 +93733,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::WorkRelationCode(None) => Some(S::WorkRelationCode(None)),
+                    S::WorkIdentifier(None) => Some(S::WorkIdentifier(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -92370,6 +93831,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -92396,6 +93861,22 @@ pub mod onix {
                         .finish_element("WorkRelationCode", self.work_relation_code)?,
                     work_identifier: helper.finish_vec(1usize, None, self.work_identifier)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"WorkRelationCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"WorkIdentifier")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -92662,6 +94143,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductRelationCode(None) => Some(S::ProductRelationCode(None)),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::Content279(None) => Some(S::Content279(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -92792,6 +94280,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -92822,6 +94314,23 @@ pub mod onix {
                     product_identifier: helper.finish_vec(1usize, None, self.product_identifier)?,
                     content_279: self.content_279,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductRelationCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if < super :: RelatedProductContent279 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -93173,6 +94682,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::CoverManifest(None) => Some(S::CoverManifest(None)),
+                    S::BodyManifest(None) => Some(S::BodyManifest(None)),
+                    S::InsertManifest(None) => Some(S::InsertManifest(None)),
+                    S::SupplementManifest(None) => Some(S::SupplementManifest(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -93355,6 +94873,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -93383,6 +94905,40 @@ pub mod onix {
                     insert_manifest: self.insert_manifest,
                     supplement_manifest: self.supplement_manifest,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CoverManifest")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BodyManifest")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"InsertManifest")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplementManifest")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -93558,6 +95114,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -93753,6 +95316,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Territory(None) => Some(S::Territory(None)),
+                    S::SalesRestriction(None) => Some(S::SalesRestriction(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -93845,6 +95414,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -93870,6 +95443,22 @@ pub mod onix {
                     territory: helper.finish_element("Territory", self.territory)?,
                     sales_restriction: self.sales_restriction,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Territory")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesRestriction")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -94423,6 +96012,22 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PublisherRepresentative(None) => Some(S::PublisherRepresentative(None)),
+                    S::ProductContact(None) => Some(S::ProductContact(None)),
+                    S::MarketPublishingStatus(None) => Some(S::MarketPublishingStatus(None)),
+                    S::MarketPublishingStatusNote(None) => {
+                        Some(S::MarketPublishingStatusNote(None))
+                    }
+                    S::MarketDate(None) => Some(S::MarketDate(None)),
+                    S::PromotionCampaign(None) => Some(S::PromotionCampaign(None)),
+                    S::InitialPrintRun(None) => Some(S::InitialPrintRun(None)),
+                    S::ReprintDetail(None) => Some(S::ReprintDetail(None)),
+                    S::CopiesSold(None) => Some(S::CopiesSold(None)),
+                    S::BookClubAdoption(None) => Some(S::BookClubAdoption(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -94783,6 +96388,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -94817,6 +96426,70 @@ pub mod onix {
                     copies_sold: self.copies_sold,
                     book_club_adoption: self.book_club_adoption,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublisherRepresentative")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContact")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MarketPublishingStatus")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MarketPublishingStatusNote")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MarketDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PromotionCampaign")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"InitialPrintRun")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReprintDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopiesSold")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BookClubAdoption")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -95570,6 +97243,23 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Supplier(None) => Some(S::Supplier(None)),
+                    S::SupplyContact(None) => Some(S::SupplyContact(None)),
+                    S::SupplierOwnCoding(None) => Some(S::SupplierOwnCoding(None)),
+                    S::ReturnsConditions(None) => Some(S::ReturnsConditions(None)),
+                    S::ProductAvailability(None) => Some(S::ProductAvailability(None)),
+                    S::SupplyDate(None) => Some(S::SupplyDate(None)),
+                    S::OrderTime(None) => Some(S::OrderTime(None)),
+                    S::NewSupplier(None) => Some(S::NewSupplier(None)),
+                    S::Stock(None) => Some(S::Stock(None)),
+                    S::PackQuantity(None) => Some(S::PackQuantity(None)),
+                    S::PalletQuantity(None) => Some(S::PalletQuantity(None)),
+                    S::Content333(None) => Some(S::Content333(None)),
+                    S::Content334(None) => Some(S::Content334(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -95981,6 +97671,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -96018,6 +97712,78 @@ pub mod onix {
                     content_333: self.content_333,
                     content_334: helper.finish_element("Content334", self.content_334)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Supplier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyContact")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierOwnCoding")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReturnsConditions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductAvailability")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OrderTime")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NewSupplier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Stock")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PackQuantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PalletQuantity")
+                ) {
+                    return true;
+                }
+                if < super :: SupplyDetailContent333 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: SupplyDetailContent334 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -96275,6 +98041,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SenderIdType(None) => Some(S::SenderIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -96393,6 +98166,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -96419,6 +98196,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SenderIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -96676,6 +98475,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AddresseeIdType(None) => Some(S::AddresseeIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -96794,6 +98600,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -96821,6 +98631,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AddresseeIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -96997,6 +98829,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -97179,6 +99019,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct IdValueElementTypeDeserializer {
@@ -97350,6 +99197,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -97525,6 +99379,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List5 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BarcodeTypeElementTypeDeserializer {
@@ -97696,6 +99557,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List141 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -97873,6 +99742,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List142 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProductCompositionElementTypeDeserializer {
@@ -98049,6 +99926,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List2 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProductFormElementTypeDeserializer {
@@ -98220,6 +100104,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List150 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -98396,6 +100288,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List175 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -98640,6 +100540,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductFormFeatureType(None) => Some(S::ProductFormFeatureType(None)),
+                    S::ProductFormFeatureValue(None) => Some(S::ProductFormFeatureValue(None)),
+                    S::ProductFormFeatureDescription(None) => {
+                        Some(S::ProductFormFeatureDescription(None))
+                    }
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -98791,6 +100700,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -98818,6 +100731,28 @@ pub mod onix {
                     product_form_feature_value: self.product_form_feature_value,
                     product_form_feature_description: self.product_form_feature_description,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormFeatureType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormFeatureValue")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormFeatureDescription")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -98993,6 +100928,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List80 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -99179,6 +101122,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TradeCategoryElementTypeDeserializer {
@@ -99352,6 +101302,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List12 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -99529,6 +101487,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List81 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProductContentTypeElementTypeDeserializer {
@@ -99704,6 +101670,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List81 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -99966,6 +101940,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MeasureType(None) => Some(S::MeasureType(None)),
+                    S::Measurement(None) => Some(S::Measurement(None)),
+                    S::MeasureUnitCode(None) => Some(S::MeasureUnitCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -100084,6 +102065,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -100111,6 +102096,28 @@ pub mod onix {
                     measure_unit_code: helper
                         .finish_element("MeasureUnitCode", self.measure_unit_code)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MeasureType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Measurement")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MeasureUnitCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -100288,6 +102295,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List91 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EpubTechnicalProtectionElementTypeDeserializer {
@@ -100464,6 +102479,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List144 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -100723,6 +102746,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EpubUsageType(None) => Some(S::EpubUsageType(None)),
+                    S::EpubUsageStatus(None) => Some(S::EpubUsageStatus(None)),
+                    S::EpubUsageLimit(None) => Some(S::EpubUsageLimit(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -100841,6 +102871,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -100869,6 +102903,28 @@ pub mod onix {
                         .finish_element("EpubUsageStatus", self.epub_usage_status)?,
                     epub_usage_limit: self.epub_usage_limit,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageStatus")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageLimit")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -101121,6 +103177,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EpubLicenseName(None) => Some(S::EpubLicenseName(None)),
+                    S::EpubLicenseExpression(None) => Some(S::EpubLicenseExpression(None)),
+                    S::EpubLicenseDate(None) => Some(S::EpubLicenseDate(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -101250,6 +103313,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -101276,6 +103343,28 @@ pub mod onix {
                     epub_license_expression: self.epub_license_expression,
                     epub_license_date: self.epub_license_date,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseExpression")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseDate")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -101448,6 +103537,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -101749,6 +103845,16 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductClassificationType(None) => Some(S::ProductClassificationType(None)),
+                    S::ProductClassificationTypeName(None) => {
+                        Some(S::ProductClassificationTypeName(None))
+                    }
+                    S::ProductClassificationCode(None) => Some(S::ProductClassificationCode(None)),
+                    S::Percent(None) => Some(S::Percent(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -101929,6 +104035,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -101962,6 +104072,34 @@ pub mod onix {
                     )?,
                     percent: self.percent,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductClassificationType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductClassificationTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductClassificationCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Percent")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -102609,6 +104747,21 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PrimaryPart(None) => Some(S::PrimaryPart(None)),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::ProductForm(None) => Some(S::ProductForm(None)),
+                    S::ProductFormDetail(None) => Some(S::ProductFormDetail(None)),
+                    S::ProductFormFeature(None) => Some(S::ProductFormFeature(None)),
+                    S::ProductPackaging(None) => Some(S::ProductPackaging(None)),
+                    S::ProductFormDescription(None) => Some(S::ProductFormDescription(None)),
+                    S::ProductContentType(None) => Some(S::ProductContentType(None)),
+                    S::Measure(None) => Some(S::Measure(None)),
+                    S::Content249(None) => Some(S::Content249(None)),
+                    S::CountryOfManufacture(None) => Some(S::CountryOfManufacture(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -102993,6 +105146,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -103027,6 +105184,71 @@ pub mod onix {
                     content_249: helper.finish_element("Content249", self.content_249)?,
                     country_of_manufacture: self.country_of_manufacture,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrimaryPart")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductForm")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormFeature")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductPackaging")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContentType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Measure")
+                ) {
+                    return true;
+                }
+                if < super :: ProductPartContent249 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountryOfManufacture")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -103339,6 +105561,22 @@ pub mod onix {
             ) -> Result<super::DescriptiveDetailContent153, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Collection")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoCollection")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TitleDetailElementTypeDeserializer {
@@ -103600,6 +105838,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TitleType(None) => Some(S::TitleType(None)),
+                    S::TitleElement(None) => Some(S::TitleElement(None)),
+                    S::TitleStatement(None) => Some(S::TitleStatement(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -103718,6 +105963,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -103744,6 +105993,28 @@ pub mod onix {
                     title_element: helper.finish_vec(1usize, None, self.title_element)?,
                     title_statement: self.title_statement,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleElement")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleStatement")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -103961,6 +106232,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ThesisType(None) => Some(S::ThesisType(None)),
+                    S::ThesisPresentedTo(None) => Some(S::ThesisPresentedTo(None)),
+                    S::ThesisYear(None) => Some(S::ThesisYear(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -104082,6 +106360,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -104103,6 +106385,28 @@ pub mod onix {
                     thesis_presented_to: self.thesis_presented_to,
                     thesis_year: self.thesis_year,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ThesisType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ThesisPresentedTo")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ThesisYear")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -104261,6 +106565,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Contributor(None) => Some(S::Contributor(None)),
+                    S::ContributorStatement(None) => Some(S::ContributorStatement(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -104361,6 +106671,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -104381,6 +106695,22 @@ pub mod onix {
                     contributor: helper.finish_vec(1usize, None, self.contributor)?,
                     contributor_statement: self.contributor_statement,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Contributor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorStatement")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -105039,6 +107369,19 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EventRole(None) => Some(S::EventRole(None)),
+                    S::EventName(None) => Some(S::EventName(None)),
+                    S::EventAcronym(None) => Some(S::EventAcronym(None)),
+                    S::EventNumber(None) => Some(S::EventNumber(None)),
+                    S::EventTheme(None) => Some(S::EventTheme(None)),
+                    S::EventDate(None) => Some(S::EventDate(None)),
+                    S::EventPlace(None) => Some(S::EventPlace(None)),
+                    S::EventSponsor(None) => Some(S::EventSponsor(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -105331,6 +107674,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -105363,6 +107710,64 @@ pub mod onix {
                     event_sponsor: self.event_sponsor,
                     website: self.website,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventAcronym")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventTheme")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventPlace")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventSponsor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -105673,6 +108078,17 @@ pub mod onix {
             ) -> Result<super::DescriptiveDetailContent156, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: DescriptiveDetailContent157 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoEdition")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ReligiousTextElementTypeDeserializer {
@@ -105874,6 +108290,11 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ReligiousTextElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -106184,6 +108605,17 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::ReligiousTextElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Bible")
+                ) {
+                    return true;
+                }
+                if < super :: ReligiousTextContent282 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -106546,6 +108978,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::LanguageRole(None) => Some(S::LanguageRole(None)),
+                    S::LanguageCode(None) => Some(S::LanguageCode(None)),
+                    S::CountryCode(None) => Some(S::CountryCode(None)),
+                    S::RegionCode(None) => Some(S::RegionCode(None)),
+                    S::ScriptCode(None) => Some(S::ScriptCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -106722,6 +109163,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -106750,6 +109195,40 @@ pub mod onix {
                     region_code: self.region_code,
                     script_code: self.script_code,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LanguageRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LanguageCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountryCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ScriptCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -107007,6 +109486,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ExtentType(None) => Some(S::ExtentType(None)),
+                    S::Content182(None) => Some(S::Content182(None)),
+                    S::ExtentUnit(None) => Some(S::ExtentUnit(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -107121,6 +109607,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -107147,6 +109637,27 @@ pub mod onix {
                     content_182: helper.finish_element("Content182", self.content_182)?,
                     extent_unit: helper.finish_element("ExtentUnit", self.extent_unit)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ExtentType")
+                ) {
+                    return true;
+                }
+                if <super::ExtentContent182 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ExtentUnit")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -107319,6 +109830,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List152 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -107495,6 +110014,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -107714,6 +110240,11 @@ pub mod onix {
                     textformat: self.textformat,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -107954,6 +110485,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AncillaryContentType(None) => Some(S::AncillaryContentType(None)),
+                    S::AncillaryContentDescription(None) => {
+                        Some(S::AncillaryContentDescription(None))
+                    }
+                    S::Number(None) => Some(S::Number(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -108094,6 +110634,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -108121,6 +110665,28 @@ pub mod onix {
                     ancillary_content_description: self.ancillary_content_description,
                     number: self.number,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AncillaryContentType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AncillaryContentDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Number")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -108484,6 +111050,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MainSubject(None) => Some(S::MainSubject(None)),
+                    S::SubjectSchemeIdentifier(None) => Some(S::SubjectSchemeIdentifier(None)),
+                    S::SubjectSchemeName(None) => Some(S::SubjectSchemeName(None)),
+                    S::SubjectSchemeVersion(None) => Some(S::SubjectSchemeVersion(None)),
+                    S::Content315(None) => Some(S::Content315(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -108682,6 +111257,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -108713,6 +111292,39 @@ pub mod onix {
                     subject_scheme_version: self.subject_scheme_version,
                     content_315: helper.finish_element("Content315", self.content_315)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MainSubject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectSchemeIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectSchemeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectSchemeVersion")
+                ) {
+                    return true;
+                }
+                if <super::SubjectContent315 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -109057,6 +111669,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::NameType(None) => Some(S::NameType(None)),
+                    S::Content205(None) => Some(S::Content205(None)),
+                    S::AlternativeName(None) => Some(S::AlternativeName(None)),
+                    S::SubjectDate(None) => Some(S::SubjectDate(None)),
+                    S::ProfessionalAffiliation(None) => Some(S::ProfessionalAffiliation(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -109242,6 +111863,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -109270,6 +111895,35 @@ pub mod onix {
                     subject_date: self.subject_date,
                     professional_affiliation: self.professional_affiliation,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameType")
+                ) {
+                    return true;
+                }
+                if < super :: NameAsSubjectContent205 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AlternativeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProfessionalAffiliation")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -109580,6 +112234,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MainAudience(None) => Some(S::MainAudience(None)),
+                    S::AudienceCodeType(None) => Some(S::AudienceCodeType(None)),
+                    S::AudienceCodeTypeName(None) => Some(S::AudienceCodeTypeName(None)),
+                    S::Content87(None) => Some(S::Content87(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -109738,6 +112400,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -109766,6 +112432,33 @@ pub mod onix {
                     audience_code_type_name: self.audience_code_type_name,
                     content_87: helper.finish_element("Content87", self.content_87)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MainAudience")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceCodeType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceCodeTypeName")
+                ) {
+                    return true;
+                }
+                if <super::AudienceContent87 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -110089,6 +112782,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AudienceRangeQualifier(None) => Some(S::AudienceRangeQualifier(None)),
+                    S::AudienceRangePrecision(None) => Some(S::AudienceRangePrecision(None)),
+                    S::AudienceRangeValue(None) => Some(S::AudienceRangeValue(None)),
+                    S::Content91(None) => Some(S::Content91(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -110258,6 +112959,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -110288,6 +112993,29 @@ pub mod onix {
                         .finish_element("AudienceRangeValue", self.audience_range_value)?,
                     content_91: self.content_91,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceRangeQualifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceRangePrecision")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceRangeValue")
+                ) {
+                    return true;
+                }
+                if < super :: AudienceRangeContent91 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -110508,6 +113236,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ComplexityElementTypeDeserializer {
@@ -110707,6 +113440,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ComplexitySchemeIdentifier(None) => {
+                        Some(S::ComplexitySchemeIdentifier(None))
+                    }
+                    S::ComplexityCode(None) => Some(S::ComplexityCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -110807,6 +113548,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -110836,6 +113581,22 @@ pub mod onix {
                     complexity_code: helper
                         .finish_element("ComplexityCode", self.complexity_code)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ComplexitySchemeIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ComplexityCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -111629,6 +114390,24 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::TextType(None) => Some(S::TextType(None)),
+                    S::ContentAudience(None) => Some(S::ContentAudience(None)),
+                    S::Territory(None) => Some(S::Territory(None)),
+                    S::Text(None) => Some(S::Text(None)),
+                    S::ReviewRating(None) => Some(S::ReviewRating(None)),
+                    S::TextAuthor(None) => Some(S::TextAuthor(None)),
+                    S::TextSourceCorporate(None) => Some(S::TextSourceCorporate(None)),
+                    S::TextSourceDescription(None) => Some(S::TextSourceDescription(None)),
+                    S::SourceTitle(None) => Some(S::SourceTitle(None)),
+                    S::TextSourceLink(None) => Some(S::TextSourceLink(None)),
+                    S::EpubUsageConstraint(None) => Some(S::EpubUsageConstraint(None)),
+                    S::EpubLicense(None) => Some(S::EpubLicense(None)),
+                    S::ContentDate(None) => Some(S::ContentDate(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -112099,6 +114878,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -112136,6 +114919,94 @@ pub mod onix {
                     epub_license: self.epub_license,
                     content_date: self.content_date,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentAudience")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Territory")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Text")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReviewRating")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextAuthor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextSourceCorporate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextSourceDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SourceTitle")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextSourceLink")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageConstraint")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicense")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentDate")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -112684,6 +115555,19 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::CitedContentType(None) => Some(S::CitedContentType(None)),
+                    S::ContentAudience(None) => Some(S::ContentAudience(None)),
+                    S::Territory(None) => Some(S::Territory(None)),
+                    S::SourceType(None) => Some(S::SourceType(None)),
+                    S::Content103(None) => Some(S::Content103(None)),
+                    S::CitationNote(None) => Some(S::CitationNote(None)),
+                    S::ResourceLink(None) => Some(S::ResourceLink(None)),
+                    S::ContentDate(None) => Some(S::ContentDate(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -112975,6 +115859,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -113008,6 +115896,63 @@ pub mod onix {
                     resource_link: self.resource_link,
                     content_date: self.content_date,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CitedContentType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentAudience")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Territory")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SourceType")
+                ) {
+                    return true;
+                }
+                if <super::CitedContent103 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CitationNote")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceLink")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentDate")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -113486,6 +116431,17 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::ResourceContentType(None) => Some(S::ResourceContentType(None)),
+                    S::ContentAudience(None) => Some(S::ContentAudience(None)),
+                    S::Territory(None) => Some(S::Territory(None)),
+                    S::ResourceMode(None) => Some(S::ResourceMode(None)),
+                    S::ResourceFeature(None) => Some(S::ResourceFeature(None)),
+                    S::ResourceVersion(None) => Some(S::ResourceVersion(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -113731,6 +116687,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -113762,6 +116722,52 @@ pub mod onix {
                     resource_feature: self.resource_feature,
                     resource_version: helper.finish_vec(1usize, None, self.resource_version)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceContentType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentAudience")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Territory")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceMode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFeature")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceVersion")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -114363,6 +117369,20 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::PrizeIdentifier(None) => Some(S::PrizeIdentifier(None)),
+                    S::PrizeName(None) => Some(S::PrizeName(None)),
+                    S::PrizeYear(None) => Some(S::PrizeYear(None)),
+                    S::AwardingBody(None) => Some(S::AwardingBody(None)),
+                    S::PrizeCountry(None) => Some(S::PrizeCountry(None)),
+                    S::PrizeRegion(None) => Some(S::PrizeRegion(None)),
+                    S::PrizeCode(None) => Some(S::PrizeCode(None)),
+                    S::PrizeStatement(None) => Some(S::PrizeStatement(None)),
+                    S::PrizeJury(None) => Some(S::PrizeJury(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -114684,6 +117704,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -114717,6 +117741,70 @@ pub mod onix {
                     prize_statement: self.prize_statement,
                     prize_jury: self.prize_jury,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeYear")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AwardingBody")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeCountry")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeRegion")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeStatement")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeJury")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -114972,6 +118060,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EventIdType(None) => Some(S::EventIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -115090,6 +118185,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -115116,6 +118215,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -115289,6 +118410,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List245 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventStatusElementTypeDeserializer {
@@ -115460,6 +118589,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List246 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -115635,6 +118772,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List154 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -115816,6 +118961,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -116136,6 +119288,17 @@ pub mod onix {
             ) -> Result<super::PromotionalEventContent256, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PromotionalEventContent257 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoContributor")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventDescriptionElementTypeDeserializer {
@@ -116353,6 +119516,11 @@ pub mod onix {
                     textformat: self.textformat,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -116852,6 +120020,18 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EventIdentifier(None) => Some(S::EventIdentifier(None)),
+                    S::OccurrenceDate(None) => Some(S::OccurrenceDate(None)),
+                    S::EventStatus(None) => Some(S::EventStatus(None)),
+                    S::Content173(None) => Some(S::Content173(None)),
+                    S::EventDescription(None) => Some(S::EventDescription(None)),
+                    S::SupportingResource(None) => Some(S::SupportingResource(None)),
+                    S::EventSponsor(None) => Some(S::EventSponsor(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -117119,6 +120299,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -117150,6 +120334,53 @@ pub mod onix {
                     event_sponsor: self.event_sponsor,
                     website: self.website,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OccurrenceDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventStatus")
+                ) {
+                    return true;
+                }
+                if < super :: EventOccurrenceContent173 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupportingResource")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventSponsor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -117352,6 +120583,11 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: EventSponsorElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -117764,6 +121000,23 @@ pub mod onix {
             ) -> Result<super::EventSponsorElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: EventSponsorContent178 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct WebsiteElementTypeDeserializer {
@@ -118014,6 +121267,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::WebsiteRole(None) => Some(S::WebsiteRole(None)),
+                    S::WebsiteDescription(None) => Some(S::WebsiteDescription(None)),
+                    S::WebsiteLink(None) => Some(S::WebsiteLink(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -118135,6 +121395,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -118161,6 +121425,28 @@ pub mod onix {
                     website_description: self.website_description,
                     website_link: helper.finish_vec(1usize, None, self.website_link)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"WebsiteRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"WebsiteDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"WebsiteLink")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -118337,6 +121623,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -118634,6 +121927,22 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::ContentItemContent118, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextItem")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AVItem")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -118942,6 +122251,12 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::ContentItemContent119, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ContentItemContent120 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContentItemContent121 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -119256,6 +122571,17 @@ pub mod onix {
             ) -> Result<super::ContentItemGpAuthorship, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CollectionContent110 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoContributor")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PublisherElementTypeDeserializer {
@@ -119548,6 +122874,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PublishingRole(None) => Some(S::PublishingRole(None)),
+                    S::Content263(None) => Some(S::Content263(None)),
+                    S::Funding(None) => Some(S::Funding(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -119692,6 +123026,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -119720,6 +123058,29 @@ pub mod onix {
                     funding: self.funding,
                     website: self.website,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublishingRole")
+                ) {
+                    return true;
+                }
+                if < super :: PublisherContent263 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Funding")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -119885,6 +123246,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CopyrightStatement(None) => Some(S::CopyrightStatement(None)),
+                    S::CopyrightStatementText(None) => Some(S::CopyrightStatementText(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -119988,6 +123355,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -120012,6 +123383,22 @@ pub mod onix {
                     )?,
                     copyright_statement_text: self.copyright_statement_text,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightStatement")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightStatementText")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -120173,6 +123560,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::RelatedWork(None) => Some(S::RelatedWork(None)),
+                    S::RelatedProduct(None) => Some(S::RelatedProduct(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -120262,6 +123655,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -120282,6 +123679,22 @@ pub mod onix {
                     related_work: self.related_work,
                     related_product: self.related_product,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RelatedWork")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RelatedProduct")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -120601,6 +124014,17 @@ pub mod onix {
             ) -> Result<super::PublishingDetailContent271, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PublishingDetailContent272 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Publisher")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CityOfPublicationElementTypeDeserializer {
@@ -120786,6 +124210,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CountryOfPublicationElementTypeDeserializer {
@@ -120961,6 +124392,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List91 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -121414,6 +124853,17 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductContactRole(None) => Some(S::ProductContactRole(None)),
+                    S::Content240(None) => Some(S::Content240(None)),
+                    S::ContactName(None) => Some(S::ContactName(None)),
+                    S::TelephoneNumber(None) => Some(S::TelephoneNumber(None)),
+                    S::FaxNumber(None) => Some(S::FaxNumber(None)),
+                    S::EmailAddress(None) => Some(S::EmailAddress(None)),
+                    S::Content242(None) => Some(S::Content242(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -121647,6 +125097,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -121678,6 +125132,42 @@ pub mod onix {
                     email_address: self.email_address,
                     content_242: self.content_242,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContactRole")
+                ) {
+                    return true;
+                }
+                if < super :: ProductContactContent240 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContactName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TelephoneNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FaxNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EmailAddress")
+                ) {
+                    return true;
+                }
+                if < super :: ProductContactContent242 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -121841,6 +125331,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PublishingStatus(None) => Some(S::PublishingStatus(None)),
+                    S::PublishingStatusNote(None) => Some(S::PublishingStatusNote(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -121944,6 +125440,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -121965,6 +125465,22 @@ pub mod onix {
                         .finish_element("PublishingStatus", self.publishing_status)?,
                     publishing_status_note: self.publishing_status_note,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublishingStatus")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublishingStatusNote")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -122167,6 +125683,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PublishingDateRole(None) => Some(S::PublishingDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -122259,6 +125781,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -122285,6 +125811,22 @@ pub mod onix {
                         .finish_element("PublishingDateRole", self.publishing_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublishingDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -122462,6 +126004,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PublishingDetailContent275Deserializer {
@@ -122629,6 +126178,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SalesRights(None) => Some(S::SalesRights(None)),
+                    S::RowSalesRightsType(None) => Some(S::RowSalesRightsType(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -122729,6 +126284,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -122749,6 +126308,22 @@ pub mod onix {
                     sales_rights: helper.finish_vec(1usize, None, self.sales_rights)?,
                     row_sales_rights_type: self.row_sales_rights_type,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesRights")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ROWSalesRightsType")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -122924,6 +126499,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List164 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -123179,6 +126762,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::WorkIdType(None) => Some(S::WorkIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -123297,6 +126887,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -123323,6 +126917,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"WorkIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -123500,6 +127116,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List51 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RelatedProductContent279Deserializer {
@@ -123660,6 +127284,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductForm(None) => Some(S::ProductForm(None)),
+                    S::ProductFormDetail(None) => Some(S::ProductFormDetail(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -123752,6 +127382,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -123772,6 +127406,22 @@ pub mod onix {
                     product_form: helper.finish_element("ProductForm", self.product_form)?,
                     product_form_detail: self.product_form_detail,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductForm")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormDetail")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -123983,6 +127633,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpProductSpecification(None) => Some(S::GpProductSpecification(None)),
+                    S::CoverResource(None) => Some(S::CoverResource(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -124078,6 +127734,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -124104,6 +127764,17 @@ pub mod onix {
                         .finish_default(self.gp_product_specification)?,
                     cover_resource: helper.finish_vec(1usize, None, self.cover_resource)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: BodyManifestGpProductSpecification as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CoverResource")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -124315,6 +127986,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpProductSpecification(None) => Some(S::GpProductSpecification(None)),
+                    S::BodyResource(None) => Some(S::BodyResource(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -124410,6 +128087,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -124436,6 +128117,17 @@ pub mod onix {
                         .finish_default(self.gp_product_specification)?,
                     body_resource: helper.finish_vec(1usize, None, self.body_resource)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: BodyManifestGpProductSpecification as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BodyResource")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -124702,6 +128394,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpProductSpecification(None) => Some(S::GpProductSpecification(None)),
+                    S::InsertPoint(None) => Some(S::InsertPoint(None)),
+                    S::InsertResource(None) => Some(S::InsertResource(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -124826,6 +128525,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -124853,6 +128556,23 @@ pub mod onix {
                     insert_point: helper.finish_element("InsertPoint", self.insert_point)?,
                     insert_resource: helper.finish_vec(1usize, None, self.insert_resource)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: BodyManifestGpProductSpecification as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"InsertPoint")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"InsertResource")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -125106,6 +128826,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::SalesOutlet(None) => Some(S::SalesOutlet(None)),
+                    S::Content319(None) => Some(S::Content319(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -125222,6 +128949,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -125248,6 +128979,23 @@ pub mod onix {
                     sales_outlet: self.sales_outlet,
                     content_319: helper.finish_element("Content319", self.content_319)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutlet")
+                ) {
+                    return true;
+                }
+                if < super :: SupplementManifestContent319 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -125448,6 +129196,11 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TerritoryElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -125756,6 +129509,12 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::TerritoryElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TerritoryContent341 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: TerritoryContent342 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -126103,6 +129862,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SalesRestrictionType(None) => Some(S::SalesRestrictionType(None)),
+                    S::SalesOutlet(None) => Some(S::SalesOutlet(None)),
+                    S::SalesRestrictionNote(None) => Some(S::SalesRestrictionNote(None)),
+                    S::StartDate(None) => Some(S::StartDate(None)),
+                    S::EndDate(None) => Some(S::EndDate(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -126301,6 +130069,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -126330,6 +130102,40 @@ pub mod onix {
                     start_date: self.start_date,
                     end_date: self.end_date,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesRestrictionType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutlet")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesRestrictionNote")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StartDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EndDate")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -126726,6 +130532,16 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AgentRole(None) => Some(S::AgentRole(None)),
+                    S::Content267(None) => Some(S::Content267(None)),
+                    S::TelephoneNumber(None) => Some(S::TelephoneNumber(None)),
+                    S::FaxNumber(None) => Some(S::FaxNumber(None)),
+                    S::EmailAddress(None) => Some(S::EmailAddress(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -126926,6 +130742,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -126955,6 +130775,41 @@ pub mod onix {
                     email_address: self.email_address,
                     website: self.website,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AgentRole")
+                ) {
+                    return true;
+                }
+                if < super :: PublisherRepresentativeContent267 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TelephoneNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FaxNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EmailAddress")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -127131,6 +130986,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List68 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -127354,6 +131217,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MarketDateElementTypeDeserializer {
@@ -127553,6 +131421,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MarketDateRole(None) => Some(S::MarketDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -127642,6 +131516,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -127668,6 +131546,22 @@ pub mod onix {
                         .finish_element("MarketDateRole", self.market_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MarketDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -127888,6 +131782,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct InitialPrintRunElementTypeDeserializer {
@@ -128106,6 +132005,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ReprintDetailElementTypeDeserializer {
@@ -128323,6 +132227,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CopiesSoldElementTypeDeserializer {
@@ -128537,6 +132446,11 @@ pub mod onix {
                     textformat: self.textformat,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -128755,6 +132669,11 @@ pub mod onix {
                     textformat: self.textformat,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -129144,6 +133063,16 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplierRole(None) => Some(S::SupplierRole(None)),
+                    S::Content322(None) => Some(S::Content322(None)),
+                    S::TelephoneNumber(None) => Some(S::TelephoneNumber(None)),
+                    S::FaxNumber(None) => Some(S::FaxNumber(None)),
+                    S::EmailAddress(None) => Some(S::EmailAddress(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -129346,6 +133275,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -129375,6 +133308,45 @@ pub mod onix {
                     email_address: self.email_address,
                     website: self.website,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierRole")
+                ) {
+                    return true;
+                }
+                if <super::SupplierContent322 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TelephoneNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FaxNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EmailAddress")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -129828,6 +133800,17 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplyContactRole(None) => Some(S::SupplyContactRole(None)),
+                    S::Content327(None) => Some(S::Content327(None)),
+                    S::ContactName(None) => Some(S::ContactName(None)),
+                    S::TelephoneNumber(None) => Some(S::TelephoneNumber(None)),
+                    S::FaxNumber(None) => Some(S::FaxNumber(None)),
+                    S::EmailAddress(None) => Some(S::EmailAddress(None)),
+                    S::Content329(None) => Some(S::Content329(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -130061,6 +134044,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -130092,6 +134079,42 @@ pub mod onix {
                     email_address: self.email_address,
                     content_329: self.content_329,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyContactRole")
+                ) {
+                    return true;
+                }
+                if < super :: SupplyContactContent327 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContactName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TelephoneNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FaxNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EmailAddress")
+                ) {
+                    return true;
+                }
+                if < super :: ProductContactContent242 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -130356,6 +134379,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplierCodeType(None) => Some(S::SupplierCodeType(None)),
+                    S::SupplierCodeTypeName(None) => Some(S::SupplierCodeTypeName(None)),
+                    S::SupplierCodeValue(None) => Some(S::SupplierCodeValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -130491,6 +134521,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -130519,6 +134553,28 @@ pub mod onix {
                     supplier_code_value: helper
                         .finish_element("SupplierCodeValue", self.supplier_code_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierCodeType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierCodeTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierCodeValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -130827,6 +134883,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ReturnsCodeType(None) => Some(S::ReturnsCodeType(None)),
+                    S::ReturnsCodeTypeName(None) => Some(S::ReturnsCodeTypeName(None)),
+                    S::ReturnsCode(None) => Some(S::ReturnsCode(None)),
+                    S::ReturnsNote(None) => Some(S::ReturnsNote(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -130985,6 +135049,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -131013,6 +135081,34 @@ pub mod onix {
                     returns_code: helper.finish_element("ReturnsCode", self.returns_code)?,
                     returns_note: self.returns_note,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReturnsCodeType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReturnsCodeTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReturnsCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReturnsNote")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -131189,6 +135285,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List65 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -131389,6 +135493,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplyDateRole(None) => Some(S::SupplyDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -131478,6 +135588,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -131504,6 +135618,22 @@ pub mod onix {
                         .finish_element("SupplyDateRole", self.supply_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -131676,6 +135806,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -132011,6 +136148,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content215(None) => Some(S::Content215(None)),
+                    S::TelephoneNumber(None) => Some(S::TelephoneNumber(None)),
+                    S::FaxNumber(None) => Some(S::FaxNumber(None)),
+                    S::EmailAddress(None) => Some(S::EmailAddress(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -132184,6 +136330,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -132212,6 +136362,35 @@ pub mod onix {
                     email_address: self.email_address,
                     website: self.website,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: NewSupplierContent215 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TelephoneNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FaxNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EmailAddress")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -132546,6 +136725,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::LocationIdentifier(None) => Some(S::LocationIdentifier(None)),
+                    S::LocationName(None) => Some(S::LocationName(None)),
+                    S::Content308(None) => Some(S::Content308(None)),
+                    S::OnOrderDetail(None) => Some(S::OnOrderDetail(None)),
+                    S::Velocity(None) => Some(S::Velocity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -132721,6 +136909,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -132749,6 +136941,39 @@ pub mod onix {
                     on_order_detail: self.on_order_detail,
                     velocity: self.velocity,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LocationIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LocationName")
+                ) {
+                    return true;
+                }
+                if <super::StockContent308 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OnOrderDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Velocity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -132924,6 +137149,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PalletQuantityElementTypeDeserializer {
@@ -133097,6 +137329,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -133273,6 +137512,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::OrderQuantityMinimum(None) => Some(S::OrderQuantityMinimum(None)),
+                    S::OrderQuantityMultiple(None) => Some(S::OrderQuantityMultiple(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -133384,6 +137629,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -133408,6 +137657,22 @@ pub mod onix {
                     )?,
                     order_quantity_multiple: self.order_quantity_multiple,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OrderQuantityMinimum")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OrderQuantityMultiple")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -133728,6 +137993,22 @@ pub mod onix {
             ) -> Result<super::SupplyDetailContent334, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"UnpricedItemType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Price")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SenderIdTypeElementTypeDeserializer {
@@ -133901,6 +138182,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -134076,6 +138365,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -134253,6 +138550,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List79 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProductFormFeatureValueElementTypeDeserializer {
@@ -134429,6 +138734,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -134621,6 +138933,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MeasureTypeElementTypeDeserializer {
@@ -134793,6 +139112,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List48 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MeasurementElementTypeDeserializer {
@@ -134964,6 +139291,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -135140,6 +139474,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List50 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EpubUsageTypeElementTypeDeserializer {
@@ -135313,6 +139655,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List145 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -135488,6 +139838,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List146 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -135694,6 +140052,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Quantity(None) => Some(S::Quantity(None)),
+                    S::EpubUsageUnit(None) => Some(S::EpubUsageUnit(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -135783,6 +140147,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -135809,6 +140177,22 @@ pub mod onix {
                     epub_usage_unit: helper
                         .finish_element("EpubUsageUnit", self.epub_usage_unit)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Quantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageUnit")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -135993,6 +140377,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -136247,6 +140638,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EpubLicenseExpressionType(None) => Some(S::EpubLicenseExpressionType(None)),
+                    S::EpubLicenseExpressionTypeName(None) => {
+                        Some(S::EpubLicenseExpressionTypeName(None))
+                    }
+                    S::EpubLicenseExpressionLink(None) => Some(S::EpubLicenseExpressionLink(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -136398,6 +140798,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -136430,6 +140834,28 @@ pub mod onix {
                         self.epub_license_expression_link,
                     )?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseExpressionType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseExpressionTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseExpressionLink")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -136632,6 +141058,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EpubLicenseDateRole(None) => Some(S::EpubLicenseDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -136732,6 +141164,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -136758,6 +141194,22 @@ pub mod onix {
                         .finish_element("EpubLicenseDateRole", self.epub_license_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -136937,6 +141389,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List9 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -137129,6 +141588,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProductClassificationCodeElementTypeDeserializer {
@@ -137308,6 +141774,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PercentElementTypeDeserializer {
@@ -137479,6 +141952,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -137909,6 +142389,17 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::ProductPartContent249, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ProductPartContent250 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NumberOfCopies")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -138358,6 +142849,17 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CollectionType(None) => Some(S::CollectionType(None)),
+                    S::CollectionFrequency(None) => Some(S::CollectionFrequency(None)),
+                    S::SourceName(None) => Some(S::SourceName(None)),
+                    S::CollectionIdentifier(None) => Some(S::CollectionIdentifier(None)),
+                    S::CollectionSequence(None) => Some(S::CollectionSequence(None)),
+                    S::TitleDetail(None) => Some(S::TitleDetail(None)),
+                    S::GpAuthorship(None) => Some(S::GpAuthorship(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -138606,6 +143108,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -138637,6 +143143,47 @@ pub mod onix {
                     title_detail: self.title_detail,
                     gp_authorship: self.gp_authorship,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionFrequency")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SourceName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionSequence")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleDetail")
+                ) {
+                    return true;
+                }
+                if < super :: CollectionGpAuthorship as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -138927,6 +143474,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List15 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -139237,6 +143792,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::TitleElementLevel(None) => Some(S::TitleElementLevel(None)),
+                    S::Content351(None) => Some(S::Content351(None)),
+                    S::Subtitle(None) => Some(S::Subtitle(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -139384,6 +143947,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -139412,6 +143979,29 @@ pub mod onix {
                     content_351: helper.finish_element("Content351", self.content_351)?,
                     subtitle: self.subtitle,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleElementLevel")
+                ) {
+                    return true;
+                }
+                if < super :: TitleElementContent351 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Subtitle")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -139630,6 +144220,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ThesisTypeElementTypeDeserializer {
@@ -139801,6 +144396,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List72 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -139987,6 +144590,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ThesisYearElementTypeDeserializer {
@@ -140167,6 +144777,13 @@ pub mod onix {
                     dateformat: self.dateformat,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -140949,6 +145566,24 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::ContributorRole(None) => Some(S::ContributorRole(None)),
+                    S::FromLanguage(None) => Some(S::FromLanguage(None)),
+                    S::ToLanguage(None) => Some(S::ToLanguage(None)),
+                    S::NameType(None) => Some(S::NameType(None)),
+                    S::Content125(None) => Some(S::Content125(None)),
+                    S::AlternativeName(None) => Some(S::AlternativeName(None)),
+                    S::ContributorDate(None) => Some(S::ContributorDate(None)),
+                    S::ProfessionalAffiliation(None) => Some(S::ProfessionalAffiliation(None)),
+                    S::Prize(None) => Some(S::Prize(None)),
+                    S::BiographicalNote(None) => Some(S::BiographicalNote(None)),
+                    S::Website(None) => Some(S::Website(None)),
+                    S::ContributorDescription(None) => Some(S::ContributorDescription(None)),
+                    S::ContributorPlace(None) => Some(S::ContributorPlace(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -141411,6 +146046,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -141448,6 +146087,89 @@ pub mod onix {
                     contributor_description: self.contributor_description,
                     contributor_place: self.contributor_place,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FromLanguage")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ToLanguage")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameType")
+                ) {
+                    return true;
+                }
+                if < super :: ContributorContent125 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AlternativeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProfessionalAffiliation")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Prize")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BiographicalNote")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Website")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorPlace")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -141668,6 +146390,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventRoleElementTypeDeserializer {
@@ -141839,6 +146566,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List20 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -142023,6 +146758,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventNumberElementTypeDeserializer {
@@ -142194,6 +146936,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -142376,6 +147125,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventDateElementTypeDeserializer {
@@ -142557,6 +147313,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventPlaceElementTypeDeserializer {
@@ -142737,6 +147500,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -142952,6 +147722,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EditionType(None) => Some(S::EditionType(None)),
+                    S::Content158(None) => Some(S::Content158(None)),
+                    S::EditionStatement(None) => Some(S::EditionStatement(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -143071,6 +147848,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -143092,6 +147873,23 @@ pub mod onix {
                     content_158: self.content_158,
                     edition_statement: self.edition_statement,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EditionType")
+                ) {
+                    return true;
+                }
+                if < super :: DescriptiveDetailContent158 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EditionStatement")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -143678,6 +148476,17 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::BibleContents(None) => Some(S::BibleContents(None)),
+                    S::BibleVersion(None) => Some(S::BibleVersion(None)),
+                    S::StudyBibleType(None) => Some(S::StudyBibleType(None)),
+                    S::BiblePurpose(None) => Some(S::BiblePurpose(None)),
+                    S::BibleTextOrganization(None) => Some(S::BibleTextOrganization(None)),
+                    S::BibleReferenceLocation(None) => Some(S::BibleReferenceLocation(None)),
+                    S::BibleTextFeature(None) => Some(S::BibleTextFeature(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -143937,6 +148746,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -143967,6 +148780,52 @@ pub mod onix {
                     bible_reference_location: self.bible_reference_location,
                     bible_text_feature: self.bible_text_feature,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BibleContents")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BibleVersion")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StudyBibleType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BiblePurpose")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BibleTextOrganization")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BibleReferenceLocation")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BibleTextFeature")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -144143,6 +149002,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ReligiousTextIdentifier(None) => Some(S::ReligiousTextIdentifier(None)),
+                    S::ReligiousTextFeature(None) => Some(S::ReligiousTextFeature(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -144254,6 +149119,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -144281,6 +149150,22 @@ pub mod onix {
                         self.religious_text_feature,
                     )?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReligiousTextIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReligiousTextFeature")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -144456,6 +149341,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List22 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct LanguageCodeElementTypeDeserializer {
@@ -144630,6 +149523,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List74 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CountryCodeElementTypeDeserializer {
@@ -144801,6 +149702,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List91 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -144974,6 +149883,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List49 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ScriptCodeElementTypeDeserializer {
@@ -145146,6 +150063,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List121 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ExtentTypeElementTypeDeserializer {
@@ -145317,6 +150242,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List23 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -145632,6 +150565,21 @@ pub mod onix {
             ) -> Result<super::ExtentContent182, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::ExtentContent183 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ExtentValueRoman")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ExtentUnitElementTypeDeserializer {
@@ -145803,6 +150751,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List24 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -147662,6 +152618,124 @@ pub mod onix {
             }
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::BlockElement, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"heading")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"lists")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"blocktext")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"div")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"p")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"h1")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"h2")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"h3")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"h4")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"h5")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"h6")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ul")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ol")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"dl")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"address")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"hr")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"pre")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"blockquote")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"table")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -150436,6 +155510,184 @@ pub mod onix {
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::InlineElement, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"special")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"fontstyle")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"phrase")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"gloss")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"a")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"span")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"bdo")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"br")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"em")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"strong")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"dfn")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"code")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"samp")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"kbd")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"var")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"cite")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"abbr")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"acronym")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"q")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"sub")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"sup")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"tt")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"i")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"b")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"big")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"small")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"img")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"map")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ruby")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AncillaryContentDescriptionContent85Deserializer {
@@ -150829,6 +156081,22 @@ pub mod onix {
             ) -> Result<super::AncillaryContentDescriptionContent85, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"block")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"inline")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AncillaryContentTypeElementTypeDeserializer {
@@ -151004,6 +156272,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List25 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -151229,6 +156505,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct NumberElementTypeDeserializer {
@@ -151400,6 +156681,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -151694,6 +156982,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List27 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SubjectSchemeNameElementTypeDeserializer {
@@ -151879,6 +157175,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SubjectSchemeVersionElementTypeDeserializer {
@@ -152054,6 +157357,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -152377,6 +157687,21 @@ pub mod onix {
             ) -> Result<super::SubjectContent315, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::SubjectContent316 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectHeadingText")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct NameTypeElementTypeDeserializer {
@@ -152548,6 +157873,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List18 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -153083,6 +158416,14 @@ pub mod onix {
             ) -> Result<super::NameAsSubjectContent205, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: NameAsSubjectContent206 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: NameAsSubjectContent208 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: NameAsSubjectGpCorporateName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AlternativeNameElementTypeDeserializer {
@@ -153286,6 +158627,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::NameType(None) => Some(S::NameType(None)),
+                    S::Content76(None) => Some(S::Content76(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -153373,6 +158720,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -153398,6 +158749,17 @@ pub mod onix {
                     name_type: helper.finish_element("NameType", self.name_type)?,
                     content_76: helper.finish_element("Content76", self.content_76)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameType")
+                ) {
+                    return true;
+                }
+                if < super :: AlternativeNameContent76 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -153598,6 +158960,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SubjectDateRole(None) => Some(S::SubjectDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -153687,6 +159055,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -153713,6 +159085,22 @@ pub mod onix {
                         .finish_element("SubjectDateRole", self.subject_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -153911,6 +159299,11 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ProfessionalAffiliationElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -154337,6 +159730,18 @@ pub mod onix {
             ) -> Result<super::ProfessionalAffiliationElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ProfessionalAffiliationContent253 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ProfessionalAffiliationContent254 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Affiliation")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MainAudienceElementTypeDeserializer {
@@ -154630,6 +160035,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List29 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AudienceCodeTypeNameElementTypeDeserializer {
@@ -154814,6 +160227,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -155139,6 +160559,21 @@ pub mod onix {
             ) -> Result<super::AudienceContent87, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::AudienceContent88 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceHeadingText")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AudienceRangeQualifierElementTypeDeserializer {
@@ -155314,6 +160749,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List30 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -155491,6 +160934,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List31 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AudienceRangeValueElementTypeDeserializer {
@@ -155667,6 +161118,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AudienceRangeContent91Deserializer {
@@ -155838,6 +161296,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AudienceRangePrecision(None) => Some(S::AudienceRangePrecision(None)),
+                    S::AudienceRangeValue(None) => Some(S::AudienceRangeValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -155941,6 +161405,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -155963,6 +161431,22 @@ pub mod onix {
                     audience_range_value: helper
                         .finish_element("AudienceRangeValue", self.audience_range_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceRangePrecision")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceRangeValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -156143,6 +161627,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List32 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ComplexityCodeElementTypeDeserializer {
@@ -156316,6 +161808,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -156491,6 +161990,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TextTypeElementTypeDeserializer {
@@ -156662,6 +162168,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List153 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -156877,6 +162391,11 @@ pub mod onix {
                     textformat: self.textformat,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -157123,6 +162642,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Rating(None) => Some(S::Rating(None)),
+                    S::RatingLimit(None) => Some(S::RatingLimit(None)),
+                    S::RatingUnits(None) => Some(S::RatingUnits(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -157241,6 +162767,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -157267,6 +162797,28 @@ pub mod onix {
                     rating_limit: self.rating_limit,
                     rating_units: self.rating_units,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Rating")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RatingLimit")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RatingUnits")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -157448,6 +163000,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -157633,6 +163192,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -157853,6 +163419,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SourceTitleElementTypeDeserializer {
@@ -158033,6 +163604,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -158216,6 +163794,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -158416,6 +164001,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ContentDateRole(None) => Some(S::ContentDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -158505,6 +164096,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -158531,6 +164126,22 @@ pub mod onix {
                         .finish_element("ContentDateRole", self.content_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -158707,6 +164318,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List156 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SourceTypeElementTypeDeserializer {
@@ -158878,6 +164497,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List157 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -159275,6 +164902,25 @@ pub mod onix {
             ) -> Result<super::CitedContent103, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::CitedContent104 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::CitedContent105 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::CitedContent106 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CitationNoteElementTypeDeserializer {
@@ -159492,6 +165138,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceLinkElementTypeDeserializer {
@@ -159675,6 +165326,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceContentTypeElementTypeDeserializer {
@@ -159851,6 +165509,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List158 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceModeElementTypeDeserializer {
@@ -160024,6 +165690,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List159 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -160277,6 +165951,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ResourceFeatureType(None) => Some(S::ResourceFeatureType(None)),
+                    S::FeatureValue(None) => Some(S::FeatureValue(None)),
+                    S::FeatureNote(None) => Some(S::FeatureNote(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -160406,6 +166087,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -160433,6 +166118,28 @@ pub mod onix {
                     feature_value: self.feature_value,
                     feature_note: self.feature_note,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFeatureType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FeatureValue")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FeatureNote")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -160836,6 +166543,16 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ResourceForm(None) => Some(S::ResourceForm(None)),
+                    S::ResourceVersionFeature(None) => Some(S::ResourceVersionFeature(None)),
+                    S::ResourceLink(None) => Some(S::ResourceLink(None)),
+                    S::EpubUsageConstraint(None) => Some(S::EpubUsageConstraint(None)),
+                    S::EpubLicense(None) => Some(S::EpubLicense(None)),
+                    S::ContentDate(None) => Some(S::ContentDate(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -161063,6 +166780,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -161092,6 +166813,46 @@ pub mod onix {
                     epub_license: self.epub_license,
                     content_date: self.content_date,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceForm")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceVersionFeature")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceLink")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubUsageConstraint")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicense")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContentDate")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -161347,6 +167108,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PrizeIdType(None) => Some(S::PrizeIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -161465,6 +167233,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -161491,6 +167263,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrizeIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -161673,6 +167467,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PrizeYearElementTypeDeserializer {
@@ -161844,6 +167645,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -162037,6 +167845,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PrizeCountryElementTypeDeserializer {
@@ -162211,6 +168026,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List91 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PrizeRegionElementTypeDeserializer {
@@ -162383,6 +168206,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List49 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PrizeCodeElementTypeDeserializer {
@@ -162554,6 +168385,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List41 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -162772,6 +168611,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PrizeJuryElementTypeDeserializer {
@@ -162987,6 +168831,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventIdTypeElementTypeDeserializer {
@@ -163159,6 +169008,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List244 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PromotionalEventContent257Deserializer {
@@ -163321,6 +169178,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content258(None) => Some(S::Content258(None)),
+                    S::ContributorStatement(None) => Some(S::ContributorStatement(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -163419,6 +169282,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -163439,6 +169306,17 @@ pub mod onix {
                     content_258: helper.finish_element("Content258", self.content_258)?,
                     contributor_statement: self.contributor_statement,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PromotionalEventContent258 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorStatement")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -163641,6 +169519,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::OccurrenceDateRole(None) => Some(S::OccurrenceDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -163733,6 +169617,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -163759,6 +169647,22 @@ pub mod onix {
                         .finish_element("OccurrenceDateRole", self.occurrence_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OccurrenceDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -164087,6 +169991,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content174(None) => Some(S::Content174(None)),
+                    S::LocationName(None) => Some(S::LocationName(None)),
+                    S::VenueName(None) => Some(S::VenueName(None)),
+                    S::Content176(None) => Some(S::Content176(None)),
+                    S::VenueNote(None) => Some(S::VenueNote(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -164259,6 +170172,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -164282,6 +170199,30 @@ pub mod onix {
                     content_176: self.content_176,
                     venue_note: self.venue_note,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: EventOccurrenceContent174 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LocationName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"VenueName")
+                ) {
+                    return true;
+                }
+                if < super :: EventOccurrenceContent176 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"VenueNote")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -164450,6 +170391,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EventSponsorIdentifier(None) => Some(S::EventSponsorIdentifier(None)),
+                    S::Content179(None) => Some(S::Content179(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -164548,6 +170495,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -164572,6 +170523,17 @@ pub mod onix {
                     )?,
                     content_179: self.content_179,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventSponsorIdentifier")
+                ) {
+                    return true;
+                }
+                if < super :: CopyrightOwnerContent143 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -164771,6 +170733,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -164973,6 +170942,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct WebsiteRoleElementTypeDeserializer {
@@ -165144,6 +171120,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List73 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -165364,6 +171348,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct WebsiteLinkElementTypeDeserializer {
@@ -165544,6 +171533,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -165840,6 +171836,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextItemType(None) => Some(S::TextItemType(None)),
+                    S::TextItemIdentifier(None) => Some(S::TextItemIdentifier(None)),
+                    S::PageRun(None) => Some(S::PageRun(None)),
+                    S::NumberOfPages(None) => Some(S::NumberOfPages(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -165990,6 +171994,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -166017,6 +172025,34 @@ pub mod onix {
                     page_run: self.page_run,
                     number_of_pages: self.number_of_pages,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextItemType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextItemIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PageRun")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NumberOfPages")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -166309,6 +172345,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AvItemType(None) => Some(S::AvItemType(None)),
+                    S::AvItemIdentifier(None) => Some(S::AvItemIdentifier(None)),
+                    S::TimeRun(None) => Some(S::TimeRun(None)),
+                    S::AvDuration(None) => Some(S::AvDuration(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -166459,6 +172503,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -166486,6 +172534,34 @@ pub mod onix {
                     time_run: self.time_run,
                     av_duration: self.av_duration,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AVItemType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AVItemIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TimeRun")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AVDuration")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -166698,6 +172774,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ComponentTypeName(None) => Some(S::ComponentTypeName(None)),
+                    S::ComponentNumber(None) => Some(S::ComponentNumber(None)),
+                    S::TitleDetail(None) => Some(S::TitleDetail(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -166819,6 +172902,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -166841,6 +172928,28 @@ pub mod onix {
                     component_number: self.component_number,
                     title_detail: self.title_detail,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ComponentTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ComponentNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleDetail")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -167007,6 +173116,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ComponentNumber(None) => Some(S::ComponentNumber(None)),
+                    S::TitleDetail(None) => Some(S::TitleDetail(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -167096,6 +173211,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -167116,6 +173235,22 @@ pub mod onix {
                     component_number: self.component_number,
                     title_detail: helper.finish_vec(1usize, None, self.title_detail)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ComponentNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleDetail")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -167290,6 +173425,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List45 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -167608,6 +173751,17 @@ pub mod onix {
             ) -> Result<super::PublisherContent263, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PublisherContent264 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublisherName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct FundingElementTypeDeserializer {
@@ -167761,6 +173915,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FundingIdentifier(None) => Some(S::FundingIdentifier(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -167824,6 +173983,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -167848,6 +174011,16 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     funding_identifier: helper.finish_vec(1usize, None, self.funding_identifier)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FundingIdentifier")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -168055,6 +174228,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CopyrightType(None) => Some(S::CopyrightType(None)),
+                    S::Content146(None) => Some(S::Content146(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -168142,6 +174321,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -168167,6 +174350,17 @@ pub mod onix {
                     copyright_type: self.copyright_type,
                     content_146: helper.finish_element("Content146", self.content_146)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightType")
+                ) {
+                    return true;
+                }
+                if < super :: CopyrightStatementContent146 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -168387,6 +174581,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PublishingDetailContent272Deserializer {
@@ -168541,6 +174740,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Imprint(None) => Some(S::Imprint(None)),
+                    S::Publisher(None) => Some(S::Publisher(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -168630,6 +174835,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -168650,6 +174859,22 @@ pub mod onix {
                     imprint: helper.finish_vec(1usize, None, self.imprint)?,
                     publisher: self.publisher,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Imprint")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Publisher")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -168826,6 +175051,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List198 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -169151,6 +175384,17 @@ pub mod onix {
             ) -> Result<super::ProductContactContent240, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ProductContactContent241 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContactName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct FaxNumberElementTypeDeserializer {
@@ -169322,6 +175566,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -169651,6 +175902,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::StreetAddress(None) => Some(S::StreetAddress(None)),
+                    S::LocationName(None) => Some(S::LocationName(None)),
+                    S::PostalCode(None) => Some(S::PostalCode(None)),
+                    S::RegionCode(None) => Some(S::RegionCode(None)),
+                    S::CountryCode(None) => Some(S::CountryCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -169827,6 +176087,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -169850,6 +176114,40 @@ pub mod onix {
                     region_code: self.region_code,
                     country_code: helper.finish_element("CountryCode", self.country_code)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StreetAddress")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LocationName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PostalCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountryCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -170025,6 +176323,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -170245,6 +176551,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PublishingDateRoleElementTypeDeserializer {
@@ -170420,6 +176731,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List163 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -170601,6 +176920,13 @@ pub mod onix {
                     dateformat: self.dateformat,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -170949,6 +177275,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SalesRightsType(None) => Some(S::SalesRightsType(None)),
+                    S::Territory(None) => Some(S::Territory(None)),
+                    S::SalesRestriction(None) => Some(S::SalesRestriction(None)),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::PublisherName(None) => Some(S::PublisherName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -171131,6 +177466,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -171160,6 +177499,40 @@ pub mod onix {
                     product_identifier: self.product_identifier,
                     publisher_name: self.publisher_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesRightsType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Territory")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesRestriction")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublisherName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -171337,6 +177710,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List46 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct WorkIdTypeElementTypeDeserializer {
@@ -171508,6 +177889,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List16 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -171773,6 +178162,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SpecificationBundleName(None) => Some(S::SpecificationBundleName(None)),
+                    S::SpecificationDetail(None) => Some(S::SpecificationDetail(None)),
+                    S::SpecificationFeature(None) => Some(S::SpecificationFeature(None)),
+                    S::SpecificationDescription(None) => Some(S::SpecificationDescription(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -171956,6 +178353,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -171978,6 +178379,34 @@ pub mod onix {
                     specification_feature: self.specification_feature,
                     specification_description: self.specification_description,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationBundleName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationFeature")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationDescription")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -172229,6 +178658,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::SalesOutlet(None) => Some(S::SalesOutlet(None)),
+                    S::Content151(None) => Some(S::Content151(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -172345,6 +178781,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -172371,6 +178811,23 @@ pub mod onix {
                     sales_outlet: self.sales_outlet,
                     content_151: helper.finish_element("Content151", self.content_151)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutlet")
+                ) {
+                    return true;
+                }
+                if < super :: CoverResourceContent151 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -172580,6 +179037,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::GpResourceSpecification(None) => Some(S::GpResourceSpecification(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -172675,6 +179138,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -172703,6 +179170,17 @@ pub mod onix {
                         self.gp_resource_specification,
                     )?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if < super :: BodyResourceGpResourceSpecification as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -172912,6 +179390,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::InsertPointType(None) => Some(S::InsertPointType(None)),
+                    S::InsertPointValue(None) => Some(S::InsertPointValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -173004,6 +179488,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -173031,6 +179519,22 @@ pub mod onix {
                     insert_point_value: helper
                         .finish_element("InsertPointValue", self.insert_point_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"InsertPointType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"InsertPointValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -173282,6 +179786,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::SalesOutlet(None) => Some(S::SalesOutlet(None)),
+                    S::Content196(None) => Some(S::Content196(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -173398,6 +179909,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -173424,6 +179939,23 @@ pub mod onix {
                     sales_outlet: self.sales_outlet,
                     content_196: helper.finish_element("Content196", self.content_196)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutlet")
+                ) {
+                    return true;
+                }
+                if < super :: CoverResourceContent151 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -173574,6 +180106,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content295(None) => Some(S::Content295(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -173631,6 +180168,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -173655,6 +180196,11 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content_295: helper.finish_element("Content295", self.content_295)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: SalesOutletContent295 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -173970,6 +180516,17 @@ pub mod onix {
             ) -> Result<super::SupplementManifestContent319, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: SupplementManifestContent320 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoSupplement")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TerritoryContent341Deserializer {
@@ -174185,6 +180742,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CountriesIncluded(None) => Some(S::CountriesIncluded(None)),
+                    S::RegionsIncluded(None) => Some(S::RegionsIncluded(None)),
+                    S::RegionsExcluded(None) => Some(S::RegionsExcluded(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -174306,6 +180870,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -174328,6 +180896,28 @@ pub mod onix {
                     regions_included: self.regions_included,
                     regions_excluded: self.regions_excluded,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountriesIncluded")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionsIncluded")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionsExcluded")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -174544,6 +181134,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::RegionsIncluded(None) => Some(S::RegionsIncluded(None)),
+                    S::CountriesExcluded(None) => Some(S::CountriesExcluded(None)),
+                    S::RegionsExcluded(None) => Some(S::RegionsExcluded(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -174665,6 +181262,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -174687,6 +181288,28 @@ pub mod onix {
                     countries_excluded: self.countries_excluded,
                     regions_excluded: self.regions_excluded,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionsIncluded")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountriesExcluded")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionsExcluded")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -174863,6 +181486,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List71 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -175083,6 +181714,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct StartDateElementTypeDeserializer {
@@ -175263,6 +181899,13 @@ pub mod onix {
                     dateformat: self.dateformat,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -175445,6 +182088,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AgentRoleElementTypeDeserializer {
@@ -175616,6 +182266,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List69 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -175929,6 +182587,17 @@ pub mod onix {
             ) -> Result<super::PublisherRepresentativeContent267, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PublisherRepresentativeContent268 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AgentName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MarketDateRoleElementTypeDeserializer {
@@ -176103,6 +182772,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List163 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SupplierRoleElementTypeDeserializer {
@@ -176276,6 +182953,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List93 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -176582,6 +183267,17 @@ pub mod onix {
             ) -> Result<super::SupplierContent322, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: NewSupplierContent216 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SupplyContactRoleElementTypeDeserializer {
@@ -176757,6 +183453,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List239 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -177082,6 +183786,17 @@ pub mod onix {
             ) -> Result<super::SupplyContactContent327, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: SupplyContactContent328 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyContactName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SupplierCodeTypeElementTypeDeserializer {
@@ -177256,6 +183971,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List165 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -177442,6 +184165,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SupplierCodeValueElementTypeDeserializer {
@@ -177618,6 +184348,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ReturnsCodeTypeElementTypeDeserializer {
@@ -177792,6 +184529,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List53 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -177978,6 +184723,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ReturnsCodeElementTypeDeserializer {
@@ -178149,6 +184901,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -178331,6 +185090,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SupplyDateRoleElementTypeDeserializer {
@@ -178504,6 +185270,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List166 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -178813,6 +185587,17 @@ pub mod onix {
             ) -> Result<super::NewSupplierContent215, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: NewSupplierContent216 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct LocationIdentifierElementTypeDeserializer {
@@ -179069,6 +185854,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::LocationIdType(None) => Some(S::LocationIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -179187,6 +185979,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -179214,6 +186010,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LocationIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -179397,6 +186215,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -179719,6 +186544,21 @@ pub mod onix {
             ) -> Result<super::StockContent308, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StockQuantityCoded")
+                ) {
+                    return true;
+                }
+                if <super::StockContent309 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct OnOrderDetailElementTypeDeserializer {
@@ -179972,6 +186812,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::OnOrder(None) => Some(S::OnOrder(None)),
+                    S::Proximity(None) => Some(S::Proximity(None)),
+                    S::ExpectedDate(None) => Some(S::ExpectedDate(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -180090,6 +186937,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -180116,6 +186967,28 @@ pub mod onix {
                     proximity: self.proximity,
                     expected_date: helper.finish_element("ExpectedDate", self.expected_date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OnOrder")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Proximity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ExpectedDate")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -180364,6 +187237,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::VelocityMetric(None) => Some(S::VelocityMetric(None)),
+                    S::Rate(None) => Some(S::Rate(None)),
+                    S::Proximity(None) => Some(S::Proximity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -180482,6 +187362,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -180509,6 +187393,28 @@ pub mod onix {
                     rate: helper.finish_element("Rate", self.rate)?,
                     proximity: self.proximity,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"VelocityMetric")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Rate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Proximity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -180686,6 +187592,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct OrderQuantityMultipleElementTypeDeserializer {
@@ -180862,6 +187775,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct UnpricedItemTypeElementTypeDeserializer {
@@ -181036,6 +187956,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List57 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -182111,6 +189039,30 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PriceIdentifier(None) => Some(S::PriceIdentifier(None)),
+                    S::PriceType(None) => Some(S::PriceType(None)),
+                    S::PriceQualifier(None) => Some(S::PriceQualifier(None)),
+                    S::EpubTechnicalProtection(None) => Some(S::EpubTechnicalProtection(None)),
+                    S::PriceConstraint(None) => Some(S::PriceConstraint(None)),
+                    S::EpubLicense(None) => Some(S::EpubLicense(None)),
+                    S::PriceTypeDescription(None) => Some(S::PriceTypeDescription(None)),
+                    S::PricePer(None) => Some(S::PricePer(None)),
+                    S::PriceCondition(None) => Some(S::PriceCondition(None)),
+                    S::MinimumOrderQuantity(None) => Some(S::MinimumOrderQuantity(None)),
+                    S::BatchBonus(None) => Some(S::BatchBonus(None)),
+                    S::DiscountCoded(None) => Some(S::DiscountCoded(None)),
+                    S::Discount(None) => Some(S::Discount(None)),
+                    S::PriceStatus(None) => Some(S::PriceStatus(None)),
+                    S::Content221(None) => Some(S::Content221(None)),
+                    S::CurrencyCode(None) => Some(S::CurrencyCode(None)),
+                    S::Territory(None) => Some(S::Territory(None)),
+                    S::ComparisonProductPrice(None) => Some(S::ComparisonProductPrice(None)),
+                    S::PriceDate(None) => Some(S::PriceDate(None)),
+                    S::Content225(None) => Some(S::Content225(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -182758,6 +189710,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -182801,6 +189757,128 @@ pub mod onix {
                     price_date: self.price_date,
                     content_225: self.content_225,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceQualifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubTechnicalProtection")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConstraint")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicense")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceTypeDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PricePer")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceCondition")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"MinimumOrderQuantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BatchBonus")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountCoded")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Discount")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceStatus")
+                ) {
+                    return true;
+                }
+                if <super::PriceContent221 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CurrencyCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Territory")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ComparisonProductPrice")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceDate")
+                ) {
+                    return true;
+                }
+                if <super::PriceContent225 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -182973,6 +190051,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -183147,6 +190232,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List147 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -183326,6 +190419,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List218 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -183518,6 +190619,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EpubLicenseExpressionLinkElementTypeDeserializer {
@@ -183697,6 +190805,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EpubLicenseDateRoleElementTypeDeserializer {
@@ -183873,6 +190988,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List260 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProductPartContent250Deserializer {
@@ -184040,6 +191163,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::NumberOfItemsOfThisForm(None) => Some(S::NumberOfItemsOfThisForm(None)),
+                    S::NumberOfCopies(None) => Some(S::NumberOfCopies(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -184140,6 +191269,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -184163,6 +191296,22 @@ pub mod onix {
                     )?,
                     number_of_copies: self.number_of_copies,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NumberOfItemsOfThisForm")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NumberOfCopies")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -184338,6 +191487,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CollectionTypeElementTypeDeserializer {
@@ -184511,6 +191667,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List148 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -184688,6 +191852,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List259 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SourceNameElementTypeDeserializer {
@@ -184859,6 +192031,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -185171,6 +192350,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CollectionElementLevel(None) => Some(S::CollectionElementLevel(None)),
+                    S::CollectionIdType(None) => Some(S::CollectionIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -185332,6 +192519,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -185360,6 +192551,34 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionElementLevel")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -185612,6 +192831,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CollectionSequenceType(None) => Some(S::CollectionSequenceType(None)),
+                    S::CollectionSequenceTypeName(None) => {
+                        Some(S::CollectionSequenceTypeName(None))
+                    }
+                    S::CollectionSequenceNumber(None) => Some(S::CollectionSequenceNumber(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -185763,6 +192991,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -185793,6 +193025,28 @@ pub mod onix {
                         self.collection_sequence_number,
                     )?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionSequenceType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionSequenceTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CollectionSequenceNumber")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -186105,6 +193359,17 @@ pub mod onix {
             ) -> Result<super::CollectionGpAuthorship, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CollectionContent110 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoContributor")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TitleElementLevelElementTypeDeserializer {
@@ -186280,6 +193545,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List149 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -186780,6 +194053,19 @@ pub mod onix {
             ) -> Result<super::TitleElementContent351, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TitleElementContent352 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: TitleElementContent356 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: TitleElementContent360 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleText")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SubtitleElementTypeDeserializer {
@@ -186988,6 +194274,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContributorRoleElementTypeDeserializer {
@@ -187163,6 +194456,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List17 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct FromLanguageElementTypeDeserializer {
@@ -187337,6 +194638,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List74 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ToLanguageElementTypeDeserializer {
@@ -187508,6 +194817,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List74 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -188137,6 +195454,20 @@ pub mod onix {
             ) -> Result<super::ContributorContent125, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ContributorContent126 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContributorContent128 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContributorGpCorporateName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"UnnamedPersons")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContributorDateElementTypeDeserializer {
@@ -188338,6 +195669,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ContributorDateRole(None) => Some(S::ContributorDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -188438,6 +195775,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -188464,6 +195805,22 @@ pub mod onix {
                         .finish_element("ContributorDateRole", self.contributor_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -188683,6 +196040,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContributorDescriptionElementTypeDeserializer {
@@ -188901,6 +196263,11 @@ pub mod onix {
                     textformat: self.textformat,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -189162,6 +196529,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ContributorPlaceRelator(None) => Some(S::ContributorPlaceRelator(None)),
+                    S::Content136(None) => Some(S::Content136(None)),
+                    S::LocationName(None) => Some(S::LocationName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -189289,6 +196663,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -189318,6 +196696,23 @@ pub mod onix {
                     content_136: helper.finish_element("Content136", self.content_136)?,
                     location_name: self.location_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorPlaceRelator")
+                ) {
+                    return true;
+                }
+                if < super :: ContributorPlaceContent136 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LocationName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -189491,6 +196886,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List21 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DescriptiveDetailContent158Deserializer {
@@ -189658,6 +197061,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EditionNumber(None) => Some(S::EditionNumber(None)),
+                    S::EditionVersionNumber(None) => Some(S::EditionVersionNumber(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -189758,6 +197167,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -189778,6 +197191,22 @@ pub mod onix {
                     edition_number: helper.finish_element("EditionNumber", self.edition_number)?,
                     edition_version_number: self.edition_version_number,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EditionNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EditionVersionNumber")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -189997,6 +197426,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BibleContentsElementTypeDeserializer {
@@ -190170,6 +197604,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List82 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -190345,6 +197787,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List83 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct StudyBibleTypeElementTypeDeserializer {
@@ -190519,6 +197969,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List84 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BiblePurposeElementTypeDeserializer {
@@ -190692,6 +198150,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List85 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -190869,6 +198335,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List86 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BibleReferenceLocationElementTypeDeserializer {
@@ -191045,6 +198519,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List87 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BibleTextFeatureElementTypeDeserializer {
@@ -191219,6 +198701,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List97 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -191396,6 +198886,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -191645,6 +199142,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ReligiousTextFeatureType(None) => Some(S::ReligiousTextFeatureType(None)),
+                    S::ReligiousTextFeatureCode(None) => Some(S::ReligiousTextFeatureCode(None)),
+                    S::ReligiousTextFeatureDescription(None) => {
+                        Some(S::ReligiousTextFeatureDescription(None))
+                    }
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -191796,6 +199302,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -191828,6 +199338,28 @@ pub mod onix {
                     )?,
                     religious_text_feature_description: self.religious_text_feature_description,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReligiousTextFeatureType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReligiousTextFeatureCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReligiousTextFeatureDescription")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -191989,6 +199521,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ExtentValue(None) => Some(S::ExtentValue(None)),
+                    S::ExtentValueRoman(None) => Some(S::ExtentValueRoman(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -192081,6 +199619,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -192101,6 +199643,22 @@ pub mod onix {
                     extent_value: helper.finish_element("ExtentValue", self.extent_value)?,
                     extent_value_roman: self.extent_value_roman,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ExtentValue")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ExtentValueRoman")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -192276,6 +199834,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -192483,6 +200048,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AbbrElementTypeDeserializer {
@@ -192676,6 +200246,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextBefore(None) => Some(S::TextBefore(None)),
+                    S::Inline(None) => Some(S::Inline(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -192761,6 +200337,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -192787,6 +200367,16 @@ pub mod onix {
                     text_before: self.text_before,
                     inline: self.inline,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"inline")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -192942,6 +200532,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Li(None) => Some(S::Li(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -193002,6 +200597,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -193027,6 +200626,16 @@ pub mod onix {
                     dir: self.dir,
                     li: helper.finish_vec(1usize, None, self.li)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"li")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -193198,6 +200807,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Li(None) => Some(S::Li(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -193258,6 +200872,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -193285,6 +200903,16 @@ pub mod onix {
                     start: self.start,
                     li: helper.finish_vec(1usize, None, self.li)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"li")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -193488,6 +201116,11 @@ pub mod onix {
                     dir: self.dir,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: DlElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -193778,6 +201411,22 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::DlElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"dt")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"dd")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -194106,6 +201755,15 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::PreContent23 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BlockquoteElementTypeDeserializer {
@@ -194259,6 +201917,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Block(None) => Some(S::Block(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -194315,6 +201978,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -194341,6 +202008,16 @@ pub mod onix {
                     cite: self.cite,
                     block: self.block,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"block")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -194744,6 +202421,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Caption(None) => Some(S::Caption(None)),
+                    S::Content48(None) => Some(S::Content48(None)),
+                    S::Thead(None) => Some(S::Thead(None)),
+                    S::Tfoot(None) => Some(S::Tfoot(None)),
+                    S::Content49(None) => Some(S::Content49(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -194912,6 +202598,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -194948,6 +202638,38 @@ pub mod onix {
                     tfoot: self.tfoot,
                     content_49: helper.finish_element("Content49", self.content_49)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"caption")
+                ) {
+                    return true;
+                }
+                if <super::TableContent48 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"thead")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"tfoot")
+                ) {
+                    return true;
+                }
+                if <super::TableContent49 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -195265,6 +202987,15 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::AContent25 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BdoElementTypeDeserializer {
@@ -195458,6 +203189,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextBefore(None) => Some(S::TextBefore(None)),
+                    S::Inline(None) => Some(S::Inline(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -195543,6 +203280,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -195569,6 +203310,16 @@ pub mod onix {
                     text_before: self.text_before,
                     inline: self.inline,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"inline")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -195878,6 +203629,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextBefore(None) => Some(S::TextBefore(None)),
+                    S::Inline(None) => Some(S::Inline(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -195963,6 +203720,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -195987,6 +203748,16 @@ pub mod onix {
                     text_before: self.text_before,
                     inline: self.inline,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"inline")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -196388,6 +204159,11 @@ pub mod onix {
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: MapElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MapElementTypeContentDeserializer {
@@ -196689,6 +204465,22 @@ pub mod onix {
             ) -> Result<super::MapElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"block")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"area")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RubyElementTypeDeserializer {
@@ -196893,6 +204685,11 @@ pub mod onix {
                     dir: self.dir,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: RubyElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -197198,6 +204995,20 @@ pub mod onix {
             ) -> Result<super::RubyElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::RubyContent59 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::RubyContent62 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SubjectContent316Deserializer {
@@ -197353,6 +205164,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SubjectCode(None) => Some(S::SubjectCode(None)),
+                    S::SubjectHeadingText(None) => Some(S::SubjectHeadingText(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -197445,6 +205262,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -197465,6 +205286,22 @@ pub mod onix {
                     subject_code: helper.finish_element("SubjectCode", self.subject_code)?,
                     subject_heading_text: self.subject_heading_text,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SubjectHeadingText")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -197651,6 +205488,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct NameAsSubjectContent206Deserializer {
@@ -197818,6 +205662,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::NameIdentifier(None) => Some(S::NameIdentifier(None)),
+                    S::Content207(None) => Some(S::Content207(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -197905,6 +205755,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -197925,6 +205779,17 @@ pub mod onix {
                     name_identifier: helper.finish_vec(1usize, None, self.name_identifier)?,
                     content_207: self.content_207,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameIdentifier")
+                ) {
+                    return true;
+                }
+                if < super :: NameAsSubjectContent207 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -198093,6 +205958,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpUnstructuredName(None) => Some(S::GpUnstructuredName(None)),
+                    S::GpStructuredName(None) => Some(S::GpStructuredName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -198184,6 +206055,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -198205,6 +206080,12 @@ pub mod onix {
                         .finish_element("gp.unstructured_name", self.gp_unstructured_name)?,
                     gp_structured_name: self.gp_structured_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: NameAsSubjectGpUnstructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -198682,6 +206563,18 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TitlesBeforeNames(None) => Some(S::TitlesBeforeNames(None)),
+                    S::NamesBeforeKey(None) => Some(S::NamesBeforeKey(None)),
+                    S::PrefixToKey(None) => Some(S::PrefixToKey(None)),
+                    S::KeyNames(None) => Some(S::KeyNames(None)),
+                    S::NamesAfterKey(None) => Some(S::NamesAfterKey(None)),
+                    S::SuffixToKey(None) => Some(S::SuffixToKey(None)),
+                    S::LettersAfterNames(None) => Some(S::LettersAfterNames(None)),
+                    S::TitlesAfterNames(None) => Some(S::TitlesAfterNames(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -198954,6 +206847,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -198980,6 +206877,58 @@ pub mod onix {
                     letters_after_names: self.letters_after_names,
                     titles_after_names: self.titles_after_names,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitlesBeforeNames")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NamesBeforeKey")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrefixToKey")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"KeyNames")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NamesAfterKey")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SuffixToKey")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LettersAfterNames")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitlesAfterNames")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -199313,6 +207262,17 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::NameAsSubjectGpCorporateName, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent82 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateNameInverted")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -199848,6 +207808,14 @@ pub mod onix {
             ) -> Result<super::AlternativeNameContent76, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent77 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameContent79 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpCorporateName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SubjectDateRoleElementTypeDeserializer {
@@ -200022,6 +207990,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List177 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -200238,6 +208214,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProfessionalPosition(None) => Some(S::ProfessionalPosition(None)),
+                    S::AffiliationIdentifier(None) => Some(S::AffiliationIdentifier(None)),
+                    S::Affiliation(None) => Some(S::Affiliation(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -200378,6 +208361,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -200403,6 +208390,28 @@ pub mod onix {
                     affiliation_identifier: self.affiliation_identifier,
                     affiliation: self.affiliation,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProfessionalPosition")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AffiliationIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Affiliation")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -200571,6 +208580,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AffiliationIdentifier(None) => Some(S::AffiliationIdentifier(None)),
+                    S::Affiliation(None) => Some(S::Affiliation(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -200671,6 +208686,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -200695,6 +208714,22 @@ pub mod onix {
                     )?,
                     affiliation: self.affiliation,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AffiliationIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Affiliation")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -200877,6 +208912,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AudienceContent88Deserializer {
@@ -201034,6 +209076,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AudienceCodeValue(None) => Some(S::AudienceCodeValue(None)),
+                    S::AudienceHeadingText(None) => Some(S::AudienceHeadingText(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -201137,6 +209185,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -201158,6 +209210,22 @@ pub mod onix {
                         .finish_element("AudienceCodeValue", self.audience_code_value)?,
                     audience_heading_text: self.audience_heading_text,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceCodeValue")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AudienceHeadingText")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -201344,6 +209412,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RatingElementTypeDeserializer {
@@ -201516,6 +209591,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RatingLimitElementTypeDeserializer {
@@ -201687,6 +209769,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -201869,6 +209958,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContentDateRoleElementTypeDeserializer {
@@ -202044,6 +210140,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List155 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CitedContent104Deserializer {
@@ -202210,6 +210314,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ReviewRating(None) => Some(S::ReviewRating(None)),
+                    S::SourceTitle(None) => Some(S::SourceTitle(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -202299,6 +210409,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -202319,6 +210433,22 @@ pub mod onix {
                     review_rating: helper.finish_element("ReviewRating", self.review_rating)?,
                     source_title: helper.finish_vec(1usize, None, self.source_title)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ReviewRating")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SourceTitle")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -202477,6 +210607,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SourceTitle(None) => Some(S::SourceTitle(None)),
+                    S::Content106(None) => Some(S::Content106(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -202562,6 +210698,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -202582,6 +210722,21 @@ pub mod onix {
                     source_title: helper.finish_vec(1usize, None, self.source_title)?,
                     content_106: self.content_106,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SourceTitle")
+                ) {
+                    return true;
+                }
+                if <super::CitedContent106 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -202742,6 +210897,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ListName(None) => Some(S::ListName(None)),
+                    S::PositionOnList(None) => Some(S::PositionOnList(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -202831,6 +210992,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -202851,6 +211016,22 @@ pub mod onix {
                     list_name: helper.finish_vec(1usize, None, self.list_name)?,
                     position_on_list: self.position_on_list,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ListName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PositionOnList")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -203028,6 +211209,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List160 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct FeatureValueElementTypeDeserializer {
@@ -203201,6 +211390,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -203417,6 +211613,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceFormElementTypeDeserializer {
@@ -203590,6 +211791,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List161 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -203833,6 +212042,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ResourceVersionFeatureType(None) => {
+                        Some(S::ResourceVersionFeatureType(None))
+                    }
+                    S::FeatureValue(None) => Some(S::FeatureValue(None)),
+                    S::FeatureNote(None) => Some(S::FeatureNote(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -203962,6 +212180,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -203991,6 +212213,28 @@ pub mod onix {
                     feature_value: self.feature_value,
                     feature_note: self.feature_note,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceVersionFeatureType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FeatureValue")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FeatureNote")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -204163,6 +212407,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List263 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -204483,6 +212735,17 @@ pub mod onix {
             ) -> Result<super::PromotionalEventContent258, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: PromotionalEventContent259 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Contributor")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct OccurrenceDateRoleElementTypeDeserializer {
@@ -204658,6 +212921,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List247 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -204970,6 +213241,17 @@ pub mod onix {
             ) -> Result<super::EventOccurrenceContent174, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ContributorPlaceContent137 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionCode")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct VenueNameElementTypeDeserializer {
@@ -205151,6 +213433,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EventOccurrenceContent176Deserializer {
@@ -205316,6 +213605,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::StreetAddress(None) => Some(S::StreetAddress(None)),
+                    S::PostalCode(None) => Some(S::PostalCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -205405,6 +213700,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -205425,6 +213724,22 @@ pub mod onix {
                     street_address: helper.finish_element("StreetAddress", self.street_address)?,
                     postal_code: self.postal_code,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StreetAddress")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PostalCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -205640,6 +213955,11 @@ pub mod onix {
                     textformat: self.textformat,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -205897,6 +214217,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EventSponsorIdType(None) => Some(S::EventSponsorIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -206026,6 +214353,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -206053,6 +214384,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EventSponsorIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -206363,6 +214716,22 @@ pub mod onix {
             ) -> Result<super::CopyrightOwnerContent143, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TextItemTypeElementTypeDeserializer {
@@ -206536,6 +214905,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List42 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -206793,6 +215170,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextItemIdType(None) => Some(S::TextItemIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -206911,6 +215295,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -206938,6 +215326,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TextItemIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -207143,6 +215553,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FirstPageNumber(None) => Some(S::FirstPageNumber(None)),
+                    S::LastPageNumber(None) => Some(S::LastPageNumber(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -207232,6 +215648,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -207258,6 +215678,22 @@ pub mod onix {
                         .finish_element("FirstPageNumber", self.first_page_number)?,
                     last_page_number: self.last_page_number,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FirstPageNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"LastPageNumber")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -207433,6 +215869,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AvItemTypeElementTypeDeserializer {
@@ -207604,6 +216047,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List240 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -207861,6 +216312,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AvItemIdType(None) => Some(S::AvItemIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -207979,6 +216437,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -208005,6 +216467,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AVItemIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -208203,6 +216687,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::StartTime(None) => Some(S::StartTime(None)),
+                    S::EndTime(None) => Some(S::EndTime(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -208292,6 +216782,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -208317,6 +216811,22 @@ pub mod onix {
                     start_time: helper.finish_element("StartTime", self.start_time)?,
                     end_time: self.end_time,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StartTime")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EndTime")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -208489,6 +216999,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -208675,6 +217192,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ComponentNumberElementTypeDeserializer {
@@ -208850,6 +217374,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PublisherContent264Deserializer {
@@ -209009,6 +217540,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PublisherIdentifier(None) => Some(S::PublisherIdentifier(None)),
+                    S::PublisherName(None) => Some(S::PublisherName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -209101,6 +217638,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -209125,6 +217666,22 @@ pub mod onix {
                     )?,
                     publisher_name: self.publisher_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublisherIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublisherName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -209326,6 +217883,13 @@ pub mod onix {
                     textscript: self.textscript,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -209583,6 +218147,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FundingIdType(None) => Some(S::FundingIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -209701,6 +218272,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -209728,6 +218303,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FundingIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -209949,6 +218546,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List219 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -210277,6 +218882,17 @@ pub mod onix {
             ) -> Result<super::CopyrightStatementContent146, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CopyrightStatementContent147 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightOwner")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ImprintElementTypeDeserializer {
@@ -210476,6 +219092,11 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ImprintElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -210784,6 +219405,21 @@ pub mod onix {
             ) -> Result<super::ImprintElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::ImprintContent190 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ImprintName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProductContactContent241Deserializer {
@@ -210955,6 +219591,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductContactIdentifier(None) => Some(S::ProductContactIdentifier(None)),
+                    S::ProductContactName(None) => Some(S::ProductContactName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -211058,6 +219700,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -211082,6 +219728,22 @@ pub mod onix {
                     )?,
                     product_contact_name: self.product_contact_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContactIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContactName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -211258,6 +219920,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -211442,6 +220111,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PostalCodeElementTypeDeserializer {
@@ -211613,6 +220289,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -211788,6 +220471,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List46 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -211991,6 +220682,16 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SpecificationBundleNameTypeName(None) => {
+                        Some(S::SpecificationBundleNameTypeName(None))
+                    }
+                    S::SpecificationBundleNameValue(None) => {
+                        Some(S::SpecificationBundleNameValue(None))
+                    }
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -212102,6 +220803,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -212133,6 +220838,22 @@ pub mod onix {
                         self.specification_bundle_name_value,
                     )?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationBundleNameTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationBundleNameValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -212309,6 +221030,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List248 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -212554,6 +221283,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SpecificationFeatureType(None) => Some(S::SpecificationFeatureType(None)),
+                    S::SpecificationFeatureValue(None) => Some(S::SpecificationFeatureValue(None)),
+                    S::SpecificationFeatureDescription(None) => {
+                        Some(S::SpecificationFeatureDescription(None))
+                    }
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -212705,6 +221443,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -212734,6 +221476,28 @@ pub mod onix {
                     specification_feature_value: self.specification_feature_value,
                     specification_feature_description: self.specification_feature_description,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationFeatureType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationFeatureValue")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SpecificationFeatureDescription")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -212920,6 +221684,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -213249,6 +222020,17 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::CoverResourceContent151, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: BodyResourceGpResourceSpecification as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoResource")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -213682,6 +222464,20 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ResourceIdentifier(None) => Some(S::ResourceIdentifier(None)),
+                    S::ResourceRole(None) => Some(S::ResourceRole(None)),
+                    S::ResourceFileDetail(None) => Some(S::ResourceFileDetail(None)),
+                    S::ResourceFileFeature(None) => Some(S::ResourceFileFeature(None)),
+                    S::ResourceFileDescription(None) => Some(S::ResourceFileDescription(None)),
+                    S::ResourceFileContentDescription(None) => {
+                        Some(S::ResourceFileContentDescription(None))
+                    }
+                    S::ResourceFileLink(None) => Some(S::ResourceFileLink(None)),
+                    S::ResourceFileDate(None) => Some(S::ResourceFileDate(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -213990,6 +222786,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -214016,6 +222816,58 @@ pub mod onix {
                     resource_file_link: helper.finish_vec(1usize, None, self.resource_file_link)?,
                     resource_file_date: self.resource_file_date,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileFeature")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileContentDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileLink")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileDate")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -214192,6 +223044,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List255 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct InsertPointValueElementTypeDeserializer {
@@ -214366,6 +223226,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -214680,6 +223547,17 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::SalesOutletContent295, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: SalesOutletContent296 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutletName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -215140,6 +224018,18 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::ProductForm(None) => Some(S::ProductForm(None)),
+                    S::ProductFormDetail(None) => Some(S::ProductFormDetail(None)),
+                    S::ProductFormDescription(None) => Some(S::ProductFormDescription(None)),
+                    S::Measure(None) => Some(S::Measure(None)),
+                    S::CoverManifest(None) => Some(S::CoverManifest(None)),
+                    S::BodyManifest(None) => Some(S::BodyManifest(None)),
+                    S::InsertManifest(None) => Some(S::InsertManifest(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -215420,6 +224310,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -215446,6 +224340,58 @@ pub mod onix {
                     body_manifest: helper.finish_element("BodyManifest", self.body_manifest)?,
                     insert_manifest: self.insert_manifest,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductForm")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormDetail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductFormDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Measure")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CoverManifest")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BodyManifest")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"InsertManifest")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -215741,6 +224687,15 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::DtCountryCodeList as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RegionsIncludedElementTypeDeserializer {
@@ -215916,6 +224871,15 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::DtRegionCodeList as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RegionsExcludedElementTypeDeserializer {
@@ -216090,6 +225054,15 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::DtRegionCodeList as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -216267,6 +225240,15 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::DtCountryCodeList as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PublisherRepresentativeContent268Deserializer {
@@ -216434,6 +225416,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AgentIdentifier(None) => Some(S::AgentIdentifier(None)),
+                    S::AgentName(None) => Some(S::AgentName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -216523,6 +225511,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -216543,6 +225535,22 @@ pub mod onix {
                     agent_identifier: helper.finish_vec(1usize, None, self.agent_identifier)?,
                     agent_name: self.agent_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AgentIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AgentName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -216734,6 +225742,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct NewSupplierContent216Deserializer {
@@ -216901,6 +225916,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplierIdentifier(None) => Some(S::SupplierIdentifier(None)),
+                    S::SupplierName(None) => Some(S::SupplierName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -216993,6 +226014,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -217017,6 +226042,22 @@ pub mod onix {
                     )?,
                     supplier_name: self.supplier_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -217210,6 +226251,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SupplyContactContent328Deserializer {
@@ -217381,6 +226429,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplyContactIdentifier(None) => Some(S::SupplyContactIdentifier(None)),
+                    S::SupplyContactName(None) => Some(S::SupplyContactName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -217484,6 +226538,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -217508,6 +226566,22 @@ pub mod onix {
                     )?,
                     supply_contact_name: self.supply_contact_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyContactIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyContactName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -217685,6 +226759,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct LocationIdTypeElementTypeDeserializer {
@@ -217858,6 +226939,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List92 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -218124,6 +227213,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::StockQuantityCodeType(None) => Some(S::StockQuantityCodeType(None)),
+                    S::StockQuantityCodeTypeName(None) => Some(S::StockQuantityCodeTypeName(None)),
+                    S::StockQuantityCode(None) => Some(S::StockQuantityCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -218267,6 +227363,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -218295,6 +227395,28 @@ pub mod onix {
                     stock_quantity_code: helper
                         .finish_element("StockQuantityCode", self.stock_quantity_code)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StockQuantityCodeType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StockQuantityCodeTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"StockQuantityCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -218592,6 +227714,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::OnHand(None) => Some(S::OnHand(None)),
+                    S::Proximity(None) => Some(S::Proximity(None)),
+                    S::Content310(None) => Some(S::Content310(None)),
+                    S::Content311(None) => Some(S::Content311(None)),
+                    S::Content312(None) => Some(S::Content312(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -218756,6 +227887,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -218779,6 +227914,37 @@ pub mod onix {
                     content_311: self.content_311,
                     content_312: self.content_312,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OnHand")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Proximity")
+                ) {
+                    return true;
+                }
+                if <super::StockContent310 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::StockContent311 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::StockContent312 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -218952,6 +228118,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProximityElementTypeDeserializer {
@@ -219123,6 +228296,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List215 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -219307,6 +228488,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct VelocityMetricElementTypeDeserializer {
@@ -219481,6 +228669,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List216 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RateElementTypeDeserializer {
@@ -219652,6 +228848,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <i32 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -219907,6 +229110,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PriceIdType(None) => Some(S::PriceIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -220025,6 +229235,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -220051,6 +229265,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -220223,6 +229459,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List58 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -220397,6 +229641,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List59 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -220656,6 +229908,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PriceConstraintType(None) => Some(S::PriceConstraintType(None)),
+                    S::PriceConstraintStatus(None) => Some(S::PriceConstraintStatus(None)),
+                    S::PriceConstraintLimit(None) => Some(S::PriceConstraintLimit(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -220807,6 +230066,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -220835,6 +230098,28 @@ pub mod onix {
                         .finish_element("PriceConstraintStatus", self.price_constraint_status)?,
                     price_constraint_limit: self.price_constraint_limit,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConstraintType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConstraintStatus")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConstraintLimit")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -221037,6 +230322,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::EpubLicenseName(None) => Some(S::EpubLicenseName(None)),
+                    S::EpubLicenseExpression(None) => Some(S::EpubLicenseExpression(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -221137,6 +230428,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -221162,6 +230457,22 @@ pub mod onix {
                     epub_license_name: helper.finish_vec(1usize, None, self.epub_license_name)?,
                     epub_license_expression: self.epub_license_expression,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"EpubLicenseExpression")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -221348,6 +230659,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PricePerElementTypeDeserializer {
@@ -221519,6 +230837,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List60 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -221771,6 +231097,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PriceConditionType(None) => Some(S::PriceConditionType(None)),
+                    S::PriceConditionQuantity(None) => Some(S::PriceConditionQuantity(None)),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -221906,6 +231239,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -221933,6 +231270,28 @@ pub mod onix {
                     price_condition_quantity: self.price_condition_quantity,
                     product_identifier: self.product_identifier,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConditionType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConditionQuantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -222109,6 +231468,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -222318,6 +231684,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::BatchQuantity(None) => Some(S::BatchQuantity(None)),
+                    S::FreeQuantity(None) => Some(S::FreeQuantity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -222407,6 +231779,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -222432,6 +231808,22 @@ pub mod onix {
                     batch_quantity: helper.finish_element("BatchQuantity", self.batch_quantity)?,
                     free_quantity: helper.finish_element("FreeQuantity", self.free_quantity)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"BatchQuantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"FreeQuantity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -222696,6 +232088,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::DiscountCodeType(None) => Some(S::DiscountCodeType(None)),
+                    S::DiscountCodeTypeName(None) => Some(S::DiscountCodeTypeName(None)),
+                    S::DiscountCode(None) => Some(S::DiscountCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -222828,6 +232227,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -222855,6 +232258,28 @@ pub mod onix {
                     discount_code_type_name: self.discount_code_type_name,
                     discount_code: helper.finish_element("DiscountCode", self.discount_code)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountCodeType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountCodeTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -223103,6 +232528,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::DiscountType(None) => Some(S::DiscountType(None)),
+                    S::Content160(None) => Some(S::Content160(None)),
+                    S::Content161(None) => Some(S::Content161(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -223215,6 +232647,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -223241,6 +232677,26 @@ pub mod onix {
                     content_160: self.content_160,
                     content_161: helper.finish_element("Content161", self.content_161)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountType")
+                ) {
+                    return true;
+                }
+                if <super::DiscountContent160 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::DiscountContent161 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -223413,6 +232869,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List61 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -223728,6 +233192,21 @@ pub mod onix {
             ) -> Result<super::PriceContent221, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::PriceContent222 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"UnpricedItemType")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CurrencyCodeElementTypeDeserializer {
@@ -223901,6 +233380,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List96 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -224216,6 +233703,14 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::PriceType(None) => Some(S::PriceType(None)),
+                    S::PriceAmount(None) => Some(S::PriceAmount(None)),
+                    S::CurrencyCode(None) => Some(S::CurrencyCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -224366,6 +233861,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -224393,6 +233892,34 @@ pub mod onix {
                     price_amount: helper.finish_element("PriceAmount", self.price_amount)?,
                     currency_code: self.currency_code,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceAmount")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CurrencyCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -224593,6 +234120,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PriceDateRole(None) => Some(S::PriceDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -224682,6 +234215,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -224708,6 +234245,22 @@ pub mod onix {
                         .finish_element("PriceDateRole", self.price_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -224871,6 +234424,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PrintedOnProduct(None) => Some(S::PrintedOnProduct(None)),
+                    S::PositionOnProduct(None) => Some(S::PositionOnProduct(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -224966,6 +234525,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -224987,6 +234550,22 @@ pub mod onix {
                         .finish_element("PrintedOnProduct", self.printed_on_product)?,
                     position_on_product: self.position_on_product,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PrintedOnProduct")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PositionOnProduct")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -225165,6 +234744,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CollectionElementLevelElementTypeDeserializer {
@@ -225341,6 +234927,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List149 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CollectionIdTypeElementTypeDeserializer {
@@ -225515,6 +235109,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List13 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -225691,6 +235293,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List197 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -225880,6 +235490,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CollectionSequenceNumberElementTypeDeserializer {
@@ -226056,6 +235673,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -226271,6 +235895,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PartNumber(None) => Some(S::PartNumber(None)),
+                    S::YearOfAnnual(None) => Some(S::YearOfAnnual(None)),
+                    S::Content353(None) => Some(S::Content353(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -226386,6 +236017,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -226407,6 +236042,23 @@ pub mod onix {
                     year_of_annual: self.year_of_annual,
                     content_353: self.content_353,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PartNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"YearOfAnnual")
+                ) {
+                    return true;
+                }
+                if < super :: TitleElementContent353 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -226571,6 +236223,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::YearOfAnnual(None) => Some(S::YearOfAnnual(None)),
+                    S::Content357(None) => Some(S::Content357(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -226657,6 +236315,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -226677,6 +236339,17 @@ pub mod onix {
                     year_of_annual: helper.finish_element("YearOfAnnual", self.year_of_annual)?,
                     content_357: self.content_357,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"YearOfAnnual")
+                ) {
+                    return true;
+                }
+                if < super :: TitleElementContent357 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -226845,6 +236518,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content361(None) => Some(S::Content361(None)),
+                    S::TitleWithoutPrefix(None) => Some(S::TitleWithoutPrefix(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -226934,6 +236613,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -226955,6 +236638,17 @@ pub mod onix {
                     title_without_prefix: helper
                         .finish_element("TitleWithoutPrefix", self.title_without_prefix)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TitleElementContent355 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleWithoutPrefix")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -227164,6 +236858,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContributorContent126Deserializer {
@@ -227329,6 +237030,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::NameIdentifier(None) => Some(S::NameIdentifier(None)),
+                    S::Content127(None) => Some(S::Content127(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -227415,6 +237122,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -227435,6 +237146,17 @@ pub mod onix {
                     name_identifier: helper.finish_vec(1usize, None, self.name_identifier)?,
                     content_127: self.content_127,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameIdentifier")
+                ) {
+                    return true;
+                }
+                if < super :: ContributorContent127 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -227601,6 +237323,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpUnstructuredName(None) => Some(S::GpUnstructuredName(None)),
+                    S::GpStructuredName(None) => Some(S::GpStructuredName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -227692,6 +237420,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -227713,6 +237445,12 @@ pub mod onix {
                         .finish_element("gp.unstructured_name", self.gp_unstructured_name)?,
                     gp_structured_name: self.gp_structured_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ContributorGpUnstructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -228047,6 +237785,17 @@ pub mod onix {
             ) -> Result<super::ContributorGpCorporateName, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent82 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateNameInverted")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct UnnamedPersonsElementTypeDeserializer {
@@ -228220,6 +237969,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List19 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -228397,6 +238154,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List177 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContributorPlaceRelatorElementTypeDeserializer {
@@ -228573,6 +238338,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List151 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -228885,6 +238658,17 @@ pub mod onix {
             ) -> Result<super::ContributorPlaceContent136, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ContributorPlaceContent137 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionCode")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EditionNumberElementTypeDeserializer {
@@ -229058,6 +238842,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -229234,6 +239025,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -229412,6 +239210,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List89 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ReligiousTextFeatureCodeElementTypeDeserializer {
@@ -229588,6 +239394,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List90 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -229813,6 +239627,11 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ExtentValueElementTypeDeserializer {
@@ -229984,6 +239803,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -231288,6 +241114,88 @@ pub mod onix {
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::PhraseElement, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"em")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"strong")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"dfn")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"code")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"samp")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"kbd")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"var")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"cite")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"abbr")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"acronym")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"q")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"sub")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"sup")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct GlossElementDeserializer {
@@ -231482,6 +241390,16 @@ pub mod onix {
             }
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::GlossElement, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ruby")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -232596,6 +242514,70 @@ pub mod onix {
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::PreContent23, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"a")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"br")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"span")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"bdo")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"map")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"tt")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"i")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"b")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"phrase")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"gloss")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TableContent48Deserializer {
@@ -232896,6 +242878,22 @@ pub mod onix {
             ) -> Result<super::TableContent48, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"col")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"colgroup")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TbodyElementTypeDeserializer {
@@ -233082,6 +243080,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Tr(None) => Some(S::Tr(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -233142,6 +243145,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -233171,6 +243178,16 @@ pub mod onix {
                     valign: self.valign,
                     tr: helper.finish_vec(1usize, None, self.tr)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"tr")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -233481,6 +243498,22 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::TableContent49, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"tbody")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"tr")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -234047,6 +244080,40 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::SpecialElement, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"span")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"bdo")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"br")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"img")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"map")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -234615,6 +244682,40 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::FontstyleElement, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"tt")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"i")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"b")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"big")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"small")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -235189,6 +245290,34 @@ pub mod onix {
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::AContent25, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"special")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"fontstyle")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"phrase")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"gloss")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AreaElementTypeDeserializer {
@@ -235511,6 +245640,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Rb(None) => Some(S::Rb(None)),
+                    S::Content60(None) => Some(S::Content60(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -235596,6 +245731,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -235616,6 +245755,21 @@ pub mod onix {
                     rb: helper.finish_element("rb", self.rb)?,
                     content_60: helper.finish_element("Content60", self.content_60)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rb")
+                ) {
+                    return true;
+                }
+                if <super::RubyContent60 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -235761,6 +245915,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Rbc(None) => Some(S::Rbc(None)),
+                    S::Rtc(None) => Some(S::Rtc(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -235850,6 +246010,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -235870,6 +246034,22 @@ pub mod onix {
                     rbc: helper.finish_element("rbc", self.rbc)?,
                     rtc: self.rtc,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rbc")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rtc")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -236042,6 +246222,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -236297,6 +246484,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::NameIdType(None) => Some(S::NameIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -236415,6 +246609,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -236441,6 +246639,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -236876,6 +247096,13 @@ pub mod onix {
             ) -> Result<super::NameAsSubjectContent207, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: NameAsSubjectContent208 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: NameAsSubjectGpCorporateName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct NameAsSubjectGpUnstructuredNameDeserializer {
@@ -236988,6 +247215,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content209(None) => Some(S::Content209(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -237046,6 +247278,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -237065,6 +247301,11 @@ pub mod onix {
                 Ok(super::NameAsSubjectGpUnstructuredName {
                     content_209: helper.finish_element("Content209", self.content_209)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: NameAsSubjectContent209 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -237269,6 +247510,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct NamesBeforeKeyElementTypeDeserializer {
@@ -237470,6 +247718,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PrefixToKeyElementTypeDeserializer {
@@ -237669,6 +247924,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct KeyNamesElementTypeDeserializer {
@@ -237867,6 +248129,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -238069,6 +248338,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SuffixToKeyElementTypeDeserializer {
@@ -238267,6 +248543,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -238471,6 +248754,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TitlesAfterNamesElementTypeDeserializer {
@@ -238673,6 +248963,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AlternativeNameContent82Deserializer {
@@ -238837,6 +249134,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CorporateName(None) => Some(S::CorporateName(None)),
+                    S::CorporateNameInverted(None) => Some(S::CorporateNameInverted(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -238937,6 +249240,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -238957,6 +249264,22 @@ pub mod onix {
                     corporate_name: helper.finish_vec(1usize, None, self.corporate_name)?,
                     corporate_name_inverted: self.corporate_name_inverted,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateNameInverted")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -239161,6 +249484,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AlternativeNameContent77Deserializer {
@@ -239328,6 +249658,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::NameIdentifier(None) => Some(S::NameIdentifier(None)),
+                    S::Content78(None) => Some(S::Content78(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -239415,6 +249751,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -239435,6 +249775,17 @@ pub mod onix {
                     name_identifier: helper.finish_vec(1usize, None, self.name_identifier)?,
                     content_78: self.content_78,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameIdentifier")
+                ) {
+                    return true;
+                }
+                if < super :: AlternativeNameContent78 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -239605,6 +249956,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::GpUnstructuredName(None) => Some(S::GpUnstructuredName(None)),
+                    S::GpStructuredName(None) => Some(S::GpStructuredName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -239693,6 +250050,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -239714,6 +250075,12 @@ pub mod onix {
                         .finish_element("gp.unstructured_name", self.gp_unstructured_name)?,
                     gp_structured_name: self.gp_structured_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameGpUnstructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -240050,6 +250417,17 @@ pub mod onix {
             ) -> Result<super::AlternativeNameGpCorporateName, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent82 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateNameInverted")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProfessionalPositionElementTypeDeserializer {
@@ -240234,6 +250612,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -240491,6 +250876,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AffiliationIdType(None) => Some(S::AffiliationIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -240612,6 +251004,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -240639,6 +251035,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AffiliationIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -240815,6 +251233,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -240997,6 +251422,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PositionOnListElementTypeDeserializer {
@@ -241170,6 +251602,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -241350,6 +251789,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List162 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PromotionalEventContent259Deserializer {
@@ -241512,6 +251959,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ContributorReference(None) => Some(S::ContributorReference(None)),
+                    S::Contributor(None) => Some(S::Contributor(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -241612,6 +252065,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -241636,6 +252093,22 @@ pub mod onix {
                     )?,
                     contributor: self.contributor,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorReference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Contributor")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -241800,6 +252273,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CountryCode(None) => Some(S::CountryCode(None)),
+                    S::RegionCode(None) => Some(S::RegionCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -241889,6 +252368,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -241909,6 +252392,22 @@ pub mod onix {
                     country_code: helper.finish_element("CountryCode", self.country_code)?,
                     region_code: self.region_code,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CountryCode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"RegionCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -242086,6 +252585,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TextItemIdTypeElementTypeDeserializer {
@@ -242259,6 +252766,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List43 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -242435,6 +252950,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct LastPageNumberElementTypeDeserializer {
@@ -242608,6 +253130,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -242783,6 +253312,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List241 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct StartTimeElementTypeDeserializer {
@@ -242955,6 +253492,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct EndTimeElementTypeDeserializer {
@@ -243126,6 +253670,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -243383,6 +253934,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PublisherIdType(None) => Some(S::PublisherIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -243501,6 +254059,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -243528,6 +254090,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PublisherIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -243703,6 +254287,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List228 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CopyrightStatementContent147Deserializer {
@@ -243867,6 +254459,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CopyrightYear(None) => Some(S::CopyrightYear(None)),
+                    S::CopyrightOwner(None) => Some(S::CopyrightOwner(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -243956,6 +254554,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -243976,6 +254578,22 @@ pub mod onix {
                     copyright_year: helper.finish_vec(1usize, None, self.copyright_year)?,
                     copyright_owner: self.copyright_owner,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightYear")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightOwner")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -244175,6 +254793,11 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CopyrightOwnerElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -244590,6 +255213,23 @@ pub mod onix {
             ) -> Result<super::CopyrightOwnerElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CopyrightOwnerContent142 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CorporateName")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ImprintContent190Deserializer {
@@ -244752,6 +255392,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ImprintIdentifier(None) => Some(S::ImprintIdentifier(None)),
+                    S::ImprintName(None) => Some(S::ImprintName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -244844,6 +255490,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -244864,6 +255514,22 @@ pub mod onix {
                     imprint_identifier: helper.finish_vec(1usize, None, self.imprint_identifier)?,
                     imprint_name: self.imprint_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ImprintIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ImprintName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -245054,6 +255720,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -245311,6 +255984,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductContactIdType(None) => Some(S::ProductContactIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -245440,6 +256120,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -245467,6 +256151,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductContactIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -245659,6 +256365,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SpecificationBundleNameValueElementTypeDeserializer {
@@ -245841,6 +256554,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SpecificationFeatureTypeElementTypeDeserializer {
@@ -246017,6 +256737,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List249 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -246196,6 +256924,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -246387,6 +257122,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -246760,6 +257502,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ResourceIdType(None) => Some(S::ResourceIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -246878,6 +257627,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -246905,6 +257658,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -247079,6 +257854,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List251 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -247255,6 +258038,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List252 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -247500,6 +258291,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ResourceFileFeatureType(None) => Some(S::ResourceFileFeatureType(None)),
+                    S::ResourceFileFeatureValue(None) => Some(S::ResourceFileFeatureValue(None)),
+                    S::ResourceFileFeatureDescription(None) => {
+                        Some(S::ResourceFileFeatureDescription(None))
+                    }
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -247651,6 +258451,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -247680,6 +258484,28 @@ pub mod onix {
                     resource_file_feature_value: self.resource_file_feature_value,
                     resource_file_feature_description: self.resource_file_feature_description,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileFeatureType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileFeatureValue")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileFeatureDescription")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -247866,6 +258692,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -248058,6 +258891,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceFileLinkElementTypeDeserializer {
@@ -248232,6 +259072,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -248434,6 +259281,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ResourceFileDateRole(None) => Some(S::ResourceFileDateRole(None)),
+                    S::Date(None) => Some(S::Date(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -248534,6 +259387,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -248560,6 +259417,22 @@ pub mod onix {
                         .finish_element("ResourceFileDateRole", self.resource_file_date_role)?,
                     date: helper.finish_element("Date", self.date)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ResourceFileDateRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Date")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -248728,6 +259601,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SalesOutletIdentifier(None) => Some(S::SalesOutletIdentifier(None)),
+                    S::SalesOutletName(None) => Some(S::SalesOutletName(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -248828,6 +259707,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -248852,6 +259735,22 @@ pub mod onix {
                     )?,
                     sales_outlet_name: self.sales_outlet_name,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutletIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutletName")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -249036,6 +259935,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -249291,6 +260197,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::AgentIdType(None) => Some(S::AgentIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -249409,6 +260322,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -249435,6 +260352,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"AgentIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -249692,6 +260631,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplierIdType(None) => Some(S::SupplierIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -249810,6 +260756,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -249837,6 +260787,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplierIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -250094,6 +261066,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SupplyContactIdType(None) => Some(S::SupplyContactIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -250223,6 +261202,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -250250,6 +261233,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SupplyContactIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -250426,6 +261431,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List70 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -250615,6 +261628,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct StockQuantityCodeElementTypeDeserializer {
@@ -250791,6 +261811,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct OnHandElementTypeDeserializer {
@@ -250963,6 +261990,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <i32 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct StockContent310Deserializer {
@@ -251115,6 +262149,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Reserved(None) => Some(S::Reserved(None)),
+                    S::Proximity(None) => Some(S::Proximity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -251204,6 +262244,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -251224,6 +262268,22 @@ pub mod onix {
                     reserved: helper.finish_element("Reserved", self.reserved)?,
                     proximity: self.proximity,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Reserved")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Proximity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -251377,6 +262437,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::OnOrder(None) => Some(S::OnOrder(None)),
+                    S::Proximity(None) => Some(S::Proximity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -251466,6 +262532,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -251486,6 +262556,22 @@ pub mod onix {
                     on_order: helper.finish_element("OnOrder", self.on_order)?,
                     proximity: self.proximity,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"OnOrder")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Proximity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -251635,6 +262721,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Cbo(None) => Some(S::Cbo(None)),
+                    S::Proximity(None) => Some(S::Proximity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -251724,6 +262816,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -251744,6 +262840,22 @@ pub mod onix {
                     cbo: helper.finish_element("CBO", self.cbo)?,
                     proximity: self.proximity,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CBO")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Proximity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -251916,6 +263028,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List217 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -252093,6 +263213,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List230 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PriceConstraintStatusElementTypeDeserializer {
@@ -252268,6 +263396,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List146 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -252474,6 +263610,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Quantity(None) => Some(S::Quantity(None)),
+                    S::PriceConstraintUnit(None) => Some(S::PriceConstraintUnit(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -252574,6 +263716,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -252600,6 +263746,22 @@ pub mod onix {
                     price_constraint_unit: helper
                         .finish_element("PriceConstraintUnit", self.price_constraint_unit)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Quantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConstraintUnit")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -252776,6 +263938,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List167 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -253029,6 +264199,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PriceConditionQuantityType(None) => {
+                        Some(S::PriceConditionQuantityType(None))
+                    }
+                    S::Quantity(None) => Some(S::Quantity(None)),
+                    S::QuantityUnit(None) => Some(S::QuantityUnit(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -253158,6 +264337,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -253187,6 +264370,28 @@ pub mod onix {
                     quantity: helper.finish_element("Quantity", self.quantity)?,
                     quantity_unit: helper.finish_element("QuantityUnit", self.quantity_unit)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceConditionQuantityType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Quantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"QuantityUnit")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -253362,6 +264567,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct FreeQuantityElementTypeDeserializer {
@@ -253535,6 +264747,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -253710,6 +264929,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List100 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -253896,6 +265123,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DiscountCodeElementTypeDeserializer {
@@ -254069,6 +265303,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -254244,6 +265485,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List170 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DiscountContent160Deserializer {
@@ -254399,6 +265648,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Quantity(None) => Some(S::Quantity(None)),
+                    S::ToQuantity(None) => Some(S::ToQuantity(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -254488,6 +265743,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -254508,6 +265767,22 @@ pub mod onix {
                     quantity: helper.finish_element("Quantity", self.quantity)?,
                     to_quantity: self.to_quantity,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Quantity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ToQuantity")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -254819,6 +266094,21 @@ pub mod onix {
             ) -> Result<super::DiscountContent161, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::DiscountContent162 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountAmount")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PriceContent222Deserializer {
@@ -254971,6 +266261,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content223(None) => Some(S::Content223(None)),
+                    S::Content224(None) => Some(S::Content224(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -255052,6 +266348,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -255072,6 +266372,20 @@ pub mod onix {
                     content_223: helper.finish_element("Content223", self.content_223)?,
                     content_224: self.content_224,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::PriceContent223 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::PriceContent224 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -255244,6 +266558,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -255419,6 +266740,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List173 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PrintedOnProductElementTypeDeserializer {
@@ -255593,6 +266922,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List174 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -255784,6 +267121,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct YearOfAnnualElementTypeDeserializer {
@@ -255957,6 +267301,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -256263,6 +267614,17 @@ pub mod onix {
             ) -> Result<super::TitleElementContent353, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TitleElementContent354 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleText")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TitleElementContent357Deserializer {
@@ -256568,6 +267930,17 @@ pub mod onix {
             ) -> Result<super::TitleElementContent357, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TitleElementContent358 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleText")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TitleElementContent355Deserializer {
@@ -256866,6 +268239,22 @@ pub mod onix {
             ) -> Result<super::TitleElementContent355, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitlePrefix")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NoPrefix")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TitleWithoutPrefixElementTypeDeserializer {
@@ -257077,6 +268466,13 @@ pub mod onix {
                     textcase: self.textcase,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -257609,6 +269005,19 @@ pub mod onix {
             ) -> Result<super::ContributorContent127, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ContributorContent128 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: ContributorGpCorporateName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"UnnamedPersons")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ContributorGpUnstructuredNameDeserializer {
@@ -257721,6 +269130,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content129(None) => Some(S::Content129(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -257778,6 +269192,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -257797,6 +269215,11 @@ pub mod onix {
                 Ok(super::ContributorGpUnstructuredName {
                     content_129: helper.finish_element("Content129", self.content_129)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ContributorContent129 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -258168,6 +269591,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Col(None) => Some(S::Col(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -258228,6 +269656,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -258259,6 +269691,16 @@ pub mod onix {
                     valign: self.valign,
                     col: self.col,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"col")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -258498,6 +269940,11 @@ pub mod onix {
                     valign: self.valign,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TrElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -258789,6 +270236,22 @@ pub mod onix {
             ) -> Result<super::TrElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"th")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"td")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RbElementTypeDeserializer {
@@ -258990,6 +270453,15 @@ pub mod onix {
                     dir: self.dir,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::RbContent65 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -259286,6 +270758,21 @@ pub mod onix {
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::RubyContent60, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rt")
+                ) {
+                    return true;
+                }
+                if <super::RubyContent61 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RbcElementTypeDeserializer {
@@ -259440,6 +270927,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Rb(None) => Some(S::Rb(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -259500,6 +270992,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -259525,6 +271021,16 @@ pub mod onix {
                     dir: self.dir,
                     rb: helper.finish_vec(1usize, None, self.rb)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rb")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -259680,6 +271186,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Rt(None) => Some(S::Rt(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -259740,6 +271251,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -259765,6 +271280,16 @@ pub mod onix {
                     dir: self.dir,
                     rt: helper.finish_vec(1usize, None, self.rt)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rt")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -259937,6 +271462,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -260261,6 +271794,17 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::NameAsSubjectContent209, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent81 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonNameInverted")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -260696,6 +272240,13 @@ pub mod onix {
             ) -> Result<super::AlternativeNameContent78, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent79 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpStructuredName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if < super :: AlternativeNameGpCorporateName as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct AlternativeNameGpUnstructuredNameDeserializer {
@@ -260808,6 +272359,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content80(None) => Some(S::Content80(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -260866,6 +272422,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -260885,6 +272445,11 @@ pub mod onix {
                 Ok(super::AlternativeNameGpUnstructuredName {
                     content_80: helper.finish_element("Content80", self.content_80)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent80 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -261061,6 +272626,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -261329,6 +272902,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SequenceNumber(None) => Some(S::SequenceNumber(None)),
+                    S::ContributorRole(None) => Some(S::ContributorRole(None)),
+                    S::NameIdentifier(None) => Some(S::NameIdentifier(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -261447,6 +273027,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -261473,6 +273057,28 @@ pub mod onix {
                     contributor_role: helper.finish_vec(1usize, None, self.contributor_role)?,
                     name_identifier: helper.finish_vec(1usize, None, self.name_identifier)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SequenceNumber")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ContributorRole")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"NameIdentifier")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -261648,6 +273254,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -261832,6 +273446,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CopyrightOwnerContent142Deserializer {
@@ -262001,6 +273622,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CopyrightOwnerIdentifier(None) => Some(S::CopyrightOwnerIdentifier(None)),
+                    S::Content143(None) => Some(S::Content143(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -262099,6 +273726,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -262123,6 +273754,17 @@ pub mod onix {
                     )?,
                     content_143: self.content_143,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightOwnerIdentifier")
+                ) {
+                    return true;
+                }
+                if < super :: CopyrightOwnerContent143 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -262380,6 +274022,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ImprintIdType(None) => Some(S::ImprintIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -262498,6 +274147,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -262525,6 +274178,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ImprintIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -262702,6 +274377,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceIdTypeElementTypeDeserializer {
@@ -262875,6 +274558,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List250 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -263053,6 +274744,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List253 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceFileFeatureValueElementTypeDeserializer {
@@ -263229,6 +274928,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -263421,6 +275127,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ResourceFileDateRoleElementTypeDeserializer {
@@ -263596,6 +275309,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List254 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -263853,6 +275574,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SalesOutletIdType(None) => Some(S::SalesOutletIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -263974,6 +275702,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -264001,6 +275733,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"SalesOutletIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -264173,6 +275927,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List92 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -264347,6 +276109,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List92 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -264524,6 +276294,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ReservedElementTypeDeserializer {
@@ -264696,6 +276474,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CboElementTypeDeserializer {
@@ -264867,6 +276652,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <usize as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -265043,6 +276835,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List147 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -265223,6 +277023,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List168 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct QuantityUnitElementTypeDeserializer {
@@ -265397,6 +277205,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List169 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ToQuantityElementTypeDeserializer {
@@ -265569,6 +277385,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DiscountContent162Deserializer {
@@ -265731,6 +277554,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::DiscountPercent(None) => Some(S::DiscountPercent(None)),
+                    S::DiscountAmount(None) => Some(S::DiscountAmount(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -265820,6 +277649,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -265841,6 +277674,22 @@ pub mod onix {
                         .finish_element("DiscountPercent", self.discount_percent)?,
                     discount_amount: self.discount_amount,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountPercent")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"DiscountAmount")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -266015,6 +277864,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -266311,6 +278167,22 @@ pub mod onix {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::PriceContent223, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceAmount")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceCoded")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -266614,6 +278486,22 @@ pub mod onix {
             ) -> Result<super::PriceContent224, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"Tax")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxExempt")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TitleElementContent354Deserializer {
@@ -266781,6 +278669,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content355(None) => Some(S::Content355(None)),
+                    S::TitleWithoutPrefix(None) => Some(S::TitleWithoutPrefix(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -266870,6 +278764,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -266891,6 +278789,17 @@ pub mod onix {
                     title_without_prefix: helper
                         .finish_element("TitleWithoutPrefix", self.title_without_prefix)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TitleElementContent355 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleWithoutPrefix")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -267059,6 +278968,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Content359(None) => Some(S::Content359(None)),
+                    S::TitleWithoutPrefix(None) => Some(S::TitleWithoutPrefix(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -267148,6 +279063,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -267169,6 +279088,17 @@ pub mod onix {
                     title_without_prefix: helper
                         .finish_element("TitleWithoutPrefix", self.title_without_prefix)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TitleElementContent355 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TitleWithoutPrefix")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -267377,6 +279307,13 @@ pub mod onix {
                     textcase: self.textcase,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -267816,6 +279753,17 @@ pub mod onix {
             ) -> Result<super::ContributorContent129, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent81 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonNameInverted")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TdElementTypeDeserializer {
@@ -268111,6 +280059,11 @@ pub mod onix {
                     valign: self.valign,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -268680,6 +280633,34 @@ pub mod onix {
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::RbContent65, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"a")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"special")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"fontstyle")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"phrase")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RtElementTypeDeserializer {
@@ -268891,6 +280872,15 @@ pub mod onix {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::RbContent65 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RubyContent61Deserializer {
@@ -269039,6 +281029,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Rp(None) => Some(S::Rp(None)),
+                    S::Rt(None) => Some(S::Rt(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -269128,6 +281124,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -269148,6 +281148,22 @@ pub mod onix {
                     rp: helper.finish_element("rp", self.rp)?,
                     rt: Box::new(helper.finish_element("rt", self.rt)?),
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rp")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"rt")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -269314,6 +281330,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PersonName(None) => Some(S::PersonName(None)),
+                    S::PersonNameInverted(None) => Some(S::PersonNameInverted(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -269406,6 +281428,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -269426,6 +281452,22 @@ pub mod onix {
                     person_name: helper.finish_element("PersonName", self.person_name)?,
                     person_name_inverted: self.person_name_inverted,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonNameInverted")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -269629,6 +281671,13 @@ pub mod onix {
                     language: self.language,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -269954,6 +282003,17 @@ pub mod onix {
             ) -> Result<super::AlternativeNameContent80, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: AlternativeNameContent81 as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PersonNameInverted")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CopyrightOwnerIdentifierElementTypeDeserializer {
@@ -270210,6 +282270,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CopyrightOwnerIdType(None) => Some(S::CopyrightOwnerIdType(None)),
+                    S::IdTypeName(None) => Some(S::IdTypeName(None)),
+                    S::IdValue(None) => Some(S::IdValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -270339,6 +282406,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -270366,6 +282437,28 @@ pub mod onix {
                     id_type_name: self.id_type_name,
                     id_value: helper.finish_element("IDValue", self.id_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"CopyrightOwnerIDType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"IDValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -270540,6 +282633,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -270717,6 +282818,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List102 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DiscountPercentElementTypeDeserializer {
@@ -270891,6 +283000,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -271151,6 +283267,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PriceCodeType(None) => Some(S::PriceCodeType(None)),
+                    S::PriceCodeTypeName(None) => Some(S::PriceCodeTypeName(None)),
+                    S::PriceCode(None) => Some(S::PriceCode(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -271272,6 +283395,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -271299,6 +283426,28 @@ pub mod onix {
                     price_code_type_name: self.price_code_type_name,
                     price_code: helper.finish_element("PriceCode", self.price_code)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceCodeType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceCodeTypeName")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PriceCode")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -271641,6 +283790,15 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ProductIdentifier(None) => Some(S::ProductIdentifier(None)),
+                    S::PricePartDescription(None) => Some(S::PricePartDescription(None)),
+                    S::TaxType(None) => Some(S::TaxType(None)),
+                    S::TaxRateCode(None) => Some(S::TaxRateCode(None)),
+                    S::Content337(None) => Some(S::Content337(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -271827,6 +283985,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -271855,6 +284017,39 @@ pub mod onix {
                     tax_rate_code: self.tax_rate_code,
                     content_337: helper.finish_element("Content337", self.content_337)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"ProductIdentifier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"PricePartDescription")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxType")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxRateCode")
+                ) {
+                    return true;
+                }
+                if <super::TaxContent337 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -272118,6 +284313,11 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Text(None) => Some(S::Text(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -272169,6 +284369,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -272371,6 +284575,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List44 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PriceCodeTypeElementTypeDeserializer {
@@ -272544,6 +284756,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List179 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -272730,6 +284950,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PriceCodeElementTypeDeserializer {
@@ -272901,6 +285128,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -273087,6 +285321,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TaxTypeElementTypeDeserializer {
@@ -273259,6 +285500,14 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List171 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TaxRateCodeElementTypeDeserializer {
@@ -273430,6 +285679,14 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::List62 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x)
+                {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -273729,6 +285986,20 @@ pub mod onix {
             fn finish(self, helper: &mut DeserializeHelper) -> Result<super::TaxContent337, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::TaxContent338 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                if <super::TaxContent339 as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TaxContent338Deserializer {
@@ -273942,6 +286213,13 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TaxRatePercent(None) => Some(S::TaxRatePercent(None)),
+                    S::TaxableAmount(None) => Some(S::TaxableAmount(None)),
+                    S::TaxAmount(None) => Some(S::TaxAmount(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -274060,6 +286338,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -274082,6 +286364,28 @@ pub mod onix {
                     taxable_amount: self.taxable_amount,
                     tax_amount: self.tax_amount,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxRatePercent")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxableAmount")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxAmount")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -274243,6 +286547,12 @@ pub mod onix {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TaxableAmount(None) => Some(S::TaxableAmount(None)),
+                    S::TaxAmount(None) => Some(S::TaxAmount(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -274332,6 +286642,10 @@ pub mod onix {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -274352,6 +286666,22 @@ pub mod onix {
                     taxable_amount: self.taxable_amount,
                     tax_amount: helper.finish_element("TaxAmount", self.tax_amount)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxableAmount")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ONIX),
+                    Some(b"TaxAmount")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -274527,6 +286857,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TaxableAmountElementTypeDeserializer {
@@ -274701,6 +287038,13 @@ pub mod onix {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TaxAmountElementTypeDeserializer {
@@ -274872,6 +287216,13 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
     }

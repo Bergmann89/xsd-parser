@@ -295,6 +295,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Once(None) => Some(S::Once(None)),
+                S::Optional(None) => Some(S::Optional(None)),
+                S::OnceSpecify(None) => Some(S::OnceSpecify(None)),
+                S::TwiceOrMore(None) => Some(S::TwiceOrMore(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -442,6 +450,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -458,6 +470,34 @@ pub mod quick_xml_deserialize {
                 once_specify: helper.finish_element("OnceSpecify", self.once_specify)?,
                 twice_or_more: helper.finish_vec(2usize, None, self.twice_or_more)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"Once")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"Optional")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"OnceSpecify")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"TwiceOrMore")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

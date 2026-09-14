@@ -204,6 +204,15 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::FooTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct FooTypeContentDeserializer {
@@ -482,6 +491,22 @@ pub mod quick_xml_deserialize {
         }
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::FooTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Bar")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Baz")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

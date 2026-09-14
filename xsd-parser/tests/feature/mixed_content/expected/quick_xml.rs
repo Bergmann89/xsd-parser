@@ -445,6 +445,22 @@ pub mod quick_xml_deserialize {
                 bar: helper.finish_element("Bar", self.bar)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Fuu")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Bar")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MixedChoiceTypeDeserializer {
@@ -597,6 +613,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::TextBefore(None) => Some(S::TextBefore(None)),
+                S::Content(None) => Some(S::Content(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -682,6 +704,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -702,6 +728,15 @@ pub mod quick_xml_deserialize {
                 text_before: self.text_before,
                 content: helper.finish_element("content", self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::MixedChoiceTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -992,6 +1027,22 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::MixedChoiceTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Fuu")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Bar")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MixedChoiceListTypeDeserializer {
@@ -1138,6 +1189,11 @@ pub mod quick_xml_deserialize {
             Ok(super::MixedChoiceListType {
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: MixedChoiceListTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -1512,6 +1568,22 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::MixedChoiceListTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Fuu")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Bar")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MixedSequenceTypeDeserializer {
@@ -1804,6 +1876,15 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::TextBefore(None) => Some(S::TextBefore(None)),
+                S::Fuu(None) => Some(S::Fuu(None)),
+                S::TextAfterFuu(None) => Some(S::TextAfterFuu(None)),
+                S::Bar(None) => Some(S::Bar(None)),
+                S::TextAfterBar(None) => Some(S::TextAfterBar(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -1965,6 +2046,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -1988,6 +2073,22 @@ pub mod quick_xml_deserialize {
                 bar: helper.finish_element("Bar", self.bar)?,
                 text_after_bar: self.text_after_bar,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Fuu")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Bar")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

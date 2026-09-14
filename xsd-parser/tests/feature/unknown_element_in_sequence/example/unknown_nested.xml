@@ -1,0 +1,10 @@
+<tns:Root xmlns:tns="http://example.com">
+    <tns:A>before</tns:A>
+    <other:Outer xmlns:other="urn:other">
+        <other:Inner>nested</other:Inner>
+        <other:Deep>
+            <other:Deepest/>
+        </other:Deep>
+    </other:Outer>
+    <tns:B>after</tns:B>
+</tns:Root>

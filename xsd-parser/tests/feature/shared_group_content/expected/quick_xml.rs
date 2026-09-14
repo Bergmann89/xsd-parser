@@ -312,6 +312,11 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: ElementAChoiceGroupType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ElementBTypeDeserializer {
@@ -463,6 +468,11 @@ pub mod quick_xml_deserialize {
                 attr_2: self.attr_2,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: ElementAChoiceGroupType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -760,6 +770,22 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
         ) -> Result<super::ElementAChoiceGroupType, Error> {
             Self::finish_state(helper, *self.state__)
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"ElementA")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"ElementB")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

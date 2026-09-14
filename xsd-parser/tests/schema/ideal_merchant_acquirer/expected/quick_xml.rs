@@ -1016,6 +1016,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::CreateDateTimestamp(None) => Some(S::CreateDateTimestamp(None)),
+                S::Merchant(None) => Some(S::Merchant(None)),
+                S::Signature(None) => Some(S::Signature(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -1134,6 +1141,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -1157,6 +1168,28 @@ pub mod quick_xml_deserialize {
                 merchant: helper.finish_element("Merchant", self.merchant)?,
                 signature: helper.finish_element("Signature", self.signature)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"createDateTimestamp")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"Merchant")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Signature")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -1314,6 +1347,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::MerchantId(None) => Some(S::MerchantId(None)),
+                S::SubId(None) => Some(S::SubId(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -1403,6 +1442,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -1423,6 +1466,22 @@ pub mod quick_xml_deserialize {
                 merchant_id: helper.finish_element("merchantID", self.merchant_id)?,
                 sub_id: helper.finish_element("subID", self.sub_id)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"merchantID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"subID")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -1679,6 +1738,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SignedInfo(None) => Some(S::SignedInfo(None)),
+                S::SignatureValue(None) => Some(S::SignatureValue(None)),
+                S::KeyInfo(None) => Some(S::KeyInfo(None)),
+                S::Object(None) => Some(S::Object(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -1826,6 +1893,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -1846,6 +1917,34 @@ pub mod quick_xml_deserialize {
                 key_info: self.key_info,
                 object: self.object,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"SignedInfo")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"SignatureValue")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"KeyInfo")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Object")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -2075,6 +2174,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::CanonicalizationMethod(None) => Some(S::CanonicalizationMethod(None)),
+                S::SignatureMethod(None) => Some(S::SignatureMethod(None)),
+                S::Reference(None) => Some(S::Reference(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -2196,6 +2302,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -2220,6 +2330,28 @@ pub mod quick_xml_deserialize {
                     .finish_element("SignatureMethod", self.signature_method)?,
                 reference: helper.finish_vec(1usize, None, self.reference)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"CanonicalizationMethod")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"SignatureMethod")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Reference")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -2356,6 +2488,13 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <Base64String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -2507,6 +2646,15 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::KeyInfoTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -3264,6 +3412,52 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::KeyInfoTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"KeyName")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"KeyValue")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"RetrievalMethod")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509Data")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"PGPData")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"SPKIData")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"MgmtData")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ObjectTypeDeserializer {
@@ -3562,6 +3756,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::HmacOutputLength(None) => Some(S::HmacOutputLength(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -3627,6 +3826,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -3647,6 +3850,16 @@ pub mod quick_xml_deserialize {
                 algorithm: self.algorithm,
                 hmac_output_length: self.hmac_output_length,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"HMACOutputLength")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -3878,6 +4091,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Transforms(None) => Some(S::Transforms(None)),
+                S::DigestMethod(None) => Some(S::DigestMethod(None)),
+                S::DigestValue(None) => Some(S::DigestValue(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -3996,6 +4216,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -4017,6 +4241,28 @@ pub mod quick_xml_deserialize {
                 digest_method: helper.finish_element("DigestMethod", self.digest_method)?,
                 digest_value: helper.finish_element("DigestValue", self.digest_value)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Transforms")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"DigestMethod")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"DigestValue")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -4159,6 +4405,15 @@ pub mod quick_xml_deserialize {
             Ok(super::KeyValueType {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::KeyValueTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -4456,6 +4711,22 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::KeyValueTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"DSAKeyValue")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"RSAKeyValue")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct RetrievalMethodTypeDeserializer {
@@ -4574,6 +4845,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Transforms(None) => Some(S::Transforms(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -4634,6 +4910,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -4655,6 +4935,16 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 transforms: self.transforms,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Transforms")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -4796,6 +5086,15 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::X509DataTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct X509DataTypeContentDeserializer {
@@ -4900,6 +5199,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Content19(None) => Some(S::Content19(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -4957,6 +5261,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -4976,6 +5284,15 @@ pub mod quick_xml_deserialize {
             Ok(super::X509DataTypeContent {
                 content_19: helper.finish_element("Content19", self.content_19)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::X509DataContent19Type as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -5118,6 +5435,15 @@ pub mod quick_xml_deserialize {
             Ok(super::PgpDataType {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::PgpDataTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -5420,6 +5746,20 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::PgpDataTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::PgpDataContent23Type as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            if <super::PgpDataContent25Type as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct SpkiDataTypeDeserializer {
@@ -5560,6 +5900,15 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::SpkiDataTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct SpkiDataTypeContentDeserializer {
@@ -5664,6 +6013,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SpkiSexp(None) => Some(S::SpkiSexp(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -5725,6 +6079,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -5744,6 +6102,16 @@ pub mod quick_xml_deserialize {
             Ok(super::SpkiDataTypeContent {
                 spki_sexp: helper.finish_element("SPKISexp", self.spki_sexp)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"SPKISexp")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -5851,6 +6219,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Transform(None) => Some(S::Transform(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -5911,6 +6284,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -5930,6 +6307,16 @@ pub mod quick_xml_deserialize {
             Ok(super::TransformsType {
                 transform: helper.finish_vec(1usize, None, self.transform)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Transform")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -6308,6 +6695,15 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Content36(None) => Some(S::Content36(None)),
+                S::G(None) => Some(S::G(None)),
+                S::Y(None) => Some(S::Y(None)),
+                S::J(None) => Some(S::J(None)),
+                S::Content37(None) => Some(S::Content37(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -6478,6 +6874,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -6501,6 +6901,30 @@ pub mod quick_xml_deserialize {
                 j: self.j,
                 content_37: self.content_37,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: DsaKeyValueContent36Type as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"G")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Y")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"J")
+            ) {
+                return true;
+            }
+            if < super :: DsaKeyValueContent37Type as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -6658,6 +7082,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Modulus(None) => Some(S::Modulus(None)),
+                S::Exponent(None) => Some(S::Exponent(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -6747,6 +7177,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -6767,6 +7201,22 @@ pub mod quick_xml_deserialize {
                 modulus: helper.finish_element("Modulus", self.modulus)?,
                 exponent: helper.finish_element("Exponent", self.exponent)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Modulus")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Exponent")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -6928,6 +7378,11 @@ pub mod quick_xml_deserialize {
             Ok(super::X509DataContent19Type {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: X509DataContent19TypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -7511,6 +7966,40 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::X509DataContent19TypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509IssuerSerial")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509SKI")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509SubjectName")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509Certificate")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509CRL")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PgpDataContent23TypeDeserializer {
@@ -7663,6 +8152,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PgpKeyId(None) => Some(S::PgpKeyId(None)),
+                S::PgpKeyPacket(None) => Some(S::PgpKeyPacket(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -7753,6 +8248,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -7773,6 +8272,22 @@ pub mod quick_xml_deserialize {
                 pgp_key_id: helper.finish_element("PGPKeyID", self.pgp_key_id)?,
                 pgp_key_packet: self.pgp_key_packet,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"PGPKeyID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"PGPKeyPacket")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -7878,6 +8393,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PgpKeyPacket(None) => Some(S::PgpKeyPacket(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -7939,6 +8459,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -7958,6 +8482,16 @@ pub mod quick_xml_deserialize {
             Ok(super::PgpDataContent25Type {
                 pgp_key_packet: helper.finish_element("PGPKeyPacket", self.pgp_key_packet)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"PGPKeyPacket")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -8113,6 +8647,15 @@ pub mod quick_xml_deserialize {
                 algorithm: self.algorithm,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::TransformTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -8314,6 +8857,16 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::TransformTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"XPath")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct DsaKeyValueContent36TypeDeserializer {
@@ -8467,6 +9020,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::P(None) => Some(S::P(None)),
+                S::Q(None) => Some(S::Q(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -8556,6 +9115,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -8576,6 +9139,22 @@ pub mod quick_xml_deserialize {
                 p: helper.finish_element("P", self.p)?,
                 q: helper.finish_element("Q", self.q)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"P")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Q")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -8734,6 +9313,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Seed(None) => Some(S::Seed(None)),
+                S::PgenCounter(None) => Some(S::PgenCounter(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -8823,6 +9408,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -8843,6 +9432,22 @@ pub mod quick_xml_deserialize {
                 seed: helper.finish_element("Seed", self.seed)?,
                 pgen_counter: helper.finish_element("PgenCounter", self.pgen_counter)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"Seed")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"PgenCounter")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -9000,6 +9605,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::X509IssuerName(None) => Some(S::X509IssuerName(None)),
+                S::X509SerialNumber(None) => Some(S::X509SerialNumber(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -9089,6 +9700,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -9110,6 +9725,22 @@ pub mod quick_xml_deserialize {
                 x509_serial_number: helper
                     .finish_element("X509SerialNumber", self.x509_serial_number)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509IssuerName")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_DS),
+                Some(b"X509SerialNumber")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

@@ -196,6 +196,11 @@ pub mod annotations {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Page(None) => Some(S::Page(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -256,6 +261,10 @@ pub mod annotations {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -273,6 +282,16 @@ pub mod annotations {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::AnnotationsXElementType { page: self.page })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Page")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -390,6 +409,11 @@ pub mod annotations {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FileLoc(None) => Some(S::FileLoc(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -450,6 +474,10 @@ pub mod annotations {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -470,6 +498,16 @@ pub mod annotations {
                     page_id: self.page_id,
                     file_loc: helper.finish_element("FileLoc", self.file_loc)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FileLoc")
+                ) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -918,6 +956,11 @@ pub mod annotion {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Annot(None) => Some(S::Annot(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -978,6 +1021,10 @@ pub mod annotion {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -997,6 +1044,16 @@ pub mod annotion {
                 Ok(super::PageAnnotXElementType {
                     annot: helper.finish_vec(1usize, None, self.annot)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Annot")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -1302,6 +1359,13 @@ pub mod annotion {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Remark(None) => Some(S::Remark(None)),
+                    S::Parameters(None) => Some(S::Parameters(None)),
+                    S::Appearance(None) => Some(S::Appearance(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -1420,6 +1484,10 @@ pub mod annotion {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -1451,6 +1519,28 @@ pub mod annotion {
                     parameters: self.parameters,
                     appearance: helper.finish_element("Appearance", self.appearance)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Remark")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Parameters")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Appearance")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -1564,6 +1654,11 @@ pub mod annotion {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Parameter(None) => Some(S::Parameter(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -1624,6 +1719,10 @@ pub mod annotion {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -1643,6 +1742,16 @@ pub mod annotion {
                 Ok(super::PageAnnotAnnotParametersXElementType {
                     parameter: helper.finish_vec(1usize, None, self.parameter)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Parameter")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -1810,6 +1919,11 @@ pub mod annotion {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: super :: page :: CtLayerContent9XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PageAnnotAnnotParametersParameterXElementTypeDeserializer {
@@ -1955,6 +2069,13 @@ pub mod annotion {
                     name: self.name,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -2565,6 +2686,11 @@ pub mod attachments {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Attachment(None) => Some(S::Attachment(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -2625,6 +2751,10 @@ pub mod attachments {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -2644,6 +2774,16 @@ pub mod attachments {
                 Ok(super::AttachmentsXElementType {
                     attachment: self.attachment,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Attachment")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -2815,6 +2955,11 @@ pub mod attachments {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FileLoc(None) => Some(S::FileLoc(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -2875,6 +3020,10 @@ pub mod attachments {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -2902,6 +3051,16 @@ pub mod attachments {
                     usage: self.usage,
                     file_loc: helper.finish_element("FileLoc", self.file_loc)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FileLoc")
+                ) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -3221,6 +3380,11 @@ pub mod custom_tags {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CustomTag(None) => Some(S::CustomTag(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -3281,6 +3445,10 @@ pub mod custom_tags {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -3300,6 +3468,16 @@ pub mod custom_tags {
                 Ok(super::CustomTagsXElementType {
                     custom_tag: self.custom_tag,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CustomTag")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -3466,6 +3644,12 @@ pub mod custom_tags {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SchemaLoc(None) => Some(S::SchemaLoc(None)),
+                    S::FileLoc(None) => Some(S::FileLoc(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -3555,6 +3739,10 @@ pub mod custom_tags {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -3576,6 +3764,22 @@ pub mod custom_tags {
                     schema_loc: self.schema_loc,
                     file_loc: helper.finish_element("FileLoc", self.file_loc)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"SchemaLoc")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FileLoc")
+                ) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -4475,6 +4679,11 @@ pub mod definition {
                     content: helper.finish_vec(1usize, Some(2usize), self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtActionXTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtActionXTypeContentDeserializer {
@@ -5156,6 +5365,46 @@ pub mod definition {
             ) -> Result<super::CtActionXTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Region")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Goto")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"URI")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"GotoA")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Sound")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Movie")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtDestXTypeDeserializer {
@@ -5535,6 +5784,14 @@ pub mod definition {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::PhysicalBox(None) => Some(S::PhysicalBox(None)),
+                    S::ApplicationBox(None) => Some(S::ApplicationBox(None)),
+                    S::ContentBox(None) => Some(S::ContentBox(None)),
+                    S::BleedBox(None) => Some(S::BleedBox(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -5682,6 +5939,10 @@ pub mod definition {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -5704,6 +5965,34 @@ pub mod definition {
                     content_box: self.content_box,
                     bleed_box: self.bleed_box,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PhysicalBox")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ApplicationBox")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ContentBox")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"BleedBox")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -5809,6 +6098,11 @@ pub mod definition {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Area(None) => Some(S::Area(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -5869,6 +6163,10 @@ pub mod definition {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -5888,6 +6186,16 @@ pub mod definition {
                 Ok(super::CtRegionXType {
                     area: helper.finish_vec(1usize, None, self.area)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Area")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -6183,6 +6491,22 @@ pub mod definition {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::CtActionGotoXElementType, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Dest")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Bookmark")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -6743,6 +7067,11 @@ pub mod definition {
                     start: self.start,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtRegionAreaXElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -7399,6 +7728,46 @@ pub mod definition {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::CtRegionAreaXElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Move")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Line")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"OuadraticBezier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CubicBezier")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Arc")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Close")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -9820,6 +10189,11 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Dest(None) => Some(S::Dest(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -9880,6 +10254,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -9900,6 +10278,16 @@ pub mod document {
                     name: self.name,
                     dest: helper.finish_element("Dest", self.dest)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Dest")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -10074,6 +10462,12 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::OutlineElem(None) => Some(S::OutlineElem(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -10163,6 +10557,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -10186,6 +10584,22 @@ pub mod document {
                     actions: self.actions,
                     outline_elem: self.outline_elem,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"OutlineElem")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -10629,6 +11043,18 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Edit(None) => Some(S::Edit(None)),
+                    S::Annot(None) => Some(S::Annot(None)),
+                    S::Export(None) => Some(S::Export(None)),
+                    S::Signature(None) => Some(S::Signature(None)),
+                    S::Watermark(None) => Some(S::Watermark(None)),
+                    S::PrintScreen(None) => Some(S::PrintScreen(None)),
+                    S::Print(None) => Some(S::Print(None)),
+                    S::ValidPeriod(None) => Some(S::ValidPeriod(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -10892,6 +11318,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -10918,6 +11348,58 @@ pub mod document {
                     print: self.print,
                     valid_period: self.valid_period,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Edit")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Annot")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Export")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Signature")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Watermark")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PrintScreen")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Print")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ValidPeriod")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -11074,6 +11556,11 @@ pub mod document {
                 Ok(super::CtVPreferencesXType {
                     content: helper.finish_vec(0usize, Some(7usize), self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtVPreferencesXTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -11951,6 +12438,58 @@ pub mod document {
             ) -> Result<super::CtVPreferencesXTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PageMode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PageLayout")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"TabDisplay")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"HideToolbar")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"HideMenubar")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"HideWindowUI")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ZoomMode")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Zoom")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DocumentXElementTypeDeserializer {
@@ -12546,6 +13085,21 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CommonData(None) => Some(S::CommonData(None)),
+                    S::Pages(None) => Some(S::Pages(None)),
+                    S::Outlines(None) => Some(S::Outlines(None)),
+                    S::Permissions(None) => Some(S::Permissions(None)),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::VPreferences(None) => Some(S::VPreferences(None)),
+                    S::Bookmarks(None) => Some(S::Bookmarks(None)),
+                    S::Annotations(None) => Some(S::Annotations(None)),
+                    S::CustomTags(None) => Some(S::CustomTags(None)),
+                    S::Attachments(None) => Some(S::Attachments(None)),
+                    S::Extensions(None) => Some(S::Extensions(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -12896,6 +13450,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -12925,6 +13483,76 @@ pub mod document {
                     attachments: self.attachments,
                     extensions: self.extensions,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CommonData")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Pages")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Outlines")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Permissions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"VPreferences")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Bookmarks")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Annotations")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CustomTags")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Attachments")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Extensions")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -13442,6 +14070,16 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MaxUnitId(None) => Some(S::MaxUnitId(None)),
+                    S::PageArea(None) => Some(S::PageArea(None)),
+                    S::PublicRes(None) => Some(S::PublicRes(None)),
+                    S::DocumentRes(None) => Some(S::DocumentRes(None)),
+                    S::TemplatePage(None) => Some(S::TemplatePage(None)),
+                    S::DefaultCs(None) => Some(S::DefaultCs(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -13647,6 +14285,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -13671,6 +14313,46 @@ pub mod document {
                     template_page: self.template_page,
                     default_cs: self.default_cs,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"MaxUnitID")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PageArea")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PublicRes")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DocumentRes")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"TemplatePage")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DefaultCs")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -13781,6 +14463,11 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Page(None) => Some(S::Page(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -13841,6 +14528,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -13860,6 +14551,16 @@ pub mod document {
                 Ok(super::DocumentPagesXElementType {
                     page: helper.finish_vec(1usize, None, self.page)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Page")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -13972,6 +14673,11 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::OutlineElem(None) => Some(S::OutlineElem(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -14032,6 +14738,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -14051,6 +14761,16 @@ pub mod document {
                 Ok(super::DocumentOutlinesXElementType {
                     outline_elem: helper.finish_vec(1usize, None, self.outline_elem)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"OutlineElem")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -14160,6 +14880,11 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Bookmark(None) => Some(S::Bookmark(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -14220,6 +14945,10 @@ pub mod document {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -14239,6 +14968,16 @@ pub mod document {
                 Ok(super::DocumentBookmarksXElementType {
                     bookmark: helper.finish_vec(1usize, None, self.bookmark)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Bookmark")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -16194,6 +16933,11 @@ pub mod extensions {
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtExtensionXTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtExtensionXTypeContentDeserializer {
@@ -16581,6 +17325,28 @@ pub mod extensions {
             ) -> Result<super::CtExtensionXTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Property")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Data")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ExtendData")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ExtensionsXElementTypeDeserializer {
@@ -16687,6 +17453,11 @@ pub mod extensions {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Extension(None) => Some(S::Extension(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -16747,6 +17518,10 @@ pub mod extensions {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -16766,6 +17541,16 @@ pub mod extensions {
                 Ok(super::ExtensionsXElementType {
                     extension: helper.finish_vec(1usize, None, self.extension)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Extension")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -16915,6 +17700,13 @@ pub mod extensions {
                     type_: self.type_,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -18138,6 +18930,23 @@ pub mod ofd {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::DocId(None) => Some(S::DocId(None)),
+                    S::Title(None) => Some(S::Title(None)),
+                    S::Author(None) => Some(S::Author(None)),
+                    S::Subject(None) => Some(S::Subject(None)),
+                    S::Abstract(None) => Some(S::Abstract(None)),
+                    S::CreationDate(None) => Some(S::CreationDate(None)),
+                    S::ModDate(None) => Some(S::ModDate(None)),
+                    S::DocUsage(None) => Some(S::DocUsage(None)),
+                    S::Cover(None) => Some(S::Cover(None)),
+                    S::Keywords(None) => Some(S::Keywords(None)),
+                    S::Creator(None) => Some(S::Creator(None)),
+                    S::CreatorVersion(None) => Some(S::CreatorVersion(None)),
+                    S::CustomDatas(None) => Some(S::CustomDatas(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -18546,6 +19355,10 @@ pub mod ofd {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -18577,6 +19390,88 @@ pub mod ofd {
                     creator_version: self.creator_version,
                     custom_datas: self.custom_datas,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DocID")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Author")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Subject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Abstract")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CreationDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ModDate")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DocUsage")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Cover")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Keywords")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Creator")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CreatorVersion")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CustomDatas")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -18707,6 +19602,11 @@ pub mod ofd {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::DocBody(None) => Some(S::DocBody(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -18767,6 +19667,10 @@ pub mod ofd {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -18788,6 +19692,16 @@ pub mod ofd {
                     doc_type: self.doc_type,
                     doc_body: helper.finish_vec(1usize, None, self.doc_body)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DocBody")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -18897,6 +19811,11 @@ pub mod ofd {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Keyword(None) => Some(S::Keyword(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -18957,6 +19876,10 @@ pub mod ofd {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -18976,6 +19899,16 @@ pub mod ofd {
                 Ok(super::CtDocInfoKeywordsXElementType {
                     keyword: helper.finish_vec(1usize, None, self.keyword)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Keyword")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -19087,6 +20020,11 @@ pub mod ofd {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CustomData(None) => Some(S::CustomData(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -19147,6 +20085,10 @@ pub mod ofd {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -19166,6 +20108,16 @@ pub mod ofd {
                 Ok(super::CtDocInfoCustomDatasXElementType {
                     custom_data: helper.finish_vec(1usize, None, self.custom_data)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CustomData")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -19424,6 +20376,14 @@ pub mod ofd {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::DocInfo(None) => Some(S::DocInfo(None)),
+                    S::DocRoot(None) => Some(S::DocRoot(None)),
+                    S::Versions(None) => Some(S::Versions(None)),
+                    S::Signatures(None) => Some(S::Signatures(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -19571,6 +20531,10 @@ pub mod ofd {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -19593,6 +20557,34 @@ pub mod ofd {
                     versions: self.versions,
                     signatures: self.signatures,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DocInfo")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DocRoot")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Versions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Signatures")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -19701,6 +20693,11 @@ pub mod ofd {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Version(None) => Some(S::Version(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -19761,6 +20758,10 @@ pub mod ofd {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -19780,6 +20781,16 @@ pub mod ofd {
                 Ok(super::OfdDocBodyVersionsXElementType {
                     version: helper.finish_vec(1usize, None, self.version)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Version")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -22681,6 +23692,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Segment(None) => Some(S::Segment(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -22741,6 +23757,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -22765,6 +23785,16 @@ pub mod page {
                     end_point: self.end_point,
                     segment: helper.finish_vec(2usize, None, self.segment)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Segment")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -22895,6 +23925,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Glyphs(None) => Some(S::Glyphs(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -22955,6 +23990,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -22977,6 +24016,16 @@ pub mod page {
                     glyph_count: self.glyph_count,
                     glyphs: self.glyphs,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Glyphs")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -23082,6 +24131,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Area(None) => Some(S::Area(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -23142,6 +24196,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -23158,6 +24216,16 @@ pub mod page {
                 Ok(super::CtClipXType {
                     area: helper.finish_vec(1usize, None, self.area)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Area")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -23342,6 +24410,11 @@ pub mod page {
                     alpha: self.alpha,
                     content: self.content,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtColorXTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -23924,6 +24997,40 @@ pub mod page {
             ) -> Result<super::CtColorXTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Pattern")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"AxialShd")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"RadialShd")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"GouraudShd")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"LaGourandShd")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtCompositeXTypeDeserializer {
@@ -24193,6 +25300,12 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::Clips(None) => Some(S::Clips(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -24282,6 +25395,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -24315,6 +25432,22 @@ pub mod page {
                     actions: self.actions,
                     clips: self.clips,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clips")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -24483,6 +25616,12 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Point(None) => Some(S::Point(None)),
+                    S::BackColor(None) => Some(S::BackColor(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -24572,6 +25711,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -24593,6 +25736,22 @@ pub mod page {
                     point: helper.finish_vec(3usize, None, self.point)?,
                     back_color: self.back_color.map(Box::new),
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Point")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"BackColor")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -25459,6 +26618,58 @@ pub mod page {
             ) -> Result<super::CtGraphicUnitXType, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CT_Text")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CtPageBlockTextObject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CT_Path")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CtPageBlockPathObject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CT_Image")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CtPageBlockImageObject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CT_Composite")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CtPageBlockCompositeObject")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtGraphicUnitDynDeserializer {
@@ -25719,6 +26930,12 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::Clips(None) => Some(S::Clips(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -25808,6 +27025,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -25840,6 +27061,22 @@ pub mod page {
                     actions: self.actions,
                     clips: self.clips,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clips")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -26176,6 +27413,13 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::Clips(None) => Some(S::Clips(None)),
+                    S::Border(None) => Some(S::Border(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -26294,6 +27538,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -26327,6 +27575,28 @@ pub mod page {
                     clips: self.clips,
                     border: self.border,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clips")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Border")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -26510,6 +27780,12 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Point(None) => Some(S::Point(None)),
+                    S::BackColor(None) => Some(S::BackColor(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -26599,6 +27875,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -26621,6 +27901,22 @@ pub mod page {
                     point: helper.finish_vec(4usize, None, self.point)?,
                     back_color: self.back_color.map(Box::new),
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Point")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"BackColor")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -26786,6 +28082,11 @@ pub mod page {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtLayerContent9XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtPageBlockXTypeDeserializer {
@@ -26932,6 +28233,11 @@ pub mod page {
                 Ok(super::CtPageBlockXType {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtLayerContent9XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -27364,6 +28670,15 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::Clips(None) => Some(S::Clips(None)),
+                    S::StrokeColor(None) => Some(S::StrokeColor(None)),
+                    S::FillColor(None) => Some(S::FillColor(None)),
+                    S::AbbreviatedData(None) => Some(S::AbbreviatedData(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -27540,6 +28855,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -27576,6 +28895,40 @@ pub mod page {
                     abbreviated_data: helper
                         .finish_element("AbbreviatedData", self.abbreviated_data)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clips")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"StrokeColor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FillColor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"AbbreviatedData")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -27746,6 +29099,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CellContent(None) => Some(S::CellContent(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -27806,6 +29164,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -27832,6 +29194,16 @@ pub mod page {
                     ctm: self.ctm,
                     cell_content: helper.finish_element("CellContent", self.cell_content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CellContent")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -28023,6 +29395,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Seqment(None) => Some(S::Seqment(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -28083,6 +29460,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -28111,6 +29492,16 @@ pub mod page {
                     extend: self.extend,
                     seqment: helper.finish_vec(2usize, None, self.seqment)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Seqment")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -28449,6 +29840,11 @@ pub mod page {
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: super :: CtPageBlockTextObjectContent20XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct PageXElementTypeDeserializer {
@@ -28745,6 +30141,15 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Template(None) => Some(S::Template(None)),
+                    S::PageRes(None) => Some(S::PageRes(None)),
+                    S::Area(None) => Some(S::Area(None)),
+                    S::Content(None) => Some(S::Content(None)),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -28921,6 +30326,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -28944,6 +30353,40 @@ pub mod page {
                     content: self.content,
                     actions: self.actions,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Template")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PageRes")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Area")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Content")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -29061,6 +30504,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Color(None) => Some(S::Color(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -29121,6 +30569,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -29141,6 +30593,16 @@ pub mod page {
                     position: self.position,
                     color: Box::new(helper.finish_element("Color", self.color)?),
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Color")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -29314,6 +30776,11 @@ pub mod page {
                     ctm: self.ctm,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtClipAreaXElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -29608,6 +31075,22 @@ pub mod page {
             ) -> Result<super::CtClipAreaXElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Path")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Text")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtGraphicUnitActionsXElementTypeDeserializer {
@@ -29721,6 +31204,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Action(None) => Some(S::Action(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -29781,6 +31269,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -29800,6 +31292,16 @@ pub mod page {
                 Ok(super::CtGraphicUnitActionsXElementType {
                     action: helper.finish_vec(1usize, None, self.action)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Action")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -29907,6 +31409,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Clip(None) => Some(S::Clip(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -29967,6 +31474,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -29986,6 +31497,16 @@ pub mod page {
                 Ok(super::CtGraphicUnitClipsXElementType {
                     clip: helper.finish_vec(1usize, None, self.clip)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clip")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -30119,6 +31640,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Color(None) => Some(S::Color(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -30179,6 +31705,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -30201,6 +31731,16 @@ pub mod page {
                     edge_flag: self.edge_flag,
                     color: Box::new(helper.finish_element("Color", self.color)?),
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Color")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -30568,6 +32108,11 @@ pub mod page {
                     id: self.id,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: super :: CtPageBlockTextObjectContent20XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -31020,6 +32565,15 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::Clips(None) => Some(S::Clips(None)),
+                    S::StrokeColor(None) => Some(S::StrokeColor(None)),
+                    S::FillColor(None) => Some(S::FillColor(None)),
+                    S::AbbreviatedData(None) => Some(S::AbbreviatedData(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -31196,6 +32750,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -31236,6 +32794,40 @@ pub mod page {
                     abbreviated_data: helper
                         .finish_element("AbbreviatedData", self.abbreviated_data)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clips")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"StrokeColor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FillColor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"AbbreviatedData")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -31589,6 +33181,13 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::Clips(None) => Some(S::Clips(None)),
+                    S::Border(None) => Some(S::Border(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -31707,6 +33306,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -31744,6 +33347,28 @@ pub mod page {
                     clips: self.clips,
                     border: self.border,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clips")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Border")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -32038,6 +33663,12 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Actions(None) => Some(S::Actions(None)),
+                    S::Clips(None) => Some(S::Clips(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -32127,6 +33758,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -32161,6 +33796,22 @@ pub mod page {
                     actions: self.actions,
                     clips: self.clips,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Actions")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Clips")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -32320,6 +33971,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::BorderColor(None) => Some(S::BorderColor(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -32380,6 +34036,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -32404,6 +34064,16 @@ pub mod page {
                     dash_pattern: self.dash_pattern,
                     border_color: self.border_color,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"BorderColor")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -32529,6 +34199,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Color(None) => Some(S::Color(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -32589,6 +34264,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -32610,6 +34289,16 @@ pub mod page {
                     y: self.y,
                     color: Box::new(helper.finish_element("Color", self.color)?),
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Color")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -32772,6 +34461,11 @@ pub mod page {
                     id: self.id,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtLayerContent9XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -33342,6 +35036,40 @@ pub mod page {
             ) -> Result<super::CtLayerContent9XType, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"TextObject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PathObject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ImageObject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CompositeObject")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"PageBlock")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtPatternCellContentXElementTypeDeserializer {
@@ -33503,6 +35231,11 @@ pub mod page {
                     thumbnail: self.thumbnail,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtLayerContent9XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -33669,6 +35402,13 @@ pub mod page {
                     deltay: self.deltay,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -33874,6 +35614,11 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Layer(None) => Some(S::Layer(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -33934,6 +35679,10 @@ pub mod page {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -33953,6 +35702,16 @@ pub mod page {
                 Ok(super::PageContentXElementType {
                     layer: helper.finish_vec(1usize, None, self.layer)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Layer")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -34133,6 +35892,11 @@ pub mod page {
                     id: self.id,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CtLayerContent9XType as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
     }
@@ -37875,7 +39639,7 @@ pub mod page {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser_types::quick_xml::{
-        DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
         DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
         RawByteStr, WithDeserializer,
     };
@@ -38568,6 +40332,46 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
         ) -> Result<super::CtPageBlockTextObjectContent20XType, Error> {
             Self::finish_state(helper, *self.state__)
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"Actions")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"Clips")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"FillColor")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"StrokeColor")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CGTransform")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"TextCode")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }
@@ -39540,6 +41344,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Palette(None) => Some(S::Palette(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -39600,6 +41409,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -39622,6 +41435,16 @@ pub mod res {
                     profile: self.profile,
                     palette: self.palette,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Palette")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -39840,6 +41663,12 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FillColor(None) => Some(S::FillColor(None)),
+                    S::StrokeColor(None) => Some(S::StrokeColor(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -39929,6 +41758,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -39956,6 +41789,22 @@ pub mod res {
                     fill_color: self.fill_color,
                     stroke_color: self.stroke_color,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FillColor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"StrokeColor")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -40117,6 +41966,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FontFile(None) => Some(S::FontFile(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -40177,6 +42031,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -40200,6 +42058,16 @@ pub mod res {
                     fixed_width: self.fixed_width,
                     font_file: self.font_file,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FontFile")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -40323,6 +42191,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MediaFile(None) => Some(S::MediaFile(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -40383,6 +42256,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -40404,6 +42281,16 @@ pub mod res {
                     format: self.format,
                     media_file: helper.finish_element("MediaFile", self.media_file)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"MediaFile")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -40628,6 +42515,13 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Thumbnail(None) => Some(S::Thumbnail(None)),
+                    S::Substitution(None) => Some(S::Substitution(None)),
+                    S::Content(None) => Some(S::Content(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -40746,6 +42640,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -40769,6 +42667,28 @@ pub mod res {
                     substitution: self.substitution,
                     content: helper.finish_element("Content", self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Thumbnail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Substitution")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Content")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -40928,6 +42848,11 @@ pub mod res {
                     base_loc: self.base_loc,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ResXElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -41534,6 +43459,40 @@ pub mod res {
             ) -> Result<super::ResXElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ColorSpaces")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DrawParams")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Fonts")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"MultiMedias")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CompositeGraphicUnits")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CtColorSpacePaletteXElementTypeDeserializer {
@@ -41640,6 +43599,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Cv(None) => Some(S::Cv(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -41700,6 +43664,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -41719,6 +43687,16 @@ pub mod res {
                 Ok(super::CtColorSpacePaletteXElementType {
                     cv: helper.finish_vec(1usize, None, self.cv)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CV")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -41835,6 +43813,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::ColorSpace(None) => Some(S::ColorSpace(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -41895,6 +43878,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -41914,6 +43901,16 @@ pub mod res {
                 Ok(super::ResColorSpacesXElementType {
                     color_space: helper.finish_vec(1usize, None, self.color_space)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"ColorSpace")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -42030,6 +44027,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::DrawParam(None) => Some(S::DrawParam(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -42090,6 +44092,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -42109,6 +44115,16 @@ pub mod res {
                 Ok(super::ResDrawParamsXElementType {
                     draw_param: helper.finish_vec(1usize, None, self.draw_param)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DrawParam")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -42214,6 +44230,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Font(None) => Some(S::Font(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -42274,6 +44295,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -42293,6 +44318,16 @@ pub mod res {
                 Ok(super::ResFontsXElementType {
                     font: helper.finish_vec(1usize, None, self.font)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Font")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -42409,6 +44444,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MultiMedia(None) => Some(S::MultiMedia(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -42469,6 +44509,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -42488,6 +44532,16 @@ pub mod res {
                 Ok(super::ResMultiMediasXElementType {
                     multi_media: helper.finish_vec(1usize, None, self.multi_media)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"MultiMedia")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -42602,6 +44656,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CompositeGraphicUnit(None) => Some(S::CompositeGraphicUnit(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -42673,6 +44732,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -42696,6 +44759,16 @@ pub mod res {
                         self.composite_graphic_unit,
                     )?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CompositeGraphicUnit")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -42846,6 +44919,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Palette(None) => Some(S::Palette(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -42906,6 +44984,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -42929,6 +45011,16 @@ pub mod res {
                     id: self.id,
                     palette: self.palette,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Palette")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -43161,6 +45253,12 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FillColor(None) => Some(S::FillColor(None)),
+                    S::StrokeColor(None) => Some(S::StrokeColor(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -43250,6 +45348,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -43278,6 +45380,22 @@ pub mod res {
                     fill_color: self.fill_color,
                     stroke_color: self.stroke_color,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FillColor")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"StrokeColor")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -43450,6 +45568,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FontFile(None) => Some(S::FontFile(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -43510,6 +45633,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -43537,6 +45664,16 @@ pub mod res {
                     id: self.id,
                     font_file: self.font_file,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FontFile")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -43672,6 +45809,11 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MediaFile(None) => Some(S::MediaFile(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -43732,6 +45874,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -43754,6 +45900,16 @@ pub mod res {
                     id: self.id,
                     media_file: helper.finish_element("MediaFile", self.media_file)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"MediaFile")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -43992,6 +46148,13 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Thumbnail(None) => Some(S::Thumbnail(None)),
+                    S::Substitution(None) => Some(S::Substitution(None)),
+                    S::Content(None) => Some(S::Content(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -44110,6 +46273,10 @@ pub mod res {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -44134,6 +46301,28 @@ pub mod res {
                         content: helper.finish_element("Content", self.content)?,
                     },
                 )
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Thumbnail")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Substitution")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Content")
+                ) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -45972,6 +48161,12 @@ pub mod signature {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::SiqnedInfo(None) => Some(S::SiqnedInfo(None)),
+                    S::SignedValue(None) => Some(S::SignedValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -46061,6 +48256,10 @@ pub mod signature {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -46081,6 +48280,22 @@ pub mod signature {
                     siqned_info: helper.finish_element("SiqnedInfo", self.siqned_info)?,
                     signed_value: helper.finish_element("SignedValue", self.signed_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"SiqnedInfo")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"SignedValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -46426,6 +48641,16 @@ pub mod signature {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Provider(None) => Some(S::Provider(None)),
+                    S::SignatureMethod(None) => Some(S::SignatureMethod(None)),
+                    S::SianatureDateTime(None) => Some(S::SianatureDateTime(None)),
+                    S::References(None) => Some(S::References(None)),
+                    S::StampAnnot(None) => Some(S::StampAnnot(None)),
+                    S::Seal(None) => Some(S::Seal(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -46634,6 +48859,10 @@ pub mod signature {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -46658,6 +48887,46 @@ pub mod signature {
                     stamp_annot: self.stamp_annot,
                     seal: self.seal,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Provider")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"SignatureMethod")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"SianatureDateTime")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"References")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"StampAnnot")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Seal")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -46891,6 +49160,11 @@ pub mod signature {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Reference(None) => Some(S::Reference(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -46951,6 +49225,10 @@ pub mod signature {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -46971,6 +49249,16 @@ pub mod signature {
                     check_method: self.check_method,
                     reference: helper.finish_vec(1usize, None, self.reference)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Reference")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -47193,6 +49481,11 @@ pub mod signature {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::BaseLoc(None) => Some(S::BaseLoc(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -47253,6 +49546,10 @@ pub mod signature {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -47272,6 +49569,16 @@ pub mod signature {
                 Ok(super::SianatureSiqnedInfoSealXElementType {
                     base_loc: helper.finish_element("BaseLoc", self.base_loc)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"BaseLoc")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -47396,6 +49703,11 @@ pub mod signature {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CheckValue(None) => Some(S::CheckValue(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -47456,6 +49768,10 @@ pub mod signature {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -47477,6 +49793,16 @@ pub mod signature {
                     file_ref: self.file_ref,
                     check_value: helper.finish_element("CheckValue", self.check_value)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"CheckValue")
+                ) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -48210,6 +50536,12 @@ pub mod signatures {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::MaxSignId(None) => Some(S::MaxSignId(None)),
+                    S::Signature(None) => Some(S::Signature(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -48299,6 +50631,10 @@ pub mod signatures {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -48319,6 +50655,22 @@ pub mod signatures {
                     max_sign_id: self.max_sign_id,
                     signature: self.signature,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"MaxSignId")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"Signature")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -48849,6 +51201,12 @@ pub mod version {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::FileList(None) => Some(S::FileList(None)),
+                    S::DocRoot(None) => Some(S::DocRoot(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -48938,6 +51296,10 @@ pub mod version {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -48962,6 +51324,22 @@ pub mod version {
                     file_list: helper.finish_element("FileList", self.file_list)?,
                     doc_root: helper.finish_element("DocRoot", self.doc_root)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"FileList")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"DocRoot")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -49076,6 +51454,11 @@ pub mod version {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::File(None) => Some(S::File(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -49136,6 +51519,10 @@ pub mod version {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -49155,6 +51542,16 @@ pub mod version {
                 Ok(super::DocVersionFileListXElementType {
                     file: helper.finish_vec(1usize, None, self.file)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                    Some(b"File")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -49296,6 +51693,13 @@ pub mod version {
                     id: self.id,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -49792,6 +52196,13 @@ pub mod xs {
                     type_: self.type_,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
     }

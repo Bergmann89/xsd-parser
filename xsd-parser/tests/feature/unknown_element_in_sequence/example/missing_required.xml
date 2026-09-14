@@ -1,0 +1,4 @@
+<tns:Root xmlns:tns="http://example.com">
+    <tns:Unknown>unknown</tns:Unknown>
+    <tns:B>after</tns:B>
+</tns:Root>

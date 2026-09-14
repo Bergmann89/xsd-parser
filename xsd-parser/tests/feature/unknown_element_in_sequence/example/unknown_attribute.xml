@@ -1,0 +1,3 @@
+<tns:Root xmlns:tns="http://example.com" unknown="attrib">
+    <tns:A>before</tns:A>
+</tns:Root>

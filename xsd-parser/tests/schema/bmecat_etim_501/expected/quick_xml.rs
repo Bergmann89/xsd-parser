@@ -5350,6 +5350,11 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(1usize, Some(2usize), self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: BmecatElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct BmecatElementTypeContentDeserializer {
@@ -5933,6 +5938,40 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::BmecatElementTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"HEADER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"T_NEW_CATALOG")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"T_UPDATE_PRODUCTS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"T_UPDATE_PRICES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"T_NEW_PRODUCTDATA")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HeaderElementTypeDeserializer {
@@ -6239,6 +6278,15 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::GeneratorInfo(None) => Some(S::GeneratorInfo(None)),
+                S::Catalog(None) => Some(S::Catalog(None)),
+                S::Buyer(None) => Some(S::Buyer(None)),
+                S::Supplier(None) => Some(S::Supplier(None)),
+                S::UserDefinedExtensions(None) => Some(S::UserDefinedExtensions(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -6418,6 +6466,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -6442,6 +6494,40 @@ pub mod quick_xml_deserialize {
                 user_defined_extensions: helper
                     .finish_element("USER_DEFINED_EXTENSIONS", self.user_defined_extensions)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"GENERATOR_INFO")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CATALOG")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"BUYER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"USER_DEFINED_EXTENSIONS")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -6552,6 +6638,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Product(None) => Some(S::Product(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -6612,6 +6703,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -6631,6 +6726,16 @@ pub mod quick_xml_deserialize {
             Ok(super::TNewCatalogElementType {
                 product: helper.finish_vec(1usize, None, self.product)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -6756,6 +6861,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Product(None) => Some(S::Product(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -6816,6 +6926,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -6836,6 +6950,16 @@ pub mod quick_xml_deserialize {
                 prev_version: self.prev_version,
                 product: helper.finish_vec(1usize, None, self.product)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -6959,6 +7083,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Product(None) => Some(S::Product(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -7019,6 +7148,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -7039,6 +7172,16 @@ pub mod quick_xml_deserialize {
                 prev_version: self.prev_version,
                 product: helper.finish_vec(1usize, None, self.product)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -7153,6 +7296,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Product(None) => Some(S::Product(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -7213,6 +7361,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -7232,6 +7384,16 @@ pub mod quick_xml_deserialize {
             Ok(super::TNewProductdataElementType {
                 product: helper.finish_vec(1usize, None, self.product)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -7686,6 +7848,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Language(None) => Some(S::Language(None)),
+                S::CatalogId(None) => Some(S::CatalogId(None)),
+                S::CatalogVersion(None) => Some(S::CatalogVersion(None)),
+                S::CatalogName(None) => Some(S::CatalogName(None)),
+                S::Datetime(None) => Some(S::Datetime(None)),
+                S::Territory(None) => Some(S::Territory(None)),
+                S::Currency(None) => Some(S::Currency(None)),
+                S::MimeRoot(None) => Some(S::MimeRoot(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -7949,6 +8123,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -7975,6 +8153,58 @@ pub mod quick_xml_deserialize {
                 currency: self.currency,
                 mime_root: self.mime_root,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"LANGUAGE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CATALOG_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CATALOG_VERSION")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CATALOG_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DATETIME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"TERRITORY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CURRENCY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MIME_ROOT")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -8131,6 +8361,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::BuyerId(None) => Some(S::BuyerId(None)),
+                S::BuyerName(None) => Some(S::BuyerName(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -8220,6 +8456,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -8240,6 +8480,22 @@ pub mod quick_xml_deserialize {
                 buyer_id: self.buyer_id,
                 buyer_name: helper.finish_element("BUYER_NAME", self.buyer_name)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"BUYER_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"BUYER_NAME")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -8492,6 +8748,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SupplierId(None) => Some(S::SupplierId(None)),
+                S::SupplierName(None) => Some(S::SupplierName(None)),
+                S::Address(None) => Some(S::Address(None)),
+                S::MimeInfo(None) => Some(S::MimeInfo(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -8639,6 +8903,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -8661,6 +8929,34 @@ pub mod quick_xml_deserialize {
                 address: self.address,
                 mime_info: self.mime_info,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"ADDRESS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MIME_INFO")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -8769,6 +9065,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfVersion(None) => Some(S::UdxEdxfVersion(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -8829,6 +9130,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -8843,6 +9148,16 @@ pub mod quick_xml_deserialize {
                 udx_edxf_version: helper
                     .finish_element("UDX.EDXF.VERSION", self.udx_edxf_version)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.VERSION")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -9345,6 +9660,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SupplierPid(None) => Some(S::SupplierPid(None)),
+                S::ProductDetails(None) => Some(S::ProductDetails(None)),
+                S::ProductFeatures(None) => Some(S::ProductFeatures(None)),
+                S::ProductOrderDetails(None) => Some(S::ProductOrderDetails(None)),
+                S::ProductPriceDetails(None) => Some(S::ProductPriceDetails(None)),
+                S::UserDefinedExtensions(None) => Some(S::UserDefinedExtensions(None)),
+                S::ProductReference(None) => Some(S::ProductReference(None)),
+                S::ProductLogisticDetails(None) => Some(S::ProductLogisticDetails(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -9614,6 +9941,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -9647,6 +9978,58 @@ pub mod quick_xml_deserialize {
                 product_reference: self.product_reference,
                 product_logistic_details: self.product_logistic_details,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_FEATURES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_ORDER_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_PRICE_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"USER_DEFINED_EXTENSIONS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_REFERENCE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_LOGISTIC_DETAILS")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -10134,6 +10517,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SupplierPid(None) => Some(S::SupplierPid(None)),
+                S::ProductDetails(None) => Some(S::ProductDetails(None)),
+                S::ProductFeatures(None) => Some(S::ProductFeatures(None)),
+                S::ProductOrderDetails(None) => Some(S::ProductOrderDetails(None)),
+                S::ProductPriceDetails(None) => Some(S::ProductPriceDetails(None)),
+                S::UserDefinedExtensions(None) => Some(S::UserDefinedExtensions(None)),
+                S::ProductReference(None) => Some(S::ProductReference(None)),
+                S::ProductLogisticDetails(None) => Some(S::ProductLogisticDetails(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -10403,6 +10798,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -10435,6 +10834,58 @@ pub mod quick_xml_deserialize {
                 product_reference: self.product_reference,
                 product_logistic_details: self.product_logistic_details,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_FEATURES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_ORDER_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_PRICE_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"USER_DEFINED_EXTENSIONS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_REFERENCE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_LOGISTIC_DETAILS")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -10659,6 +11110,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SupplierPid(None) => Some(S::SupplierPid(None)),
+                S::ProductPriceDetails(None) => Some(S::ProductPriceDetails(None)),
+                S::UserDefinedExtensions(None) => Some(S::UserDefinedExtensions(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -10780,6 +11238,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -10806,6 +11268,28 @@ pub mod quick_xml_deserialize {
                 )?,
                 user_defined_extensions: self.user_defined_extensions,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_PRICE_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"USER_DEFINED_EXTENSIONS")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -11127,6 +11611,15 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SupplierPid(None) => Some(S::SupplierPid(None)),
+                S::ProductDetails(None) => Some(S::ProductDetails(None)),
+                S::ProductFeatures(None) => Some(S::ProductFeatures(None)),
+                S::UserDefinedExtensions(None) => Some(S::UserDefinedExtensions(None)),
+                S::ProductReference(None) => Some(S::ProductReference(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -11306,6 +11799,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -11330,6 +11827,40 @@ pub mod quick_xml_deserialize {
                 user_defined_extensions: self.user_defined_extensions,
                 product_reference: self.product_reference,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_FEATURES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"USER_DEFINED_EXTENSIONS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_REFERENCE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -11467,6 +11998,13 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::DtLang as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct DtMlstringDeserializer {
@@ -11597,6 +12135,13 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct CatalogDatetimeElementTypeDeserializer {
@@ -11709,6 +12254,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Date(None) => Some(S::Date(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -11769,6 +12319,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -11789,6 +12343,16 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 date: helper.finish_element("DATE", self.date)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DATE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -11919,6 +12483,13 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -12333,6 +12904,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Contact(None) => Some(S::Contact(None)),
+                S::Street(None) => Some(S::Street(None)),
+                S::Zip(None) => Some(S::Zip(None)),
+                S::City(None) => Some(S::City(None)),
+                S::Country(None) => Some(S::Country(None)),
+                S::VatId(None) => Some(S::VatId(None)),
+                S::Email(None) => Some(S::Email(None)),
+                S::Url(None) => Some(S::Url(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -12596,6 +13179,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -12623,6 +13210,58 @@ pub mod quick_xml_deserialize {
                 email: helper.finish_element("EMAIL", self.email)?,
                 url: self.url,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CONTACT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"STREET")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"ZIP")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CITY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"COUNTRY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"VAT_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"EMAIL")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"URL")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -12728,6 +13367,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Mime(None) => Some(S::Mime(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -12788,6 +13432,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -12807,6 +13455,16 @@ pub mod quick_xml_deserialize {
             Ok(super::MimeInfoElementType {
                 mime: helper.finish_vec(1usize, None, self.mime)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MIME")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -13529,6 +14187,24 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::DescriptionShort(None) => Some(S::DescriptionShort(None)),
+                S::DescriptionLong(None) => Some(S::DescriptionLong(None)),
+                S::InternationalPid(None) => Some(S::InternationalPid(None)),
+                S::SupplierAltPid(None) => Some(S::SupplierAltPid(None)),
+                S::BuyerPid(None) => Some(S::BuyerPid(None)),
+                S::ManufacturerPid(None) => Some(S::ManufacturerPid(None)),
+                S::ManufacturerName(None) => Some(S::ManufacturerName(None)),
+                S::ManufacturerTypeDescr(None) => Some(S::ManufacturerTypeDescr(None)),
+                S::DeliveryTime(None) => Some(S::DeliveryTime(None)),
+                S::SpecialTreatmentClass(None) => Some(S::SpecialTreatmentClass(None)),
+                S::Keyword(None) => Some(S::Keyword(None)),
+                S::Remarks(None) => Some(S::Remarks(None)),
+                S::ProductStatus(None) => Some(S::ProductStatus(None)),
+                S::ProductType(None) => Some(S::ProductType(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -13972,6 +14648,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -14004,6 +14684,94 @@ pub mod quick_xml_deserialize {
                 product_status: self.product_status,
                 product_type: self.product_type,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DESCRIPTION_SHORT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DESCRIPTION_LONG")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"INTERNATIONAL_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SUPPLIER_ALT_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"BUYER_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MANUFACTURER_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MANUFACTURER_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MANUFACTURER_TYPE_DESCR")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DELIVERY_TIME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"SPECIAL_TREATMENT_CLASS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"KEYWORD")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"REMARKS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_STATUS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_TYPE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -14211,6 +14979,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::ReferenceFeatureSystemName(None) => Some(S::ReferenceFeatureSystemName(None)),
+                S::ReferenceFeatureGroupId(None) => Some(S::ReferenceFeatureGroupId(None)),
+                S::Feature(None) => Some(S::Feature(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -14351,6 +15126,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -14378,6 +15157,28 @@ pub mod quick_xml_deserialize {
                 )?,
                 feature: self.feature,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"REFERENCE_FEATURE_SYSTEM_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"REFERENCE_FEATURE_GROUP_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"FEATURE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -14729,6 +15530,16 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::OrderUnit(None) => Some(S::OrderUnit(None)),
+                S::ContentUnit(None) => Some(S::ContentUnit(None)),
+                S::NoCuPerOu(None) => Some(S::NoCuPerOu(None)),
+                S::PriceQuantity(None) => Some(S::PriceQuantity(None)),
+                S::QuantityMin(None) => Some(S::QuantityMin(None)),
+                S::QuantityInterval(None) => Some(S::QuantityInterval(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -14934,6 +15745,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -14958,6 +15773,46 @@ pub mod quick_xml_deserialize {
                 quantity_min: self.quantity_min,
                 quantity_interval: self.quantity_interval,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"ORDER_UNIT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CONTENT_UNIT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"NO_CU_PER_OU")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRICE_QUANTITY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"QUANTITY_MIN")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"QUANTITY_INTERVAL")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -15235,6 +16090,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Datetime(None) => Some(S::Datetime(None)),
+                S::DailyPrice(None) => Some(S::DailyPrice(None)),
+                S::ProductPrice(None) => Some(S::ProductPrice(None)),
+                S::PriceBase(None) => Some(S::PriceBase(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -15382,6 +16245,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -15404,6 +16271,34 @@ pub mod quick_xml_deserialize {
                 product_price: helper.finish_vec(1usize, None, self.product_price)?,
                 price_base: self.price_base,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DATETIME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DAILY_PRICE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRODUCT_PRICE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRICE_BASE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -16845,6 +17740,47 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfMimeInfo(None) => Some(S::UdxEdxfMimeInfo(None)),
+                S::UdxEdxfManufacturerAcronym(None) => Some(S::UdxEdxfManufacturerAcronym(None)),
+                S::UdxEdxfDescriptionVeryShort(None) => Some(S::UdxEdxfDescriptionVeryShort(None)),
+                S::UdxEdxfBrandName(None) => Some(S::UdxEdxfBrandName(None)),
+                S::UdxEdxfTenderText(None) => Some(S::UdxEdxfTenderText(None)),
+                S::UdxEdxfValidFrom(None) => Some(S::UdxEdxfValidFrom(None)),
+                S::UdxEdxfExpirationDate(None) => Some(S::UdxEdxfExpirationDate(None)),
+                S::UdxEdxfDiscountGroup(None) => Some(S::UdxEdxfDiscountGroup(None)),
+                S::UdxEdxfBonusGroupSupplier(None) => Some(S::UdxEdxfBonusGroupSupplier(None)),
+                S::UdxEdxfAdditionalFactors(None) => Some(S::UdxEdxfAdditionalFactors(None)),
+                S::UdxEdxfProductToStock(None) => Some(S::UdxEdxfProductToStock(None)),
+                S::UdxEdxfProductSeries(None) => Some(S::UdxEdxfProductSeries(None)),
+                S::UdxEdxfProductVariation(None) => Some(S::UdxEdxfProductVariation(None)),
+                S::UdxEdxfPredecessorPid(None) => Some(S::UdxEdxfPredecessorPid(None)),
+                S::UdxEdxfCountryBranchNumbers(None) => Some(S::UdxEdxfCountryBranchNumbers(None)),
+                S::UdxEdxfCountryBranchSupplierIds(None) => {
+                    Some(S::UdxEdxfCountryBranchSupplierIds(None))
+                }
+                S::UdxEdxfPackingUnits(None) => Some(S::UdxEdxfPackingUnits(None)),
+                S::UdxEdxfProductLogisticDetails(None) => {
+                    Some(S::UdxEdxfProductLogisticDetails(None))
+                }
+                S::UdxEdxfShelfLifePeriod(None) => Some(S::UdxEdxfShelfLifePeriod(None)),
+                S::UdxEdxfBatteryContained(None) => Some(S::UdxEdxfBatteryContained(None)),
+                S::UdxEdxfRohsIndicator(None) => Some(S::UdxEdxfRohsIndicator(None)),
+                S::UdxEdxfCeMarking(None) => Some(S::UdxEdxfCeMarking(None)),
+                S::UdxEdxfReach(None) => Some(S::UdxEdxfReach(None)),
+                S::UdxEdxfSpecialTreatmentClassDetails(None) => {
+                    Some(S::UdxEdxfSpecialTreatmentClassDetails(None))
+                }
+                S::UdxEdxfSurchargeList(None) => Some(S::UdxEdxfSurchargeList(None)),
+                S::UdxEdxfWarranty(None) => Some(S::UdxEdxfWarranty(None)),
+                S::UdxEdxfProductEtimDynamic(None) => Some(S::UdxEdxfProductEtimDynamic(None)),
+                S::UdxEdxfProductFeaturesMc(None) => Some(S::UdxEdxfProductFeaturesMc(None)),
+                S::UdxEdxfProductCharacteristics(None) => {
+                    Some(S::UdxEdxfProductCharacteristics(None))
+                }
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -17900,6 +18836,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -17942,6 +18882,184 @@ pub mod quick_xml_deserialize {
                 udx_edxf_product_features_mc: self.udx_edxf_product_features_mc,
                 udx_edxf_product_characteristics: self.udx_edxf_product_characteristics,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_INFO")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MANUFACTURER_ACRONYM")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.DESCRIPTION_VERY_SHORT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.BRAND_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.TENDER_TEXT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.VALID_FROM")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.EXPIRATION_DATE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.DISCOUNT_GROUP")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.BONUS_GROUP_SUPPLIER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.ADDITIONAL_FACTORS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_TO_STOCK")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_SERIES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_VARIATION")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PREDECESSOR_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COUNTRY_BRANCH_NUMBERS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PACKING_UNITS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_LOGISTIC_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SHELF_LIFE_PERIOD")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.BATTERY_CONTAINED")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.ROHS_INDICATOR")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.CE_MARKING")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.REACH")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SPECIAL_TREATMENT_CLASS_DETAILS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE_LIST")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.WARRANTY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_ETIM_DYNAMIC")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_FEATURES_MC")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTICS")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -18206,6 +19324,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::ProdIdTo(None) => Some(S::ProdIdTo(None)),
+                S::CatalogId(None) => Some(S::CatalogId(None)),
+                S::CatalogVersion(None) => Some(S::CatalogVersion(None)),
+                S::ReferenceDescr(None) => Some(S::ReferenceDescr(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -18353,6 +19479,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -18377,6 +19507,34 @@ pub mod quick_xml_deserialize {
                 catalog_version: self.catalog_version,
                 reference_descr: self.reference_descr,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PROD_ID_TO")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CATALOG_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CATALOG_VERSION")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"REFERENCE_DESCR")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -18571,6 +19729,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::CustomsTariffNumber(None) => Some(S::CustomsTariffNumber(None)),
+                S::StatisticsFactor(None) => Some(S::StatisticsFactor(None)),
+                S::CountryOfOrigin(None) => Some(S::CountryOfOrigin(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -18689,6 +19854,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -18710,6 +19879,28 @@ pub mod quick_xml_deserialize {
                 statistics_factor: self.statistics_factor,
                 country_of_origin: self.country_of_origin,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CUSTOMS_TARIFF_NUMBER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"STATISTICS_FACTOR")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"COUNTRY_OF_ORIGIN")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -19465,6 +20656,29 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfMimeInfo(None) => Some(S::UdxEdxfMimeInfo(None)),
+                S::UdxEdxfManufacturerAcronym(None) => Some(S::UdxEdxfManufacturerAcronym(None)),
+                S::UdxEdxfDescriptionVeryShort(None) => Some(S::UdxEdxfDescriptionVeryShort(None)),
+                S::UdxEdxfBrandName(None) => Some(S::UdxEdxfBrandName(None)),
+                S::UdxEdxfTenderText(None) => Some(S::UdxEdxfTenderText(None)),
+                S::UdxEdxfValidFrom(None) => Some(S::UdxEdxfValidFrom(None)),
+                S::UdxEdxfExpirationDate(None) => Some(S::UdxEdxfExpirationDate(None)),
+                S::UdxEdxfProductSeries(None) => Some(S::UdxEdxfProductSeries(None)),
+                S::UdxEdxfProductVariation(None) => Some(S::UdxEdxfProductVariation(None)),
+                S::UdxEdxfPredecessorPid(None) => Some(S::UdxEdxfPredecessorPid(None)),
+                S::UdxEdxfCountryBranchNumbers(None) => Some(S::UdxEdxfCountryBranchNumbers(None)),
+                S::UdxEdxfCountryBranchSupplierIds(None) => {
+                    Some(S::UdxEdxfCountryBranchSupplierIds(None))
+                }
+                S::UdxEdxfProductEtimDynamic(None) => Some(S::UdxEdxfProductEtimDynamic(None)),
+                S::UdxEdxfProductFeaturesMc(None) => Some(S::UdxEdxfProductFeaturesMc(None)),
+                S::UdxEdxfProductCharacteristics(None) => {
+                    Some(S::UdxEdxfProductCharacteristics(None))
+                }
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -20028,6 +21242,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -20061,6 +21279,100 @@ pub mod quick_xml_deserialize {
                 udx_edxf_product_features_mc: self.udx_edxf_product_features_mc,
                 udx_edxf_product_characteristics: self.udx_edxf_product_characteristics,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_INFO")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MANUFACTURER_ACRONYM")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.DESCRIPTION_VERY_SHORT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.BRAND_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.TENDER_TEXT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.VALID_FROM")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.EXPIRATION_DATE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_SERIES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_VARIATION")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PREDECESSOR_PID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COUNTRY_BRANCH_NUMBERS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_ETIM_DYNAMIC")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_FEATURES_MC")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTICS")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -20254,6 +21566,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::MimeSource(None) => Some(S::MimeSource(None)),
+                S::MimeDescr(None) => Some(S::MimeDescr(None)),
+                S::MimeAlt(None) => Some(S::MimeAlt(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -20372,6 +21691,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -20393,6 +21716,28 @@ pub mod quick_xml_deserialize {
                 mime_descr: self.mime_descr,
                 mime_alt: self.mime_alt,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MIME_SOURCE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MIME_DESCR")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"MIME_ALT")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -20532,6 +21877,13 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct BuyerPidElementTypeDeserializer {
@@ -20667,6 +22019,13 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -20807,6 +22166,13 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -20954,6 +22320,13 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -21200,6 +22573,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Fname(None) => Some(S::Fname(None)),
+                S::Fvalue(None) => Some(S::Fvalue(None)),
+                S::Funit(None) => Some(S::Funit(None)),
+                S::FvalueDetails(None) => Some(S::FvalueDetails(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -21347,6 +22728,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -21369,6 +22754,34 @@ pub mod quick_xml_deserialize {
                 funit: self.funit,
                 fvalue_details: self.fvalue_details,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"FNAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"FVALUE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"FUNIT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"FVALUE_DETAILS")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -21482,6 +22895,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Date(None) => Some(S::Date(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -21542,6 +22960,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -21562,6 +22984,16 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 date: helper.finish_element("DATE", self.date)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"DATE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -21911,6 +23343,16 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PriceAmount(None) => Some(S::PriceAmount(None)),
+                S::PriceCurrency(None) => Some(S::PriceCurrency(None)),
+                S::Tax(None) => Some(S::Tax(None)),
+                S::PriceFactor(None) => Some(S::PriceFactor(None)),
+                S::LowerBound(None) => Some(S::LowerBound(None)),
+                S::Territory(None) => Some(S::Territory(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -22116,6 +23558,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -22141,6 +23587,46 @@ pub mod quick_xml_deserialize {
                 lower_bound: self.lower_bound,
                 territory: self.territory,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRICE_AMOUNT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRICE_CURRENCY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"TAX")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRICE_FACTOR")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"LOWER_BOUND")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"TERRITORY")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -22294,6 +23780,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PriceUnit(None) => Some(S::PriceUnit(None)),
+                S::PriceUnitFactor(None) => Some(S::PriceUnitFactor(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -22383,6 +23875,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -22403,6 +23899,22 @@ pub mod quick_xml_deserialize {
                 price_unit: helper.finish_element("PRICE_UNIT", self.price_unit)?,
                 price_unit_factor: self.price_unit_factor,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRICE_UNIT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"PRICE_UNIT_FACTOR")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -22515,6 +24027,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfMime(None) => Some(S::UdxEdxfMime(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -22575,6 +24092,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -22594,6 +24115,16 @@ pub mod quick_xml_deserialize {
             Ok(super::UdxEdxfMimeInfoElementType {
                 udx_edxf_mime: helper.finish_vec(1usize, None, self.udx_edxf_mime)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -22752,6 +24283,11 @@ pub mod quick_xml_deserialize {
             Ok(super::UdxEdxfDiscountGroupElementType {
                 content: helper.finish_vec(1usize, Some(2usize), self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: UdxEdxfDiscountGroupElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -23082,6 +24618,22 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::UdxEdxfDiscountGroupElementTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct UdxEdxfAdditionalFactorsElementTypeDeserializer {
@@ -23245,6 +24797,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfAdditionalPriceFactor(None) => {
+                    Some(S::UdxEdxfAdditionalPriceFactor(None))
+                }
+                S::UdxEdxfAdditionalFactorInfo(None) => Some(S::UdxEdxfAdditionalFactorInfo(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -23356,6 +24916,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -23383,6 +24947,22 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_additional_factor_info,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.ADDITIONAL_PRICE_FACTOR")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.ADDITIONAL_FACTOR_INFO")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -23495,6 +25075,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfCountryBranchNumber(None) => Some(S::UdxEdxfCountryBranchNumber(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -23566,6 +25151,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -23589,6 +25178,16 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_country_branch_number,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COUNTRY_BRANCH_NUMBER")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -23703,6 +25302,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfCountryBranchSupplierId(None) => {
+                    Some(S::UdxEdxfCountryBranchSupplierId(None))
+                }
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -23774,6 +25380,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -23797,6 +25407,16 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_country_branch_supplier_id,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -23911,6 +25531,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfPackingUnit(None) => Some(S::UdxEdxfPackingUnit(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -23971,6 +25596,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -23994,6 +25623,16 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_packing_unit,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PACKING_UNIT")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -24387,6 +26026,17 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfNetvolume(None) => Some(S::UdxEdxfNetvolume(None)),
+                S::UdxEdxfNetweight(None) => Some(S::UdxEdxfNetweight(None)),
+                S::UdxEdxfNetlength(None) => Some(S::UdxEdxfNetlength(None)),
+                S::UdxEdxfNetwidth(None) => Some(S::UdxEdxfNetwidth(None)),
+                S::UdxEdxfNetdepth(None) => Some(S::UdxEdxfNetdepth(None)),
+                S::UdxEdxfNetdiameter(None) => Some(S::UdxEdxfNetdiameter(None)),
+                S::UdxEdxfRegionOfOrigin(None) => Some(S::UdxEdxfRegionOfOrigin(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -24632,6 +26282,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -24657,6 +26311,52 @@ pub mod quick_xml_deserialize {
                 udx_edxf_netdiameter: self.udx_edxf_netdiameter,
                 udx_edxf_region_of_origin: self.udx_edxf_region_of_origin,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NETVOLUME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NETWEIGHT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NETLENGTH")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NETWIDTH")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NETDEPTH")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NETDIAMETER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.REGION_OF_ORIGIN")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -24913,6 +26613,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfReachListdate(None) => Some(S::UdxEdxfReachListdate(None)),
+                S::UdxEdxfReachInfo(None) => Some(S::UdxEdxfReachInfo(None)),
+                S::UdxEdxfScipNumber(None) => Some(S::UdxEdxfScipNumber(None)),
+                S::UdxEdxfUfiCode(None) => Some(S::UdxEdxfUfiCode(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -25063,6 +26771,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -25086,6 +26798,34 @@ pub mod quick_xml_deserialize {
                 udx_edxf_scip_number: self.udx_edxf_scip_number,
                 udx_edxf_ufi_code: self.udx_edxf_ufi_code,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.REACH.LISTDATE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.REACH.INFO")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SCIP_NUMBER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.UFI_CODE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -26246,6 +27986,35 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfHazardousSubstances(None) => Some(S::UdxEdxfHazardousSubstances(None)),
+                S::UdxEdxfShippingName(None) => Some(S::UdxEdxfShippingName(None)),
+                S::UdxEdxfPackingGroup(None) => Some(S::UdxEdxfPackingGroup(None)),
+                S::UdxEdxfTransportCategory(None) => Some(S::UdxEdxfTransportCategory(None)),
+                S::UdxEdxfMultiplicationFactor(None) => Some(S::UdxEdxfMultiplicationFactor(None)),
+                S::UdxEdxfLimitedQuantities(None) => Some(S::UdxEdxfLimitedQuantities(None)),
+                S::UdxEdxfExceptedQuantities(None) => Some(S::UdxEdxfExceptedQuantities(None)),
+                S::UdxEdxfAggregationState(None) => Some(S::UdxEdxfAggregationState(None)),
+                S::UdxEdxfSpecialProvisionId(None) => Some(S::UdxEdxfSpecialProvisionId(None)),
+                S::UdxEdxfHazardClass(None) => Some(S::UdxEdxfHazardClass(None)),
+                S::UdxEdxfClassificationCode(None) => Some(S::UdxEdxfClassificationCode(None)),
+                S::UdxEdxfHazardLabel(None) => Some(S::UdxEdxfHazardLabel(None)),
+                S::UdxEdxfEnvironmentalHazards(None) => Some(S::UdxEdxfEnvironmentalHazards(None)),
+                S::UdxEdxfTunnelCode(None) => Some(S::UdxEdxfTunnelCode(None)),
+                S::UdxEdxfGhsLabelCode(None) => Some(S::UdxEdxfGhsLabelCode(None)),
+                S::UdxEdxfGhsSignalWord(None) => Some(S::UdxEdxfGhsSignalWord(None)),
+                S::UdxEdxfHazardStatement(None) => Some(S::UdxEdxfHazardStatement(None)),
+                S::UdxEdxfPrecautionaryStatement(None) => {
+                    Some(S::UdxEdxfPrecautionaryStatement(None))
+                }
+                S::UdxEdxfLiIonTested(None) => Some(S::UdxEdxfLiIonTested(None)),
+                S::UdxEdxfLithiumAmount(None) => Some(S::UdxEdxfLithiumAmount(None)),
+                S::UdxEdxfBatteryEnergy(None) => Some(S::UdxEdxfBatteryEnergy(None)),
+                S::UdxEdxfNos274(None) => Some(S::UdxEdxfNos274(None)),
+                S::UdxEdxfHazardTrigger(None) => Some(S::UdxEdxfHazardTrigger(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -27077,6 +28846,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -27118,6 +28891,148 @@ pub mod quick_xml_deserialize {
                 udx_edxf_nos_274: self.udx_edxf_nos_274,
                 udx_edxf_hazard_trigger: self.udx_edxf_hazard_trigger,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.HAZARDOUS_SUBSTANCES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SHIPPING_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PACKING_GROUP")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.TRANSPORT_CATEGORY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MULTIPLICATION_FACTOR")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.LIMITED_QUANTITIES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.EXCEPTED_QUANTITIES")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.AGGREGATION_STATE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SPECIAL_PROVISION_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.HAZARD_CLASS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.CLASSIFICATION_CODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.HAZARD_LABEL")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.ENVIRONMENTAL_HAZARDS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.TUNNEL_CODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.GHS_LABEL_CODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.GHS_SIGNAL_WORD")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.HAZARD_STATEMENT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRECAUTIONARY_STATEMENT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.LI-ION_TESTED")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.LITHIUM_AMOUNT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.BATTERY_ENERGY")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NOS_274")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.HAZARD_TRIGGER")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -27232,6 +29147,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfSurcharge(None) => Some(S::UdxEdxfSurcharge(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -27292,6 +29212,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -27311,6 +29235,16 @@ pub mod quick_xml_deserialize {
             Ok(super::UdxEdxfSurchargeListElementType {
                 udx_edxf_surcharge: helper.finish_vec(1usize, None, self.udx_edxf_surcharge)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -27462,6 +29396,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfWarrantyBusiness(None) => Some(S::UdxEdxfWarrantyBusiness(None)),
+                S::UdxEdxfWarrantyConsumer(None) => Some(S::UdxEdxfWarrantyConsumer(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -27573,6 +29513,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -27593,6 +29537,22 @@ pub mod quick_xml_deserialize {
                 udx_edxf_warranty_business: self.udx_edxf_warranty_business,
                 udx_edxf_warranty_consumer: self.udx_edxf_warranty_consumer,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.WARRANTY_BUSINESS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.WARRANTY_CONSUMER")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -27700,6 +29660,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfProductEtimReleaseDate(None) => {
+                    Some(S::UdxEdxfProductEtimReleaseDate(None))
+                }
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -27771,6 +29738,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -27793,6 +29764,16 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_product_etim_release_date,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_ETIM_RELEASE_DATE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -28064,6 +30045,16 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfReferenceFeatureMcId(None) => Some(S::UdxEdxfReferenceFeatureMcId(None)),
+                S::UdxEdxfReferenceFeatureMcVersion(None) => {
+                    Some(S::UdxEdxfReferenceFeatureMcVersion(None))
+                }
+                S::UdxEdxfBimStatus(None) => Some(S::UdxEdxfBimStatus(None)),
+                S::UdxEdxfFeatureMc(None) => Some(S::UdxEdxfFeatureMc(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -28233,6 +30224,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -28261,6 +30256,34 @@ pub mod quick_xml_deserialize {
                 udx_edxf_bim_status: self.udx_edxf_bim_status,
                 udx_edxf_feature_mc: helper.finish_vec(1usize, None, self.udx_edxf_feature_mc)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.REFERENCE_FEATURE_MC_ID")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.REFERENCE_FEATURE_MC_VERSION")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.BIM_STATUS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.FEATURE_MC")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -28379,6 +30402,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfProductCharacteristic(None) => {
+                    Some(S::UdxEdxfProductCharacteristic(None))
+                }
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -28450,6 +30480,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -28473,6 +30507,16 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_product_characteristic,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -28580,6 +30624,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::CustomsNumber(None) => Some(S::CustomsNumber(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -28640,6 +30689,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -28659,6 +30712,16 @@ pub mod quick_xml_deserialize {
             Ok(super::CustomsTariffNumberElementType {
                 customs_number: helper.finish_element("CUSTOMS_NUMBER", self.customs_number)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"CUSTOMS_NUMBER")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -29099,6 +31162,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfMimeSource(None) => Some(S::UdxEdxfMimeSource(None)),
+                S::UdxEdxfMimeCode(None) => Some(S::UdxEdxfMimeCode(None)),
+                S::UdxEdxfMimeFilename(None) => Some(S::UdxEdxfMimeFilename(None)),
+                S::UdxEdxfMimeDesignation(None) => Some(S::UdxEdxfMimeDesignation(None)),
+                S::UdxEdxfMimeAlt(None) => Some(S::UdxEdxfMimeAlt(None)),
+                S::UdxEdxfMimeIssueDate(None) => Some(S::UdxEdxfMimeIssueDate(None)),
+                S::UdxEdxfMimeExpiryDate(None) => Some(S::UdxEdxfMimeExpiryDate(None)),
+                S::UdxEdxfMimeOrder(None) => Some(S::UdxEdxfMimeOrder(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -29387,6 +31462,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -29414,6 +31493,58 @@ pub mod quick_xml_deserialize {
                 udx_edxf_mime_expiry_date: self.udx_edxf_mime_expiry_date,
                 udx_edxf_mime_order: self.udx_edxf_mime_order,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_SOURCE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_CODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_FILENAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_DESIGNATION")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_ALT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_ISSUE_DATE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_EXPIRY_DATE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MIME_ORDER")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -29566,6 +31697,13 @@ pub mod quick_xml_deserialize {
                 },
             )
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <i32 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializer { type_ : String , country : String , content : Option < i32 > , state__ : Box < UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState > , }
@@ -29714,6 +31852,13 @@ pub mod quick_xml_deserialize {
                     content: helper.finish_content(self.content)?,
                 },
             )
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <i32 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -30447,6 +32592,24 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfQuantityMin(None) => Some(S::UdxEdxfQuantityMin(None)),
+                S::UdxEdxfQuantityMax(None) => Some(S::UdxEdxfQuantityMax(None)),
+                S::UdxEdxfPackingUnitCode(None) => Some(S::UdxEdxfPackingUnitCode(None)),
+                S::UdxEdxfPackingUnitName(None) => Some(S::UdxEdxfPackingUnitName(None)),
+                S::UdxEdxfPackageBreak(None) => Some(S::UdxEdxfPackageBreak(None)),
+                S::UdxEdxfPackingParts(None) => Some(S::UdxEdxfPackingParts(None)),
+                S::UdxEdxfVolume(None) => Some(S::UdxEdxfVolume(None)),
+                S::UdxEdxfWeight(None) => Some(S::UdxEdxfWeight(None)),
+                S::UdxEdxfLength(None) => Some(S::UdxEdxfLength(None)),
+                S::UdxEdxfWidth(None) => Some(S::UdxEdxfWidth(None)),
+                S::UdxEdxfDepth(None) => Some(S::UdxEdxfDepth(None)),
+                S::UdxEdxfDiameter(None) => Some(S::UdxEdxfDiameter(None)),
+                S::UdxEdxfGtin(None) => Some(S::UdxEdxfGtin(None)),
+                S::UdxEdxfGs1128(None) => Some(S::UdxEdxfGs1128(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -30906,6 +33069,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -30942,6 +33109,94 @@ pub mod quick_xml_deserialize {
                 udx_edxf_gtin: self.udx_edxf_gtin,
                 udx_edxf_gs_1128: self.udx_edxf_gs_1128,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.QUANTITY_MIN")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.QUANTITY_MAX")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PACKING_UNIT_CODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PACKING_UNIT_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PACKAGE_BREAK")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PACKING_PARTS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.VOLUME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.WEIGHT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.LENGTH")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.WIDTH")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.DEPTH")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.DIAMETER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.GTIN")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.GS1_128")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -31153,6 +33408,17 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfUnNumber(None) => Some(S::UdxEdxfUnNumber(None)),
+                S::UdxEdxfNetWeightOfHazardousSubstance(None) => {
+                    Some(S::UdxEdxfNetWeightOfHazardousSubstance(None))
+                }
+                S::UdxEdxfVolumeOfHazardousSubstances(None) => {
+                    Some(S::UdxEdxfVolumeOfHazardousSubstances(None))
+                }
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -31293,6 +33559,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -31317,6 +33587,28 @@ pub mod quick_xml_deserialize {
                 udx_edxf_volume_of_hazardous_substances: self
                     .udx_edxf_volume_of_hazardous_substances,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.UN_NUMBER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.NET_WEIGHT_OF_HAZARDOUS_SUBSTANCE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.VOLUME_OF_HAZARDOUS_SUBSTANCES")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -31470,6 +33762,11 @@ pub mod quick_xml_deserialize {
             Ok(super::UdxEdxfSurchargeElementType {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: UdxEdxfSurchargeElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -32846,6 +35143,82 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::UdxEdxfSurchargeElementTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE_TYPE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE_CLASS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE_MANNER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE_PERCENTAGE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.SURCHARGE_CALCULATION")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATERIAL_BASIS")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATERIAL_BASIS_WEIGHT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct UdxEdxfFeatureMcElementTypeDeserializer {
@@ -32998,6 +35371,11 @@ pub mod quick_xml_deserialize {
             Ok(super::UdxEdxfFeatureMcElementType {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: UdxEdxfFeatureMcElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -33783,6 +36161,52 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::UdxEdxfFeatureMcElementTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PORTCODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.FNAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.FVALUE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COORDINATE_X")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COORDINATE_Y")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.COORDINATE_Z")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATRIX_VALUES")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct UdxEdxfProductCharacteristicElementTypeDeserializer {
@@ -33931,6 +36355,11 @@ pub mod quick_xml_deserialize {
             Ok(super::UdxEdxfProductCharacteristicElementType {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if < super :: UdxEdxfProductCharacteristicElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -35311,6 +37740,76 @@ pub mod quick_xml_deserialize {
         ) -> Result<super::UdxEdxfProductCharacteristicElementTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_CODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_NAME")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_BOOLEAN")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_NUMERIC")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_FROM")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_TO")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_STRING")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SET")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SELECT")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_UNIT_CODE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_REFERENCE_GTIN")
+            ) {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct UdxEdxfMatrixValuesElementTypeDeserializer {
@@ -35424,6 +37923,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfMatrixValue(None) => Some(S::UdxEdxfMatrixValue(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -35484,6 +37988,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -35507,6 +38015,16 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_matrix_value,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATRIX_VALUE")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -35666,6 +38184,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::UdxEdxfMatrixSourceValue(None) => Some(S::UdxEdxfMatrixSourceValue(None)),
+                S::UdxEdxfMatrixResultValue(None) => Some(S::UdxEdxfMatrixResultValue(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -35777,6 +38301,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -35803,6 +38331,22 @@ pub mod quick_xml_deserialize {
                     self.udx_edxf_matrix_result_value,
                 )?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATRIX_SOURCE_VALUE")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                Some(b"UDX.EDXF.MATRIX_RESULT_VALUE")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

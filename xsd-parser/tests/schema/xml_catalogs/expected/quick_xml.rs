@@ -603,6 +603,15 @@ pub mod er {
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::CatalogTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CatalogTypeContentDeserializer {
@@ -1849,6 +1858,82 @@ pub mod er {
             ) -> Result<super::CatalogTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"public")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"system")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"uri")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"rewriteSystem")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"rewriteURI")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"uriSuffix")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"systemSuffix")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"delegatePublic")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"delegateSystem")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"delegateURI")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"nextCatalog")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"group")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DelegatePublicTypeDeserializer {
@@ -2312,6 +2397,15 @@ pub mod er {
                     id: self.id,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::GroupTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -3465,6 +3559,76 @@ pub mod er {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::GroupTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"public")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"system")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"uri")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"rewriteSystem")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"rewriteURI")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"uriSuffix")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"systemSuffix")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"delegatePublic")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"delegateSystem")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"delegateURI")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                    Some(b"nextCatalog")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]

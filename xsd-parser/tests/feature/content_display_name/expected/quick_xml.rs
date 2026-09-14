@@ -170,6 +170,13 @@ pub mod quick_xml_deserialize {
                 text_value: helper.finish_content(self.text_value)?,
             })
         }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+            false
+        }
     }
 }
 pub mod quick_xml_serialize {

@@ -321,6 +321,14 @@ pub mod quick_xml_deserialize {
             let mut allow_any_element = false;
             let mut is_any_retry = false;
             let mut any_fallback = None;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Name(None) => Some(S::Name(None)),
+                S::Any0(None) => Some(S::Any0(None)),
+                S::Choice(None) => Some(S::Choice(None)),
+                S::Any1(None) => Some(S::Any1(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -476,6 +484,10 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(event, DeserializerEvent::None) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -493,6 +505,22 @@ pub mod quick_xml_deserialize {
                 choice: self.choice,
                 any_1: self.any_1,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Name")
+            ) {
+                return true;
+            }
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Choice")
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -639,6 +667,15 @@ pub mod quick_xml_deserialize {
                 any_attribute: self.any_attribute,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if <super::ChoiceTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                helper, x,
+            ) {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -916,6 +953,16 @@ pub mod quick_xml_deserialize {
         }
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::ChoiceTypeContent, Error> {
             Self::finish_state(helper, *self.state__)
+        }
+        fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+            let _ = helper;
+            if matches!(
+                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Name")
+            ) {
+                return true;
+            }
+            false
         }
     }
 }

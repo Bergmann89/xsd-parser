@@ -4294,6 +4294,11 @@ pub mod cdf {
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: BenchmarkElementTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct BenchmarkElementTypeContentDeserializer {
@@ -6184,6 +6189,130 @@ pub mod cdf {
             ) -> Result<super::BenchmarkElementTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"dc-status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"description")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"notice")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"front-matter")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"rear-matter")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"reference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"plain-text")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"platform-specification")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"platform")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"version")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"metadata")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"model")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"Profile")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"Value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"Group")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"Rule")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"TestResult")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"signature")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct StatusElementTypeDeserializer {
@@ -6320,6 +6449,15 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::StatusType as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct DcStatusTypeDeserializer {
@@ -6426,6 +6564,11 @@ pub mod cdf {
                 let mut allow_any_element = false;
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Any(None) => Some(S::Any(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -6493,6 +6636,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -6648,6 +6795,13 @@ pub mod cdf {
                     override_: self.override_,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -6816,6 +6970,11 @@ pub mod cdf {
                     override_: self.override_,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: FixTextContent35Type as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -6986,6 +7145,12 @@ pub mod cdf {
                 let mut allow_any_element = false;
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextBefore(None) => Some(S::TextBefore(None)),
+                    S::Any(None) => Some(S::Any(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -7082,6 +7247,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -7264,6 +7433,12 @@ pub mod cdf {
                 let mut allow_any_element = false;
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextBefore(None) => Some(S::TextBefore(None)),
+                    S::Any(None) => Some(S::Any(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -7360,6 +7535,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -7518,6 +7697,13 @@ pub mod cdf {
                     id: self.id,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -7739,6 +7925,13 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct MetadataTypeDeserializer {
@@ -7845,6 +8038,11 @@ pub mod cdf {
                 let mut allow_any_element = false;
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Any(None) => Some(S::Any(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -7912,6 +8110,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -8034,6 +8236,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Param(None) => Some(S::Param(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -8094,6 +8301,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -8114,6 +8325,16 @@ pub mod cdf {
                     system: self.system,
                     param: self.param,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"param")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -8328,6 +8549,15 @@ pub mod cdf {
                     xml_id: self.xml_id,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::ProfileTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -9764,6 +9994,94 @@ pub mod cdf {
             ) -> Result<super::ProfileTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"dc-status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"version")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"description")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"reference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"platform")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"select")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"set-complex-value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"set-value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"refine-value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"refine-rule")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"metadata")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"signature")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ValueTypeDeserializer {
@@ -10027,6 +10345,15 @@ pub mod cdf {
                     interface_hint: self.interface_hint,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::ValueTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -11920,6 +12247,124 @@ pub mod cdf {
             ) -> Result<super::ValueTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"dc-status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"version")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"description")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"warning")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"question")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"reference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"metadata")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"complex-value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"default")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"complex-default")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"match")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"lower-bound")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"upper-bound")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"choices")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"source")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"signature")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct GroupTypeDeserializer {
@@ -12165,6 +12610,15 @@ pub mod cdf {
                     id: self.id,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::GroupTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -13864,6 +14318,112 @@ pub mod cdf {
             ) -> Result<super::GroupTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"dc-status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"version")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"description")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"warning")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"question")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"reference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"metadata")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"rationale")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"platform")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"requires")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"conflicts")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"Value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"Group")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"Rule")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"signature")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct RuleTypeDeserializer {
@@ -14136,6 +14696,15 @@ pub mod cdf {
                     multiple: self.multiple,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::RuleTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -16209,6 +16778,136 @@ pub mod cdf {
             ) -> Result<super::RuleTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"dc-status")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"version")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"description")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"warning")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"question")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"reference")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"metadata")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"rationale")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"platform")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"requires")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"conflicts")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"ident")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"impact-metric")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"profile-note")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"fixtext")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"fix")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"check")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"complex-check")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"signature")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TestResultTypeDeserializer {
@@ -16412,6 +17111,11 @@ pub mod cdf {
                     xml_id: self.xml_id,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: TestResultTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -18312,6 +19016,118 @@ pub mod cdf {
             ) -> Result<super::TestResultTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"benchmark")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"tailoring-file")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"remark")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"organization")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"identity")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"profile")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"target")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"target-address")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"target-facts")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"target-id-ref")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"platform")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"set-value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"set-complex-value")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"rule-result")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"score")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"metadata")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"signature")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SignatureTypeDeserializer {
@@ -18416,6 +19232,11 @@ pub mod cdf {
                 let mut allow_any_element = false;
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Any(None) => Some(S::Any(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -18483,6 +19304,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -18956,6 +19781,16 @@ pub mod cdf {
             ) -> Result<super::FixTextContent35Type, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"sub")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ParamTypeDeserializer {
@@ -19085,6 +19920,13 @@ pub mod cdf {
                     name: self.name,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -19245,6 +20087,12 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextBefore(None) => Some(S::TextBefore(None)),
+                    S::Sub(None) => Some(S::Sub(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -19333,6 +20181,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -19355,6 +20207,16 @@ pub mod cdf {
                     text_before: self.text_before,
                     sub: self.sub,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"sub")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -19562,6 +20424,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Remark(None) => Some(S::Remark(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -19622,6 +20489,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -19643,6 +20514,16 @@ pub mod cdf {
                     selected: self.selected,
                     remark: self.remark,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"remark")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -19749,6 +20630,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Item(None) => Some(S::Item(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -19809,6 +20695,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -19829,6 +20719,16 @@ pub mod cdf {
                     idref: self.idref,
                     item: self.item,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"item")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -19966,6 +20866,13 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProfileRefineValueTypeDeserializer {
@@ -20087,6 +20994,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Remark(None) => Some(S::Remark(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -20147,6 +21059,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -20169,6 +21085,16 @@ pub mod cdf {
                     operator: self.operator,
                     remark: self.remark,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"remark")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -20307,6 +21233,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Remark(None) => Some(S::Remark(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -20367,6 +21298,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -20391,6 +21326,16 @@ pub mod cdf {
                     role: self.role,
                     remark: self.remark,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"remark")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -20565,6 +21510,11 @@ pub mod cdf {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: FixTextContent35Type as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SelStringTypeDeserializer {
@@ -20701,6 +21651,13 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct SelComplexValueTypeDeserializer {
@@ -20804,6 +21761,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Item(None) => Some(S::Item(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -20864,6 +21826,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -20884,6 +21850,16 @@ pub mod cdf {
                     selector: self.selector,
                     item: self.item,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"item")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -21017,6 +21993,13 @@ pub mod cdf {
                     selector: self.selector,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -21184,6 +22167,11 @@ pub mod cdf {
                     selector: self.selector,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: SelChoicesTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -21483,6 +22471,22 @@ pub mod cdf {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::SelChoicesTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"choice")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"complex-choice")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -21843,6 +22847,13 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ProfileNoteTypeDeserializer {
@@ -22009,6 +23020,11 @@ pub mod cdf {
                     tag: self.tag,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ProfileNoteTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -22383,6 +23399,16 @@ pub mod cdf {
             ) -> Result<super::ProfileNoteTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"sub")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct FixTextTypeDeserializer {
@@ -22592,6 +23618,11 @@ pub mod cdf {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: FixTextContent35Type as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct FixTypeDeserializer {
@@ -22796,6 +23827,15 @@ pub mod cdf {
                     platform: self.platform,
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <super::FixTypeContent as WithDeserializer>::Deserializer::is_known_start_tag(
+                    helper, x,
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -23174,6 +24214,22 @@ pub mod cdf {
             ) -> Result<super::FixTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"sub")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"instance")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct CheckTypeDeserializer {
@@ -23456,6 +24512,14 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::CheckImport(None) => Some(S::CheckImport(None)),
+                    S::CheckExport(None) => Some(S::CheckExport(None)),
+                    S::CheckContentRef(None) => Some(S::CheckContentRef(None)),
+                    S::CheckContent(None) => Some(S::CheckContent(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -23603,6 +24667,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -23625,6 +24693,34 @@ pub mod cdf {
                     check_content_ref: self.check_content_ref,
                     check_content: self.check_content,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"check-import")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"check-export")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"check-content-ref")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"check-content")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -23797,6 +24893,11 @@ pub mod cdf {
                     negate: self.negate,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: ComplexCheckTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -24095,6 +25196,22 @@ pub mod cdf {
                 helper: &mut DeserializeHelper,
             ) -> Result<super::ComplexCheckTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"check")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"complex-check")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -24437,6 +25554,13 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct TargetFactsTypeDeserializer {
@@ -24530,6 +25654,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Fact(None) => Some(S::Fact(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -24590,6 +25719,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -24607,6 +25740,16 @@ pub mod cdf {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::TargetFactsType { fact: self.fact })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"fact")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -24908,6 +26051,11 @@ pub mod cdf {
                     weight: self.weight,
                     content: helper.finish_vec(1usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: RuleResultTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -25858,6 +27006,64 @@ pub mod cdf {
             ) -> Result<super::RuleResultTypeContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"result")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"override")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"ident")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"metadata")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"message")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"instance")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"fix")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"check")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"complex-check")
+                ) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ScoreTypeDeserializer {
@@ -25997,6 +27203,13 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <f64 as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct ComplexValueTypeDeserializer {
@@ -26090,6 +27303,11 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Item(None) => Some(S::Item(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -26150,6 +27368,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -26167,6 +27389,16 @@ pub mod cdf {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ComplexValueType { item: self.item })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"item")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -26463,6 +27695,13 @@ pub mod cdf {
                 let mut allow_any_element = false;
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::TextBefore(None) => Some(S::TextBefore(None)),
+                    S::Any(None) => Some(S::Any(None)),
+                    S::TextAfterAny40(None) => Some(S::TextAfterAny40(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -26578,6 +27817,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -26932,6 +28175,11 @@ pub mod cdf {
                 Ok(super::CheckContentType {
                     content: helper.finish_vec(0usize, None, self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if < super :: CheckContentTypeContent as WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
         #[derive(Debug)]
@@ -27356,6 +28604,13 @@ pub mod cdf {
                     content: helper.finish_content(self.content)?,
                 })
             }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
+            }
         }
         #[derive(Debug)]
         pub struct OverrideTypeDeserializer {
@@ -27583,6 +28838,13 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::OldResult(None) => Some(S::OldResult(None)),
+                    S::NewResult(None) => Some(S::NewResult(None)),
+                    S::Remark(None) => Some(S::Remark(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -27701,6 +28963,10 @@ pub mod cdf {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -27721,6 +28987,28 @@ pub mod cdf {
                     new_result: helper.finish_element("new-result", self.new_result)?,
                     remark: helper.finish_element("remark", self.remark)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"old-result")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"new-result")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                    Some(b"remark")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -27855,6 +29143,13 @@ pub mod cdf {
                     severity: self.severity,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -28000,6 +29295,13 @@ pub mod cdf {
                     parent_context: self.parent_context,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -34773,6 +36075,11 @@ pub mod cpe {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Platform(None) => Some(S::Platform(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -34833,6 +36140,10 @@ pub mod cpe {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -34852,6 +36163,16 @@ pub mod cpe {
                 Ok(super::PlatformSpecificationType {
                     platform: helper.finish_vec(1usize, None, self.platform)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"platform")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -35053,6 +36374,13 @@ pub mod cpe {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::Title(None) => Some(S::Title(None)),
+                    S::Remark(None) => Some(S::Remark(None)),
+                    S::LogicalTest(None) => Some(S::LogicalTest(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -35171,6 +36499,10 @@ pub mod cpe {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -35190,6 +36522,28 @@ pub mod cpe {
                     remark: self.remark,
                     logical_test: helper.finish_element("logical-test", self.logical_test)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"title")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"remark")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"logical-test")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -35320,6 +36674,13 @@ pub mod cpe {
                     lang: self.lang,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if <String as WithDeserializer>::Deserializer::is_known_start_tag(helper, x) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]
@@ -35524,6 +36885,13 @@ pub mod cpe {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::LogicalTest(None) => Some(S::LogicalTest(None)),
+                    S::FactRef(None) => Some(S::FactRef(None)),
+                    S::CheckFactRef(None) => Some(S::CheckFactRef(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -35642,6 +37010,10 @@ pub mod cpe {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -35665,6 +37037,28 @@ pub mod cpe {
                     fact_ref: self.fact_ref,
                     check_fact_ref: self.check_fact_ref,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"logical-test")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"fact-ref")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                    Some(b"check-fact-ref")
+                ) {
+                    return true;
+                }
+                false
             }
         }
         #[derive(Debug)]

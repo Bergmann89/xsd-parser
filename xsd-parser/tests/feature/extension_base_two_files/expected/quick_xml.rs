@@ -188,6 +188,12 @@ pub mod other {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::B(None) => Some(S::B(None)),
+                    S::C(None) => Some(S::C(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -277,6 +283,10 @@ pub mod other {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -291,6 +301,22 @@ pub mod other {
                     b: helper.finish_element("b", self.b)?,
                     c: helper.finish_element("c", self.c)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_OTHER),
+                    Some(b"b")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_OTHER),
+                    Some(b"c")
+                ) {
+                    return true;
+                }
+                false
             }
         }
     }
@@ -557,6 +583,12 @@ pub mod tns {
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
+                let entry_state__ = match &*self.state__ {
+                    S::Init__ => Some(S::Init__),
+                    S::A(None) => Some(S::A(None)),
+                    S::B(None) => Some(S::B(None)),
+                    _ => None,
+                };
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
@@ -646,6 +678,10 @@ pub mod tns {
                 };
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
+                } else if !matches!(event, DeserializerEvent::None) {
+                    if let Some(entry_state) = entry_state__ {
+                        *self.state__ = entry_state;
+                    }
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -660,6 +696,22 @@ pub mod tns {
                     a: helper.finish_element("a", self.a)?,
                     b: helper.finish_element("b", self.b)?,
                 })
+            }
+            fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
+                let _ = helper;
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_TNS),
+                    Some(b"a")
+                ) {
+                    return true;
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::super::NS_TNS),
+                    Some(b"b")
+                ) {
+                    return true;
+                }
+                false
             }
         }
     }

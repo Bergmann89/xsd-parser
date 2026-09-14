@@ -14693,6 +14693,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AccidentalValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct AccidentalMarkDeserializer {
@@ -14919,6 +14927,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AccidentalValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -15201,6 +15217,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AccidentalValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct AccordDeserializer {
@@ -15383,6 +15407,14 @@ pub mod quick_xml_deserialize {
                 string: self.string,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AccordContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -15642,6 +15674,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::TuningStep(None) => Some(S::TuningStep(None)),
+                S::TuningAlter(None) => Some(S::TuningAlter(None)),
+                S::TuningOctave(None) => Some(S::TuningOctave(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -15806,6 +15845,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -15828,6 +15874,22 @@ pub mod quick_xml_deserialize {
                 tuning_alter: self.tuning_alter,
                 tuning_octave: helper.finish_element("tuning-octave", self.tuning_octave)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"tuning-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuning-alter" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuning-octave" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -16083,6 +16145,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AccordionRegistrationContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -16356,6 +16426,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::AccordionHigh(None) => Some(S::AccordionHigh(None)),
+                S::AccordionMiddle(None) => Some(S::AccordionMiddle(None)),
+                S::AccordionLow(None) => Some(S::AccordionLow(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -16520,6 +16597,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -16544,6 +16628,22 @@ pub mod quick_xml_deserialize {
                 accordion_middle: self.accordion_middle,
                 accordion_low: self.accordion_low,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"accordion-high" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accordion-middle" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accordion-low" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -16719,6 +16819,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Appearance {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AppearanceContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -17083,6 +17191,15 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::LineWidth(None) => Some(S::LineWidth(None)),
+                S::NoteSize(None) => Some(S::NoteSize(None)),
+                S::Distance(None) => Some(S::Distance(None)),
+                S::Glyph(None) => Some(S::Glyph(None)),
+                S::OtherAppearance(None) => Some(S::OtherAppearance(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -17317,6 +17434,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -17341,6 +17465,28 @@ pub mod quick_xml_deserialize {
                 glyph: self.glyph,
                 other_appearance: self.other_appearance,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"line-width" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"note-size" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"distance" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"glyph" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-appearance" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -17726,6 +17872,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_vec(1usize, Some(3usize), self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ArrowContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -18292,6 +18446,25 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"arrow-direction" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"arrow-style" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"arrowhead" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"circular-arrow" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ArticulationsDeserializer {
@@ -18474,6 +18647,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ArticulationsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -20444,6 +20625,64 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"accent" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"strong-accent" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staccato" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tenuto" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"detached-legato" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staccatissimo" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"spiccato" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"scoop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"plop" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"doit" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"falloff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"breath-mark" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"caesura" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"stress" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unstress" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"soft-accent" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-articulation" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct AssessDeserializer {
@@ -20709,6 +20948,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Attributes {
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AttributesContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -22376,6 +22623,55 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"divisions" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"key" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"time" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staves" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-symbol" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"instruments" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"clef" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff-details" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"transpose" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"for-part" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"directive" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"measure-style" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct BackupDeserializer {
@@ -22550,6 +22846,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Backup {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BackupContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -22801,6 +23105,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Duration(None) => Some(S::Duration(None)),
+                S::Footnote(None) => Some(S::Footnote(None)),
+                S::Level(None) => Some(S::Level(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -22953,6 +23264,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -22975,6 +23293,22 @@ pub mod quick_xml_deserialize {
                 footnote: self.footnote,
                 level: self.level,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"duration" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -23123,6 +23457,14 @@ pub mod quick_xml_deserialize {
                 color: self.color,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BarStyle as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -23324,6 +23666,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BarlineContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -23970,6 +24320,19 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::BarStyle(None) => Some(S::BarStyle(None)),
+                S::Footnote(None) => Some(S::Footnote(None)),
+                S::Level(None) => Some(S::Level(None)),
+                S::WavyLine(None) => Some(S::WavyLine(None)),
+                S::Segno(None) => Some(S::Segno(None)),
+                S::Coda(None) => Some(S::Coda(None)),
+                S::Fermata(None) => Some(S::Fermata(None)),
+                S::Ending(None) => Some(S::Ending(None)),
+                S::Repeat(None) => Some(S::Repeat(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -24344,6 +24707,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -24372,6 +24742,40 @@ pub mod quick_xml_deserialize {
                 ending: self.ending,
                 repeat: self.repeat,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"bar-style" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"wavy-line" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"segno" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"coda" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fermata" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ending" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"repeat" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -24641,6 +25045,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BassContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct BassContentDeserializer {
@@ -24893,6 +25305,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::BassSeparator(None) => Some(S::BassSeparator(None)),
+                S::BassStep(None) => Some(S::BassStep(None)),
+                S::BassAlter(None) => Some(S::BassAlter(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -25053,6 +25472,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -25073,6 +25499,22 @@ pub mod quick_xml_deserialize {
                 bass_step: helper.finish_element("bass-step", self.bass_step)?,
                 bass_alter: self.bass_alter,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"bass-separator" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bass-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bass-alter" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -25271,6 +25713,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: Step as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct BeamDeserializer {
@@ -25436,6 +25886,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BeamValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -25633,6 +26091,14 @@ pub mod quick_xml_deserialize {
                 use_dots: self.use_dots,
                 content: self.content,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BeatRepeatContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -25882,6 +26348,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SlashType(None) => Some(S::SlashType(None)),
+                S::SlashDot(None) => Some(S::SlashDot(None)),
+                S::ExceptVoice(None) => Some(S::ExceptVoice(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -26042,6 +26515,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -26064,6 +26544,22 @@ pub mod quick_xml_deserialize {
                 slash_dot: self.slash_dot,
                 except_voice: self.except_voice,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"slash-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"slash-dot" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"except-voice" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -26239,6 +26735,14 @@ pub mod quick_xml_deserialize {
             Ok(super::BeatUnitTied {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BeatUnitTiedContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -26424,6 +26928,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::BeatUnit(None) => Some(S::BeatUnit(None)),
+                S::BeatUnitDot(None) => Some(S::BeatUnitDot(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -26543,6 +27053,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -26564,6 +27081,19 @@ pub mod quick_xml_deserialize {
                 beat_unit: helper.finish_element("beat-unit", self.beat_unit)?,
                 beat_unit_dot: self.beat_unit_dot,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"beat-unit" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beat-unit-dot" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -26707,6 +27237,14 @@ pub mod quick_xml_deserialize {
                 tip: self.tip,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BeaterValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -26974,6 +27512,14 @@ pub mod quick_xml_deserialize {
                 last_beat: self.last_beat,
                 content: helper.finish_vec(1usize, Some(3usize), self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BendContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -27537,6 +28083,25 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"bend-alter" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pre-bend" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"release" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"with-bar" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct BookmarkDeserializer {
@@ -27988,6 +28553,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BreathMarkValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct CaesuraDeserializer {
@@ -28185,6 +28758,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: CaesuraValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct CancelDeserializer {
@@ -28325,6 +28906,14 @@ pub mod quick_xml_deserialize {
                 location: self.location,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: num :: BigInt as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -28592,6 +29181,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ClefContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ClefContentDeserializer {
@@ -28858,6 +29455,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Sign(None) => Some(S::Sign(None)),
+                S::Line(None) => Some(S::Line(None)),
+                S::ClefOctaveChange(None) => Some(S::ClefOctaveChange(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -29014,6 +29618,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -29034,6 +29645,22 @@ pub mod quick_xml_deserialize {
                 line: self.line,
                 clef_octave_change: self.clef_octave_change,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"sign" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"line" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"clef-octave-change" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -29371,6 +29998,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: CreditContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -30166,6 +30801,31 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"credit-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"link" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bookmark" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"credit-image" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"credit-words" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"credit-symbol" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct DashesDeserializer {
@@ -30471,6 +31131,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Defaults {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: DefaultsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -31177,6 +31845,20 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Scaling(None) => Some(S::Scaling(None)),
+                S::ConcertScore(None) => Some(S::ConcertScore(None)),
+                S::PageLayout(None) => Some(S::PageLayout(None)),
+                S::SystemLayout(None) => Some(S::SystemLayout(None)),
+                S::StaffLayout(None) => Some(S::StaffLayout(None)),
+                S::Appearance(None) => Some(S::Appearance(None)),
+                S::MusicFont(None) => Some(S::MusicFont(None)),
+                S::WordFont(None) => Some(S::WordFont(None)),
+                S::LyricFont(None) => Some(S::LyricFont(None)),
+                S::LyricLanguage(None) => Some(S::LyricLanguage(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -31620,6 +32302,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -31649,6 +32338,43 @@ pub mod quick_xml_deserialize {
                 lyric_font: self.lyric_font,
                 lyric_language: self.lyric_language,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"scaling" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"concert-score" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"page-layout" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"system-layout" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff-layout" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"appearance" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"music-font" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"word-font" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"lyric-font" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"lyric-language" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -31832,6 +32558,14 @@ pub mod quick_xml_deserialize {
                 print_object: self.print_object,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: DegreeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -32097,6 +32831,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::DegreeValue(None) => Some(S::DegreeValue(None)),
+                S::DegreeAlter(None) => Some(S::DegreeAlter(None)),
+                S::DegreeType(None) => Some(S::DegreeType(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -32261,6 +33002,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -32283,6 +33031,22 @@ pub mod quick_xml_deserialize {
                 degree_alter: helper.finish_element("degree-alter", self.degree_alter)?,
                 degree_type: helper.finish_element("degree-type", self.degree_type)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"degree-value" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"degree-alter" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"degree-type" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -32479,6 +33243,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct DegreeTypeDeserializer {
@@ -32673,6 +33445,14 @@ pub mod quick_xml_deserialize {
                 color: self.color,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: DegreeTypeValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -32878,6 +33658,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct DirectionDeserializer {
@@ -33075,6 +33863,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: DirectionContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -33654,6 +34450,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::DirectionType(None) => Some(S::DirectionType(None)),
+                S::Offset(None) => Some(S::Offset(None)),
+                S::Footnote(None) => Some(S::Footnote(None)),
+                S::Level(None) => Some(S::Level(None)),
+                S::Voice(None) => Some(S::Voice(None)),
+                S::Staff(None) => Some(S::Staff(None)),
+                S::Sound(None) => Some(S::Sound(None)),
+                S::Listening(None) => Some(S::Listening(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -33995,6 +34803,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -34022,6 +34837,37 @@ pub mod quick_xml_deserialize {
                 sound: self.sound,
                 listening: self.listening,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"direction-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"offset" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"voice" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sound" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"listening" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -34205,6 +35051,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: DirectionTypeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -36980,6 +37834,85 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"rehearsal" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"segno" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"coda" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"words" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"symbol" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"wedge" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"dynamics" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"dashes" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bracket" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pedal" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"octave-shift" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"harp-pedals" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"damp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"damp-all" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"eyeglasses" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"string-mute" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"scordatura" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"image" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"principal-voice" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"percussion" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accordion-registration" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff-divide" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-direction" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct DistanceDeserializer {
@@ -37121,6 +38054,14 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -37471,6 +38412,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: DynamicsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -40842,6 +41791,94 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"p" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ppp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pppp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ppppp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pppppp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"f" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ffff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fffff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ffffff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"mp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"mf" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sf" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sfp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sfpp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"rf" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"rfz" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sfz" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sffz" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fz" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"n" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pf" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sfzp" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-dynamics" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct EffectDeserializer {
@@ -40984,6 +42021,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: EffectValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -41152,6 +42197,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -42713,6 +43766,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: EncodingContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct EncodingContentDeserializer {
@@ -43385,6 +44446,28 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"encoding-date" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"encoder" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"software" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"encoding-description" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"supports" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct EndingDeserializer {
@@ -43616,6 +44699,14 @@ pub mod quick_xml_deserialize {
                 text_y: self.text_y,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -43864,6 +44955,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct FermataDeserializer {
@@ -44067,6 +45166,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: FermataShape as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct FigureDeserializer {
@@ -44241,6 +45348,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Figure {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: FigureContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -44688,6 +45803,16 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Prefix(None) => Some(S::Prefix(None)),
+                S::FigureNumber(None) => Some(S::FigureNumber(None)),
+                S::Suffix(None) => Some(S::Suffix(None)),
+                S::Extend(None) => Some(S::Extend(None)),
+                S::Footnote(None) => Some(S::Footnote(None)),
+                S::Level(None) => Some(S::Level(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -44955,6 +46080,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -44980,6 +46112,31 @@ pub mod quick_xml_deserialize {
                 footnote: self.footnote,
                 level: self.level,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"prefix" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"figure-number" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"suffix" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"extend" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -45265,6 +46422,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: FiguredBassContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -45587,6 +46752,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Figure(None) => Some(S::Figure(None)),
+                S::Duration(None) => Some(S::Duration(None)),
+                S::Footnote(None) => Some(S::Footnote(None)),
+                S::Level(None) => Some(S::Level(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -45776,6 +46949,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -45799,6 +46979,25 @@ pub mod quick_xml_deserialize {
                 footnote: self.footnote,
                 level: self.level,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"figure" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"duration" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -46007,6 +47206,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct FirstFretDeserializer {
@@ -46156,6 +47363,14 @@ pub mod quick_xml_deserialize {
                 location: self.location,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -46339,6 +47554,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ForPartContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -46527,6 +47750,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PartClef(None) => Some(S::PartClef(None)),
+                S::PartTranspose(None) => Some(S::PartTranspose(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -46646,6 +47875,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -46667,6 +47903,19 @@ pub mod quick_xml_deserialize {
                 part_clef: self.part_clef,
                 part_transpose: helper.finish_element("part-transpose", self.part_transpose)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"part-clef" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-transpose" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -46927,6 +48176,14 @@ pub mod quick_xml_deserialize {
                 enclosure: self.enclosure,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -47193,6 +48450,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -47468,6 +48733,14 @@ pub mod quick_xml_deserialize {
                 enclosure: self.enclosure,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -47753,6 +49026,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ForwardDeserializer {
@@ -47921,6 +49202,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Forward {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ForwardContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -48301,6 +49590,15 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Duration(None) => Some(S::Duration(None)),
+                S::Footnote(None) => Some(S::Footnote(None)),
+                S::Level(None) => Some(S::Level(None)),
+                S::Voice(None) => Some(S::Voice(None)),
+                S::Staff(None) => Some(S::Staff(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -48527,6 +49825,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -48551,6 +49856,28 @@ pub mod quick_xml_deserialize {
                 voice: self.voice,
                 staff: self.staff,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"duration" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"voice" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -48793,6 +50120,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: FrameContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -49135,6 +50470,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::FrameStrings(None) => Some(S::FrameStrings(None)),
+                S::FrameFrets(None) => Some(S::FrameFrets(None)),
+                S::FirstFret(None) => Some(S::FirstFret(None)),
+                S::FrameNote(None) => Some(S::FrameNote(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -49340,6 +50683,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -49361,6 +50711,25 @@ pub mod quick_xml_deserialize {
                 first_fret: self.first_fret,
                 frame_note: helper.finish_vec(1usize, None, self.frame_note)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"frame-strings" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"frame-frets" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"first-fret" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"frame-note" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -49533,6 +50902,14 @@ pub mod quick_xml_deserialize {
             Ok(super::FrameNote {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: FrameNoteContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -49876,6 +51253,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::String(None) => Some(S::String(None)),
+                S::Fret(None) => Some(S::Fret(None)),
+                S::Fingering(None) => Some(S::Fingering(None)),
+                S::Barre(None) => Some(S::Barre(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -50065,6 +51450,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -50088,6 +51480,25 @@ pub mod quick_xml_deserialize {
                 fingering: self.fingering,
                 barre: self.barre,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"string" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fret" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fingering" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"barre" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -50255,6 +51666,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: num :: BigUint as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct GlassDeserializer {
@@ -50396,6 +51815,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: GlassValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -50624,6 +52051,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct GlyphDeserializer {
@@ -50762,6 +52197,14 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -51011,6 +52454,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: GroupBarlineValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct GroupNameDeserializer {
@@ -51206,6 +52657,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct GroupSymbolDeserializer {
@@ -51370,6 +52829,14 @@ pub mod quick_xml_deserialize {
                 color: self.color,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: GroupSymbolValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -51570,6 +53037,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_default(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: GroupingContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct GroupingContentDeserializer {
@@ -51699,6 +53174,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Feature(None) => Some(S::Feature(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -51777,6 +53257,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -51797,6 +53284,16 @@ pub mod quick_xml_deserialize {
             Ok(super::GroupingContent {
                 feature: self.feature,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"feature" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -52012,6 +53509,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HandbellDeserializer {
@@ -52211,6 +53716,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HandbellValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HarmonClosedDeserializer {
@@ -52354,6 +53867,14 @@ pub mod quick_xml_deserialize {
                 location: self.location,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HarmonClosedValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -52592,6 +54113,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HarmonMuteContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HarmonMuteContentDeserializer {
@@ -52716,6 +54245,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::HarmonClosed(None) => Some(S::HarmonClosed(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -52798,6 +54332,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -52818,6 +54359,16 @@ pub mod quick_xml_deserialize {
             Ok(super::HarmonMuteContent {
                 harmon_closed: helper.finish_element("harmon-closed", self.harmon_closed)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"harmon-closed" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -53064,6 +54615,14 @@ pub mod quick_xml_deserialize {
                 placement: self.placement,
                 content: helper.finish_vec(0usize, Some(2usize), self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HarmonicContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -53810,6 +55369,28 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"natural" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"artificial" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"base-pitch" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"touching-pitch" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sounding-pitch" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HarmonyDeserializer {
@@ -54074,6 +55655,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HarmonyContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -55518,6 +57107,49 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"root" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"numeral" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"function" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"kind" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"inversion" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bass" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"degree" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"frame" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"offset" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HarmonyAlterDeserializer {
@@ -55718,6 +57350,14 @@ pub mod quick_xml_deserialize {
                 location: self.location,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -55968,6 +57608,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HarpPedalsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HarpPedalsContentDeserializer {
@@ -56098,6 +57746,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PedalTuning(None) => Some(S::PedalTuning(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -56180,6 +57833,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -56200,6 +57860,16 @@ pub mod quick_xml_deserialize {
             Ok(super::HarpPedalsContent {
                 pedal_tuning: helper.finish_vec(1usize, None, self.pedal_tuning)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"pedal-tuning" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -56576,6 +58246,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HoleContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct HoleContentDeserializer {
@@ -56828,6 +58506,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::HoleType(None) => Some(S::HoleType(None)),
+                S::HoleClosed(None) => Some(S::HoleClosed(None)),
+                S::HoleShape(None) => Some(S::HoleShape(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -56988,6 +58673,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -57008,6 +58700,22 @@ pub mod quick_xml_deserialize {
                 hole_closed: helper.finish_element("hole-closed", self.hole_closed)?,
                 hole_shape: self.hole_shape,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"hole-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"hole-closed" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"hole-shape" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -57149,6 +58857,14 @@ pub mod quick_xml_deserialize {
                 location: self.location,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: HoleClosedValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -57512,6 +59228,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Identification {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: IdentificationContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -57950,6 +59674,16 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Creator(None) => Some(S::Creator(None)),
+                S::Rights(None) => Some(S::Rights(None)),
+                S::Encoding(None) => Some(S::Encoding(None)),
+                S::Source(None) => Some(S::Source(None)),
+                S::Relation(None) => Some(S::Relation(None)),
+                S::Miscellaneous(None) => Some(S::Miscellaneous(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -58217,6 +59951,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -58244,6 +59985,31 @@ pub mod quick_xml_deserialize {
                 relation: self.relation,
                 miscellaneous: self.miscellaneous,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"creator" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"rights" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"encoding" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"source" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"relation" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"miscellaneous" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -58664,6 +60430,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, Some(3usize), self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: InstrumentChangeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -59242,6 +61016,25 @@ pub mod quick_xml_deserialize {
         > {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"instrument-sound" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"solo" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ensemble" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"virtual-instrument" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct InstrumentLinkDeserializer {
@@ -59516,6 +61309,14 @@ pub mod quick_xml_deserialize {
                 separator: self.separator,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: InterchangeableContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -59969,6 +61770,22 @@ pub mod quick_xml_deserialize {
         > {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"time-relation" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beats" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beat-type" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct InversionDeserializer {
@@ -60168,6 +61985,14 @@ pub mod quick_xml_deserialize {
                 color: self.color,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: num :: BigUint as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -60414,6 +62239,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: KeyContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -61306,6 +63139,34 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"cancel" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fifths" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"mode" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"key-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"key-alter" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"key-accidental" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"key-octave" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct KeyAccidentalDeserializer {
@@ -61448,6 +63309,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: AccidentalValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -61600,6 +63469,14 @@ pub mod quick_xml_deserialize {
                 cancel: self.cancel,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: num :: BigInt as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -61837,6 +63714,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: KindValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct LevelDeserializer {
@@ -61997,6 +63882,14 @@ pub mod quick_xml_deserialize {
                 size: self.size,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -62248,6 +64141,14 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -62591,6 +64492,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Listen {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ListenContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -63048,6 +64957,22 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"assess" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"wait" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-listen" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ListeningDeserializer {
@@ -63217,6 +65142,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Listening {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ListeningContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -63676,6 +65609,22 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"sync" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-listening" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"offset" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct LyricDeserializer {
@@ -63921,6 +65870,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: LyricContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -65150,6 +67107,43 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"syllabic" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"text" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"elision" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"extend" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"laughing" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"humming" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"end-line" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"end-paragraph" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct LyricFontDeserializer {
@@ -65540,6 +67534,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_default(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MeasureLayoutContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MeasureLayoutContentDeserializer {
@@ -65666,6 +67668,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::MeasureDistance(None) => Some(S::MeasureDistance(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -65748,6 +67755,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -65768,6 +67782,16 @@ pub mod quick_xml_deserialize {
             Ok(super::MeasureLayoutContent {
                 measure_distance: self.measure_distance,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"measure-distance" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -66010,6 +68034,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MeasureNumberingValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MeasureRepeatDeserializer {
@@ -66163,6 +68195,14 @@ pub mod quick_xml_deserialize {
                 slashes: self.slashes,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PositiveIntegerOrEmpty as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -66382,6 +68422,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MeasureStyleContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -66950,6 +68998,25 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"multiple-rest" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"measure-repeat" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beat-repeat" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"slash" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MembraneDeserializer {
@@ -67095,6 +69162,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MembraneValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MetalDeserializer {
@@ -67236,6 +69311,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MetalValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -67498,6 +69581,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MetronomeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -68404,6 +70495,34 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"beat-unit" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beat-unit-dot" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beat-unit-tied" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"per-minute" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome-arrows" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome-note" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome-relation" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MetronomeBeamDeserializer {
@@ -68551,6 +70670,14 @@ pub mod quick_xml_deserialize {
                 number: self.number,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: BeamValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -68728,6 +70855,14 @@ pub mod quick_xml_deserialize {
             Ok(super::MetronomeNote {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MetronomeNoteContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -69103,6 +71238,15 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::MetronomeType(None) => Some(S::MetronomeType(None)),
+                S::MetronomeDot(None) => Some(S::MetronomeDot(None)),
+                S::MetronomeBeam(None) => Some(S::MetronomeBeam(None)),
+                S::MetronomeTied(None) => Some(S::MetronomeTied(None)),
+                S::MetronomeTuplet(None) => Some(S::MetronomeTuplet(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -69349,6 +71493,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -69373,6 +71524,28 @@ pub mod quick_xml_deserialize {
                 metronome_tied: self.metronome_tied,
                 metronome_tuplet: self.metronome_tuplet,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"metronome-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome-dot" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome-beam" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome-tied" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metronome-tuplet" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -69658,6 +71831,14 @@ pub mod quick_xml_deserialize {
                 show_number: self.show_number,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MetronomeTupletContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -69979,6 +72160,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::ActualNotes(None) => Some(S::ActualNotes(None)),
+                S::NormalNotes(None) => Some(S::NormalNotes(None)),
+                S::NormalType(None) => Some(S::NormalType(None)),
+                S::NormalDot(None) => Some(S::NormalDot(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -70184,6 +72373,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -70209,6 +72405,25 @@ pub mod quick_xml_deserialize {
                 normal_type: self.normal_type,
                 normal_dot: self.normal_dot,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"actual-notes" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"normal-notes" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"normal-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"normal-dot" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -70356,6 +72571,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -70543,6 +72766,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MidiInstrumentContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -71140,6 +73371,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::MidiChannel(None) => Some(S::MidiChannel(None)),
+                S::MidiName(None) => Some(S::MidiName(None)),
+                S::MidiBank(None) => Some(S::MidiBank(None)),
+                S::MidiProgram(None) => Some(S::MidiProgram(None)),
+                S::MidiUnpitched(None) => Some(S::MidiUnpitched(None)),
+                S::Volume(None) => Some(S::Volume(None)),
+                S::Pan(None) => Some(S::Pan(None)),
+                S::Elevation(None) => Some(S::Elevation(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -71489,6 +73732,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -71518,6 +73768,37 @@ pub mod quick_xml_deserialize {
                 pan: self.pan,
                 elevation: self.elevation,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"midi-channel" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-name" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-bank" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-program" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-unpitched" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"volume" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pan" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"elevation" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -71696,6 +73977,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_default(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: MiscellaneousContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct MiscellaneousContentDeserializer {
@@ -71820,6 +74109,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::MiscellaneousField(None) => Some(S::MiscellaneousField(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -71902,6 +74196,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -71922,6 +74223,16 @@ pub mod quick_xml_deserialize {
             Ok(super::MiscellaneousContent {
                 miscellaneous_field: self.miscellaneous_field,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"miscellaneous-field" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -72070,6 +74381,14 @@ pub mod quick_xml_deserialize {
                 name: self.name,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -72408,6 +74727,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct NameDisplayDeserializer {
@@ -72588,6 +74915,14 @@ pub mod quick_xml_deserialize {
                 print_object: self.print_object,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NameDisplayContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -72935,6 +75270,19 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"display-text" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accidental-text" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct NonArpeggiateDeserializer {
@@ -73252,6 +75600,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NotationsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -75136,6 +77492,61 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tied" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"slur" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuplet" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"glissando" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"slide" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ornaments" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"technical" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"articulations" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"dynamics" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fermata" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"arpeggiate" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"non-arpeggiate" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accidental-mark" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-notation" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct NoteDeserializer {
@@ -75435,6 +77846,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NoteContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -78303,6 +80722,88 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"grace" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"chord" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pitch" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"unpitched" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"rest" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tie" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"cue" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"duration" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"instrument" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"voice" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"dot" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accidental" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"time-modification" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"stem" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"notehead" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"notehead-text" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beam" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"notations" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"lyric" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"play" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"listen" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct NoteSizeDeserializer {
@@ -78444,6 +80945,14 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -78589,6 +81098,14 @@ pub mod quick_xml_deserialize {
                 size: self.size,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NoteTypeValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -78777,6 +81294,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NoteheadValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct NoteheadTextDeserializer {
@@ -78949,6 +81474,14 @@ pub mod quick_xml_deserialize {
             Ok(super::NoteheadText {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NoteheadTextContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -79296,6 +81829,19 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"display-text" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accidental-text" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct NumeralDeserializer {
@@ -79464,6 +82010,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Numeral {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NumeralContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -79717,6 +82271,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::NumeralRoot(None) => Some(S::NumeralRoot(None)),
+                S::NumeralAlter(None) => Some(S::NumeralAlter(None)),
+                S::NumeralKey(None) => Some(S::NumeralKey(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -79881,6 +82442,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -79903,6 +82471,22 @@ pub mod quick_xml_deserialize {
                 numeral_alter: self.numeral_alter,
                 numeral_key: self.numeral_key,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"numeral-root" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"numeral-alter" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"numeral-key" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -80086,6 +82670,14 @@ pub mod quick_xml_deserialize {
                 print_object: self.print_object,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NumeralKeyContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -80282,6 +82874,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::NumeralFifths(None) => Some(S::NumeralFifths(None)),
+                S::NumeralMode(None) => Some(S::NumeralMode(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -80405,6 +83003,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -80426,6 +83031,19 @@ pub mod quick_xml_deserialize {
                 numeral_fifths: helper.finish_element("numeral-fifths", self.numeral_fifths)?,
                 numeral_mode: helper.finish_element("numeral-mode", self.numeral_mode)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"numeral-fifths" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"numeral-mode" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -80624,6 +83242,14 @@ pub mod quick_xml_deserialize {
                 color: self.color,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -80931,6 +83557,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct OpusDeserializer {
@@ -81236,6 +83870,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: OrnamentsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -83126,6 +85768,61 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"trill-mark" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"turn" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"delayed-turn" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"inverted-turn" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"delayed-inverted-turn" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"vertical-turn" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"inverted-vertical-turn" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"shake" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"wavy-line" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"mordent" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"inverted-mordent" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"schleifer" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tremolo" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"haydn" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-ornament" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"accidental-mark" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct OtherAppearanceDeserializer {
@@ -83273,6 +85970,14 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -83495,6 +86200,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct OtherListeningDeserializer {
@@ -83651,6 +86364,14 @@ pub mod quick_xml_deserialize {
                 time_only: self.time_only,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -83881,6 +86602,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct OtherPlacementTextDeserializer {
@@ -84087,6 +86816,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct OtherPlayDeserializer {
@@ -84230,6 +86967,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct OtherTextDeserializer {
@@ -84370,6 +87115,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -84545,6 +87298,14 @@ pub mod quick_xml_deserialize {
             Ok(super::PageLayout {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PageLayoutContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -84807,6 +87568,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PageHeight(None) => Some(S::PageHeight(None)),
+                S::PageWidth(None) => Some(S::PageWidth(None)),
+                S::PageMargins(None) => Some(S::PageMargins(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -84971,6 +87739,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -84993,6 +87768,22 @@ pub mod quick_xml_deserialize {
                 page_width: self.page_width,
                 page_margins: self.page_margins,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"page-height" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"page-width" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"page-margins" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -85176,6 +87967,14 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PageMarginsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -85514,6 +88313,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::LeftMargin(None) => Some(S::LeftMargin(None)),
+                S::RightMargin(None) => Some(S::RightMargin(None)),
+                S::TopMargin(None) => Some(S::TopMargin(None)),
+                S::BottomMargin(None) => Some(S::BottomMargin(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -85719,6 +88526,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -85742,6 +88556,25 @@ pub mod quick_xml_deserialize {
                 top_margin: helper.finish_element("top-margin", self.top_margin)?,
                 bottom_margin: helper.finish_element("bottom-margin", self.bottom_margin)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"left-margin" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"right-margin" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"top-margin" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bottom-margin" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -85913,6 +88746,14 @@ pub mod quick_xml_deserialize {
             Ok(super::PartClef {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PartClefContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -86182,6 +89023,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Sign(None) => Some(S::Sign(None)),
+                S::Line(None) => Some(S::Line(None)),
+                S::ClefOctaveChange(None) => Some(S::ClefOctaveChange(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -86338,6 +89186,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -86360,6 +89215,22 @@ pub mod quick_xml_deserialize {
                 line: self.line,
                 clef_octave_change: self.clef_octave_change,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"sign" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"line" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"clef-octave-change" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -86548,6 +89419,14 @@ pub mod quick_xml_deserialize {
                 number: self.number,
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PartGroupContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -87203,6 +90082,19 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::GroupName(None) => Some(S::GroupName(None)),
+                S::GroupNameDisplay(None) => Some(S::GroupNameDisplay(None)),
+                S::GroupAbbreviation(None) => Some(S::GroupAbbreviation(None)),
+                S::GroupAbbreviationDisplay(None) => Some(S::GroupAbbreviationDisplay(None)),
+                S::GroupSymbol(None) => Some(S::GroupSymbol(None)),
+                S::GroupBarline(None) => Some(S::GroupBarline(None)),
+                S::GroupTime(None) => Some(S::GroupTime(None)),
+                S::Footnote(None) => Some(S::Footnote(None)),
+                S::Level(None) => Some(S::Level(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -87613,6 +90505,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -87641,6 +90540,40 @@ pub mod quick_xml_deserialize {
                 footnote: self.footnote,
                 level: self.level,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"group-name" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group-name-display" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group-abbreviation" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group-abbreviation-display" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group-symbol" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group-barline" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group-time" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"footnote" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"level" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -87871,6 +90804,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_default(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PartLinkContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PartLinkContentDeserializer {
@@ -88053,6 +90994,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::InstrumentLink(None) => Some(S::InstrumentLink(None)),
+                S::GroupLink(None) => Some(S::GroupLink(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -88176,6 +91123,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -88197,6 +91151,19 @@ pub mod quick_xml_deserialize {
                 instrument_link: self.instrument_link,
                 group_link: self.group_link,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"instrument-link" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group-link" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -88366,6 +91333,14 @@ pub mod quick_xml_deserialize {
             Ok(super::PartList {
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PartListContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -88738,6 +91713,19 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"part-group" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"score-part" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PartNameDeserializer {
@@ -88938,6 +91926,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PartSymbolDeserializer {
@@ -89115,6 +92111,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: GroupSymbolValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PartTransposeDeserializer {
@@ -89291,6 +92295,14 @@ pub mod quick_xml_deserialize {
             Ok(super::PartTranspose {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PartTransposeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -89609,6 +92621,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Diatonic(None) => Some(S::Diatonic(None)),
+                S::Chromatic(None) => Some(S::Chromatic(None)),
+                S::OctaveChange(None) => Some(S::OctaveChange(None)),
+                S::Double(None) => Some(S::Double(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -89802,6 +92822,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -89825,6 +92852,25 @@ pub mod quick_xml_deserialize {
                 octave_change: self.octave_change,
                 double: self.double,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"diatonic" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"chromatic" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"octave-change" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"double" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -90177,6 +93223,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PedalTuningContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PedalTuningContentDeserializer {
@@ -90372,6 +93426,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PedalStep(None) => Some(S::PedalStep(None)),
+                S::PedalAlter(None) => Some(S::PedalAlter(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -90495,6 +93555,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -90516,6 +93583,19 @@ pub mod quick_xml_deserialize {
                 pedal_step: helper.finish_element("pedal-step", self.pedal_step)?,
                 pedal_alter: helper.finish_element("pedal-alter", self.pedal_alter)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"pedal-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pedal-alter" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -90675,6 +93755,14 @@ pub mod quick_xml_deserialize {
                 font_weight: self.font_weight,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -90930,6 +94018,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PercussionContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -92278,6 +95374,46 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"glass" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"metal" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"wood" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pitched" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"membrane" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"effect" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"timpani" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beater" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"stick" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"stick-location" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-percussion" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PitchDeserializer {
@@ -92451,6 +95587,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Pitch {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PitchContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -92704,6 +95848,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Step(None) => Some(S::Step(None)),
+                S::Alter(None) => Some(S::Alter(None)),
+                S::Octave(None) => Some(S::Octave(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -92856,6 +96007,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -92876,6 +96034,22 @@ pub mod quick_xml_deserialize {
                 alter: self.alter,
                 octave: helper.finish_element("octave", self.octave)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"alter" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"octave" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -93019,6 +96193,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PitchedValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -93217,6 +96399,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PlayDeserializer {
@@ -93396,6 +96586,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PlayContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -93960,6 +97158,25 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"ipa" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"mute" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"semi-pitched" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-play" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PlayerDeserializer {
@@ -94145,6 +97362,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PlayerContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PlayerContentDeserializer {
@@ -94267,6 +97492,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PlayerName(None) => Some(S::PlayerName(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -94349,6 +97579,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -94369,6 +97606,16 @@ pub mod quick_xml_deserialize {
             Ok(super::PlayerContent {
                 player_name: helper.finish_element("player-name", self.player_name)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"player-name" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -94595,6 +97842,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct PrintDeserializer {
@@ -94806,6 +98061,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: PrintContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -95324,6 +98587,17 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::PageLayout(None) => Some(S::PageLayout(None)),
+                S::SystemLayout(None) => Some(S::SystemLayout(None)),
+                S::StaffLayout(None) => Some(S::StaffLayout(None)),
+                S::MeasureLayout(None) => Some(S::MeasureLayout(None)),
+                S::MeasureNumbering(None) => Some(S::MeasureNumbering(None)),
+                S::PartNameDisplay(None) => Some(S::PartNameDisplay(None)),
+                S::PartAbbreviationDisplay(None) => Some(S::PartAbbreviationDisplay(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -95660,6 +98934,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -95684,6 +98965,34 @@ pub mod quick_xml_deserialize {
                 part_name_display: self.part_name_display,
                 part_abbreviation_display: self.part_abbreviation_display,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"page-layout" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"system-layout" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff-layout" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"measure-layout" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"measure-numbering" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-name-display" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-abbreviation-display" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -96045,6 +99354,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_default(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: RestContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct RestContentDeserializer {
@@ -96248,6 +99565,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::DisplayStep(None) => Some(S::DisplayStep(None)),
+                S::DisplayOctave(None) => Some(S::DisplayOctave(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -96371,6 +99694,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -96390,6 +99720,19 @@ pub mod quick_xml_deserialize {
                 display_step: self.display_step,
                 display_octave: self.display_octave,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"display-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"display-octave" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -96564,6 +99907,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Root {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: RootContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -96752,6 +100103,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::RootStep(None) => Some(S::RootStep(None)),
+                S::RootAlter(None) => Some(S::RootAlter(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -96871,6 +100228,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -96890,6 +100254,19 @@ pub mod quick_xml_deserialize {
                 root_step: helper.finish_element("root-step", self.root_step)?,
                 root_alter: self.root_alter,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"root-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"root-alter" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -97088,6 +100465,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: Step as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScalingDeserializer {
@@ -97256,6 +100641,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Scaling {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScalingContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -97448,6 +100841,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Millimeters(None) => Some(S::Millimeters(None)),
+                S::Tenths(None) => Some(S::Tenths(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -97567,6 +100966,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -97588,6 +100994,19 @@ pub mod quick_xml_deserialize {
                 millimeters: helper.finish_element("millimeters", self.millimeters)?,
                 tenths: helper.finish_element("tenths", self.tenths)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"millimeters" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tenths" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -97772,6 +101191,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScordaturaContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScordaturaContentDeserializer {
@@ -97908,6 +101335,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Accord(None) => Some(S::Accord(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -97986,6 +101418,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -98006,6 +101445,16 @@ pub mod quick_xml_deserialize {
             Ok(super::ScordaturaContent {
                 accord: helper.finish_vec(1usize, None, self.accord)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"accord" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -98202,6 +101651,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, Some(5usize), self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScoreInstrumentContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -99004,6 +102461,31 @@ pub mod quick_xml_deserialize {
         > {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"instrument-name" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"instrument-abbreviation" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"instrument-sound" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"solo" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"ensemble" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"virtual-instrument" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScorePartDeserializer {
@@ -99183,6 +102665,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScorePartContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -100531,6 +104021,46 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"identification" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-link" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-name" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-name-display" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-abbreviation" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-abbreviation-display" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"group" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"score-instrument" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"player" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-device" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-instrument" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScorePartwiseElementTypeDeserializer {
@@ -100719,6 +104249,14 @@ pub mod quick_xml_deserialize {
                 version: self.version,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScorePartwiseElementTypeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -101313,6 +104851,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Work(None) => Some(S::Work(None)),
+                S::MovementNumber(None) => Some(S::MovementNumber(None)),
+                S::MovementTitle(None) => Some(S::MovementTitle(None)),
+                S::Identification(None) => Some(S::Identification(None)),
+                S::Defaults(None) => Some(S::Defaults(None)),
+                S::Credit(None) => Some(S::Credit(None)),
+                S::PartList(None) => Some(S::PartList(None)),
+                S::Part(None) => Some(S::Part(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -101662,6 +105212,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -101691,6 +105248,37 @@ pub mod quick_xml_deserialize {
                 part_list: helper.finish_element("part-list", self.part_list)?,
                 part: helper.finish_vec(1usize, None, self.part)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"work" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"movement-number" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"movement-title" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"identification" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"defaults" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"credit" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -101880,6 +105468,14 @@ pub mod quick_xml_deserialize {
                 version: self.version,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScoreTimewiseElementTypeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -102476,6 +106072,18 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Work(None) => Some(S::Work(None)),
+                S::MovementNumber(None) => Some(S::MovementNumber(None)),
+                S::MovementTitle(None) => Some(S::MovementTitle(None)),
+                S::Identification(None) => Some(S::Identification(None)),
+                S::Defaults(None) => Some(S::Defaults(None)),
+                S::Credit(None) => Some(S::Credit(None)),
+                S::PartList(None) => Some(S::PartList(None)),
+                S::Measure(None) => Some(S::Measure(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -102825,6 +106433,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -102854,6 +106469,37 @@ pub mod quick_xml_deserialize {
                 part_list: helper.finish_element("part-list", self.part_list)?,
                 measure: helper.finish_vec(1usize, None, self.measure)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"work" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"movement-number" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"movement-title" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"identification" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"defaults" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"credit" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"part-list" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"measure" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -103201,6 +106847,14 @@ pub mod quick_xml_deserialize {
                 content: self.content,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: SlashContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct SlashContentDeserializer {
@@ -103447,6 +107101,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SlashType(None) => Some(S::SlashType(None)),
+                S::SlashDot(None) => Some(S::SlashDot(None)),
+                S::ExceptVoice(None) => Some(S::ExceptVoice(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -103607,6 +107268,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -103627,6 +107295,22 @@ pub mod quick_xml_deserialize {
                 slash_dot: self.slash_dot,
                 except_voice: self.except_voice,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"slash-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"slash-dot" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"except-voice" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -103874,6 +107558,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -104344,6 +108036,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: SoundContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -105132,6 +108832,31 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"instrument-change" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-device" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"midi-instrument" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"play" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"swing" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"offset" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct StaffDetailsDeserializer {
@@ -105332,6 +109057,14 @@ pub mod quick_xml_deserialize {
                 print_spacing: self.print_spacing,
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: StaffDetailsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -105777,6 +109510,16 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::StaffType(None) => Some(S::StaffType(None)),
+                S::StaffLines(None) => Some(S::StaffLines(None)),
+                S::LineDetail(None) => Some(S::LineDetail(None)),
+                S::StaffTuning(None) => Some(S::StaffTuning(None)),
+                S::Capo(None) => Some(S::Capo(None)),
+                S::StaffSize(None) => Some(S::StaffSize(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -106060,6 +109803,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -106085,6 +109835,31 @@ pub mod quick_xml_deserialize {
                 capo: self.capo,
                 staff_size: self.staff_size,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"staff-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff-lines" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"line-detail" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff-tuning" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"capo" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"staff-size" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -106425,6 +110200,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_default(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: StaffLayoutContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct StaffLayoutContentDeserializer {
@@ -106551,6 +110334,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::StaffDistance(None) => Some(S::StaffDistance(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -106633,6 +110421,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -106653,6 +110448,16 @@ pub mod quick_xml_deserialize {
             Ok(super::StaffLayoutContent {
                 staff_distance: self.staff_distance,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"staff-distance" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -106794,6 +110599,14 @@ pub mod quick_xml_deserialize {
                 scaling: self.scaling,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -106979,6 +110792,14 @@ pub mod quick_xml_deserialize {
                 line: self.line,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: StaffTuningContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -107240,6 +111061,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::TuningStep(None) => Some(S::TuningStep(None)),
+                S::TuningAlter(None) => Some(S::TuningAlter(None)),
+                S::TuningOctave(None) => Some(S::TuningOctave(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -107404,6 +111232,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -107426,6 +111261,22 @@ pub mod quick_xml_deserialize {
                 tuning_alter: self.tuning_alter,
                 tuning_octave: helper.finish_element("tuning-octave", self.tuning_octave)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"tuning-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuning-alter" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuning-octave" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -107592,6 +111443,14 @@ pub mod quick_xml_deserialize {
                 color: self.color,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: StemValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -107787,6 +111646,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: StickContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct StickContentDeserializer {
@@ -107980,6 +111847,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::StickType(None) => Some(S::StickType(None)),
+                S::StickMaterial(None) => Some(S::StickMaterial(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -108103,6 +111976,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -108122,6 +112002,19 @@ pub mod quick_xml_deserialize {
                 stick_type: helper.finish_element("stick-type", self.stick_type)?,
                 stick_material: helper.finish_element("stick-material", self.stick_material)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"stick-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"stick-material" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -108317,6 +112210,14 @@ pub mod quick_xml_deserialize {
                 placement: self.placement,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -108805,6 +112706,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct SupportsDeserializer {
@@ -109088,6 +112997,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Swing {
                 content: helper.finish_vec(1usize, Some(4usize), self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: SwingContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -109762,6 +113679,28 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"straight" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"first" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"second" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"swing-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"swing-style" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct SyncDeserializer {
@@ -110037,6 +113976,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: SystemDividersContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct SystemDividersContentDeserializer {
@@ -110238,6 +114185,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::LeftDivider(None) => Some(S::LeftDivider(None)),
+                S::RightDivider(None) => Some(S::RightDivider(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -110361,6 +114314,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -110384,6 +114344,19 @@ pub mod quick_xml_deserialize {
                 left_divider: helper.finish_element("left-divider", self.left_divider)?,
                 right_divider: helper.finish_element("right-divider", self.right_divider)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"left-divider" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"right-divider" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -110559,6 +114532,14 @@ pub mod quick_xml_deserialize {
             Ok(super::SystemLayout {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: SystemLayoutContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -110884,6 +114865,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::SystemMargins(None) => Some(S::SystemMargins(None)),
+                S::SystemDistance(None) => Some(S::SystemDistance(None)),
+                S::TopSystemDistance(None) => Some(S::TopSystemDistance(None)),
+                S::SystemDividers(None) => Some(S::SystemDividers(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -111089,6 +115078,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -111112,6 +115108,25 @@ pub mod quick_xml_deserialize {
                 top_system_distance: self.top_system_distance,
                 system_dividers: self.system_dividers,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"system-margins" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"system-distance" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"top-system-distance" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"system-dividers" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -111289,6 +115304,14 @@ pub mod quick_xml_deserialize {
             Ok(super::SystemMargins {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: SystemMarginsContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -111485,6 +115508,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::LeftMargin(None) => Some(S::LeftMargin(None)),
+                S::RightMargin(None) => Some(S::RightMargin(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -111608,6 +115637,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -111629,6 +115665,19 @@ pub mod quick_xml_deserialize {
                 left_margin: helper.finish_element("left-margin", self.left_margin)?,
                 right_margin: helper.finish_element("right-margin", self.right_margin)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"left-margin" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"right-margin" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -111827,6 +115876,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct TechnicalDeserializer {
@@ -112004,6 +116061,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: TechnicalContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -115521,6 +119586,106 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"up-bow" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"down-bow" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"harmonic" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"open-string" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"thumb-position" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fingering" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pluck" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"double-tongue" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"triple-tongue" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"stopped" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"snap-pizzicato" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fret" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"string" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"hammer-on" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"pull-off" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bend" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tap" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"heel" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"toe" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"fingernails" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"hole" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"arrow" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"handbell" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"brass-bend" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"flip" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"smear" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"open" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"half-muted" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"harmon-mute" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"golpe" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"other-technical" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct TextElementDataDeserializer {
@@ -115735,6 +119900,14 @@ pub mod quick_xml_deserialize {
                 dir: self.dir,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -116279,6 +120452,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(1usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: TimeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -116836,6 +121017,25 @@ pub mod quick_xml_deserialize {
         {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"beats" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"beat-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"interchangeable" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"senza-misura" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct TimeModificationDeserializer {
@@ -117014,6 +121214,14 @@ pub mod quick_xml_deserialize {
             Ok(super::TimeModification {
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: TimeModificationContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -117338,6 +121546,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::ActualNotes(None) => Some(S::ActualNotes(None)),
+                S::NormalNotes(None) => Some(S::NormalNotes(None)),
+                S::NormalType(None) => Some(S::NormalType(None)),
+                S::NormalDot(None) => Some(S::NormalDot(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -117543,6 +121759,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -117568,6 +121791,25 @@ pub mod quick_xml_deserialize {
                 normal_type: self.normal_type,
                 normal_dot: self.normal_dot,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"actual-notes" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"normal-notes" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"normal-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"normal-dot" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -117831,6 +122073,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: TransposeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -118149,6 +122399,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Diatonic(None) => Some(S::Diatonic(None)),
+                S::Chromatic(None) => Some(S::Chromatic(None)),
+                S::OctaveChange(None) => Some(S::OctaveChange(None)),
+                S::Double(None) => Some(S::Double(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -118342,6 +122600,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -118365,6 +122630,25 @@ pub mod quick_xml_deserialize {
                 octave_change: self.octave_change,
                 double: self.double,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"diatonic" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"chromatic" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"octave-change" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"double" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -118572,6 +122856,14 @@ pub mod quick_xml_deserialize {
                 smufl: self.smufl,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: num :: BigInt as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -118824,6 +123116,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_default(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: TupletContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct TupletContentDeserializer {
@@ -119014,6 +123314,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::TupletActual(None) => Some(S::TupletActual(None)),
+                S::TupletNormal(None) => Some(S::TupletNormal(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -119137,6 +123443,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -119158,6 +123471,19 @@ pub mod quick_xml_deserialize {
                 tuplet_actual: self.tuplet_actual,
                 tuplet_normal: self.tuplet_normal,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"tuplet-actual" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuplet-normal" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -119435,6 +123761,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: num :: BigUint as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct TupletPortionDeserializer {
@@ -119611,6 +123945,14 @@ pub mod quick_xml_deserialize {
             Ok(super::TupletPortion {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: TupletPortionContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -119865,6 +124207,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::TupletNumber(None) => Some(S::TupletNumber(None)),
+                S::TupletType(None) => Some(S::TupletType(None)),
+                S::TupletDot(None) => Some(S::TupletDot(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -120029,6 +124378,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -120051,6 +124407,22 @@ pub mod quick_xml_deserialize {
                 tuplet_type: self.tuplet_type,
                 tuplet_dot: self.tuplet_dot,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"tuplet-number" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuplet-type" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"tuplet-dot" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -120222,6 +124594,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: NoteTypeValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct TypedTextDeserializer {
@@ -120362,6 +124742,14 @@ pub mod quick_xml_deserialize {
                 type_: self.type_,
                 content: helper.finish_content(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -120534,6 +124922,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Unpitched {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: UnpitchedContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -120740,6 +125136,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::DisplayStep(None) => Some(S::DisplayStep(None)),
+                S::DisplayOctave(None) => Some(S::DisplayOctave(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -120863,6 +125265,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -120884,6 +125293,19 @@ pub mod quick_xml_deserialize {
                 display_step: self.display_step,
                 display_octave: self.display_octave,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"display-step" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"display-octave" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -121063,6 +125485,14 @@ pub mod quick_xml_deserialize {
             Ok(super::VirtualInstrument {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: VirtualInstrumentContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -121259,6 +125689,12 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::VirtualLibrary(None) => Some(S::VirtualLibrary(None)),
+                S::VirtualName(None) => Some(S::VirtualName(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -121382,6 +125818,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -121405,6 +125848,19 @@ pub mod quick_xml_deserialize {
                 virtual_library: self.virtual_library,
                 virtual_name: self.virtual_name,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"virtual-library" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"virtual-name" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -121957,6 +126413,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: WoodValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct WorkDeserializer {
@@ -122130,6 +126594,14 @@ pub mod quick_xml_deserialize {
             Ok(super::Work {
                 content: helper.finish_default(self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: WorkContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -122385,6 +126857,13 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::WorkNumber(None) => Some(S::WorkNumber(None)),
+                S::WorkTitle(None) => Some(S::WorkTitle(None)),
+                S::Opus(None) => Some(S::Opus(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -122545,6 +127024,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -122565,6 +127051,22 @@ pub mod quick_xml_deserialize {
                 work_title: self.work_title,
                 opus: self.opus,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"work-number" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"work-title" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"opus" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -122781,6 +127283,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScorePartwisePartElementTypeDeserializer {
@@ -122978,6 +127488,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScorePartwisePartElementTypeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScorePartwisePartElementTypeContentDeserializer {
@@ -123123,6 +127641,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Measure(None) => Some(S::Measure(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -123201,6 +127724,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -123223,6 +127753,16 @@ pub mod quick_xml_deserialize {
             Ok(super::ScorePartwisePartElementTypeContent {
                 measure: helper.finish_vec(1usize, None, self.measure)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"measure" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -123453,6 +127993,14 @@ pub mod quick_xml_deserialize {
                 content: helper.finish_content(self.content)?,
             })
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScoreTimewiseMeasureElementTypeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScoreTimewiseMeasureElementTypeContentDeserializer {
@@ -123598,6 +128146,11 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            let entry_state__ = match &*self.state__ {
+                S::Init__ => Some(S::Init__),
+                S::Part(None) => Some(S::Part(None)),
+                _ => None,
+            };
             let (event, allow_any) = loop {
                 let state = ::core::mem::replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
@@ -123676,6 +128229,13 @@ pub mod quick_xml_deserialize {
             };
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
+            } else if !matches!(
+                event,
+                ::xsd_parser_types::quick_xml::DeserializerEvent::None
+            ) {
+                if let Some(entry_state) = entry_state__ {
+                    *self.state__ = entry_state;
+                }
             }
             Ok(::xsd_parser_types::quick_xml::DeserializerOutput {
                 artifact: ::xsd_parser_types::quick_xml::DeserializerArtifact::Deserializer(self),
@@ -123698,6 +128258,16 @@ pub mod quick_xml_deserialize {
             Ok(super::ScoreTimewiseMeasureElementTypeContent {
                 part: helper.finish_vec(1usize, None, self.part)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"part" {
+                return true;
+            }
+            false
         }
     }
     #[derive(Debug)]
@@ -123928,6 +128498,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScorePartwisePartMeasureElementTypeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -125625,6 +130203,55 @@ pub mod quick_xml_deserialize {
         > {
             Self::finish_state(helper, *self.state__)
         }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"note" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"backup" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"forward" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"direction" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"attributes" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"harmony" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"figured-bass" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"print" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sound" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"listening" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"barline" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"grouping" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"link" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bookmark" {
+                return true;
+            }
+            false
+        }
     }
     #[derive(Debug)]
     pub struct ScoreTimewiseMeasurePartElementTypeDeserializer {
@@ -125824,6 +130451,14 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if < super :: ScoreTimewiseMeasurePartElementTypeContent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+            false
         }
     }
     #[derive(Debug)]
@@ -127520,6 +132155,55 @@ pub mod quick_xml_deserialize {
             ::xsd_parser_types::quick_xml::Error,
         > {
             Self::finish_state(helper, *self.state__)
+        }
+        fn is_known_start_tag(
+            helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+            x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+        ) -> bool {
+            let _ = helper;
+            if x.name().local_name().as_ref() == b"note" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"backup" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"forward" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"direction" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"attributes" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"harmony" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"figured-bass" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"print" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"sound" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"listening" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"barline" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"grouping" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"link" {
+                return true;
+            }
+            if x.name().local_name().as_ref() == b"bookmark" {
+                return true;
+            }
+            false
         }
     }
 }
@@ -161852,6 +166536,14 @@ pub mod xs {
                     type_: self.type_,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+            fn is_known_start_tag(
+                helper: &::xsd_parser_types::quick_xml::DeserializeHelper,
+                x: &::xsd_parser_types::quick_xml::BytesStart<'_>,
+            ) -> bool {
+                let _ = helper;
+                if < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: Deserializer :: is_known_start_tag (helper , x) { return true ; }
+                false
             }
         }
     }
