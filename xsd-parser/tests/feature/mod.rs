@@ -32,6 +32,7 @@ mod empty_string;
 mod enumeration;
 mod enumeration_with_annotation;
 mod extension_base;
+mod extension_base_as_element_type;
 mod extension_base_multilayer;
 mod extension_base_two_files;
 mod extension_mixed_content;

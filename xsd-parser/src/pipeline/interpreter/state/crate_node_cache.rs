@@ -851,7 +851,17 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
     }
 
     fn add_dependency_with_key(&mut self, key: NodeDependencyKey, dependency: NodeDependency) {
-        self.active_entry_mut().dependencies.insert(key, dependency);
+        let dependencies = &mut self.active_entry_mut().dependencies;
+
+        // `create_node_list` ignores weak edges, so downgrading a strong one (e.g. an
+        // extension base also used as element type) would generate the base too late.
+        if matches!(dependency, NodeDependency::Weak(_))
+            && matches!(dependencies.get(&key), Some(NodeDependency::Strong(_)))
+        {
+            return;
+        }
+
+        dependencies.insert(key, dependency);
     }
 
     fn push_stack(&mut self, entry: StackEntry<'schema>) {
