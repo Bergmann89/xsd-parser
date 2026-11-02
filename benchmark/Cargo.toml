@@ -20,7 +20,7 @@ serde-xml-rs = { workspace = true }
 serde-xml-rs-v7 = { workspace = true }
 sysinfo = { workspace = true }
 
-xsd-parser-types = { workspace = true, features = [ "quick-xml" ] }
+xsd-parser-types = { workspace = true, features = [ "quick-xml", "serde" ] }
 
 [build-dependencies]
 anyhow = { workspace = true}

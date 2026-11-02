@@ -31,7 +31,8 @@ fn main() -> Result<(), Error> {
                     - GeneratorFlags::MIXED_TYPE_SUPPORT
                     - GeneratorFlags::NILLABLE_TYPE_SUPPORT
                     - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
-                    - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS,
+                    - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS
+                    - GeneratorFlags::ADVANCED_ENUMS,
             )
             .with_generate([IdentQuadruple::from((IdentType::ElementType, "xs:schema"))]);
         config.generator.type_postfix.element = String::default();

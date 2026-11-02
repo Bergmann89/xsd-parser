@@ -23,7 +23,9 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
 
-    - uses: actions/cache@v4
+    - name: restore cache
+      id: cache
+      uses: actions/cache/restore@v4
       with:
         path: |
           ~/.cargo/bin/
@@ -31,7 +33,7 @@ jobs:
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
           target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+        key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
 
     - name: rust environment
       run: rustc --version && cargo --version
@@ -64,3 +66,17 @@ jobs:
     - name: example VSME
       working-directory: examples/vsme
       run: cargo run --release
+
+    # A failing cache upload should not fail the build.
+    - name: save cache
+      if: steps.cache.outputs.cache-hit != 'true'
+      continue-on-error: true
+      uses: actions/cache/save@v4
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ steps.cache.outputs.cache-primary-key }}
