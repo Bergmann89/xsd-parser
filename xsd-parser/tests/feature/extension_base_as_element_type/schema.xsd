@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://example.com" targetNamespace="http://example.com" elementFormDefault="qualified">
+    <xs:element name="SomeDetails" type="withFirstDataType"/>
+    <xs:complexType name="withFirstDataType">
+        <xs:complexContent>
+            <xs:extension base="dataType">
+                <xs:sequence>
+                    <xs:element name="firstInfo" type="dataType" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="dataType">
+        <xs:sequence>
+            <xs:element name="createDate" type="xs:dateTime" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="WithAttr">
+        <xs:simpleContent>
+            <xs:extension base="tns:Code">
+                <xs:attribute name="alt" type="tns:Code"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="Code">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:element name="Other" type="tns:WithAttr"/>
+</xs:schema>
