@@ -175,7 +175,9 @@ impl Module {
             } else {
                 directory.join(path).join("mod.rs")
             };
-            create_dir_all(filename.parent().unwrap())?;
+            if let Some(parent) = filename.parent() {
+                create_dir_all(parent)?;
+            }
 
             let mut code = TokenStream::new();
             module.to_code(&mut code, SubModules::Files);
@@ -290,4 +292,18 @@ where
     }
 
     ret
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn write_to_files_with_empty_directory_returns_error() {
+        let module = Module::default();
+
+        let err = module.write_to_files("").unwrap_err();
+
+        assert_eq!(err.kind(), std::io::ErrorKind::NotFound);
+    }
 }

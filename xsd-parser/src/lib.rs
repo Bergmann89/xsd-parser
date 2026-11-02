@@ -26,6 +26,7 @@ pub type ParserError<E> = self::pipeline::parser::Error<E>;
 use std::fmt::Debug;
 use std::fs::write;
 use std::io::Error as IoError;
+use std::str::FromStr;
 
 pub use proc_macro2::Ident as Ident2;
 
@@ -63,6 +64,7 @@ use self::config::{
     OptimizerFlags, ParserConfig, ParserFlags, RendererConfig, Resolver, Schema,
 };
 use self::macros::{assert, unreachable};
+use self::models::code::IdentPath;
 use self::pipeline::{
     optimizer::UnrestrictedBaseFlags,
     parser::resolver::{FileResolver, ManyResolver},
@@ -440,6 +442,11 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
         .xsd_parser_types(config.xsd_parser_types);
 
     if let Some(derive) = config.derive {
+        // `Renderer::derive` panics on invalid paths, so validate them up front.
+        for path in &derive {
+            IdentPath::from_str(path)?;
+        }
+
         renderer = renderer.derive(derive);
     }
 

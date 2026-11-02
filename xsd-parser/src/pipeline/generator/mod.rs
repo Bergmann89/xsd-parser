@@ -475,9 +475,9 @@ impl<'types> State<'types> {
             }
             MetaTypeVariant::Custom(x) => {
                 if let Some(using) = x.include() {
-                    if meta.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS) {
-                        let path = IdentPath::from_str(using)?;
+                    let path = IdentPath::from_str(using)?;
 
+                    if meta.check_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS) {
                         PathData::from_path(path)
                     } else {
                         let path = IdentPath::from_ident(format_ident!("{}", x.name()));
