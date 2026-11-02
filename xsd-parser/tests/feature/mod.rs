@@ -86,6 +86,7 @@ mod simple_type_max_length;
 mod static_list;
 mod substitution_group;
 mod substitution_group_nillable;
+mod substitution_group_typeless_members;
 mod trailing_underscore_group;
 mod tuple_with_complex;
 mod tuple_with_integer;
