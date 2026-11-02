@@ -178,3 +178,22 @@ mod serde_quick_xml {
 
     include!("expected/serde_quick_xml.rs");
 }
+
+#[test]
+fn invalid_derive_returns_error() {
+    let mut config = config().with_derive(["Debug", "not a path"]);
+    let input_xsd = Path::new("tests/feature/derive/schema.xsd")
+        .canonicalize()
+        .unwrap();
+    config.parser.schemas.push(Schema::File(input_xsd));
+
+    let err = xsd_parser::generate(config).unwrap_err();
+
+    assert!(
+        matches!(
+            err,
+            xsd_parser::Error::RendererError(xsd_parser::RendererError::InvalidIdentifier(_))
+        ),
+        "{err:?}"
+    );
+}

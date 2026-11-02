@@ -2,8 +2,8 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Deref, DerefMut};
 use std::str::FromStr;
 
-use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote, ToTokens};
+use proc_macro2::{Ident as Ident2, TokenStream, TokenTree};
+use quote::{quote, ToTokens};
 use smallvec::SmallVec;
 use thiserror::Error;
 
@@ -227,11 +227,17 @@ impl FromStr for IdentPath {
                 continue;
             }
 
+            // Let the lexer validate the part, `format_ident!` would panic on invalid input.
+            let mut tokens = TokenStream::from_str(part).into_iter().flatten();
+            let (Some(TokenTree::Ident(part)), None) = (tokens.next(), tokens.next()) else {
+                return Err(InvalidIdentPath(s.into()));
+            };
+
             if let Some(ident) = ident.take() {
                 path.0.push(ident);
             }
 
-            ident = Some(format_ident!("{part}"));
+            ident = Some(part);
         }
 
         Ok(Self {
@@ -361,9 +367,47 @@ impl ModuleIdent {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use quote::{format_ident, quote};
 
     use super::{IdentPath, ModulePath};
+
+    #[test]
+    fn from_str_accepts_valid_paths() {
+        for s in [
+            "Foo",
+            "::foo::Bar",
+            "foo::r#type",
+            "_x",
+            "x\u{301}",
+            "über::Grüße",
+        ] {
+            assert!(IdentPath::from_str(s).is_ok(), "{s}");
+        }
+    }
+
+    #[test]
+    fn from_str_rejects_invalid_paths() {
+        for s in [
+            "",
+            "::",
+            "not a path",
+            "foo::*",
+            "foo::{A, B}",
+            "foo as Bar",
+            "1x",
+            "a\u{b2}",
+            "r#_",
+            "r#self",
+            "r#Self",
+            "r#super",
+            "r#crate",
+            "\u{345}x",
+        ] {
+            assert!(IdentPath::from_str(s).is_err(), "{s}");
+        }
+    }
 
     #[test]
     #[rustfmt::skip]
