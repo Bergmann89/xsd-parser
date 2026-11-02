@@ -254,6 +254,11 @@ bitflags! {
         /// [`EnumConstantsRenderStep`](crate::pipeline::renderer::EnumConstantsRenderStep)
         /// or the [`RenderStep::EnumConstants`](super::RenderStep::EnumConstants)
         /// to generate suitable code for these constants and associated functions.
+        ///
+        /// Note that [`GeneratorFlags::all()`] includes this flag. To keep it, also
+        /// call [`Config::with_advanced_enums`](crate::Config::with_advanced_enums),
+        /// which adds the render step, otherwise remove it
+        /// (`GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS`).
         const ADVANCED_ENUMS = 1 << 9;
     }
 }

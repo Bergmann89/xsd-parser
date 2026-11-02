@@ -13,7 +13,9 @@ fn main() -> Result<(), Error> {
         .with_schema(Schema::File("my-schema.xsd".into()))
         .with_interpreter_flags(InterpreterFlags::all())
         .with_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::all())
+        // `ADVANCED_ENUMS` also needs `RenderStep::EnumConstants`,
+        // see `Config::with_advanced_enums`.
+        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS)
         .with_quick_xml();
 
     // Generate the code based on the configuration above.
