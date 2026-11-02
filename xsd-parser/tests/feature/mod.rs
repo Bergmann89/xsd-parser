@@ -42,6 +42,7 @@ mod extra_derive;
 mod facets;
 mod facets_binary;
 mod flattened_content_helpers;
+mod global_attribute_without_type;
 mod globally_allowed_attribute;
 mod group_modules;
 mod group_optional_followed_by_element;

@@ -321,6 +321,13 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             init_any!(self, Reference, ReferenceMeta::new(type_), false);
         } else if let Some(x) = &ty.simple_type {
             self.apply_simple_type(x)?;
+        } else {
+            init_any!(
+                self,
+                Reference,
+                ReferenceMeta::new(TypeIdent::STRING),
+                false
+            );
         }
 
         Ok(())
