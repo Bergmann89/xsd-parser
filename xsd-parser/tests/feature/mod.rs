@@ -22,6 +22,7 @@ mod defaultable_content;
 mod derive;
 mod documentation;
 mod duplicate_idents;
+mod duplicate_type_name;
 mod dynamic_type;
 mod dynamic_type_member_generated_first;
 mod dynamic_type_substitution_group;

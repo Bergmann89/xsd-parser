@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com"
+    xmlns:tns="http://example.com"
+    elementFormDefault="qualified">
+    <!-- `Foo` gets the `Type` postfix and ends up next to the existing `FooType` -->
+    <xs:simpleType name="Foo"><xs:restriction base="xs:string"><xs:enumeration value="a" /></xs:restriction></xs:simpleType>
+    <xs:simpleType name="FooType"><xs:restriction base="xs:string"><xs:enumeration value="b" /></xs:restriction></xs:simpleType>
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="A" type="tns:Foo" />
+                <xs:element name="B" type="tns:FooType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

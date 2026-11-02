@@ -5,6 +5,7 @@ use bit_set::BitSet;
 
 use crate::models::meta::DeriveRelationship;
 use crate::models::{
+    code::IdentPath,
     data::PathData,
     meta::{ComplexMeta, MetaType, MetaTypeVariant, MetaTypes},
     TypeIdent,
@@ -18,6 +19,9 @@ pub(super) struct State<'types> {
     pub pending: VecDeque<PendingType<'types>>,
     pub trait_infos: TraitInfos,
     pub loop_detection: LoopDetection,
+
+    /// Rust paths of the generated types, to detect two types sharing one path.
+    pub paths: BTreeMap<IdentPath, TypeIdent>,
 
     /// Resolved identifiers of the content types that are used by more than one
     /// complex type.
@@ -56,6 +60,7 @@ impl State<'_> {
             pending: VecDeque::new(),
             trait_infos: TraitInfos::empty(),
             loop_detection: LoopDetection::default(),
+            paths: BTreeMap::new(),
             shared_content_idents,
         }
     }

@@ -47,4 +47,23 @@ pub enum Error {
         #[source]
         InvalidIdentPath,
     ),
+
+    /// Duplicate type name.
+    ///
+    /// Is raised if two different schema types would be generated with the
+    /// same Rust path, which results in code that does not compile.
+    #[error(
+        "Type name `{path}` is generated for both {first} and {second}! \
+         Use different module flags or a custom naming to tell them apart."
+    )]
+    DuplicateTypeName {
+        /// The Rust path that is used by both types.
+        path: String,
+
+        /// Description of the schema type that claimed the path first.
+        first: String,
+
+        /// Description of the schema type that collides with `first`.
+        second: String,
+    },
 }

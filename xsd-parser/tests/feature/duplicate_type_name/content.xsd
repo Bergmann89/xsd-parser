@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com"
+    xmlns:tns="http://example.com"
+    elementFormDefault="qualified">
+    <!-- without a type postfix, the inline content of `Foo` is generated as `FooContent`, like the type `FooContent` -->
+    <xs:complexType name="Foo">
+        <xs:sequence>
+            <xs:element name="A" type="xs:string" />
+            <xs:element name="B" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FooContent"><xs:attribute name="x" type="xs:string" /></xs:complexType>
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="A" type="tns:Foo" />
+                <xs:element name="B" type="tns:FooContent" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

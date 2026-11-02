@@ -292,6 +292,10 @@ impl<'types> ComplexData<'types> {
         let has_content = occurs.is_some() && !elements.is_empty();
         let shared_content = ctx.shared_content();
 
+        if has_content && shared_content.is_none() {
+            ctx.register_content_path(&content_ident)?;
+        }
+
         let content_type = (has_content && shared_content.is_none()).then(|| {
             let type_ = ComplexDataEnum {
                 base: ComplexBase::new_empty(
@@ -449,6 +453,10 @@ impl<'types> ComplexData<'types> {
         let content_ident = format_ident!("{type_ident}Content");
         let has_content = occurs.is_some() && !elements.is_empty();
         let shared_content = ctx.shared_content();
+
+        if has_content && shared_content.is_none() {
+            ctx.register_content_path(&content_ident)?;
+        }
 
         let content_type = (has_content && shared_content.is_none()).then(|| {
             let mode = match type_mode {

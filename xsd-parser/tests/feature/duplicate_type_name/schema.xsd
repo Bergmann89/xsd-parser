@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com"
+    xmlns:tns="http://example.com"
+    xmlns:o="http://example.com/other"
+    elementFormDefault="qualified">
+    <xs:import namespace="http://example.com/other" schemaLocation="other.xsd" />
+    <!-- global element with an inline complex type, named like a global attribute of the other namespace -->
+    <xs:element name="space">
+        <xs:complexType>
+            <xs:attribute name="width" type="xs:string" />
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="kind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="a" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:space" />
+                <xs:element name="A" type="tns:kind" />
+                <xs:element name="B" type="o:kind" />
+            </xs:sequence>
+            <xs:attribute ref="o:space" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
