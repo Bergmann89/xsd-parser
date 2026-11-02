@@ -90,7 +90,7 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
     pub(super) fn get_substitution_group_element_mut(
         &mut self,
         ident: &TypeIdent,
-    ) -> &mut MetaType {
+    ) -> Result<&mut MetaType, Error> {
         self.get_type_mut(ident)
     }
 
@@ -98,8 +98,8 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
     pub(super) fn get_simple_type_variant(
         &mut self,
         ident: &TypeIdent,
-    ) -> Option<Cow<'_, MetaTypeVariant>> {
-        match self.get_variant(ident) {
+    ) -> Result<Option<Cow<'_, MetaTypeVariant>>, Error> {
+        let ret = match self.get_variant(ident)? {
             ty if ty.is_mixed(self.types) && ty.is_emptiable(self.types) => {
                 Some(Cow::Owned(MetaTypeVariant::BuildIn(BuildInMeta::String)))
             }
@@ -116,22 +116,21 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
             | MetaTypeVariant::Union(_)
             | MetaTypeVariant::Reference(_)
             | MetaTypeVariant::SimpleType(_)) => Some(Cow::Borrowed(ty)),
-        }
+        };
+
+        Ok(ret)
     }
 
     #[instrument(level = "trace", skip(self))]
     pub(super) fn get_complex_type_variant(
         &mut self,
         ident: &TypeIdent,
-    ) -> Option<&MetaTypeVariant> {
+    ) -> Result<Option<&MetaTypeVariant>, Error> {
         let mut ident = Cow::Borrowed(ident);
 
         loop {
             match self.types.get_variant(&ident) {
-                None => {
-                    // Hard dependencies should be available here
-                    panic!("Unable to get type for {ident}");
-                }
+                None => return Err(Error::UnknownType(ident.into_owned())),
                 Some(
                     MetaTypeVariant::Enumeration(_)
                     | MetaTypeVariant::BuildIn(_)
@@ -139,13 +138,13 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
                     | MetaTypeVariant::Union(_)
                     | MetaTypeVariant::Reference(_)
                     | MetaTypeVariant::SimpleType(_),
-                ) => return None,
+                ) => return Ok(None),
                 Some(
                     ty @ (MetaTypeVariant::ComplexType(_)
                     | MetaTypeVariant::All(_)
                     | MetaTypeVariant::Choice(_)
                     | MetaTypeVariant::Sequence(_)),
-                ) => return Some(ty),
+                ) => return Ok(Some(ty)),
                 Some(MetaTypeVariant::Dynamic(dt)) => {
                     ident = Cow::Owned(dt.type_.clone().expect("Dynamic type to have base type"));
                 }
@@ -179,28 +178,22 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
         Ok(())
     }
 
-    pub(super) fn get_type(&self, ident: &TypeIdent) -> &MetaType {
-        match self.types.items.get(ident) {
-            Some(ty) => ty,
-            None => {
-                // Hard dependencies should be available here
-                panic!("Unable to get type for {ident}");
-            }
-        }
+    pub(super) fn get_type(&self, ident: &TypeIdent) -> Result<&MetaType, Error> {
+        self.types
+            .items
+            .get(ident)
+            .ok_or_else(|| Error::UnknownType(ident.clone()))
     }
 
-    pub(super) fn get_type_mut(&mut self, ident: &TypeIdent) -> &mut MetaType {
-        match self.types.items.get_mut(ident) {
-            Some(ty) => ty,
-            None => {
-                // Hard dependencies should be available here
-                panic!("Unable to get type for {ident}");
-            }
-        }
+    pub(super) fn get_type_mut(&mut self, ident: &TypeIdent) -> Result<&mut MetaType, Error> {
+        self.types
+            .items
+            .get_mut(ident)
+            .ok_or_else(|| Error::UnknownType(ident.clone()))
     }
 
-    pub(super) fn get_variant(&self, ident: &TypeIdent) -> &MetaTypeVariant {
-        &self.get_type(ident).variant
+    pub(super) fn get_variant(&self, ident: &TypeIdent) -> Result<&MetaTypeVariant, Error> {
+        Ok(&self.get_type(ident)?.variant)
     }
 
     pub(super) fn add_type(

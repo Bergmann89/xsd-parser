@@ -55,6 +55,7 @@ mod include_references;
 mod include_target_namespace;
 mod inline_element_names;
 mod list;
+mod missing_base_type;
 mod mixed_choice_with_any;
 mod mixed_content;
 mod mixed_content_groups;

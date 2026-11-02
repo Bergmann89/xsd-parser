@@ -247,7 +247,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                 // inline complex type so the deserializer can use it when
                 // the element is present but has no text content.
                 if let Some(default) = &ty.default {
-                    let type_meta = self.owner.get_type_mut(&type_);
+                    let type_meta = self.owner.get_type_mut(&type_)?;
                     if let MetaTypeVariant::ComplexType(ref mut meta) = type_meta.variant {
                         meta.default = Some(default.clone());
                     }
@@ -417,7 +417,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
         let mut is_direct = true;
         while let Some(base_ident) = base.take() {
-            let base_ty = self.owner.get_type_mut(&base_ident);
+            let base_ty = self.owner.get_type_mut(&base_ident)?;
 
             match &mut base_ty.variant {
                 MetaTypeVariant::Dynamic(dm) => {
@@ -1249,13 +1249,13 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                 self.fixed = false;
                 let ty = self
                     .owner
-                    .get_simple_type_variant(&base)
+                    .get_simple_type_variant(&base)?
                     .ok_or_else(|| Error::ExpectedSimpleType(base.clone()))?;
 
                 (BaseIdent::Simple(base), ty)
             }
             (TypeMode::Complex, ContentMode::Simple) => {
-                match self.owner.get_simple_type_variant(&base) {
+                match self.owner.get_simple_type_variant(&base)? {
                     Some(ty) => {
                         self.fixed = false;
 
@@ -1265,7 +1265,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                         self.fixed = true;
                         let ty = self
                             .owner
-                            .get_complex_type_variant(&base)
+                            .get_complex_type_variant(&base)?
                             .ok_or_else(|| Error::ExpectedComplexType(base.clone()))?;
 
                         (BaseIdent::Complex(base), Cow::Borrowed(ty))
@@ -1275,7 +1275,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             (TypeMode::Complex, ContentMode::Complex) => {
                 let ty = self
                     .owner
-                    .get_complex_type_variant(&base)
+                    .get_complex_type_variant(&base)?
                     .ok_or_else(|| Error::ExpectedComplexType(base.clone()))?;
 
                 (BaseIdent::Complex(base), Cow::Borrowed(ty))
@@ -1289,7 +1289,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             (ContentMode::Simple, MetaTypeVariant::Enumeration(ei)) => ei.variants.clear(),
             (ContentMode::Complex, MetaTypeVariant::ComplexType(ci)) => {
                 if let Some(content_ident) = &ci.content {
-                    let mut content_type = self.owner.get_type(content_ident).clone();
+                    let mut content_type = self.owner.get_type(content_ident)?.clone();
 
                     match (&mut content_type.variant, mode) {
                         (MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si) | MetaTypeVariant::Sequence(si), UpdateMode::Restriction) => {
@@ -1404,7 +1404,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
                 let content = self
                     .owner
-                    .get_simple_type_variant(&content_ident)
+                    .get_simple_type_variant(&content_ident)?
                     .ok_or_else(|| Error::ExpectedSimpleType(content_ident.clone()))?
                     .into_owned();
 
@@ -1487,7 +1487,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
         if let Some(MetaTypeVariant::ComplexType(ci)) = &self.variant {
             if let Some(content_ident) = &ci.content {
-                let content_ty = self.owner.get_type(content_ident);
+                let content_ty = self.owner.get_type(content_ident)?;
 
                 match (complex_content_type, &content_ty.variant) {
                     (ComplexContentType::All, MetaTypeVariant::All(_))
@@ -1576,7 +1576,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                     };
 
                     let content_ident = ci.content.as_ref().unwrap();
-                    let content_type = self.owner.get_type_mut(content_ident);
+                    let content_type = self.owner.get_type_mut(content_ident)?;
                     let content_variant = &mut content_type.variant;
 
                     let (MetaTypeVariant::All(si)
@@ -1744,7 +1744,7 @@ fn prepare_substitution_group(
     let current_ident = processor.owner.current_ident().clone();
     let base_ty = processor
         .owner
-        .get_substitution_group_element_mut(base_ident);
+        .get_substitution_group_element_mut(base_ident)?;
     let mut helper_type = None;
 
     if let MetaTypeVariant::Reference(ti) = &mut base_ty.variant {
