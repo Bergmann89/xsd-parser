@@ -53,7 +53,7 @@ This library provides the following features:
 - **Layered Architecture:** Add user-defined code to manipulate type information or generated code.
 - **User-Defined Types:** Inject existing types into the generated code to reuse predefined structures.
 - **`serde` Support:** Generate code for serialization and deserialization using [`serde`](https://docs.rs/serde) with [`serde_xml`](https://docs.rs/serde-xml-rs) or [`quick_xml`](https://docs.rs/quick-xml) as serializer/deserializer.
-- **`quick_xml` Support:** Direct serialization/deserialization support using [`quick_xml`](https://docs.rs/quick-xml), avoiding `serde` limitations and leveraging asynchronous features.
+- **`quick_xml` Support:** Direct serialization/deserialization support using [`quick_xml`](https://docs.rs/quick-xml), avoiding `serde` limitations and leveraging asynchronous features. Code generated for very large schemas may need a higher `#![recursion_limit]` (e.g. `256`) in the crate that includes it.
 
 
 # Planned Features

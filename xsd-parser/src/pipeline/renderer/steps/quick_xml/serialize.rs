@@ -324,6 +324,12 @@ impl ReferenceData<'_> {
             return;
         }
 
+        if self.target_is_complex(ctx) {
+            self.render_serializer_delegate(ctx);
+
+            return;
+        }
+
         let body = match occurs {
             Occurs::None => return,
             Occurs::Single => {
@@ -385,6 +391,40 @@ impl ReferenceData<'_> {
                 }
             }
             impl #with_serializer_to_bytes for #type_ident { }
+        };
+
+        ctx.current_module().append(code);
+    }
+
+    fn render_serializer_delegate(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            type_ident,
+            target_type,
+            ..
+        } = self;
+
+        let target_type = ctx.resolve_type_for_module(target_type);
+
+        let str_ = resolve_build_in!(ctx, "::core::primitive::str");
+        let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
+        let result = resolve_build_in!(ctx, "::core::result::Result");
+        let option = resolve_build_in!(ctx, "::core::option::Option");
+
+        let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
+        let with_serializer = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::WithSerializer");
+
+        let code = quote! {
+            impl #with_serializer for #type_ident {
+                type Serializer<'x> = <#target_type as #with_serializer>::Serializer<'x>;
+
+                fn serializer<'ser>(
+                    &'ser self,
+                    name: #option<&'ser #str_>,
+                    is_root: #bool_,
+                ) -> #result<Self::Serializer<'ser>, #error> {
+                    #with_serializer::serializer(&self.0, name, is_root)
+                }
+            }
         };
 
         ctx.current_module().append(code);

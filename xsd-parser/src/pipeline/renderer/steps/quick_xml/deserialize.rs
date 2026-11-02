@@ -569,6 +569,12 @@ impl ReferenceData<'_> {
             return;
         }
 
+        if self.target_is_complex(ctx) {
+            self.render_deserializer_delegate(ctx);
+
+            return;
+        }
+
         let target_type = ctx.resolve_type_for_module(target_type);
 
         let result = resolve_build_in!(ctx, "::core::result::Result");
@@ -622,6 +628,93 @@ impl ReferenceData<'_> {
         };
 
         ctx.current_module().append(code);
+    }
+
+    // No extra boxing needed: with `boxed_deserializer` the wrapped deserializer is boxed already.
+    fn render_deserializer_delegate(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            type_ident,
+            target_type,
+            ..
+        } = self;
+
+        let deserializer_ident = format_ident!("{type_ident}Deserializer");
+        let target_type = ctx.resolve_type_for_deserialize_module(target_type);
+
+        let result = resolve_build_in!(ctx, "::core::result::Result");
+
+        let event = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Event");
+        let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
+        let deserializer =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Deserializer");
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
+        let deserializer_result =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerResult");
+        let deserializer_output =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializerOutput");
+        let with_deserializer =
+            resolve_ident!(ctx, "::xsd_parser_types::quick_xml::WithDeserializer");
+
+        let code = quote! {
+            impl #with_deserializer for #type_ident {
+                type Deserializer = quick_xml_deserialize::#deserializer_ident;
+            }
+        };
+        ctx.current_module().append(code);
+
+        let code = quote! {
+            #[derive(Debug)]
+            pub struct #deserializer_ident(<#target_type as #with_deserializer>::Deserializer);
+
+            impl<'de> #deserializer<'de, super::#type_ident> for #deserializer_ident {
+                fn init(
+                    helper: &mut #deserialize_helper,
+                    event: #event<'de>,
+                ) -> #deserializer_result<'de, super::#type_ident> {
+                    let output = <#target_type as #with_deserializer>::Deserializer::init(helper, event)?;
+
+                    Ok(Self::map_output(output))
+                }
+
+                fn next(
+                    self,
+                    helper: &mut #deserialize_helper,
+                    event: #event<'de>,
+                ) -> #deserializer_result<'de, super::#type_ident> {
+                    let output = self.0.next(helper, event)?;
+
+                    Ok(Self::map_output(output))
+                }
+
+                fn finish(
+                    self,
+                    helper: &mut #deserialize_helper,
+                ) -> #result<super::#type_ident, #error> {
+                    Ok(super::#type_ident(self.0.finish(helper)?))
+                }
+            }
+
+            impl #deserializer_ident {
+                fn map_output<'de>(
+                    output: #deserializer_output<'de, #target_type>,
+                ) -> #deserializer_output<'de, super::#type_ident> {
+                    let #deserializer_output {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = output;
+
+                    #deserializer_output {
+                        artifact: artifact.map(super::#type_ident, Self),
+                        event,
+                        allow_any,
+                    }
+                }
+            }
+        };
+
+        ctx.quick_xml_deserialize().append(code);
     }
 }
 

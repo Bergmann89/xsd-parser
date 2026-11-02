@@ -87,6 +87,7 @@ mod static_list;
 mod substitution_group;
 mod substitution_group_nillable;
 mod trailing_underscore_group;
+mod tuple_with_complex;
 mod tuple_with_integer;
 mod tuple_with_string;
 mod tuple_with_vec;

@@ -1,0 +1,5 @@
+<tns:Holder xmlns:tns="http://example.com">
+  <tns:Member>
+    <tns:Info>xyz</tns:Info>
+  </tns:Member>
+</tns:Holder>
