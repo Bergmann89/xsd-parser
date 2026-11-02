@@ -437,15 +437,34 @@ impl<'types> State<'types> {
         meta: &MetaData<'types>,
         ident: &TypeIdent,
     ) -> Result<&mut TypeRef, Error> {
+        if !self.cache.contains_key(ident) {
+            self.requeue_derived_types(meta, ident);
+        }
+
         match self.cache.entry(ident.clone()) {
             Entry::Occupied(e) => Ok(e.into_mut()),
             Entry::Vacant(e) => {
                 let id = self.loop_detection.next_id(e.key().clone());
 
-                self.trait_infos.update(meta.types, e.key());
-
                 Self::create_type_ref(id, &*meta.naming, &mut self.pending, e, meta, ident)
             }
+        }
+    }
+
+    /// Regenerates already generated types that derive from the dynamic type
+    /// `ident`, so they pick up the trait implementation of it.
+    fn requeue_derived_types(&mut self, meta: &MetaData<'types>, ident: &TypeIdent) {
+        for derived in self.trait_infos.update(meta.types, ident) {
+            let is_generated = self.cache.get(&derived).is_some_and(|x| !x.is_fixed);
+            if !is_generated || self.pending.iter().any(|x| x.ident == derived) {
+                continue;
+            }
+
+            let Some(ty) = meta.types.items.get(&derived) else {
+                continue;
+            };
+
+            self.pending.push_back(PendingType { ty, ident: derived });
         }
     }
 

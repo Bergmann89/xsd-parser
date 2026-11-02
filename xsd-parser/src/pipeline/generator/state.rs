@@ -126,6 +126,9 @@ pub struct TypeRef {
     pub path: PathData,
 
     pub(super) reachable: BitSet<u64>,
+
+    /// `true` if the type was provided by the user and is not generated.
+    pub(super) is_fixed: bool,
 }
 
 impl TypeRef {
@@ -134,6 +137,7 @@ impl TypeRef {
             id,
             path,
             reachable: BitSet::default(),
+            is_fixed: false,
         }
     }
 
@@ -142,6 +146,7 @@ impl TypeRef {
             id,
             path,
             reachable: BitSet::default(),
+            is_fixed: true,
         }
     }
 }
@@ -157,18 +162,31 @@ impl TraitInfos {
         Self(BTreeMap::new())
     }
 
-    pub(super) fn update(&mut self, types: &MetaTypes, ident: &TypeIdent) {
+    /// Registers `ident` as trait of its derived types and returns these types.
+    pub(super) fn update(&mut self, types: &MetaTypes, ident: &TypeIdent) -> Vec<TypeIdent> {
+        let mut derived = Vec::new();
+
         if let Some(base_type) = types.items.get(ident) {
-            self.update_impl(types, ident, base_type);
+            self.update_impl(types, ident, base_type, &mut derived);
         }
+
+        derived
     }
 
-    fn update_impl(&mut self, types: &MetaTypes, base_ident: &TypeIdent, base_ty: &MetaType) {
+    fn update_impl(
+        &mut self,
+        types: &MetaTypes,
+        base_ident: &TypeIdent,
+        base_ty: &MetaType,
+        derived: &mut Vec<TypeIdent>,
+    ) {
         let MetaTypeVariant::Dynamic(meta) = &base_ty.variant else {
             return;
         };
 
         for meta in meta.derived_types.values() {
+            derived.push(meta.type_.clone());
+
             let info = self.0.entry(meta.type_.clone()).or_default();
 
             info.traits_to_impl.insert(base_ident.clone());

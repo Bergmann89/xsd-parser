@@ -23,6 +23,7 @@ mod derive;
 mod documentation;
 mod duplicate_idents;
 mod dynamic_type;
+mod dynamic_type_member_generated_first;
 mod dynamic_type_substitution_group;
 mod dynamic_type_substitution_group_overlap;
 mod element_default_with_simple_content;
