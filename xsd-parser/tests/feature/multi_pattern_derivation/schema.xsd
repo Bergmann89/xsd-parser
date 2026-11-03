@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="BaseType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-z]+"/>
+            <xs:pattern value="[0-9]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DerivedType">
+        <xs:restriction base="tns:BaseType">
+            <xs:pattern value="[a-f]+"/>
+            <xs:pattern value="[0-4]+"/>
+            <xs:pattern value="[A-F]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="InlineType">
+        <xs:restriction>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[a-z]+"/>
+                    <xs:pattern value="[0-9]+"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:pattern value="[a-f]+"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ExtendedType">
+        <xs:simpleContent>
+            <xs:extension base="tns:BaseType"/>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="RestrictedType">
+        <xs:simpleContent>
+            <xs:restriction base="tns:ExtendedType">
+                <xs:pattern value="[a-f]+"/>
+            </xs:restriction>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:element name="Value" type="tns:DerivedType"/>
+    <xs:element name="Inline" type="tns:InlineType"/>
+    <xs:element name="Extended" type="tns:ExtendedType"/>
+    <xs:element name="Restricted" type="tns:RestrictedType"/>
+
+</xs:schema>
