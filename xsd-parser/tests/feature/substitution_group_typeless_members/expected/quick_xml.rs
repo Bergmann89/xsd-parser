@@ -50,10 +50,10 @@ impl WithSerializer for Head {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        if (*self.0).as_any().is::<AnyType>() {
+        if (*self.0).as_any().is::<HeadType>() {
             return self.0.serializer(Some("tns:A"), is_root);
         }
-        if (*self.0).as_any().is::<AnyType>() {
+        if (*self.0).as_any().is::<HeadType>() {
             return self.0.serializer(Some("tns:B"), is_root);
         }
         self.0.serializer(None, is_root)
@@ -63,25 +63,27 @@ impl WithDeserializer for Head {
     type Deserializer = quick_xml_deserialize::HeadDeserializer;
 }
 #[derive(Debug)]
-pub struct AnyType;
-impl HeadTrait for AnyType {}
-impl WithSerializer for AnyType {
-    type Serializer<'x> = quick_xml_serialize::AnyTypeSerializer<'x>;
+pub struct HeadType {
+    pub id: Option<String>,
+}
+impl HeadTrait for HeadType {}
+impl WithSerializer for HeadType {
+    type Serializer<'x> = quick_xml_serialize::HeadTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::AnyTypeSerializer {
+        Ok(quick_xml_serialize::HeadTypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::AnyTypeSerializerState::Init__),
-            name: name.unwrap_or("anyType"),
+            state: Box::new(quick_xml_serialize::HeadTypeSerializerState::Init__),
+            name: name.unwrap_or("tns:Head"),
             is_root,
         })
     }
 }
-impl WithDeserializer for AnyType {
-    type Deserializer = quick_xml_deserialize::AnyTypeDeserializer;
+impl WithDeserializer for HeadType {
+    type Deserializer = quick_xml_deserialize::HeadTypeDeserializer;
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
@@ -265,8 +267,8 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub enum HeadDeserializer {
-        A(<super::AnyType as WithDeserializer>::Deserializer),
-        B(<super::AnyType as WithDeserializer>::Deserializer),
+        A(<super::HeadType as WithDeserializer>::Deserializer),
+        B(<super::HeadType as WithDeserializer>::Deserializer),
     }
     impl<'de> Deserializer<'de, super::Head> for HeadDeserializer {
         fn init(
@@ -289,7 +291,7 @@ pub mod quick_xml_deserialize {
                     artifact,
                     event,
                     allow_any,
-                } = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                } = <super::HeadType as WithDeserializer>::init(helper, event)?;
                 return Ok(DeserializerOutput {
                     artifact: artifact.map(|x| super::Head(Box::new(x)), |x| Self::A(x)),
                     event,
@@ -304,7 +306,7 @@ pub mod quick_xml_deserialize {
                     artifact,
                     event,
                     allow_any,
-                } = <super::AnyType as WithDeserializer>::init(helper, event)?;
+                } = <super::HeadType as WithDeserializer>::init(helper, event)?;
                 return Ok(DeserializerOutput {
                     artifact: artifact.map(|x| super::Head(Box::new(x)), |x| Self::B(x)),
                     event,
@@ -357,67 +359,75 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct AnyTypeDeserializer {
-        state__: Box<AnyTypeDeserializerState>,
+    pub struct HeadTypeDeserializer {
+        id: Option<String>,
+        state__: Box<HeadTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum AnyTypeDeserializerState {
+    enum HeadTypeDeserializerState {
         Init__,
         Unknown__,
     }
-    impl AnyTypeDeserializer {
+    impl HeadTypeDeserializer {
         fn from_bytes_start(
             helper: &mut DeserializeHelper,
             bytes_start: &BytesStart<'_>,
         ) -> Result<Self, Error> {
+            let mut id: Option<String> = None;
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"id")
+                ) {
+                    helper.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else {
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
+                }
+            }
             Ok(Self {
-                state__: Box::new(AnyTypeDeserializerState::Init__),
+                id: id,
+                state__: Box::new(HeadTypeDeserializerState::Init__),
             })
         }
         fn finish_state(
             &mut self,
             helper: &mut DeserializeHelper,
-            state: AnyTypeDeserializerState,
+            state: HeadTypeDeserializerState,
         ) -> Result<(), Error> {
             Ok(())
         }
     }
-    impl<'de> Deserializer<'de, super::AnyType> for AnyTypeDeserializer {
+    impl<'de> Deserializer<'de, super::HeadType> for HeadTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::AnyType> {
+        ) -> DeserializerResult<'de, super::HeadType> {
             helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next(
             mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::AnyType> {
+        ) -> DeserializerResult<'de, super::HeadType> {
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(helper)?),
                     event: DeserializerEvent::None,
                     allow_any: false,
                 })
-            } else if matches!(&event, Event::Text(_) | Event::CData(_)) {
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Deserializer(self),
-                    event: DeserializerEvent::None,
-                    allow_any: true,
-                })
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
                     event: DeserializerEvent::Break(event),
-                    allow_any: true,
+                    allow_any: false,
                 })
             }
         }
-        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::AnyType, Error> {
-            let state = replace(&mut *self.state__, AnyTypeDeserializerState::Unknown__);
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::HeadType, Error> {
+            let state = replace(&mut *self.state__, HeadTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
-            Ok(super::AnyType {})
+            Ok(super::HeadType { id: self.id })
         }
     }
 }
@@ -492,48 +502,53 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct AnyTypeSerializer<'ser> {
-        pub(super) value: &'ser super::AnyType,
-        pub(super) state: Box<AnyTypeSerializerState<'ser>>,
+    pub struct HeadTypeSerializer<'ser> {
+        pub(super) value: &'ser super::HeadType,
+        pub(super) state: Box<HeadTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum AnyTypeSerializerState<'ser> {
+    pub(super) enum HeadTypeSerializerState<'ser> {
         Init__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> AnyTypeSerializer<'ser> {
+    impl<'ser> HeadTypeSerializer<'ser> {
         fn next_event(
             &mut self,
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    AnyTypeSerializerState::Init__ => {
-                        *self.state = AnyTypeSerializerState::Done__;
+                    HeadTypeSerializerState::Init__ => {
+                        *self.state = HeadTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_XS);
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
+                            );
                         }
+                        helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }
-                    AnyTypeSerializerState::Done__ => return Ok(None),
-                    AnyTypeSerializerState::Phantom__(_) => unreachable!(),
+                    HeadTypeSerializerState::Done__ => return Ok(None),
+                    HeadTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Serializer<'ser> for AnyTypeSerializer<'ser> {
+    impl<'ser> Serializer<'ser> for HeadTypeSerializer<'ser> {
         fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
             match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = AnyTypeSerializerState::Done__;
+                    *self.state = HeadTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

@@ -14,5 +14,7 @@ impl Head {
     }
 }
 #[derive(Debug)]
-pub struct AnyType;
-impl HeadTrait for AnyType {}
+pub struct HeadType {
+    pub id: Option<String>,
+}
+impl HeadTrait for HeadType {}
