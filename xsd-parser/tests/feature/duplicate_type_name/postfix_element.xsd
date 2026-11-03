@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com"
+    xmlns:tns="http://example.com"
+    elementFormDefault="qualified">
+    <!-- the type `Bar` and the element `Bar` are both generated as `BarType` -->
+    <xs:complexType name="Bar"><xs:attribute name="x" type="xs:string" /></xs:complexType>
+    <xs:element name="Bar"><xs:complexType><xs:attribute name="y" type="xs:string" /></xs:complexType></xs:element>
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="C" type="tns:Bar" />
+                <xs:element ref="tns:Bar" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

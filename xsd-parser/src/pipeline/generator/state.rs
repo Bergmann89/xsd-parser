@@ -5,6 +5,7 @@ use bit_set::BitSet;
 
 use crate::models::meta::DeriveRelationship;
 use crate::models::{
+    code::IdentPath,
     data::PathData,
     meta::{ComplexMeta, MetaType, MetaTypeVariant, MetaTypes},
     TypeIdent,
@@ -18,6 +19,9 @@ pub(super) struct State<'types> {
     pub pending: VecDeque<PendingType<'types>>,
     pub trait_infos: TraitInfos,
     pub loop_detection: LoopDetection,
+
+    /// Rust paths of the generated types, to detect two types sharing one path.
+    pub paths: BTreeMap<IdentPath, TypeIdent>,
 
     /// Resolved identifiers of the content types that are used by more than one
     /// complex type.
@@ -56,6 +60,7 @@ impl State<'_> {
             pending: VecDeque::new(),
             trait_infos: TraitInfos::empty(),
             loop_detection: LoopDetection::default(),
+            paths: BTreeMap::new(),
             shared_content_idents,
         }
     }
@@ -126,6 +131,9 @@ pub struct TypeRef {
     pub path: PathData,
 
     pub(super) reachable: BitSet<u64>,
+
+    /// `true` if the type was provided by the user and is not generated.
+    pub(super) is_fixed: bool,
 }
 
 impl TypeRef {
@@ -134,6 +142,7 @@ impl TypeRef {
             id,
             path,
             reachable: BitSet::default(),
+            is_fixed: false,
         }
     }
 
@@ -142,6 +151,7 @@ impl TypeRef {
             id,
             path,
             reachable: BitSet::default(),
+            is_fixed: true,
         }
     }
 }
@@ -157,18 +167,31 @@ impl TraitInfos {
         Self(BTreeMap::new())
     }
 
-    pub(super) fn update(&mut self, types: &MetaTypes, ident: &TypeIdent) {
+    /// Registers `ident` as trait of its derived types and returns these types.
+    pub(super) fn update(&mut self, types: &MetaTypes, ident: &TypeIdent) -> Vec<TypeIdent> {
+        let mut derived = Vec::new();
+
         if let Some(base_type) = types.items.get(ident) {
-            self.update_impl(types, ident, base_type);
+            self.update_impl(types, ident, base_type, &mut derived);
         }
+
+        derived
     }
 
-    fn update_impl(&mut self, types: &MetaTypes, base_ident: &TypeIdent, base_ty: &MetaType) {
+    fn update_impl(
+        &mut self,
+        types: &MetaTypes,
+        base_ident: &TypeIdent,
+        base_ty: &MetaType,
+        derived: &mut Vec<TypeIdent>,
+    ) {
         let MetaTypeVariant::Dynamic(meta) = &base_ty.variant else {
             return;
         };
 
         for meta in meta.derived_types.values() {
+            derived.push(meta.type_.clone());
+
             let info = self.0.entry(meta.type_.clone()).or_default();
 
             info.traits_to_impl.insert(base_ident.clone());

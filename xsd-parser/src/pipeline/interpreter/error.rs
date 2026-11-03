@@ -109,9 +109,9 @@ pub enum Error {
     /// Unable to create type information.
     ///
     /// Is raised if the interpreter was not able to generate a `Type` from the
-    /// provided schema information.
-    #[error("Unable to create type information!")]
-    NoType,
+    /// provided schema information for the specified type.
+    #[error("Unable to create type information for type: {0}!")]
+    NoType(TypeIdent),
 
     /// The interpreter expected a group type (like `xs:all`, `xs:choice` or `xs:sequence`).
     #[error("Expected group type!")]

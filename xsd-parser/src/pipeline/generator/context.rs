@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use bit_set::BitSet;
-use proc_macro2::{Literal, TokenStream};
+use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 use xsd_parser_types::xml::NamespacesShared;
 
@@ -120,6 +120,16 @@ impl<'a, 'types> Context<'a, 'types> {
 
     pub(super) fn current_type_ref(&self) -> &TypeRef {
         self.state.cache.get(self.ident).unwrap()
+    }
+
+    /// Claims the path of the content type `content_ident`, that is generated
+    /// next to the current type, so it can not be used by another type.
+    pub(super) fn register_content_path(&mut self, content_ident: &Ident2) -> Result<(), Error> {
+        let path = (*self.current_type_ref().path)
+            .clone()
+            .with_ident(content_ident.clone());
+
+        State::claim_path(&mut self.state.paths, self.meta, &path, self.ident)
     }
 
     pub(super) fn get_trait_infos(&mut self) -> &TraitInfos {

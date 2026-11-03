@@ -165,7 +165,9 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
     pub(super) fn finish(self) -> Result<MetaType, Error> {
         let Self { variant, owner, .. } = self;
-        let variant = variant.ok_or(Error::NoType)?;
+        let Some(variant) = variant else {
+            return Err(Error::NoType(owner.current_ident().clone()));
+        };
 
         let mut type_ = MetaType::new(variant);
         type_.form = Some(owner.current_schema().element_form_default);
@@ -176,7 +178,9 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
     }
 
     fn finish_mut(&mut self) -> Result<MetaType, Error> {
-        let variant = self.variant.take().ok_or(Error::NoType)?;
+        let Some(variant) = self.variant.take() else {
+            return Err(Error::NoType(self.owner.current_ident().clone()));
+        };
 
         let mut type_ = MetaType::new(variant);
         type_.form = Some(self.owner.current_schema().element_form_default);
@@ -210,15 +214,18 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             let type_ = self.owner.resolve_type_ident(type_, IdentType::Type)?;
 
             init_any!(self, Reference, ReferenceMeta::new(type_), true);
-        } else if !ty.content.is_empty() {
+        } else if ty
+            .content
+            .iter()
+            .any(|c| matches!(c, C::SimpleType(_) | C::ComplexType(_)))
+        {
             let type_ = self
                 .owner
                 .current_ident()
                 .clone()
                 .with_type(IdentType::ElementType);
 
-            let mut has_content = false;
-            let ret = self.owner.create_type(type_.clone(), |processor| {
+            self.owner.create_type(type_.clone(), |processor| {
                 for c in &ty.content {
                     match c {
                         C::Annotation(_)
@@ -226,42 +233,27 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                         | C::Alternative(_)
                         | C::Unique(_)
                         | C::Keyref(_) => {}
-                        C::SimpleType(x) => {
-                            has_content = true;
-                            processor.apply_simple_type(x)?;
-                        }
-                        C::ComplexType(x) => {
-                            has_content = true;
-                            processor.apply_complex_type(x)?;
-                        }
+                        C::SimpleType(x) => processor.apply_simple_type(x)?,
+                        C::ComplexType(x) => processor.apply_complex_type(x)?,
                     }
                 }
 
                 Ok(())
-            });
+            })?;
 
-            if has_content {
-                ret?;
-
-                // If the element has a default value, propagate it to the
-                // inline complex type so the deserializer can use it when
-                // the element is present but has no text content.
-                if let Some(default) = &ty.default {
-                    let type_meta = self.owner.get_type_mut(&type_)?;
-                    if let MetaTypeVariant::ComplexType(ref mut meta) = type_meta.variant {
-                        meta.default = Some(default.clone());
-                    }
+            // If the element has a default value, propagate it to the
+            // inline complex type so the deserializer can use it when
+            // the element is present but has no text content.
+            if let Some(default) = &ty.default {
+                let type_meta = self.owner.get_type_mut(&type_)?;
+                if let MetaTypeVariant::ComplexType(ref mut meta) = type_meta.variant {
+                    meta.default = Some(default.clone());
                 }
-
-                init_any!(self, Reference, ReferenceMeta::new(type_), true);
-            } else {
-                // No actual type content found, default to `xs:anyType`
-                let ident = self.owner.resolve_xs_type(Name::ANY_TYPE)?;
-
-                init_any!(self, Reference, ReferenceMeta::new(ident), true);
             }
+
+            init_any!(self, Reference, ReferenceMeta::new(type_), true);
         } else {
-            // No content, default to `xs:anyType`
+            // No type content, default to `xs:anyType`
             let ident = self.owner.resolve_xs_type(Name::ANY_TYPE)?;
 
             init_any!(self, Reference, ReferenceMeta::new(ident), true);
@@ -321,6 +313,13 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
             init_any!(self, Reference, ReferenceMeta::new(type_), false);
         } else if let Some(x) = &ty.simple_type {
             self.apply_simple_type(x)?;
+        } else {
+            init_any!(
+                self,
+                Reference,
+                ReferenceMeta::new(TypeIdent::STRING),
+                false
+            );
         }
 
         Ok(())

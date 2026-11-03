@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com/other"
+    xmlns:o="http://example.com/other">
+    <!-- global attribute with an inline simple type, named like a global element of the other namespace -->
+    <xs:attribute name="space">
+        <xs:simpleType>
+            <xs:restriction base="xs:token">
+                <xs:enumeration value="default" />
+                <xs:enumeration value="preserve" />
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:attribute>
+    <!-- plain named type collision -->
+    <xs:simpleType name="kind">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="x" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

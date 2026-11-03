@@ -28,7 +28,7 @@ mod meta;
 mod state;
 
 use std::collections::btree_map::{Entry, VacantEntry};
-use std::collections::VecDeque;
+use std::collections::{BTreeMap, VecDeque};
 use std::str::FromStr;
 
 use quote::format_ident;
@@ -262,11 +262,12 @@ impl<'types> Generator<'types> {
             .naming
             .format_module(self.meta.types, Some(ident.ns));
         let type_ident = format_ident!("{}", ident.name.to_string());
-        let path = PathData::from_path(IdentPath::from_parts(module_ident, type_ident));
+        let path = IdentPath::from_parts(module_ident, type_ident);
 
         let id = self.state.loop_detection.next_id(ident.clone());
-        let type_ref = TypeRef::new_fixed(id, path);
+        let type_ref = TypeRef::new_fixed(id, PathData::from_path(path.clone()));
 
+        self.state.paths.insert(path, ident.clone());
         self.state.cache.insert(ident, type_ref);
 
         Ok(self)
@@ -437,15 +438,42 @@ impl<'types> State<'types> {
         meta: &MetaData<'types>,
         ident: &TypeIdent,
     ) -> Result<&mut TypeRef, Error> {
+        if !self.cache.contains_key(ident) {
+            self.requeue_derived_types(meta, ident);
+        }
+
         match self.cache.entry(ident.clone()) {
             Entry::Occupied(e) => Ok(e.into_mut()),
             Entry::Vacant(e) => {
                 let id = self.loop_detection.next_id(e.key().clone());
 
-                self.trait_infos.update(meta.types, e.key());
-
-                Self::create_type_ref(id, &*meta.naming, &mut self.pending, e, meta, ident)
+                Self::create_type_ref(
+                    id,
+                    &*meta.naming,
+                    &mut self.pending,
+                    &mut self.paths,
+                    e,
+                    meta,
+                    ident,
+                )
             }
+        }
+    }
+
+    /// Regenerates already generated types that derive from the dynamic type
+    /// `ident`, so they pick up the trait implementation of it.
+    fn requeue_derived_types(&mut self, meta: &MetaData<'types>, ident: &TypeIdent) {
+        for derived in self.trait_infos.update(meta.types, ident) {
+            let is_generated = self.cache.get(&derived).is_some_and(|x| !x.is_fixed);
+            if !is_generated || self.pending.iter().any(|x| x.ident == derived) {
+                continue;
+            }
+
+            let Some(ty) = meta.types.items.get(&derived) else {
+                continue;
+            };
+
+            self.pending.push_back(PendingType { ty, ident: derived });
         }
     }
 
@@ -453,6 +481,7 @@ impl<'types> State<'types> {
         id: usize,
         naming: &dyn Naming,
         pending: &mut VecDeque<PendingType<'types>>,
+        paths: &mut BTreeMap<IdentPath, TypeIdent>,
         entry: VacantEntry<'a, TypeIdent, TypeRef>,
         meta: &MetaData<'types>,
         ident: &TypeIdent,
@@ -502,6 +531,8 @@ impl<'types> State<'types> {
 
                 let path = IdentPath::from_parts(module_path.0, type_ident);
 
+                Self::claim_path(paths, meta, &path, ident)?;
+
                 PathData::from_path(path)
             }
         };
@@ -514,5 +545,35 @@ impl<'types> State<'types> {
         });
 
         Ok(entry.insert(TypeRef::new_pending(id, path)))
+    }
+
+    /// Registers `path` for `ident` and fails if another type already uses it.
+    fn claim_path(
+        paths: &mut BTreeMap<IdentPath, TypeIdent>,
+        meta: &MetaData<'types>,
+        path: &IdentPath,
+        ident: &TypeIdent,
+    ) -> Result<(), Error> {
+        match paths.insert(path.clone(), ident.clone()) {
+            Some(first) if &first != ident => Err(Error::DuplicateTypeName {
+                path: path.to_string(),
+                first: Self::describe_type(meta, &first),
+                second: Self::describe_type(meta, ident),
+            }),
+            _ => Ok(()),
+        }
+    }
+
+    /// Describes `ident` by its namespace and identifier type for error messages.
+    fn describe_type(meta: &MetaData<'types>, ident: &TypeIdent) -> String {
+        let namespace = meta
+            .types
+            .modules
+            .get(&ident.ns)
+            .and_then(|module| module.namespace.as_ref())
+            .map(|ns| String::from_utf8_lossy(&ns.0).into_owned())
+            .unwrap_or_default();
+
+        format!("{{{namespace}}}{ident:-}")
     }
 }
