@@ -49,8 +49,11 @@ pub struct Constrains {
     /// Number of fraction digits the value maximal should have.
     pub fraction_digits: Option<usize>,
 
-    /// Regex pattern the value should fulfill.
-    pub patterns: Vec<String>,
+    /// Regex patterns the value should fulfill, grouped per derivation step.
+    ///
+    /// The value must match at least one pattern of every group (OR within a
+    /// step, AND across steps). Groups are never empty.
+    pub patterns: Vec<Vec<String>>,
 
     /// The minimum length the value should have.
     pub min_length: Option<usize>,

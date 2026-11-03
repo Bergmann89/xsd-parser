@@ -232,23 +232,32 @@ impl ConstrainsData<'_> {
         let lazy_lock = ctx.resolve_ident_path("::std::sync::LazyLock");
         let validate_error = ctx.resolve_ident_path("::xsd_parser_types::quick_xml::ValidateError");
 
-        let sz = self.meta.patterns.len();
-        let patterns = self.meta.patterns.iter().map(|x| {
-            let pa = Literal::string(x);
+        let blocks = self.meta.patterns.iter().map(|group| {
+            let sz = group.len();
+            let patterns = group.iter().map(|x| {
+                let pa = Literal::string(x);
 
-            // Make sure the pattern is anchored, otherwise it would be possible to match only a part of the string
-            let rx = Literal::string(&format!("^(?:{})$", x));
+                // Make sure the pattern is anchored, otherwise it would be possible to match only a part of the string
+                let rx = Literal::string(&format!("^(?:{})$", x));
 
-            quote!((#pa, #regex::new(#rx).unwrap()))
+                quote!((#pa, #regex::new(#rx).unwrap()))
+            });
+
+            quote! {
+                static PATTERNS: #lazy_lock<[(&#str_, #regex); #sz]> = #lazy_lock::new(|| [ #( #patterns ),* ]);
+
+                if !PATTERNS.iter().any(|(_, regex)| regex.is_match(s)) {
+                    return Err(#validate_error::Pattern(PATTERNS[0usize].0));
+                }
+            }
         });
 
-        Some(quote! {
-            static PATTERNS: #lazy_lock<[(&#str_, #regex); #sz]> = #lazy_lock::new(|| [ #( #patterns ),* ]);
-
-            if !PATTERNS.iter().any(|(_, regex)| regex.is_match(s)) {
-                return Err(#validate_error::Pattern(PATTERNS[0usize].0));
-            }
-        })
+        // Every group needs its own `PATTERNS` static, so they get a scope of their own
+        if self.meta.patterns.len() == 1 {
+            Some(quote!( #( #blocks )* ))
+        } else {
+            Some(quote!( #( { #blocks } )* ))
+        }
     }
 
     fn render_validate_total_digits(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
