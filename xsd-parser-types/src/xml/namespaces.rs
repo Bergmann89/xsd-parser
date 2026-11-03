@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
+use std::str::{from_utf8, Utf8Error};
 use std::sync::Arc;
 
 #[cfg(feature = "quick-xml")]
@@ -80,12 +81,15 @@ pub struct Key<'a>(pub Cow<'a, [u8]>);
 #[cfg(feature = "quick-xml")]
 impl Key<'_> {
     /// Get the key value as [`PrefixDeclaration`].
-    #[must_use]
-    pub fn prefix_decl(&self) -> PrefixDeclaration<'_> {
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the key is not valid UTF-8.
+    pub fn prefix_decl(&self) -> Result<PrefixDeclaration<'_>, Utf8Error> {
         if self.0.is_empty() {
-            PrefixDeclaration::Default
+            Ok(PrefixDeclaration::Default)
         } else {
-            PrefixDeclaration::Named(&self.0)
+            Ok(PrefixDeclaration::Named(from_utf8(&self.0)?))
         }
     }
 }
@@ -145,10 +149,13 @@ pub struct Value<'a>(pub Cow<'a, [u8]>);
 #[cfg(feature = "quick-xml")]
 impl Value<'_> {
     /// Get the namespace as [`Namespace`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the value is not valid UTF-8.
     #[inline]
-    #[must_use]
-    pub fn namespace(&self) -> Namespace<'_> {
-        Namespace(&self.0)
+    pub fn namespace(&self) -> Result<Namespace<'_>, Utf8Error> {
+        Ok(Namespace(from_utf8(&self.0)?))
     }
 }
 
@@ -256,5 +263,31 @@ impl Eq for NamespacesShared<'_> {}
 impl PartialEq for NamespacesShared<'_> {
     fn eq(&self, other: &Self) -> bool {
         Arc::ptr_eq(&self.0, &other.0) || self.0.eq(&other.0)
+    }
+}
+
+#[cfg(all(test, feature = "quick-xml"))]
+mod tests {
+    use quick_xml::name::PrefixDeclaration;
+
+    use super::{Key, Value};
+
+    #[test]
+    fn key_prefix_decl() {
+        assert_eq!(
+            Key(b""[..].into()).prefix_decl().unwrap(),
+            PrefixDeclaration::Default
+        );
+        assert_eq!(
+            Key(b"a"[..].into()).prefix_decl().unwrap(),
+            PrefixDeclaration::Named("a")
+        );
+        assert!(Key(b"\xFF"[..].into()).prefix_decl().is_err());
+    }
+
+    #[test]
+    fn value_namespace() {
+        assert_eq!(Value(b"urn:x"[..].into()).namespace().unwrap().0, "urn:x");
+        assert!(Value(b"\xFF"[..].into()).namespace().is_err());
     }
 }

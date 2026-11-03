@@ -252,7 +252,7 @@ pub mod quick_xml_deserialize {
             let mut baz: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"Baz" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"Baz" {
                     helper.read_attrib(&mut baz, b"Baz", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;

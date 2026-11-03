@@ -370,8 +370,7 @@ impl ErrorInfo {
     pub(super) fn update(&mut self, event: &Event<'_>) {
         match event {
             Event::Start(x) => {
-                self.elements
-                    .push(String::from_utf8_lossy(x.name().0).to_string());
+                self.elements.push(x.name().0.to_owned());
             }
             Event::End(_) => {
                 self.elements.pop();

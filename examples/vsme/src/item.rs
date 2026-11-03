@@ -201,8 +201,8 @@ where
                 };
 
                 TTags::tags().iter().position(|tag| {
-                    tag.name.as_bytes() == local
-                        && namespace.is_none_or(|ns| ns == tag.namespace.as_ref())
+                    tag.name == local
+                        && namespace.is_none_or(|ns| ns.as_bytes() == tag.namespace.as_ref())
                 })
             }
             _ => None,

@@ -11,7 +11,8 @@ use std::ops::{Deref, DerefMut};
 
 use quick_xml::{
     escape::escape,
-    events::{BytesEnd, BytesStart, BytesText, Event},
+    events::{attributes::Attribute, BytesEnd, BytesStart, BytesText, Event},
+    name::QName as XmlQName,
     Writer,
 };
 
@@ -566,11 +567,11 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
     fn rewrite(&self, bytes: BytesStart<'ser>, helper: &mut SerializeHelper) -> BytesStart<'ser> {
         // The value uses the base element name already, so it is the base type
         // and does not need a `xsi:type` attribute.
-        if bytes.name().as_ref() == self.name.as_bytes() {
+        if bytes.name().0 == self.name {
             return bytes;
         }
 
-        let type_name = bytes.name().as_ref().to_owned();
+        let type_name = bytes.name().0.to_owned();
 
         let mut new = BytesStart::new(self.name);
 
@@ -578,11 +579,11 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
             helper.write_xmlns(&mut new, Some(&NamespacePrefix::XSI), &Namespace::XSI);
         }
 
-        new.push_attribute((&b"xsi:type"[..], &type_name[..]));
+        new.push_attribute(("xsi:type", &type_name[..]));
         new.extend_attributes(bytes.attributes().filter_map(|attr| {
             let attr = attr.ok()?;
 
-            if attr.key.as_ref() == b"xsi:type" || attr.key.as_ref() == b"xmlns:xsi" {
+            if attr.key.0 == "xsi:type" || attr.key.0 == "xmlns:xsi" {
                 None
             } else {
                 Some(attr)
@@ -936,9 +937,12 @@ impl SerializeHelper {
         prefix: Option<&[u8]>,
         namespace: Namespace,
     ) {
-        let xmlns = prefix.map(|x| b"xmlns:".iter().chain(x).copied().collect::<Vec<u8>>());
-        let xmlns = xmlns.as_deref().unwrap_or(b"xmlns");
-        bytes.push_attribute((xmlns, &**namespace));
+        let xmlns = prefix.map(|x| format!("xmlns:{}", String::from_utf8_lossy(x)));
+        let xmlns = xmlns.as_deref().unwrap_or("xmlns");
+        bytes.push_attribute(Attribute {
+            key: XmlQName(xmlns),
+            value: String::from_utf8_lossy(&namespace),
+        });
 
         self.namespaces.push(NamespaceEntry {
             level: self.level,

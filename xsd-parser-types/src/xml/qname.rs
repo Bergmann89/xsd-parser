@@ -1,6 +1,7 @@
 use std::borrow::Cow;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
+use std::str::from_utf8;
 
 #[cfg(feature = "quick-xml")]
 use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
@@ -60,14 +61,21 @@ impl QName {
     }
 
     /// Create a new [`QName`] instance from the passed `reader` and `raw` data.
+    ///
+    /// The namespace stays unresolved if `raw` is not valid UTF-8.
     #[must_use]
     #[cfg(feature = "quick-xml")]
     pub fn from_helper(helper: &DeserializeHelper, raw: &[u8]) -> Self {
         let index = raw.iter().position(|x| *x == b':');
-        let ns = match helper.resolve(QuickXmlQName(raw), false).0 {
-            ResolveResult::Unbound | ResolveResult::Unknown(_) => None,
-            ResolveResult::Bound(ns) => Some(Namespace(Cow::Owned(ns.0.to_owned()))),
-        };
+        let ns =
+            from_utf8(raw)
+                .ok()
+                .and_then(|raw| match helper.resolve(QuickXmlQName(raw), false).0 {
+                    ResolveResult::Unbound | ResolveResult::Unknown(_) => None,
+                    ResolveResult::Bound(ns) => {
+                        Some(Namespace(Cow::Owned(ns.0.as_bytes().to_owned())))
+                    }
+                });
         let raw = Cow::Owned(raw.to_owned());
 
         Self { raw, index, ns }

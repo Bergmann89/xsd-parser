@@ -14514,35 +14514,35 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"cautionary" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"cautionary" {
                     helper.read_attrib(&mut cautionary, b"cautionary", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"editorial" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"editorial" {
                     helper.read_attrib(&mut editorial, b"editorial", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"parentheses" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"parentheses" {
                     helper.read_attrib(&mut parentheses, b"parentheses", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bracket" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bracket" {
                     helper.read_attrib(&mut bracket, b"bracket", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"size" {
                     helper.read_attrib(&mut size, b"size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -14739,35 +14739,35 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"parentheses" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"parentheses" {
                     helper.read_attrib(&mut parentheses, b"parentheses", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bracket" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bracket" {
                     helper.read_attrib(&mut bracket, b"bracket", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"size" {
                     helper.read_attrib(&mut size, b"size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -14982,41 +14982,41 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"justify" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"underline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"underline" {
                     helper.read_attrib(&mut underline, b"underline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"overline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"overline" {
                     helper.read_attrib(&mut overline, b"overline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-through" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-through" {
                     helper.read_attrib(&mut line_through, b"line-through", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"rotation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"rotation" {
                     helper.read_attrib(&mut rotation, b"rotation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"letter-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"letter-spacing" {
                     helper.read_attrib(&mut letter_spacing, b"letter-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-height" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
                 } else if matches!(
                     helper.resolve_local_name(attrib.key, &super::NS_XML),
@@ -15028,11 +15028,11 @@ pub mod quick_xml_deserialize {
                     Some(b"space")
                 ) {
                     helper.read_attrib(&mut space, b"space", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dir" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dir" {
                     helper.read_attrib(&mut dir, b"dir", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enclosure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enclosure" {
                     helper.read_attrib(&mut enclosure, b"enclosure", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -15225,7 +15225,7 @@ pub mod quick_xml_deserialize {
             let mut string: ::core::option::Option<::core::num::NonZeroUsize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"string" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"string" {
                     helper.read_attrib(&mut string, b"string", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -15869,29 +15869,29 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -17379,25 +17379,25 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"direction" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"direction" {
                     helper.read_attrib(&mut direction, b"direction", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"unbroken" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"unbroken" {
                     helper.read_attrib(&mut unbroken, b"unbroken", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -17522,27 +17522,27 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -17747,7 +17747,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"arrow-direction" {
+                if x.name().local_name().into_inner().as_bytes() == b"arrow-direction" {
                     let output = < super :: ArrowDirection as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_arrow_direction(
                         helper,
@@ -17756,7 +17756,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"arrow-style" {
+                if x.name().local_name().into_inner().as_bytes() == b"arrow-style" {
                     let output = < super :: ArrowStyle as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_arrow_style(
                         helper,
@@ -17765,7 +17765,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"arrowhead" {
+                if x.name().local_name().into_inner().as_bytes() == b"arrowhead" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -17777,7 +17777,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"circular-arrow" {
+                if x.name().local_name().into_inner().as_bytes() == b"circular-arrow" {
                     let output = < super :: CircularArrow as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_circular_arrow(
                         helper,
@@ -18310,7 +18310,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -18495,7 +18495,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"accent" {
+                if x.name().local_name().into_inner().as_bytes() == b"accent" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_accent(
                         helper,
@@ -18504,7 +18504,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"strong-accent" {
+                if x.name().local_name().into_inner().as_bytes() == b"strong-accent" {
                     let output = < super :: StrongAccent as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_strong_accent(
                         helper,
@@ -18513,7 +18513,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"staccato" {
+                if x.name().local_name().into_inner().as_bytes() == b"staccato" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_staccato(
                         helper,
@@ -18522,7 +18522,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"tenuto" {
+                if x.name().local_name().into_inner().as_bytes() == b"tenuto" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_tenuto(
                         helper,
@@ -18531,7 +18531,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"detached-legato" {
+                if x.name().local_name().into_inner().as_bytes() == b"detached-legato" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_detached_legato(
                         helper,
@@ -18540,7 +18540,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"staccatissimo" {
+                if x.name().local_name().into_inner().as_bytes() == b"staccatissimo" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_staccatissimo(
                         helper,
@@ -18549,7 +18549,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"spiccato" {
+                if x.name().local_name().into_inner().as_bytes() == b"spiccato" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_spiccato(
                         helper,
@@ -18558,7 +18558,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"scoop" {
+                if x.name().local_name().into_inner().as_bytes() == b"scoop" {
                     let output = < super :: EmptyLine as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_scoop(
                         helper,
@@ -18567,7 +18567,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"plop" {
+                if x.name().local_name().into_inner().as_bytes() == b"plop" {
                     let output = < super :: EmptyLine as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_plop(
                         helper,
@@ -18576,7 +18576,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"doit" {
+                if x.name().local_name().into_inner().as_bytes() == b"doit" {
                     let output = < super :: EmptyLine as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_doit(
                         helper,
@@ -18585,7 +18585,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"falloff" {
+                if x.name().local_name().into_inner().as_bytes() == b"falloff" {
                     let output = < super :: EmptyLine as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_falloff(
                         helper,
@@ -18594,7 +18594,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"breath-mark" {
+                if x.name().local_name().into_inner().as_bytes() == b"breath-mark" {
                     let output = < super :: BreathMark as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_breath_mark(
                         helper,
@@ -18603,7 +18603,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"caesura" {
+                if x.name().local_name().into_inner().as_bytes() == b"caesura" {
                     let output =
                         <super::Caesura as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -18615,7 +18615,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"stress" {
+                if x.name().local_name().into_inner().as_bytes() == b"stress" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_stress(
                         helper,
@@ -18624,7 +18624,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"unstress" {
+                if x.name().local_name().into_inner().as_bytes() == b"unstress" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_unstress(
                         helper,
@@ -18633,7 +18633,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"soft-accent" {
+                if x.name().local_name().into_inner().as_bytes() == b"soft-accent" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_soft_accent(
                         helper,
@@ -18642,7 +18642,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-articulation" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-articulation" {
                     let output = < super :: OtherPlacementText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_articulation(
                         helper,
@@ -20467,11 +20467,11 @@ pub mod quick_xml_deserialize {
             let mut time_only: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"player" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"player" {
                     helper.read_attrib(&mut player, b"player", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -20730,7 +20730,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"footnote" {
+                if x.name().local_name().into_inner().as_bytes() == b"footnote" {
                     let output = < super :: FormattedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_footnote(
                         helper,
@@ -20739,7 +20739,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"level" {
+                if x.name().local_name().into_inner().as_bytes() == b"level" {
                     let output =
                         <super::Level as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -20751,7 +20751,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"divisions" {
+                if x.name().local_name().into_inner().as_bytes() == b"divisions" {
                     let output = < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_divisions(
                         helper,
@@ -20760,7 +20760,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"key" {
+                if x.name().local_name().into_inner().as_bytes() == b"key" {
                     let output =
                         <super::Key as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -20772,7 +20772,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"time" {
+                if x.name().local_name().into_inner().as_bytes() == b"time" {
                     let output =
                         <super::Time as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -20784,7 +20784,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"staves" {
+                if x.name().local_name().into_inner().as_bytes() == b"staves" {
                     let output =
                         <::num::BigUint as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -20796,7 +20796,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"part-symbol" {
+                if x.name().local_name().into_inner().as_bytes() == b"part-symbol" {
                     let output = < super :: PartSymbol as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_part_symbol(
                         helper,
@@ -20805,7 +20805,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"instruments" {
+                if x.name().local_name().into_inner().as_bytes() == b"instruments" {
                     let output =
                         <::num::BigUint as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -20817,7 +20817,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"clef" {
+                if x.name().local_name().into_inner().as_bytes() == b"clef" {
                     let output =
                         <super::Clef as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -20829,7 +20829,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"staff-details" {
+                if x.name().local_name().into_inner().as_bytes() == b"staff-details" {
                     let output = < super :: StaffDetails as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_staff_details(
                         helper,
@@ -20838,7 +20838,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"transpose" {
+                if x.name().local_name().into_inner().as_bytes() == b"transpose" {
                     let output = < super :: Transpose as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_transpose(
                         helper,
@@ -20847,7 +20847,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"for-part" {
+                if x.name().local_name().into_inner().as_bytes() == b"for-part" {
                     let output =
                         <super::ForPart as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -20859,7 +20859,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"directive" {
+                if x.name().local_name().into_inner().as_bytes() == b"directive" {
                     let output = < super :: AttributesDirectiveElementType as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_directive(
                         helper,
@@ -20868,7 +20868,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"measure-style" {
+                if x.name().local_name().into_inner().as_bytes() == b"measure-style" {
                     let output = < super :: MeasureStyle as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_measure_style(
                         helper,
@@ -22999,7 +22999,7 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"color" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -23150,15 +23150,15 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"location" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"location" {
                     helper.read_attrib(&mut location, b"location", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"segno" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"segno" {
                     helper.read_attrib(&mut segno_attr, b"segno", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"coda" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"coda" {
                     helper.read_attrib(&mut coda_attr, b"coda", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"divisions" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"divisions" {
                     helper.read_attrib(&mut divisions, b"divisions", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -24394,9 +24394,9 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -24483,7 +24483,7 @@ pub mod quick_xml_deserialize {
             let mut arrangement: ::core::option::Option<super::HarmonyArrangement> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"arrangement" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"arrangement" {
                     helper.read_attrib(&mut arrangement, b"arrangement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -25113,25 +25113,25 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"text" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -25302,15 +25302,15 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"repeater" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"repeater" {
                     helper.read_attrib(&mut repeater, b"repeater", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"fan" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"fan" {
                     helper.read_attrib(&mut fan, b"fan", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -25459,11 +25459,11 @@ pub mod quick_xml_deserialize {
             let mut use_dots: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"slashes" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"slashes" {
                     helper.read_attrib(&mut slashes, b"slashes", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"use-dots" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"use-dots" {
                     helper.read_attrib(&mut use_dots, b"use-dots", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -26588,7 +26588,7 @@ pub mod quick_xml_deserialize {
             let mut tip: ::core::option::Option<super::TipDirection> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"tip" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"tip" {
                     helper.read_attrib(&mut tip, b"tip", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -26758,33 +26758,33 @@ pub mod quick_xml_deserialize {
             let mut last_beat: ::core::option::Option<::core::primitive::f64> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"shape" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"shape" {
                     helper.read_attrib(&mut shape, b"shape", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"accelerate" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"accelerate" {
                     helper.read_attrib(&mut accelerate, b"accelerate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"beats" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"beats" {
                     helper.read_attrib(&mut beats, b"beats", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"first-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"first-beat" {
                     helper.read_attrib(&mut first_beat, b"first-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"last-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"last-beat" {
                     helper.read_attrib(&mut last_beat, b"last-beat", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -26995,7 +26995,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"bend-alter" {
+                if x.name().local_name().into_inner().as_bytes() == b"bend-alter" {
                     let output = < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_bend_alter(
                         helper,
@@ -27004,7 +27004,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pre-bend" {
+                if x.name().local_name().into_inner().as_bytes() == b"pre-bend" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -27016,7 +27016,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"release" {
+                if x.name().local_name().into_inner().as_bytes() == b"release" {
                     let output =
                         <super::Release as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -27028,7 +27028,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"with-bar" {
+                if x.name().local_name().into_inner().as_bytes() == b"with-bar" {
                     let output = < super :: PlacementText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_with_bar(
                         helper,
@@ -27562,13 +27562,13 @@ pub mod quick_xml_deserialize {
             let mut position: ::core::option::Option<::core::num::NonZeroUsize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"element" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"element" {
                     helper.read_attrib(&mut element, b"element", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"position" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"position" {
                     helper.read_attrib(&mut position, b"position", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -27681,31 +27681,31 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-end" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-end" {
                     helper.read_attrib(&mut line_end, b"line-end", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"end-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"end-length" {
                     helper.read_attrib(&mut end_length, b"end-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -27829,25 +27829,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -28029,25 +28029,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -28206,7 +28206,7 @@ pub mod quick_xml_deserialize {
             let mut location: ::core::option::Option<super::CancelLocation> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"location" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"location" {
                     helper.read_attrib(&mut location, b"location", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -28378,35 +28378,35 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"additional" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"additional" {
                     helper.read_attrib(&mut additional, b"additional", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"size" {
                     helper.read_attrib(&mut size, b"size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"after-barline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"after-barline" {
                     helper.read_attrib(&mut after_barline, b"after-barline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -29078,31 +29078,31 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -29211,9 +29211,9 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"page" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"page" {
                     helper.read_attrib(&mut page, b"page", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -29392,7 +29392,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"credit-type" {
+                if x.name().local_name().into_inner().as_bytes() == b"credit-type" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_credit_type(
                         helper,
@@ -29401,7 +29401,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"link" {
+                if x.name().local_name().into_inner().as_bytes() == b"link" {
                     let output =
                         <super::Link as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -29413,7 +29413,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"bookmark" {
+                if x.name().local_name().into_inner().as_bytes() == b"bookmark" {
                     let output =
                         <super::Bookmark as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -29425,7 +29425,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"credit-image" {
+                if x.name().local_name().into_inner().as_bytes() == b"credit-image" {
                     let output =
                         <super::Image as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -29437,7 +29437,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"credit-words" {
+                if x.name().local_name().into_inner().as_bytes() == b"credit-words" {
                     let output = < super :: FormattedTextId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_credit_words(
                         helper,
@@ -29446,7 +29446,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"credit-symbol" {
+                if x.name().local_name().into_inner().as_bytes() == b"credit-symbol" {
                     let output = < super :: FormattedSymbolId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_credit_symbol(
                         helper,
@@ -30203,25 +30203,25 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -31674,7 +31674,7 @@ pub mod quick_xml_deserialize {
             let mut print_object: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -32320,25 +32320,25 @@ pub mod quick_xml_deserialize {
             let mut plus_minus: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"plus-minus" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"plus-minus" {
                     helper.read_attrib(&mut plus_minus, b"plus-minus", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -32515,25 +32515,25 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"text" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -32712,27 +32712,27 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"symbol" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"symbol" {
                     helper.read_attrib(&mut symbol, b"symbol", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"text" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -32902,13 +32902,13 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"placement" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"directive" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"directive" {
                     helper.read_attrib(&mut directive, b"directive", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"system" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"system" {
                     helper.read_attrib(&mut system, b"system", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -34041,7 +34041,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -34226,7 +34226,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"rehearsal" {
+                if x.name().local_name().into_inner().as_bytes() == b"rehearsal" {
                     let output = < super :: FormattedTextId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_rehearsal(
                         helper,
@@ -34235,7 +34235,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"segno" {
+                if x.name().local_name().into_inner().as_bytes() == b"segno" {
                     let output =
                         <super::Segno as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34247,7 +34247,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"coda" {
+                if x.name().local_name().into_inner().as_bytes() == b"coda" {
                     let output =
                         <super::Coda as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34259,7 +34259,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"words" {
+                if x.name().local_name().into_inner().as_bytes() == b"words" {
                     let output = < super :: FormattedTextId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_words(
                         helper,
@@ -34268,7 +34268,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"symbol" {
+                if x.name().local_name().into_inner().as_bytes() == b"symbol" {
                     let output = < super :: FormattedSymbolId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_symbol(
                         helper,
@@ -34277,7 +34277,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"wedge" {
+                if x.name().local_name().into_inner().as_bytes() == b"wedge" {
                     let output =
                         <super::Wedge as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34289,7 +34289,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"dynamics" {
+                if x.name().local_name().into_inner().as_bytes() == b"dynamics" {
                     let output =
                         <super::Dynamics as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34301,7 +34301,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"dashes" {
+                if x.name().local_name().into_inner().as_bytes() == b"dashes" {
                     let output =
                         <super::Dashes as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34313,7 +34313,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"bracket" {
+                if x.name().local_name().into_inner().as_bytes() == b"bracket" {
                     let output =
                         <super::Bracket as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34325,7 +34325,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pedal" {
+                if x.name().local_name().into_inner().as_bytes() == b"pedal" {
                     let output =
                         <super::Pedal as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34337,7 +34337,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"metronome" {
+                if x.name().local_name().into_inner().as_bytes() == b"metronome" {
                     let output = < super :: Metronome as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_metronome(
                         helper,
@@ -34346,7 +34346,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"octave-shift" {
+                if x.name().local_name().into_inner().as_bytes() == b"octave-shift" {
                     let output = < super :: OctaveShift as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_octave_shift(
                         helper,
@@ -34355,7 +34355,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"harp-pedals" {
+                if x.name().local_name().into_inner().as_bytes() == b"harp-pedals" {
                     let output = < super :: HarpPedals as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_harp_pedals(
                         helper,
@@ -34364,7 +34364,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"damp" {
+                if x.name().local_name().into_inner().as_bytes() == b"damp" {
                     let output = < super :: EmptyPrintStyleAlignId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_damp(
                         helper,
@@ -34373,7 +34373,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"damp-all" {
+                if x.name().local_name().into_inner().as_bytes() == b"damp-all" {
                     let output = < super :: EmptyPrintStyleAlignId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_damp_all(
                         helper,
@@ -34382,7 +34382,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"eyeglasses" {
+                if x.name().local_name().into_inner().as_bytes() == b"eyeglasses" {
                     let output = < super :: EmptyPrintStyleAlignId as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_eyeglasses(
                         helper,
@@ -34391,7 +34391,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"string-mute" {
+                if x.name().local_name().into_inner().as_bytes() == b"string-mute" {
                     let output = < super :: StringMute as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_string_mute(
                         helper,
@@ -34400,7 +34400,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"scordatura" {
+                if x.name().local_name().into_inner().as_bytes() == b"scordatura" {
                     let output = < super :: Scordatura as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_scordatura(
                         helper,
@@ -34409,7 +34409,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"image" {
+                if x.name().local_name().into_inner().as_bytes() == b"image" {
                     let output =
                         <super::Image as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -34421,7 +34421,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"principal-voice" {
+                if x.name().local_name().into_inner().as_bytes() == b"principal-voice" {
                     let output = < super :: PrincipalVoice as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_principal_voice(
                         helper,
@@ -34430,7 +34430,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"percussion" {
+                if x.name().local_name().into_inner().as_bytes() == b"percussion" {
                     let output = < super :: Percussion as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_percussion(
                         helper,
@@ -34439,7 +34439,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"accordion-registration" {
+                if x.name().local_name().into_inner().as_bytes() == b"accordion-registration" {
                     let output = < super :: AccordionRegistration as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_accordion_registration(
                         helper,
@@ -34448,7 +34448,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"staff-divide" {
+                if x.name().local_name().into_inner().as_bytes() == b"staff-divide" {
                     let output = < super :: StaffDivide as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_staff_divide(
                         helper,
@@ -34457,7 +34457,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-direction" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-direction" {
                     let output = < super :: OtherDirection as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_direction(
                         helper,
@@ -36998,7 +36998,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -37141,7 +37141,7 @@ pub mod quick_xml_deserialize {
             let mut above: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"above" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"above" {
                     helper.read_attrib(&mut above, b"above", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -37249,39 +37249,39 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"underline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"underline" {
                     helper.read_attrib(&mut underline, b"underline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"overline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"overline" {
                     helper.read_attrib(&mut overline, b"overline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-through" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-through" {
                     helper.read_attrib(&mut line_through, b"line-through", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enclosure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enclosure" {
                     helper.read_attrib(&mut enclosure, b"enclosure", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -37738,7 +37738,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"p" {
+                if x.name().local_name().into_inner().as_bytes() == b"p" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37750,7 +37750,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pp" {
+                if x.name().local_name().into_inner().as_bytes() == b"pp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37762,7 +37762,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ppp" {
+                if x.name().local_name().into_inner().as_bytes() == b"ppp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37774,7 +37774,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pppp" {
+                if x.name().local_name().into_inner().as_bytes() == b"pppp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37786,7 +37786,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ppppp" {
+                if x.name().local_name().into_inner().as_bytes() == b"ppppp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37798,7 +37798,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pppppp" {
+                if x.name().local_name().into_inner().as_bytes() == b"pppppp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37810,7 +37810,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"f" {
+                if x.name().local_name().into_inner().as_bytes() == b"f" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37822,7 +37822,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ff" {
+                if x.name().local_name().into_inner().as_bytes() == b"ff" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37834,7 +37834,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fff" {
+                if x.name().local_name().into_inner().as_bytes() == b"fff" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37846,7 +37846,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ffff" {
+                if x.name().local_name().into_inner().as_bytes() == b"ffff" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37858,7 +37858,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fffff" {
+                if x.name().local_name().into_inner().as_bytes() == b"fffff" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37870,7 +37870,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ffffff" {
+                if x.name().local_name().into_inner().as_bytes() == b"ffffff" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37882,7 +37882,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"mp" {
+                if x.name().local_name().into_inner().as_bytes() == b"mp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37894,7 +37894,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"mf" {
+                if x.name().local_name().into_inner().as_bytes() == b"mf" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37906,7 +37906,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sf" {
+                if x.name().local_name().into_inner().as_bytes() == b"sf" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37918,7 +37918,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sfp" {
+                if x.name().local_name().into_inner().as_bytes() == b"sfp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37930,7 +37930,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sfpp" {
+                if x.name().local_name().into_inner().as_bytes() == b"sfpp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37942,7 +37942,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fp" {
+                if x.name().local_name().into_inner().as_bytes() == b"fp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37954,7 +37954,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"rf" {
+                if x.name().local_name().into_inner().as_bytes() == b"rf" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37966,7 +37966,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"rfz" {
+                if x.name().local_name().into_inner().as_bytes() == b"rfz" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37978,7 +37978,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sfz" {
+                if x.name().local_name().into_inner().as_bytes() == b"sfz" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -37990,7 +37990,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sffz" {
+                if x.name().local_name().into_inner().as_bytes() == b"sffz" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -38002,7 +38002,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fz" {
+                if x.name().local_name().into_inner().as_bytes() == b"fz" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -38014,7 +38014,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"n" {
+                if x.name().local_name().into_inner().as_bytes() == b"n" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -38026,7 +38026,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pf" {
+                if x.name().local_name().into_inner().as_bytes() == b"pf" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -38038,7 +38038,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sfzp" {
+                if x.name().local_name().into_inner().as_bytes() == b"sfzp" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -38050,7 +38050,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-dynamics" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-dynamics" {
                     let output = < super :: OtherText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_dynamics(
                         helper,
@@ -40865,7 +40865,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -41013,17 +41013,17 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -41247,13 +41247,13 @@ pub mod quick_xml_deserialize {
             let mut font_weight: ::core::option::Option<super::FontWeight> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -41369,35 +41369,35 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"line-shape" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"line-shape" {
                     helper.read_attrib(&mut line_shape, b"line-shape", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-length" {
                     helper.read_attrib(&mut line_length, b"line-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -41525,25 +41525,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -41665,27 +41665,27 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -41813,29 +41813,29 @@ pub mod quick_xml_deserialize {
             let mut valign: ::core::option::Option<super::Valign> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -41963,23 +41963,23 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -42101,27 +42101,27 @@ pub mod quick_xml_deserialize {
             let mut valign: ::core::option::Option<super::Valign> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -42249,29 +42249,29 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -42413,39 +42413,39 @@ pub mod quick_xml_deserialize {
             let mut last_beat: ::core::option::Option<::core::primitive::f64> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"start-note" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"start-note" {
                     helper.read_attrib(&mut start_note, b"start-note", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"trill-step" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"trill-step" {
                     helper.read_attrib(&mut trill_step, b"trill-step", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"two-note-turn" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"two-note-turn" {
                     helper.read_attrib(&mut two_note_turn, b"two-note-turn", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"accelerate" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"accelerate" {
                     helper.read_attrib(&mut accelerate, b"accelerate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"beats" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"beats" {
                     helper.read_attrib(&mut beats, b"beats", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"second-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"second-beat" {
                     helper.read_attrib(&mut second_beat, b"second-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"last-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"last-beat" {
                     helper.read_attrib(&mut last_beat, b"last-beat", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -42733,7 +42733,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"encoding-date" {
+                if x.name().local_name().into_inner().as_bytes() == b"encoding-date" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_encoding_date(
                         helper,
@@ -42742,7 +42742,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"encoder" {
+                if x.name().local_name().into_inner().as_bytes() == b"encoder" {
                     let output = < super :: TypedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_encoder(
                         helper,
@@ -42751,7 +42751,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"software" {
+                if x.name().local_name().into_inner().as_bytes() == b"software" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_software(
                         helper,
@@ -42760,7 +42760,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"encoding-description" {
+                if x.name().local_name().into_inner().as_bytes() == b"encoding-description" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_encoding_description(
                         helper,
@@ -42769,7 +42769,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"supports" {
+                if x.name().local_name().into_inner().as_bytes() == b"supports" {
                     let output =
                         <super::Supports as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -43433,37 +43433,37 @@ pub mod quick_xml_deserialize {
             let mut text_y: ::core::option::Option<::core::primitive::f64> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"system" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"system" {
                     helper.read_attrib(&mut system, b"system", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"end-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"end-length" {
                     helper.read_attrib(&mut end_length, b"end-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"text-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"text-x" {
                     helper.read_attrib(&mut text_x, b"text-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"text-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"text-y" {
                     helper.read_attrib(&mut text_y, b"text-y", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -43646,17 +43646,17 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -43744,7 +43744,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -43907,27 +43907,27 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -45033,41 +45033,41 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-dot" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-dot" {
                     helper.read_attrib(&mut print_dot, b"print-dot", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-spacing" {
                     helper.read_attrib(&mut print_spacing, b"print-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-lyric" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-lyric" {
                     helper.read_attrib(&mut print_lyric, b"print-lyric", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"parentheses" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"parentheses" {
                     helper.read_attrib(&mut parentheses, b"parentheses", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -45840,29 +45840,29 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"substitution" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"substitution" {
                     helper.read_attrib(&mut substitution, b"substitution", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"alternate" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"alternate" {
                     helper.read_attrib(&mut alternate, b"alternate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -46027,9 +46027,9 @@ pub mod quick_xml_deserialize {
             let mut location: ::core::option::Option<super::LeftRight> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"text" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"location" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"location" {
                     helper.read_attrib(&mut location, b"location", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -46177,9 +46177,9 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -46724,45 +46724,45 @@ pub mod quick_xml_deserialize {
             let mut enclosure: ::core::option::Option<super::EnclosureShape> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"justify" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"underline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"underline" {
                     helper.read_attrib(&mut underline, b"underline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"overline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"overline" {
                     helper.read_attrib(&mut overline, b"overline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-through" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-through" {
                     helper.read_attrib(&mut line_through, b"line-through", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"rotation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"rotation" {
                     helper.read_attrib(&mut rotation, b"rotation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"letter-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"letter-spacing" {
                     helper.read_attrib(&mut letter_spacing, b"letter-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-height" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dir" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dir" {
                     helper.read_attrib(&mut dir, b"dir", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enclosure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enclosure" {
                     helper.read_attrib(&mut enclosure, b"enclosure", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -46986,47 +46986,47 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"justify" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"underline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"underline" {
                     helper.read_attrib(&mut underline, b"underline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"overline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"overline" {
                     helper.read_attrib(&mut overline, b"overline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-through" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-through" {
                     helper.read_attrib(&mut line_through, b"line-through", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"rotation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"rotation" {
                     helper.read_attrib(&mut rotation, b"rotation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"letter-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"letter-spacing" {
                     helper.read_attrib(&mut letter_spacing, b"letter-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-height" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dir" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dir" {
                     helper.read_attrib(&mut dir, b"dir", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enclosure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enclosure" {
                     helper.read_attrib(&mut enclosure, b"enclosure", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -47254,41 +47254,41 @@ pub mod quick_xml_deserialize {
             let mut enclosure: ::core::option::Option<super::EnclosureShape> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"justify" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"underline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"underline" {
                     helper.read_attrib(&mut underline, b"underline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"overline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"overline" {
                     helper.read_attrib(&mut overline, b"overline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-through" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-through" {
                     helper.read_attrib(&mut line_through, b"line-through", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"rotation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"rotation" {
                     helper.read_attrib(&mut rotation, b"rotation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"letter-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"letter-spacing" {
                     helper.read_attrib(&mut letter_spacing, b"letter-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-height" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
                 } else if matches!(
                     helper.resolve_local_name(attrib.key, &super::NS_XML),
@@ -47300,9 +47300,9 @@ pub mod quick_xml_deserialize {
                     Some(b"space")
                 ) {
                     helper.read_attrib(&mut space, b"space", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dir" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dir" {
                     helper.read_attrib(&mut dir, b"dir", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enclosure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enclosure" {
                     helper.read_attrib(&mut enclosure, b"enclosure", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -47531,41 +47531,41 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"justify" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"underline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"underline" {
                     helper.read_attrib(&mut underline, b"underline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"overline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"overline" {
                     helper.read_attrib(&mut overline, b"overline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-through" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-through" {
                     helper.read_attrib(&mut line_through, b"line-through", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"rotation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"rotation" {
                     helper.read_attrib(&mut rotation, b"rotation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"letter-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"letter-spacing" {
                     helper.read_attrib(&mut letter_spacing, b"letter-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-height" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
                 } else if matches!(
                     helper.resolve_local_name(attrib.key, &super::NS_XML),
@@ -47577,11 +47577,11 @@ pub mod quick_xml_deserialize {
                     Some(b"space")
                 ) {
                     helper.read_attrib(&mut space, b"space", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dir" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dir" {
                     helper.read_attrib(&mut dir, b"dir", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enclosure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enclosure" {
                     helper.read_attrib(&mut enclosure, b"enclosure", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -48596,27 +48596,27 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"height" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"height" {
                     helper.read_attrib(&mut height, b"height", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"width" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"width" {
                     helper.read_attrib(&mut width, b"width", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"unplayed" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"unplayed" {
                     helper.read_attrib(&mut unplayed, b"unplayed", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -50120,15 +50120,15 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -50278,7 +50278,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -50443,35 +50443,35 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -50642,7 +50642,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -50788,21 +50788,22 @@ pub mod quick_xml_deserialize {
             let mut slash: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"steal-time-previous" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"steal-time-previous" {
                     helper.read_attrib(
                         &mut steal_time_previous,
                         b"steal-time-previous",
                         &attrib.value,
                     )?;
-                } else if attrib.key.local_name().as_ref() == b"steal-time-following" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"steal-time-following"
+                {
                     helper.read_attrib(
                         &mut steal_time_following,
                         b"steal-time-following",
                         &attrib.value,
                     )?;
-                } else if attrib.key.local_name().as_ref() == b"make-time" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"make-time" {
                     helper.read_attrib(&mut make_time, b"make-time", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"slash" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"slash" {
                     helper.read_attrib(&mut slash, b"slash", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -50885,7 +50886,7 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"color" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -51047,25 +51048,25 @@ pub mod quick_xml_deserialize {
             let mut justify: ::core::option::Option<super::LeftCenterRight> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"justify" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -51232,15 +51233,15 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -51395,13 +51396,13 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"member-of" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"member-of" {
                     helper.read_attrib(&mut member_of, b"member-of", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -51838,29 +51839,29 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -52053,25 +52054,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -52229,7 +52230,7 @@ pub mod quick_xml_deserialize {
             let mut location: ::core::option::Option<super::HarmonClosedLocation> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"location" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"location" {
                     helper.read_attrib(&mut location, b"location", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -52391,25 +52392,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -52857,27 +52858,27 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -53133,7 +53134,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"natural" {
+                if x.name().local_name().into_inner().as_bytes() == b"natural" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -53145,7 +53146,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"artificial" {
+                if x.name().local_name().into_inner().as_bytes() == b"artificial" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -53157,7 +53158,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"base-pitch" {
+                if x.name().local_name().into_inner().as_bytes() == b"base-pitch" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -53169,7 +53170,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"touching-pitch" {
+                if x.name().local_name().into_inner().as_bytes() == b"touching-pitch" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -53181,7 +53182,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sounding-pitch" {
+                if x.name().local_name().into_inner().as_bytes() == b"sounding-pitch" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -53858,37 +53859,37 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-frame" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-frame" {
                     helper.read_attrib(&mut print_frame, b"print-frame", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"arrangement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"arrangement" {
                     helper.read_attrib(&mut arrangement, b"arrangement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"system" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"system" {
                     helper.read_attrib(&mut system, b"system", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -54095,7 +54096,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"root" {
+                if x.name().local_name().into_inner().as_bytes() == b"root" {
                     let output =
                         <super::Root as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54107,7 +54108,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"numeral" {
+                if x.name().local_name().into_inner().as_bytes() == b"numeral" {
                     let output =
                         <super::Numeral as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54119,7 +54120,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"function" {
+                if x.name().local_name().into_inner().as_bytes() == b"function" {
                     let output = < super :: StyleText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_function(
                         helper,
@@ -54128,7 +54129,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"kind" {
+                if x.name().local_name().into_inner().as_bytes() == b"kind" {
                     let output =
                         <super::Kind as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54140,7 +54141,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"inversion" {
+                if x.name().local_name().into_inner().as_bytes() == b"inversion" {
                     let output = < super :: Inversion as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_inversion(
                         helper,
@@ -54149,7 +54150,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"bass" {
+                if x.name().local_name().into_inner().as_bytes() == b"bass" {
                     let output =
                         <super::Bass as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54161,7 +54162,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"degree" {
+                if x.name().local_name().into_inner().as_bytes() == b"degree" {
                     let output =
                         <super::Degree as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54173,7 +54174,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"frame" {
+                if x.name().local_name().into_inner().as_bytes() == b"frame" {
                     let output =
                         <super::Frame as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54185,7 +54186,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"offset" {
+                if x.name().local_name().into_inner().as_bytes() == b"offset" {
                     let output =
                         <super::Offset as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54197,7 +54198,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"footnote" {
+                if x.name().local_name().into_inner().as_bytes() == b"footnote" {
                     let output = < super :: FormattedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_footnote(
                         helper,
@@ -54206,7 +54207,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"level" {
+                if x.name().local_name().into_inner().as_bytes() == b"level" {
                     let output =
                         <super::Level as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -54218,7 +54219,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"staff" {
+                if x.name().local_name().into_inner().as_bytes() == b"staff" {
                     let output = < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_staff(
                         helper,
@@ -55556,27 +55557,27 @@ pub mod quick_xml_deserialize {
             let mut location: ::core::option::Option<super::LeftRight> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"location" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"location" {
                     helper.read_attrib(&mut location, b"location", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -55759,29 +55760,29 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -56240,27 +56241,27 @@ pub mod quick_xml_deserialize {
             let mut substitution: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"substitution" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"substitution" {
                     helper.read_attrib(&mut substitution, b"substitution", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -56382,25 +56383,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -57027,7 +57028,7 @@ pub mod quick_xml_deserialize {
             let mut location: ::core::option::Option<super::HoleClosedLocation> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"location" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"location" {
                     helper.read_attrib(&mut location, b"location", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -57203,41 +57204,41 @@ pub mod quick_xml_deserialize {
             let mut slash: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"start-note" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"start-note" {
                     helper.read_attrib(&mut start_note, b"start-note", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"trill-step" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"trill-step" {
                     helper.read_attrib(&mut trill_step, b"trill-step", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"two-note-turn" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"two-note-turn" {
                     helper.read_attrib(&mut two_note_turn, b"two-note-turn", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"accelerate" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"accelerate" {
                     helper.read_attrib(&mut accelerate, b"accelerate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"beats" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"beats" {
                     helper.read_attrib(&mut beats, b"beats", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"second-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"second-beat" {
                     helper.read_attrib(&mut second_beat, b"second-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"last-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"last-beat" {
                     helper.read_attrib(&mut last_beat, b"last-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"slash" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"slash" {
                     helper.read_attrib(&mut slash, b"slash", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -58284,27 +58285,27 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"source" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"source" {
                     helper.read_attrib(&mut source, b"source", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"height" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"height" {
                     helper.read_attrib(&mut height, b"height", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"width" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"width" {
                     helper.read_attrib(&mut width, b"width", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -58406,7 +58407,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -58487,7 +58488,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -58685,7 +58686,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"instrument-sound" {
+                if x.name().local_name().into_inner().as_bytes() == b"instrument-sound" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_instrument_sound(
                         helper,
@@ -58694,7 +58695,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"solo" {
+                if x.name().local_name().into_inner().as_bytes() == b"solo" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -58706,7 +58707,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ensemble" {
+                if x.name().local_name().into_inner().as_bytes() == b"ensemble" {
                     let output = < super :: PositiveIntegerOrEmpty as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_ensemble(
                         helper,
@@ -58715,7 +58716,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"virtual-instrument" {
+                if x.name().local_name().into_inner().as_bytes() == b"virtual-instrument" {
                     let output = < super :: VirtualInstrument as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_virtual_instrument(
                         helper,
@@ -59261,7 +59262,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -59346,9 +59347,9 @@ pub mod quick_xml_deserialize {
             let mut separator: ::core::option::Option<super::TimeSeparator> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"symbol" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"symbol" {
                     helper.read_attrib(&mut symbol, b"symbol", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"separator" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"separator" {
                     helper.read_attrib(&mut separator, b"separator", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -59537,7 +59538,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"time-relation" {
+                if x.name().local_name().into_inner().as_bytes() == b"time-relation" {
                     let output = < super :: TimeRelation as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_time_relation(
                         helper,
@@ -59546,7 +59547,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beats" {
+                if x.name().local_name().into_inner().as_bytes() == b"beats" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_beats(
                         helper,
@@ -59555,7 +59556,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beat-type" {
+                if x.name().local_name().into_inner().as_bytes() == b"beat-type" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_beat_type(
                         helper,
@@ -60010,25 +60011,25 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"text" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -60215,29 +60216,29 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -60435,7 +60436,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"cancel" {
+                if x.name().local_name().into_inner().as_bytes() == b"cancel" {
                     let output =
                         <super::Cancel as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -60447,7 +60448,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fifths" {
+                if x.name().local_name().into_inner().as_bytes() == b"fifths" {
                     let output =
                         <::num::BigInt as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -60459,7 +60460,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"mode" {
+                if x.name().local_name().into_inner().as_bytes() == b"mode" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_mode(
                         helper,
@@ -60468,7 +60469,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"key-step" {
+                if x.name().local_name().into_inner().as_bytes() == b"key-step" {
                     let output =
                         <super::Step as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -60480,7 +60481,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"key-alter" {
+                if x.name().local_name().into_inner().as_bytes() == b"key-alter" {
                     let output = < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_key_alter(
                         helper,
@@ -60489,7 +60490,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"key-accidental" {
+                if x.name().local_name().into_inner().as_bytes() == b"key-accidental" {
                     let output = < super :: KeyAccidental as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_key_accidental(
                         helper,
@@ -60498,7 +60499,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"key-octave" {
+                if x.name().local_name().into_inner().as_bytes() == b"key-octave" {
                     let output = < super :: KeyOctave as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_key_octave(
                         helper,
@@ -61324,7 +61325,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -61472,9 +61473,9 @@ pub mod quick_xml_deserialize {
             let mut cancel: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"cancel" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"cancel" {
                     helper.read_attrib(&mut cancel, b"cancel", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -61654,41 +61655,42 @@ pub mod quick_xml_deserialize {
             let mut valign: ::core::option::Option<super::Valign> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"use-symbols" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"use-symbols" {
                     helper.read_attrib(&mut use_symbols, b"use-symbols", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"text" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"stack-degrees" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"stack-degrees" {
                     helper.read_attrib(&mut stack_degrees, b"stack-degrees", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"parentheses-degrees" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"parentheses-degrees"
+                {
                     helper.read_attrib(
                         &mut parentheses_degrees,
                         b"parentheses-degrees",
                         &attrib.value,
                     )?;
-                } else if attrib.key.local_name().as_ref() == b"bracket-degrees" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bracket-degrees" {
                     helper.read_attrib(&mut bracket_degrees, b"bracket-degrees", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -61863,15 +61865,15 @@ pub mod quick_xml_deserialize {
             let mut size: ::core::option::Option<super::SymbolSize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"reference" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"reference" {
                     helper.read_attrib(&mut reference, b"reference", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"parentheses" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"parentheses" {
                     helper.read_attrib(&mut parentheses, b"parentheses", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bracket" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bracket" {
                     helper.read_attrib(&mut bracket, b"bracket", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"size" {
                     helper.read_attrib(&mut size, b"size", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -62025,15 +62027,15 @@ pub mod quick_xml_deserialize {
             let mut print_object: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"line" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"line" {
                     helper.read_attrib(&mut line, b"line", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"width" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"width" {
                     helper.read_attrib(&mut width, b"width", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -62124,7 +62126,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -62322,19 +62324,19 @@ pub mod quick_xml_deserialize {
                     Some(b"actuate")
                 ) {
                     helper.read_attrib(&mut actuate, b"actuate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"element" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"element" {
                     helper.read_attrib(&mut element, b"element", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"position" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"position" {
                     helper.read_attrib(&mut position, b"position", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -62612,7 +62614,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"assess" {
+                if x.name().local_name().into_inner().as_bytes() == b"assess" {
                     let output =
                         <super::Assess as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -62624,7 +62626,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"wait" {
+                if x.name().local_name().into_inner().as_bytes() == b"wait" {
                     let output =
                         <super::Wait as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -62636,7 +62638,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-listen" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-listen" {
                     let output = < super :: OtherListening as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_listen(
                         helper,
@@ -63238,7 +63240,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"sync" {
+                if x.name().local_name().into_inner().as_bytes() == b"sync" {
                     let output =
                         <super::Sync as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -63250,7 +63252,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-listening" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-listening" {
                     let output = < super :: OtherListening as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_listening(
                         helper,
@@ -63259,7 +63261,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"offset" {
+                if x.name().local_name().into_inner().as_bytes() == b"offset" {
                     let output =
                         <super::Offset as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -63722,29 +63724,29 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"justify" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -63942,7 +63944,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"syllabic" {
+                if x.name().local_name().into_inner().as_bytes() == b"syllabic" {
                     let output =
                         <super::Syllabic as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -63954,7 +63956,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"text" {
+                if x.name().local_name().into_inner().as_bytes() == b"text" {
                     let output = < super :: TextElementData as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_text(
                         helper,
@@ -63963,7 +63965,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"elision" {
+                if x.name().local_name().into_inner().as_bytes() == b"elision" {
                     let output =
                         <super::Elision as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -63975,7 +63977,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"extend" {
+                if x.name().local_name().into_inner().as_bytes() == b"extend" {
                     let output =
                         <super::Extend as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -63987,7 +63989,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"laughing" {
+                if x.name().local_name().into_inner().as_bytes() == b"laughing" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -63999,7 +64001,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"humming" {
+                if x.name().local_name().into_inner().as_bytes() == b"humming" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -64011,7 +64013,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"end-line" {
+                if x.name().local_name().into_inner().as_bytes() == b"end-line" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -64023,7 +64025,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"end-paragraph" {
+                if x.name().local_name().into_inner().as_bytes() == b"end-paragraph" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -64035,7 +64037,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"footnote" {
+                if x.name().local_name().into_inner().as_bytes() == b"footnote" {
                     let output = < super :: FormattedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_footnote(
                         helper,
@@ -64044,7 +64046,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"level" {
+                if x.name().local_name().into_inner().as_bytes() == b"level" {
                     let output =
                         <super::Level as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -65179,17 +65181,17 @@ pub mod quick_xml_deserialize {
             let mut font_weight: ::core::option::Option<super::FontWeight> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -65285,9 +65287,9 @@ pub mod quick_xml_deserialize {
             let mut lang: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
                     helper.resolve_local_name(attrib.key, &super::NS_XML),
@@ -65815,43 +65817,45 @@ pub mod quick_xml_deserialize {
             let mut valign: ::core::option::Option<super::Valign> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"system" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"system" {
                     helper.read_attrib(&mut system, b"system", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"staff" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"staff" {
                     helper.read_attrib(&mut staff, b"staff", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"multiple-rest-always" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"multiple-rest-always"
+                {
                     helper.read_attrib(
                         &mut multiple_rest_always,
                         b"multiple-rest-always",
                         &attrib.value,
                     )?;
-                } else if attrib.key.local_name().as_ref() == b"multiple-rest-range" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"multiple-rest-range"
+                {
                     helper.read_attrib(
                         &mut multiple_rest_range,
                         b"multiple-rest-range",
                         &attrib.value,
                     )?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -66030,9 +66034,9 @@ pub mod quick_xml_deserialize {
             let mut slashes: ::core::option::Option<::core::num::NonZeroUsize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"slashes" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"slashes" {
                     helper.read_attrib(&mut slashes, b"slashes", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -66194,19 +66198,19 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -66403,7 +66407,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"multiple-rest" {
+                if x.name().local_name().into_inner().as_bytes() == b"multiple-rest" {
                     let output = < super :: MultipleRest as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_multiple_rest(
                         helper,
@@ -66412,7 +66416,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"measure-repeat" {
+                if x.name().local_name().into_inner().as_bytes() == b"measure-repeat" {
                     let output = < super :: MeasureRepeat as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_measure_repeat(
                         helper,
@@ -66421,7 +66425,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beat-repeat" {
+                if x.name().local_name().into_inner().as_bytes() == b"beat-repeat" {
                     let output = < super :: BeatRepeat as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_beat_repeat(
                         helper,
@@ -66430,7 +66434,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"slash" {
+                if x.name().local_name().into_inner().as_bytes() == b"slash" {
                     let output =
                         <super::Slash as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -66973,7 +66977,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -67118,7 +67122,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -67283,35 +67287,35 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"justify" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"parentheses" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"parentheses" {
                     helper.read_attrib(&mut parentheses, b"parentheses", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -67519,7 +67523,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"beat-unit" {
+                if x.name().local_name().into_inner().as_bytes() == b"beat-unit" {
                     let output = < super :: NoteTypeValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_beat_unit(
                         helper,
@@ -67528,7 +67532,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beat-unit-dot" {
+                if x.name().local_name().into_inner().as_bytes() == b"beat-unit-dot" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -67540,7 +67544,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beat-unit-tied" {
+                if x.name().local_name().into_inner().as_bytes() == b"beat-unit-tied" {
                     let output = < super :: BeatUnitTied as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_beat_unit_tied(
                         helper,
@@ -67549,7 +67553,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"per-minute" {
+                if x.name().local_name().into_inner().as_bytes() == b"per-minute" {
                     let output = < super :: PerMinute as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_per_minute(
                         helper,
@@ -67558,7 +67562,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"metronome-arrows" {
+                if x.name().local_name().into_inner().as_bytes() == b"metronome-arrows" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -67570,7 +67574,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"metronome-note" {
+                if x.name().local_name().into_inner().as_bytes() == b"metronome-note" {
                     let output = < super :: MetronomeNote as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_metronome_note(
                         helper,
@@ -67579,7 +67583,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"metronome-relation" {
+                if x.name().local_name().into_inner().as_bytes() == b"metronome-relation" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_metronome_relation(
                         helper,
@@ -68427,7 +68431,7 @@ pub mod quick_xml_deserialize {
             let mut number: ::core::option::Option<::core::num::NonZeroUsize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -69393,7 +69397,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<super::StartStop> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -69480,11 +69484,11 @@ pub mod quick_xml_deserialize {
             let mut show_number: ::core::option::Option<super::ShowTuplet> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bracket" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bracket" {
                     helper.read_attrib(&mut bracket, b"bracket", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"show-number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"show-number" {
                     helper.read_attrib(&mut show_number, b"show-number", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -70230,9 +70234,9 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"port" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"port" {
                     helper.read_attrib(&mut port, b"port", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -70375,7 +70379,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -71941,7 +71945,7 @@ pub mod quick_xml_deserialize {
             let mut name: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -72128,45 +72132,45 @@ pub mod quick_xml_deserialize {
             let mut departure: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"start-note" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"start-note" {
                     helper.read_attrib(&mut start_note, b"start-note", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"trill-step" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"trill-step" {
                     helper.read_attrib(&mut trill_step, b"trill-step", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"two-note-turn" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"two-note-turn" {
                     helper.read_attrib(&mut two_note_turn, b"two-note-turn", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"accelerate" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"accelerate" {
                     helper.read_attrib(&mut accelerate, b"accelerate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"beats" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"beats" {
                     helper.read_attrib(&mut beats, b"beats", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"second-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"second-beat" {
                     helper.read_attrib(&mut second_beat, b"second-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"last-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"last-beat" {
                     helper.read_attrib(&mut last_beat, b"last-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"long" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"long" {
                     helper.read_attrib(&mut long, b"long", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"approach" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"approach" {
                     helper.read_attrib(&mut approach, b"approach", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"departure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"departure" {
                     helper.read_attrib(&mut departure, b"departure", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -72282,7 +72286,7 @@ pub mod quick_xml_deserialize {
             let mut use_symbols: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"use-symbols" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"use-symbols" {
                     helper.read_attrib(&mut use_symbols, b"use-symbols", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -72426,7 +72430,7 @@ pub mod quick_xml_deserialize {
             let mut print_object: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -72609,7 +72613,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"display-text" {
+                if x.name().local_name().into_inner().as_bytes() == b"display-text" {
                     let output = < super :: FormattedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_display_text(
                         helper,
@@ -72618,7 +72622,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"accidental-text" {
+                if x.name().local_name().into_inner().as_bytes() == b"accidental-text" {
                     let output = < super :: AccidentalText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_accidental_text(
                         helper,
@@ -72970,23 +72974,23 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -73089,9 +73093,9 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -73273,7 +73277,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"footnote" {
+                if x.name().local_name().into_inner().as_bytes() == b"footnote" {
                     let output = < super :: FormattedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_footnote(
                         helper,
@@ -73282,7 +73286,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"level" {
+                if x.name().local_name().into_inner().as_bytes() == b"level" {
                     let output =
                         <super::Level as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -73294,7 +73298,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"tied" {
+                if x.name().local_name().into_inner().as_bytes() == b"tied" {
                     let output =
                         <super::Tied as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -73306,7 +73310,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"slur" {
+                if x.name().local_name().into_inner().as_bytes() == b"slur" {
                     let output =
                         <super::Slur as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -73318,7 +73322,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"tuplet" {
+                if x.name().local_name().into_inner().as_bytes() == b"tuplet" {
                     let output =
                         <super::Tuplet as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -73330,7 +73334,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"glissando" {
+                if x.name().local_name().into_inner().as_bytes() == b"glissando" {
                     let output = < super :: Glissando as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_glissando(
                         helper,
@@ -73339,7 +73343,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"slide" {
+                if x.name().local_name().into_inner().as_bytes() == b"slide" {
                     let output =
                         <super::Slide as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -73351,7 +73355,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ornaments" {
+                if x.name().local_name().into_inner().as_bytes() == b"ornaments" {
                     let output = < super :: Ornaments as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_ornaments(
                         helper,
@@ -73360,7 +73364,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"technical" {
+                if x.name().local_name().into_inner().as_bytes() == b"technical" {
                     let output = < super :: Technical as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_technical(
                         helper,
@@ -73369,7 +73373,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"articulations" {
+                if x.name().local_name().into_inner().as_bytes() == b"articulations" {
                     let output = < super :: Articulations as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_articulations(
                         helper,
@@ -73378,7 +73382,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"dynamics" {
+                if x.name().local_name().into_inner().as_bytes() == b"dynamics" {
                     let output =
                         <super::Dynamics as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -73390,7 +73394,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fermata" {
+                if x.name().local_name().into_inner().as_bytes() == b"fermata" {
                     let output =
                         <super::Fermata as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -73402,7 +73406,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"arpeggiate" {
+                if x.name().local_name().into_inner().as_bytes() == b"arpeggiate" {
                     let output = < super :: Arpeggiate as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_arpeggiate(
                         helper,
@@ -73411,7 +73415,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"non-arpeggiate" {
+                if x.name().local_name().into_inner().as_bytes() == b"non-arpeggiate" {
                     let output = < super :: NonArpeggiate as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_non_arpeggiate(
                         helper,
@@ -73420,7 +73424,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"accidental-mark" {
+                if x.name().local_name().into_inner().as_bytes() == b"accidental-mark" {
                     let output = < super :: AccidentalMark as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_accidental_mark(
                         helper,
@@ -73429,7 +73433,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-notation" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-notation" {
                     let output = < super :: OtherNotation as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_notation(
                         helper,
@@ -75200,47 +75204,47 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-dot" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-dot" {
                     helper.read_attrib(&mut print_dot, b"print-dot", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-spacing" {
                     helper.read_attrib(&mut print_spacing, b"print-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-lyric" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-lyric" {
                     helper.read_attrib(&mut print_lyric, b"print-lyric", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-leger" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-leger" {
                     helper.read_attrib(&mut print_leger, b"print-leger", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dynamics" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dynamics" {
                     helper.read_attrib(&mut dynamics, b"dynamics", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"end-dynamics" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"end-dynamics" {
                     helper.read_attrib(&mut end_dynamics, b"end-dynamics", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"attack" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"attack" {
                     helper.read_attrib(&mut attack, b"attack", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"release" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"release" {
                     helper.read_attrib(&mut release, b"release", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"pizzicato" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"pizzicato" {
                     helper.read_attrib(&mut pizzicato, b"pizzicato", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -75456,7 +75460,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"grace" {
+                if x.name().local_name().into_inner().as_bytes() == b"grace" {
                     let output =
                         <super::Grace as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75468,7 +75472,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"chord" {
+                if x.name().local_name().into_inner().as_bytes() == b"chord" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75480,7 +75484,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pitch" {
+                if x.name().local_name().into_inner().as_bytes() == b"pitch" {
                     let output =
                         <super::Pitch as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75492,7 +75496,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"unpitched" {
+                if x.name().local_name().into_inner().as_bytes() == b"unpitched" {
                     let output = < super :: Unpitched as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_unpitched(
                         helper,
@@ -75501,7 +75505,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"rest" {
+                if x.name().local_name().into_inner().as_bytes() == b"rest" {
                     let output =
                         <super::Rest as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75513,7 +75517,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"tie" {
+                if x.name().local_name().into_inner().as_bytes() == b"tie" {
                     let output =
                         <super::Tie as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75525,7 +75529,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"cue" {
+                if x.name().local_name().into_inner().as_bytes() == b"cue" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75537,7 +75541,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"duration" {
+                if x.name().local_name().into_inner().as_bytes() == b"duration" {
                     let output = < :: core :: primitive :: f64 as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_duration(
                         helper,
@@ -75546,7 +75550,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"instrument" {
+                if x.name().local_name().into_inner().as_bytes() == b"instrument" {
                     let output = < super :: Instrument as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_instrument(
                         helper,
@@ -75555,7 +75559,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"footnote" {
+                if x.name().local_name().into_inner().as_bytes() == b"footnote" {
                     let output = < super :: FormattedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_footnote(
                         helper,
@@ -75564,7 +75568,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"level" {
+                if x.name().local_name().into_inner().as_bytes() == b"level" {
                     let output =
                         <super::Level as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75576,7 +75580,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"voice" {
+                if x.name().local_name().into_inner().as_bytes() == b"voice" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_voice(
                         helper,
@@ -75585,7 +75589,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"type" {
+                if x.name().local_name().into_inner().as_bytes() == b"type" {
                     let output =
                         <super::NoteType as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75597,7 +75601,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"dot" {
+                if x.name().local_name().into_inner().as_bytes() == b"dot" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_dot(
                         helper,
@@ -75606,7 +75610,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"accidental" {
+                if x.name().local_name().into_inner().as_bytes() == b"accidental" {
                     let output = < super :: Accidental as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_accidental(
                         helper,
@@ -75615,7 +75619,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"time-modification" {
+                if x.name().local_name().into_inner().as_bytes() == b"time-modification" {
                     let output = < super :: TimeModification as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_time_modification(
                         helper,
@@ -75624,7 +75628,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"stem" {
+                if x.name().local_name().into_inner().as_bytes() == b"stem" {
                     let output =
                         <super::Stem as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75636,7 +75640,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"notehead" {
+                if x.name().local_name().into_inner().as_bytes() == b"notehead" {
                     let output =
                         <super::Notehead as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75648,7 +75652,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"notehead-text" {
+                if x.name().local_name().into_inner().as_bytes() == b"notehead-text" {
                     let output = < super :: NoteheadText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_notehead_text(
                         helper,
@@ -75657,7 +75661,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"staff" {
+                if x.name().local_name().into_inner().as_bytes() == b"staff" {
                     let output = < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_staff(
                         helper,
@@ -75666,7 +75670,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beam" {
+                if x.name().local_name().into_inner().as_bytes() == b"beam" {
                     let output =
                         <super::Beam as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75678,7 +75682,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"notations" {
+                if x.name().local_name().into_inner().as_bytes() == b"notations" {
                     let output = < super :: Notations as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_notations(
                         helper,
@@ -75687,7 +75691,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"lyric" {
+                if x.name().local_name().into_inner().as_bytes() == b"lyric" {
                     let output =
                         <super::Lyric as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75699,7 +75703,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"play" {
+                if x.name().local_name().into_inner().as_bytes() == b"play" {
                     let output =
                         <super::Play as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -75711,7 +75715,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"listen" {
+                if x.name().local_name().into_inner().as_bytes() == b"listen" {
                     let output =
                         <super::Listen as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -78321,7 +78325,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<super::NoteSizeType> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -78468,7 +78472,7 @@ pub mod quick_xml_deserialize {
             let mut size: ::core::option::Option<super::SymbolSize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"size" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"size" {
                     helper.read_attrib(&mut size, b"size", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -78627,21 +78631,21 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"filled" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"filled" {
                     helper.read_attrib(&mut filled, b"filled", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"parentheses" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"parentheses" {
                     helper.read_attrib(&mut parentheses, b"parentheses", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -78970,7 +78974,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"display-text" {
+                if x.name().local_name().into_inner().as_bytes() == b"display-text" {
                     let output = < super :: FormattedText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_display_text(
                         helper,
@@ -78979,7 +78983,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"accidental-text" {
+                if x.name().local_name().into_inner().as_bytes() == b"accidental-text" {
                     let output = < super :: AccidentalText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_accidental_text(
                         helper,
@@ -79922,7 +79926,7 @@ pub mod quick_xml_deserialize {
             let mut print_object: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -80463,25 +80467,25 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"text" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -80672,35 +80676,35 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"size" {
                     helper.read_attrib(&mut size, b"size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -80811,7 +80815,7 @@ pub mod quick_xml_deserialize {
             let mut sound: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"sound" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"sound" {
                     helper.read_attrib(&mut sound, b"sound", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -81077,7 +81081,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -81257,7 +81261,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"trill-mark" {
+                if x.name().local_name().into_inner().as_bytes() == b"trill-mark" {
                     let output = < super :: EmptyTrillSound as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_trill_mark(
                         helper,
@@ -81266,7 +81270,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"turn" {
+                if x.name().local_name().into_inner().as_bytes() == b"turn" {
                     let output = < super :: HorizontalTurn as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_turn(
                         helper,
@@ -81275,7 +81279,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"delayed-turn" {
+                if x.name().local_name().into_inner().as_bytes() == b"delayed-turn" {
                     let output = < super :: HorizontalTurn as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_delayed_turn(
                         helper,
@@ -81284,7 +81288,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"inverted-turn" {
+                if x.name().local_name().into_inner().as_bytes() == b"inverted-turn" {
                     let output = < super :: HorizontalTurn as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_inverted_turn(
                         helper,
@@ -81293,7 +81297,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"delayed-inverted-turn" {
+                if x.name().local_name().into_inner().as_bytes() == b"delayed-inverted-turn" {
                     let output = < super :: HorizontalTurn as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_delayed_inverted_turn(
                         helper,
@@ -81302,7 +81306,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"vertical-turn" {
+                if x.name().local_name().into_inner().as_bytes() == b"vertical-turn" {
                     let output = < super :: EmptyTrillSound as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_vertical_turn(
                         helper,
@@ -81311,7 +81315,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"inverted-vertical-turn" {
+                if x.name().local_name().into_inner().as_bytes() == b"inverted-vertical-turn" {
                     let output = < super :: EmptyTrillSound as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_inverted_vertical_turn(
                         helper,
@@ -81320,7 +81324,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"shake" {
+                if x.name().local_name().into_inner().as_bytes() == b"shake" {
                     let output = < super :: EmptyTrillSound as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_shake(
                         helper,
@@ -81329,7 +81333,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"wavy-line" {
+                if x.name().local_name().into_inner().as_bytes() == b"wavy-line" {
                     let output =
                         <super::WavyLine as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -81341,7 +81345,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"mordent" {
+                if x.name().local_name().into_inner().as_bytes() == b"mordent" {
                     let output =
                         <super::Mordent as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -81353,7 +81357,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"inverted-mordent" {
+                if x.name().local_name().into_inner().as_bytes() == b"inverted-mordent" {
                     let output =
                         <super::Mordent as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -81365,7 +81369,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"schleifer" {
+                if x.name().local_name().into_inner().as_bytes() == b"schleifer" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_schleifer(
                         helper,
@@ -81374,7 +81378,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"tremolo" {
+                if x.name().local_name().into_inner().as_bytes() == b"tremolo" {
                     let output =
                         <super::Tremolo as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -81386,7 +81390,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"haydn" {
+                if x.name().local_name().into_inner().as_bytes() == b"haydn" {
                     let output = < super :: EmptyTrillSound as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_haydn(
                         helper,
@@ -81395,7 +81399,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-ornament" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-ornament" {
                     let output = < super :: OtherPlacementText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_ornament(
                         helper,
@@ -81404,7 +81408,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"accidental-mark" {
+                if x.name().local_name().into_inner().as_bytes() == b"accidental-mark" {
                     let output = < super :: AccidentalMark as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_accidental_mark(
                         helper,
@@ -83144,7 +83148,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -83318,33 +83322,33 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"print-object" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -83517,11 +83521,11 @@ pub mod quick_xml_deserialize {
             let mut time_only: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"player" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"player" {
                     helper.read_attrib(&mut player, b"player", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -83698,35 +83702,35 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -83919,27 +83923,27 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -84105,7 +84109,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -84248,7 +84252,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -85012,7 +85016,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<super::MarginType> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -86381,9 +86385,9 @@ pub mod quick_xml_deserialize {
             let mut number: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -88408,7 +88412,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"part-group" {
+                if x.name().local_name().into_inner().as_bytes() == b"part-group" {
                     let output = < super :: PartGroup as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_part_group(
                         helper,
@@ -88417,7 +88421,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"score-part" {
+                if x.name().local_name().into_inner().as_bytes() == b"score-part" {
                     let output = < super :: ScorePart as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_score_part(
                         helper,
@@ -88776,27 +88780,27 @@ pub mod quick_xml_deserialize {
             let mut justify: ::core::option::Option<super::LeftCenterRight> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"justify" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"justify" {
                     helper.read_attrib(&mut justify, b"justify", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -88968,19 +88972,19 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"top-staff" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"top-staff" {
                     helper.read_attrib(&mut top_staff, b"top-staff", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bottom-staff" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bottom-staff" {
                     helper.read_attrib(&mut bottom_staff, b"bottom-staff", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -89877,39 +89881,39 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line" {
                     helper.read_attrib(&mut line, b"line", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"sign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"sign" {
                     helper.read_attrib(&mut sign, b"sign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"abbreviated" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"abbreviated" {
                     helper.read_attrib(&mut abbreviated, b"abbreviated", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -90541,13 +90545,13 @@ pub mod quick_xml_deserialize {
             let mut font_weight: ::core::option::Option<super::FontWeight> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -90718,31 +90722,31 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enclosure" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enclosure" {
                     helper.read_attrib(&mut enclosure, b"enclosure", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -90951,7 +90955,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"glass" {
+                if x.name().local_name().into_inner().as_bytes() == b"glass" {
                     let output =
                         <super::Glass as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -90963,7 +90967,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"metal" {
+                if x.name().local_name().into_inner().as_bytes() == b"metal" {
                     let output =
                         <super::Metal as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -90975,7 +90979,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"wood" {
+                if x.name().local_name().into_inner().as_bytes() == b"wood" {
                     let output =
                         <super::Wood as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -90987,7 +90991,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pitched" {
+                if x.name().local_name().into_inner().as_bytes() == b"pitched" {
                     let output =
                         <super::Pitched as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -90999,7 +91003,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"membrane" {
+                if x.name().local_name().into_inner().as_bytes() == b"membrane" {
                     let output =
                         <super::Membrane as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -91011,7 +91015,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"effect" {
+                if x.name().local_name().into_inner().as_bytes() == b"effect" {
                     let output =
                         <super::Effect as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -91023,7 +91027,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"timpani" {
+                if x.name().local_name().into_inner().as_bytes() == b"timpani" {
                     let output =
                         <super::Timpani as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -91035,7 +91039,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beater" {
+                if x.name().local_name().into_inner().as_bytes() == b"beater" {
                     let output =
                         <super::Beater as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -91047,7 +91051,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"stick" {
+                if x.name().local_name().into_inner().as_bytes() == b"stick" {
                     let output =
                         <super::Stick as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -91059,7 +91063,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"stick-location" {
+                if x.name().local_name().into_inner().as_bytes() == b"stick-location" {
                     let output = < super :: StickLocation as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_stick_location(
                         helper,
@@ -91068,7 +91072,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-percussion" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-percussion" {
                     let output = < super :: OtherText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_percussion(
                         helper,
@@ -92900,7 +92904,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -93056,25 +93060,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -93241,7 +93245,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -93417,7 +93421,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"ipa" {
+                if x.name().local_name().into_inner().as_bytes() == b"ipa" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_ipa(
                         helper,
@@ -93426,7 +93430,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"mute" {
+                if x.name().local_name().into_inner().as_bytes() == b"mute" {
                     let output =
                         <super::Mute as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -93438,7 +93442,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"semi-pitched" {
+                if x.name().local_name().into_inner().as_bytes() == b"semi-pitched" {
                     let output = < super :: SemiPitched as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_semi_pitched(
                         helper,
@@ -93447,7 +93451,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-play" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-play" {
                     let output = < super :: OtherPlay as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_play(
                         helper,
@@ -93984,7 +93988,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -94414,33 +94418,33 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"symbol" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"symbol" {
                     helper.read_attrib(&mut symbol, b"symbol", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -94629,17 +94633,17 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"staff-spacing" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"staff-spacing" {
                     helper.read_attrib(&mut staff_spacing, b"staff-spacing", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"new-system" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"new-system" {
                     helper.read_attrib(&mut new_system, b"new-system", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"new-page" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"new-page" {
                     helper.read_attrib(&mut new_page, b"new-page", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"blank-page" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"blank-page" {
                     helper.read_attrib(&mut blank_page, b"blank-page", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"page-number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"page-number" {
                     helper.read_attrib(&mut page_number, b"page-number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -95704,7 +95708,7 @@ pub mod quick_xml_deserialize {
             let mut offset: ::core::option::Option<::core::primitive::f64> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"offset" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"offset" {
                     helper.read_attrib(&mut offset, b"offset", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -95789,13 +95793,13 @@ pub mod quick_xml_deserialize {
             let mut winged: ::core::option::Option<super::Winged> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"direction" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"direction" {
                     helper.read_attrib(&mut direction, b"direction", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"times" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"times" {
                     helper.read_attrib(&mut times, b"times", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"after-jump" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"after-jump" {
                     helper.read_attrib(&mut after_jump, b"after-jump", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"winged" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"winged" {
                     helper.read_attrib(&mut winged, b"winged", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -95887,7 +95891,7 @@ pub mod quick_xml_deserialize {
             let mut measure: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"measure" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"measure" {
                     helper.read_attrib(&mut measure, b"measure", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -96930,25 +96934,25 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"text" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -97607,7 +97611,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -98025,7 +98029,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -98223,7 +98227,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"instrument-name" {
+                if x.name().local_name().into_inner().as_bytes() == b"instrument-name" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_instrument_name(
                         helper,
@@ -98232,7 +98236,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"instrument-abbreviation" {
+                if x.name().local_name().into_inner().as_bytes() == b"instrument-abbreviation" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_instrument_abbreviation(
                         helper,
@@ -98241,7 +98245,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"instrument-sound" {
+                if x.name().local_name().into_inner().as_bytes() == b"instrument-sound" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_instrument_sound(
                         helper,
@@ -98250,7 +98254,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"solo" {
+                if x.name().local_name().into_inner().as_bytes() == b"solo" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -98262,7 +98266,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"ensemble" {
+                if x.name().local_name().into_inner().as_bytes() == b"ensemble" {
                     let output = < super :: PositiveIntegerOrEmpty as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_ensemble(
                         helper,
@@ -98271,7 +98275,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"virtual-instrument" {
+                if x.name().local_name().into_inner().as_bytes() == b"virtual-instrument" {
                     let output = < super :: VirtualInstrument as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_virtual_instrument(
                         helper,
@@ -99022,7 +99026,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -99204,7 +99208,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"identification" {
+                if x.name().local_name().into_inner().as_bytes() == b"identification" {
                     let output = < super :: Identification as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_identification(
                         helper,
@@ -99213,7 +99217,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"part-link" {
+                if x.name().local_name().into_inner().as_bytes() == b"part-link" {
                     let output =
                         <super::PartLink as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -99225,7 +99229,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"part-name" {
+                if x.name().local_name().into_inner().as_bytes() == b"part-name" {
                     let output =
                         <super::PartName as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -99237,7 +99241,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"part-name-display" {
+                if x.name().local_name().into_inner().as_bytes() == b"part-name-display" {
                     let output = < super :: NameDisplay as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_part_name_display(
                         helper,
@@ -99246,7 +99250,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"part-abbreviation" {
+                if x.name().local_name().into_inner().as_bytes() == b"part-abbreviation" {
                     let output =
                         <super::PartName as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -99258,7 +99262,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"part-abbreviation-display" {
+                if x.name().local_name().into_inner().as_bytes() == b"part-abbreviation-display" {
                     let output = < super :: NameDisplay as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_part_abbreviation_display(
                         helper,
@@ -99267,7 +99271,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"group" {
+                if x.name().local_name().into_inner().as_bytes() == b"group" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_group(
                         helper,
@@ -99276,7 +99280,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"score-instrument" {
+                if x.name().local_name().into_inner().as_bytes() == b"score-instrument" {
                     let output = < super :: ScoreInstrument as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_score_instrument(
                         helper,
@@ -99285,7 +99289,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"player" {
+                if x.name().local_name().into_inner().as_bytes() == b"player" {
                     let output =
                         <super::Player as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -99297,7 +99301,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"midi-device" {
+                if x.name().local_name().into_inner().as_bytes() == b"midi-device" {
                     let output = < super :: MidiDevice as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_midi_device(
                         helper,
@@ -99306,7 +99310,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"midi-instrument" {
+                if x.name().local_name().into_inner().as_bytes() == b"midi-instrument" {
                     let output = < super :: MidiInstrument as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_midi_instrument(
                         helper,
@@ -100549,7 +100553,7 @@ pub mod quick_xml_deserialize {
             let mut version: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"version" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"version" {
                     helper.read_attrib(&mut version, b"version", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -101710,7 +101714,7 @@ pub mod quick_xml_deserialize {
             let mut version: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"version" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"version" {
                     helper.read_attrib(&mut version, b"version", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -102898,31 +102902,31 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -103033,11 +103037,11 @@ pub mod quick_xml_deserialize {
             let mut use_stems: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"use-dots" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"use-dots" {
                     helper.read_attrib(&mut use_dots, b"use-dots", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"use-stems" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"use-stems" {
                     helper.read_attrib(&mut use_stems, b"use-stems", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -103682,43 +103686,43 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"accelerate" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"accelerate" {
                     helper.read_attrib(&mut accelerate, b"accelerate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"beats" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"beats" {
                     helper.read_attrib(&mut beats, b"beats", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"first-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"first-beat" {
                     helper.read_attrib(&mut first_beat, b"first-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"last-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"last-beat" {
                     helper.read_attrib(&mut last_beat, b"last-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -103930,43 +103934,43 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"orientation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"orientation" {
                     helper.read_attrib(&mut orientation, b"orientation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-x" {
                     helper.read_attrib(&mut bezier_x, b"bezier-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-y" {
                     helper.read_attrib(&mut bezier_y, b"bezier-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-x2" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-x2" {
                     helper.read_attrib(&mut bezier_x2, b"bezier-x2", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-y2" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-y2" {
                     helper.read_attrib(&mut bezier_y2, b"bezier-y2", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-offset" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset" {
                     helper.read_attrib(&mut bezier_offset, b"bezier-offset", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-offset2" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset2" {
                     helper.read_attrib(&mut bezier_offset_2, b"bezier-offset2", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -104121,41 +104125,41 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"tempo" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"tempo" {
                     helper.read_attrib(&mut tempo, b"tempo", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dynamics" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dynamics" {
                     helper.read_attrib(&mut dynamics, b"dynamics", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dacapo" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dacapo" {
                     helper.read_attrib(&mut dacapo, b"dacapo", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"segno" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"segno" {
                     helper.read_attrib(&mut segno, b"segno", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dalsegno" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dalsegno" {
                     helper.read_attrib(&mut dalsegno, b"dalsegno", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"coda" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"coda" {
                     helper.read_attrib(&mut coda, b"coda", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"tocoda" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"tocoda" {
                     helper.read_attrib(&mut tocoda, b"tocoda", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"divisions" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"divisions" {
                     helper.read_attrib(&mut divisions, b"divisions", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"forward-repeat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"forward-repeat" {
                     helper.read_attrib(&mut forward_repeat, b"forward-repeat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"fine" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"fine" {
                     helper.read_attrib(&mut fine, b"fine", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"pizzicato" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"pizzicato" {
                     helper.read_attrib(&mut pizzicato, b"pizzicato", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"pan" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"pan" {
                     helper.read_attrib(&mut pan, b"pan", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"elevation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"elevation" {
                     helper.read_attrib(&mut elevation, b"elevation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"damper-pedal" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"damper-pedal" {
                     helper.read_attrib(&mut damper_pedal, b"damper-pedal", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"soft-pedal" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"soft-pedal" {
                     helper.read_attrib(&mut soft_pedal, b"soft-pedal", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"sostenuto-pedal" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"sostenuto-pedal" {
                     helper.read_attrib(&mut sostenuto_pedal, b"sostenuto-pedal", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -104365,7 +104369,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"instrument-change" {
+                if x.name().local_name().into_inner().as_bytes() == b"instrument-change" {
                     let output = < super :: InstrumentChange as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_instrument_change(
                         helper,
@@ -104374,7 +104378,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"midi-device" {
+                if x.name().local_name().into_inner().as_bytes() == b"midi-device" {
                     let output = < super :: MidiDevice as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_midi_device(
                         helper,
@@ -104383,7 +104387,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"midi-instrument" {
+                if x.name().local_name().into_inner().as_bytes() == b"midi-instrument" {
                     let output = < super :: MidiInstrument as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_midi_instrument(
                         helper,
@@ -104392,7 +104396,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"play" {
+                if x.name().local_name().into_inner().as_bytes() == b"play" {
                     let output =
                         <super::Play as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -104404,7 +104408,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"swing" {
+                if x.name().local_name().into_inner().as_bytes() == b"swing" {
                     let output =
                         <super::Swing as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -104416,7 +104420,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"offset" {
+                if x.name().local_name().into_inner().as_bytes() == b"offset" {
                     let output =
                         <super::Offset as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -105156,13 +105160,13 @@ pub mod quick_xml_deserialize {
             let mut print_spacing: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"show-frets" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"show-frets" {
                     helper.read_attrib(&mut show_frets, b"show-frets", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-spacing" {
                     helper.read_attrib(&mut print_spacing, b"print-spacing", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -106129,31 +106133,31 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -106260,7 +106264,7 @@ pub mod quick_xml_deserialize {
             let mut number: ::core::option::Option<::core::num::NonZeroUsize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -106672,7 +106676,7 @@ pub mod quick_xml_deserialize {
             let mut scaling: ::core::option::Option<::core::primitive::f64> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"scaling" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"scaling" {
                     helper.read_attrib(&mut scaling, b"scaling", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -106813,7 +106817,7 @@ pub mod quick_xml_deserialize {
             let mut line: ::core::option::Option<::core::num::NonZeroUsize> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"line" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"line" {
                     helper.read_attrib(&mut line, b"line", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -107458,15 +107462,15 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -107621,11 +107625,11 @@ pub mod quick_xml_deserialize {
             let mut dashed_circle: ::core::option::Option<super::YesNo> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"tip" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"tip" {
                     helper.read_attrib(&mut tip, b"tip", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"parentheses" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"parentheses" {
                     helper.read_attrib(&mut parentheses, b"parentheses", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dashed-circle" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dashed-circle" {
                     helper.read_attrib(&mut dashed_circle, b"dashed-circle", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -108159,25 +108163,25 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -108361,31 +108365,31 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -108513,27 +108517,27 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<super::UpDown> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -108650,23 +108654,23 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -108830,13 +108834,13 @@ pub mod quick_xml_deserialize {
             let mut value: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"element" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"element" {
                     helper.read_attrib(&mut element, b"element", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"attribute" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"attribute" {
                     helper.read_attrib(&mut attribute, b"attribute", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"value" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"value" {
                     helper.read_attrib(&mut value, b"value", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -109109,7 +109113,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"straight" {
+                if x.name().local_name().into_inner().as_bytes() == b"straight" {
                     let output =
                         <super::Empty as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -109121,7 +109125,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"first" {
+                if x.name().local_name().into_inner().as_bytes() == b"first" {
                     let output = < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_first(
                         helper,
@@ -109130,7 +109134,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"second" {
+                if x.name().local_name().into_inner().as_bytes() == b"second" {
                     let output = < :: core :: num :: NonZeroUsize as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_second(
                         helper,
@@ -109139,7 +109143,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"swing-type" {
+                if x.name().local_name().into_inner().as_bytes() == b"swing-type" {
                     let output = < super :: NoteTypeValue as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_swing_type(
                         helper,
@@ -109148,7 +109152,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"swing-style" {
+                if x.name().local_name().into_inner().as_bytes() == b"swing-style" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_swing_style(
                         helper,
@@ -109787,13 +109791,13 @@ pub mod quick_xml_deserialize {
             let mut time_only: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"latency" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"latency" {
                     helper.read_attrib(&mut latency, b"latency", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"player" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"player" {
                     helper.read_attrib(&mut player, b"player", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -111668,27 +111672,27 @@ pub mod quick_xml_deserialize {
             let mut placement: ::core::option::Option<super::AboveBelow> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"hand" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"hand" {
                     helper.read_attrib(&mut hand, b"hand", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -111845,7 +111849,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -112025,7 +112029,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"up-bow" {
+                if x.name().local_name().into_inner().as_bytes() == b"up-bow" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_up_bow(
                         helper,
@@ -112034,7 +112038,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"down-bow" {
+                if x.name().local_name().into_inner().as_bytes() == b"down-bow" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_down_bow(
                         helper,
@@ -112043,7 +112047,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"harmonic" {
+                if x.name().local_name().into_inner().as_bytes() == b"harmonic" {
                     let output =
                         <super::Harmonic as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112055,7 +112059,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"open-string" {
+                if x.name().local_name().into_inner().as_bytes() == b"open-string" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_open_string(
                         helper,
@@ -112064,7 +112068,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"thumb-position" {
+                if x.name().local_name().into_inner().as_bytes() == b"thumb-position" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_thumb_position(
                         helper,
@@ -112073,7 +112077,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fingering" {
+                if x.name().local_name().into_inner().as_bytes() == b"fingering" {
                     let output = < super :: Fingering as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_fingering(
                         helper,
@@ -112082,7 +112086,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pluck" {
+                if x.name().local_name().into_inner().as_bytes() == b"pluck" {
                     let output = < super :: PlacementText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_pluck(
                         helper,
@@ -112091,7 +112095,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"double-tongue" {
+                if x.name().local_name().into_inner().as_bytes() == b"double-tongue" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_double_tongue(
                         helper,
@@ -112100,7 +112104,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"triple-tongue" {
+                if x.name().local_name().into_inner().as_bytes() == b"triple-tongue" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_triple_tongue(
                         helper,
@@ -112109,7 +112113,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"stopped" {
+                if x.name().local_name().into_inner().as_bytes() == b"stopped" {
                     let output = < super :: EmptyPlacementSmufl as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_stopped(
                         helper,
@@ -112118,7 +112122,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"snap-pizzicato" {
+                if x.name().local_name().into_inner().as_bytes() == b"snap-pizzicato" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_snap_pizzicato(
                         helper,
@@ -112127,7 +112131,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fret" {
+                if x.name().local_name().into_inner().as_bytes() == b"fret" {
                     let output =
                         <super::Fret as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112139,7 +112143,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"string" {
+                if x.name().local_name().into_inner().as_bytes() == b"string" {
                     let output =
                         <super::String as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112151,7 +112155,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"hammer-on" {
+                if x.name().local_name().into_inner().as_bytes() == b"hammer-on" {
                     let output = < super :: HammerOnPullOff as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_hammer_on(
                         helper,
@@ -112160,7 +112164,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"pull-off" {
+                if x.name().local_name().into_inner().as_bytes() == b"pull-off" {
                     let output = < super :: HammerOnPullOff as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_pull_off(
                         helper,
@@ -112169,7 +112173,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"bend" {
+                if x.name().local_name().into_inner().as_bytes() == b"bend" {
                     let output =
                         <super::Bend as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112181,7 +112185,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"tap" {
+                if x.name().local_name().into_inner().as_bytes() == b"tap" {
                     let output =
                         <super::Tap as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112193,7 +112197,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"heel" {
+                if x.name().local_name().into_inner().as_bytes() == b"heel" {
                     let output =
                         <super::HeelToe as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112205,7 +112209,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"toe" {
+                if x.name().local_name().into_inner().as_bytes() == b"toe" {
                     let output =
                         <super::HeelToe as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112217,7 +112221,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"fingernails" {
+                if x.name().local_name().into_inner().as_bytes() == b"fingernails" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_fingernails(
                         helper,
@@ -112226,7 +112230,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"hole" {
+                if x.name().local_name().into_inner().as_bytes() == b"hole" {
                     let output =
                         <super::Hole as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112238,7 +112242,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"arrow" {
+                if x.name().local_name().into_inner().as_bytes() == b"arrow" {
                     let output =
                         <super::Arrow as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112250,7 +112254,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"handbell" {
+                if x.name().local_name().into_inner().as_bytes() == b"handbell" {
                     let output =
                         <super::Handbell as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -112262,7 +112266,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"brass-bend" {
+                if x.name().local_name().into_inner().as_bytes() == b"brass-bend" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_brass_bend(
                         helper,
@@ -112271,7 +112275,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"flip" {
+                if x.name().local_name().into_inner().as_bytes() == b"flip" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_flip(
                         helper,
@@ -112280,7 +112284,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"smear" {
+                if x.name().local_name().into_inner().as_bytes() == b"smear" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_smear(
                         helper,
@@ -112289,7 +112293,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"open" {
+                if x.name().local_name().into_inner().as_bytes() == b"open" {
                     let output = < super :: EmptyPlacementSmufl as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_open(
                         helper,
@@ -112298,7 +112302,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"half-muted" {
+                if x.name().local_name().into_inner().as_bytes() == b"half-muted" {
                     let output = < super :: EmptyPlacementSmufl as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_half_muted(
                         helper,
@@ -112307,7 +112311,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"harmon-mute" {
+                if x.name().local_name().into_inner().as_bytes() == b"harmon-mute" {
                     let output = < super :: HarmonMute as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_harmon_mute(
                         helper,
@@ -112316,7 +112320,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"golpe" {
+                if x.name().local_name().into_inner().as_bytes() == b"golpe" {
                     let output = < super :: EmptyPlacement as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_golpe(
                         helper,
@@ -112325,7 +112329,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"other-technical" {
+                if x.name().local_name().into_inner().as_bytes() == b"other-technical" {
                     let output = < super :: OtherPlacementText as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_other_technical(
                         helper,
@@ -115561,32 +115565,32 @@ pub mod quick_xml_deserialize {
             let mut dir: ::core::option::Option<super::TextDirection> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"underline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"underline" {
                     helper.read_attrib(&mut underline, b"underline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"overline" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"overline" {
                     helper.read_attrib(&mut overline, b"overline", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-through" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-through" {
                     helper.read_attrib(&mut line_through, b"line-through", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"rotation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"rotation" {
                     helper.read_attrib(&mut rotation, b"rotation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"letter-spacing" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"letter-spacing" {
                     helper.read_attrib(&mut letter_spacing, b"letter-spacing", &attrib.value)?;
                 } else if matches!(
                     helper.resolve_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dir" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dir" {
                     helper.read_attrib(&mut dir, b"dir", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -115757,9 +115761,9 @@ pub mod quick_xml_deserialize {
             let mut time_only: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -115877,43 +115881,43 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"orientation" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"orientation" {
                     helper.read_attrib(&mut orientation, b"orientation", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-x" {
                     helper.read_attrib(&mut bezier_x, b"bezier-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-y" {
                     helper.read_attrib(&mut bezier_y, b"bezier-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-x2" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-x2" {
                     helper.read_attrib(&mut bezier_x2, b"bezier-x2", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-y2" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-y2" {
                     helper.read_attrib(&mut bezier_y2, b"bezier-y2", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-offset" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset" {
                     helper.read_attrib(&mut bezier_offset, b"bezier-offset", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bezier-offset2" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset2" {
                     helper.read_attrib(&mut bezier_offset_2, b"bezier-offset2", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -116064,37 +116068,37 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"symbol" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"symbol" {
                     helper.read_attrib(&mut symbol, b"symbol", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"separator" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"separator" {
                     helper.read_attrib(&mut separator, b"separator", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"halign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"halign" {
                     helper.read_attrib(&mut halign, b"halign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"valign" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"valign" {
                     helper.read_attrib(&mut valign, b"valign", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"print-object" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"print-object" {
                     helper.read_attrib(&mut print_object, b"print-object", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -116300,7 +116304,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"beats" {
+                if x.name().local_name().into_inner().as_bytes() == b"beats" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_beats(
                         helper,
@@ -116309,7 +116313,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"beat-type" {
+                if x.name().local_name().into_inner().as_bytes() == b"beat-type" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_beat_type(
                         helper,
@@ -116318,7 +116322,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"interchangeable" {
+                if x.name().local_name().into_inner().as_bytes() == b"interchangeable" {
                     let output = < super :: Interchangeable as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_interchangeable(
                         helper,
@@ -116327,7 +116331,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"senza-misura" {
+                if x.name().local_name().into_inner().as_bytes() == b"senza-misura" {
                     let output = < :: std :: string :: String as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_senza_misura(
                         helper,
@@ -117588,7 +117592,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -117666,9 +117670,9 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -118409,29 +118413,29 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -118619,29 +118623,29 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"bracket" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"bracket" {
                     helper.read_attrib(&mut bracket, b"bracket", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"show-number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"show-number" {
                     helper.read_attrib(&mut show_number, b"show-number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"show-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"show-type" {
                     helper.read_attrib(&mut show_type, b"show-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-shape" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-shape" {
                     helper.read_attrib(&mut line_shape, b"line-shape", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -119186,15 +119190,15 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -119296,15 +119300,15 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -120083,15 +120087,15 @@ pub mod quick_xml_deserialize {
             let mut color: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"font-family" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -120240,7 +120244,7 @@ pub mod quick_xml_deserialize {
             let mut type_: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -121427,9 +121431,9 @@ pub mod quick_xml_deserialize {
             let mut time_only: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"player" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"player" {
                     helper.read_attrib(&mut player, b"player", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"time-only" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"time-only" {
                     helper.read_attrib(&mut time_only, b"time-only", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -121539,37 +121543,37 @@ pub mod quick_xml_deserialize {
             let mut last_beat: ::core::option::Option<::core::primitive::f64> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"smufl" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"placement" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"placement" {
                     helper.read_attrib(&mut placement, b"placement", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"start-note" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"start-note" {
                     helper.read_attrib(&mut start_note, b"start-note", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"trill-step" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"trill-step" {
                     helper.read_attrib(&mut trill_step, b"trill-step", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"two-note-turn" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"two-note-turn" {
                     helper.read_attrib(&mut two_note_turn, b"two-note-turn", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"accelerate" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"accelerate" {
                     helper.read_attrib(&mut accelerate, b"accelerate", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"beats" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"beats" {
                     helper.read_attrib(&mut beats, b"beats", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"second-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"second-beat" {
                     helper.read_attrib(&mut second_beat, b"second-beat", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"last-beat" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"last-beat" {
                     helper.read_attrib(&mut last_beat, b"last-beat", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -121706,31 +121710,31 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"spread" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"spread" {
                     helper.read_attrib(&mut spread, b"spread", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"niente" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"niente" {
                     helper.read_attrib(&mut niente, b"niente", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"line-type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"line-type" {
                     helper.read_attrib(&mut line_type, b"line-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"dash-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"dash-length" {
                     helper.read_attrib(&mut dash_length, b"dash-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"space-length" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"space-length" {
                     helper.read_attrib(&mut space_length, b"space-length", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -121838,7 +121842,7 @@ pub mod quick_xml_deserialize {
             let mut smufl: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"smufl" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"smufl" {
                     helper.read_attrib(&mut smufl, b"smufl", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -122602,23 +122606,23 @@ pub mod quick_xml_deserialize {
             let mut lang: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"default-x" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"default-x" {
                     helper.read_attrib(&mut default_x, b"default-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"default-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"default-y" {
                     helper.read_attrib(&mut default_y, b"default-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-x" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-x" {
                     helper.read_attrib(&mut relative_x, b"relative-x", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"relative-y" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"relative-y" {
                     helper.read_attrib(&mut relative_y, b"relative-y", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-family" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-family" {
                     helper.read_attrib(&mut font_family, b"font-family", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-style" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-style" {
                     helper.read_attrib(&mut font_style, b"font-style", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-size" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-size" {
                     helper.read_attrib(&mut font_size, b"font-size", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"font-weight" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"font-weight" {
                     helper.read_attrib(&mut font_weight, b"font-weight", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"color" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else if matches!(
                     helper.resolve_local_name(attrib.key, &super::NS_XML),
@@ -122799,7 +122803,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -123252,17 +123256,17 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"text" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"implicit" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"implicit" {
                     helper.read_attrib(&mut implicit, b"implicit", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"non-controlling" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"non-controlling" {
                     helper.read_attrib(&mut non_controlling, b"non-controlling", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"width" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"width" {
                     helper.read_attrib(&mut width, b"width", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -123727,17 +123731,17 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"number" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"text" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"text" {
                     helper.read_attrib(&mut text, b"text", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"implicit" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"implicit" {
                     helper.read_attrib(&mut implicit, b"implicit", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"non-controlling" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"non-controlling" {
                     helper.read_attrib(&mut non_controlling, b"non-controlling", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"width" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"width" {
                     helper.read_attrib(&mut width, b"width", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"id" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -123949,7 +123953,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"note" {
+                if x.name().local_name().into_inner().as_bytes() == b"note" {
                     let output =
                         <super::Note as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -123961,7 +123965,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"backup" {
+                if x.name().local_name().into_inner().as_bytes() == b"backup" {
                     let output =
                         <super::Backup as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -123973,7 +123977,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"forward" {
+                if x.name().local_name().into_inner().as_bytes() == b"forward" {
                     let output =
                         <super::Forward as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -123985,7 +123989,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"direction" {
+                if x.name().local_name().into_inner().as_bytes() == b"direction" {
                     let output = < super :: Direction as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_direction(
                         helper,
@@ -123994,7 +123998,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"attributes" {
+                if x.name().local_name().into_inner().as_bytes() == b"attributes" {
                     let output = < super :: Attributes as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_attributes(
                         helper,
@@ -124003,7 +124007,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"harmony" {
+                if x.name().local_name().into_inner().as_bytes() == b"harmony" {
                     let output =
                         <super::Harmony as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -124015,7 +124019,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"figured-bass" {
+                if x.name().local_name().into_inner().as_bytes() == b"figured-bass" {
                     let output = < super :: FiguredBass as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_figured_bass(
                         helper,
@@ -124024,7 +124028,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"print" {
+                if x.name().local_name().into_inner().as_bytes() == b"print" {
                     let output =
                         <super::Print as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -124036,7 +124040,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sound" {
+                if x.name().local_name().into_inner().as_bytes() == b"sound" {
                     let output =
                         <super::Sound as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -124048,7 +124052,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"listening" {
+                if x.name().local_name().into_inner().as_bytes() == b"listening" {
                     let output = < super :: Listening as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_listening(
                         helper,
@@ -124057,7 +124061,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"barline" {
+                if x.name().local_name().into_inner().as_bytes() == b"barline" {
                     let output =
                         <super::Barline as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -124069,7 +124073,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"grouping" {
+                if x.name().local_name().into_inner().as_bytes() == b"grouping" {
                     let output =
                         <super::Grouping as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -124081,7 +124085,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"link" {
+                if x.name().local_name().into_inner().as_bytes() == b"link" {
                     let output =
                         <super::Link as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -124093,7 +124097,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"bookmark" {
+                if x.name().local_name().into_inner().as_bytes() == b"bookmark" {
                     let output =
                         <super::Bookmark as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125643,7 +125647,7 @@ pub mod quick_xml_deserialize {
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"id" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"id" {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -125845,7 +125849,7 @@ pub mod quick_xml_deserialize {
             if let ::xsd_parser_types::quick_xml::Event::Start(x)
             | ::xsd_parser_types::quick_xml::Event::Empty(x) = &event
             {
-                if x.name().local_name().as_ref() == b"note" {
+                if x.name().local_name().into_inner().as_bytes() == b"note" {
                     let output =
                         <super::Note as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125857,7 +125861,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"backup" {
+                if x.name().local_name().into_inner().as_bytes() == b"backup" {
                     let output =
                         <super::Backup as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125869,7 +125873,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"forward" {
+                if x.name().local_name().into_inner().as_bytes() == b"forward" {
                     let output =
                         <super::Forward as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125881,7 +125885,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"direction" {
+                if x.name().local_name().into_inner().as_bytes() == b"direction" {
                     let output = < super :: Direction as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_direction(
                         helper,
@@ -125890,7 +125894,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"attributes" {
+                if x.name().local_name().into_inner().as_bytes() == b"attributes" {
                     let output = < super :: Attributes as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_attributes(
                         helper,
@@ -125899,7 +125903,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"harmony" {
+                if x.name().local_name().into_inner().as_bytes() == b"harmony" {
                     let output =
                         <super::Harmony as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125911,7 +125915,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"figured-bass" {
+                if x.name().local_name().into_inner().as_bytes() == b"figured-bass" {
                     let output = < super :: FiguredBass as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_figured_bass(
                         helper,
@@ -125920,7 +125924,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"print" {
+                if x.name().local_name().into_inner().as_bytes() == b"print" {
                     let output =
                         <super::Print as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125932,7 +125936,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"sound" {
+                if x.name().local_name().into_inner().as_bytes() == b"sound" {
                     let output =
                         <super::Sound as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125944,7 +125948,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"listening" {
+                if x.name().local_name().into_inner().as_bytes() == b"listening" {
                     let output = < super :: Listening as :: xsd_parser_types :: quick_xml :: WithDeserializer > :: init (helper , event) ? ;
                     return self.handle_listening(
                         helper,
@@ -125953,7 +125957,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"barline" {
+                if x.name().local_name().into_inner().as_bytes() == b"barline" {
                     let output =
                         <super::Barline as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125965,7 +125969,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"grouping" {
+                if x.name().local_name().into_inner().as_bytes() == b"grouping" {
                     let output =
                         <super::Grouping as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125977,7 +125981,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"link" {
+                if x.name().local_name().into_inner().as_bytes() == b"link" {
                     let output =
                         <super::Link as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,
@@ -125989,7 +125993,7 @@ pub mod quick_xml_deserialize {
                         output,
                     );
                 }
-                if x.name().local_name().as_ref() == b"bookmark" {
+                if x.name().local_name().into_inner().as_bytes() == b"bookmark" {
                     let output =
                         <super::Bookmark as ::xsd_parser_types::quick_xml::WithDeserializer>::init(
                             helper, event,

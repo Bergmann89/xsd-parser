@@ -617,8 +617,7 @@ where
     ) -> DeserializerResult<'de, T> {
         match event {
             Event::Text(x) => {
-                let text = x.decode()?;
-                let text = unescape(&text)?;
+                let text = unescape(&x)?;
                 self.data.push_str(&text);
 
                 Ok(DeserializerOutput {
@@ -628,8 +627,7 @@ where
                 })
             }
             Event::CData(x) => {
-                let text = x.decode()?;
-                self.data.push_str(&text);
+                self.data.push_str(&x);
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -638,8 +636,7 @@ where
                 })
             }
             Event::GeneralRef(x) => {
-                let x = from_utf8(x.as_ref())?;
-                let s = format!("&{x};");
+                let s = format!("&{};", &*x);
                 let text = unescape(&s)?;
                 self.data.push_str(&text);
 
@@ -710,7 +707,7 @@ impl DeserializeHelper {
             .map(|(_, x)| {
                 let prefixes = self.resolver.bindings().map(|(decl, ns)| {
                     let key = match decl {
-                        PrefixDeclaration::Named(x) => Cow::Owned(x.to_vec()),
+                        PrefixDeclaration::Named(x) => Cow::Owned(x.as_bytes().to_vec()),
                         PrefixDeclaration::Default => Cow::Borrowed(&b""[..]),
                     };
                     let value = Cow::Owned(ns.0.into());
@@ -738,7 +735,7 @@ impl DeserializeHelper {
         &mut self,
         store: &mut Option<T>,
         name: &'static [u8],
-        value: &[u8],
+        value: &str,
     ) -> Result<(), Error>
     where
         T: DeserializeBytes,
@@ -747,7 +744,6 @@ impl DeserializeHelper {
             Err(ErrorKind::DuplicateAttribute(RawByteStr::from(name)))?;
         }
 
-        let value = from_utf8(value)?;
         let value = unescape(value)?;
         let value = T::deserialize_str(self, &value)?;
 
@@ -832,7 +828,7 @@ impl DeserializeHelper {
                 return true;
             };
 
-            attrib.key.0 != b"xmlns" && !attrib.key.0.starts_with(b"xmlns:")
+            attrib.key.0 != "xmlns" && !attrib.key.0.starts_with("xmlns:")
         })
     }
 
@@ -845,7 +841,7 @@ impl DeserializeHelper {
     /// error.
     pub fn raise_unexpected_attrib(&self, attrib: &Attribute<'_>) -> Result<(), Error> {
         Err(ErrorKind::UnexpectedAttribute(RawByteStr::from_slice(
-            attrib.key.into_inner(),
+            attrib.key.into_inner().as_bytes(),
         )))?
     }
 
@@ -878,12 +874,12 @@ impl DeserializeHelper {
     #[must_use]
     pub fn is_globally_allowed_attrib(&self, attrib: &Attribute<'_>) -> bool {
         if let (ResolveResult::Bound(x), local) = self.resolve(attrib.key, true) {
-            let local = local.as_ref();
-            x.0 == &**crate::misc::Namespace::XSI
-                && (local == b"schemaLocation"
-                    || local == b"noNamespaceSchemaLocation"
-                    || local == b"type"
-                    || local == b"nil")
+            let local = local.into_inner();
+            x.0.as_bytes() == &**crate::misc::Namespace::XSI
+                && (local == "schemaLocation"
+                    || local == "noNamespaceSchemaLocation"
+                    || local == "type"
+                    || local == "nil")
         } else {
             false
         }
@@ -932,8 +928,10 @@ impl DeserializeHelper {
     #[must_use]
     pub fn resolve_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
         match self.resolve(name, true) {
-            (ResolveResult::Unbound, local) => Some(local.into_inner()),
-            (ResolveResult::Bound(x), local) if x.0 == ns => Some(local.into_inner()),
+            (ResolveResult::Unbound, local) => Some(local.into_inner().as_bytes()),
+            (ResolveResult::Bound(x), local) if x.0.as_bytes() == ns => {
+                Some(local.into_inner().as_bytes())
+            }
             (_, _) => None,
         }
     }
@@ -949,7 +947,7 @@ impl DeserializeHelper {
         if let Some(ns) = ns {
             matches!(self.resolve_local_name(x.name(), ns), Some(x) if x == name)
         } else {
-            x.name().local_name().as_ref() == name
+            x.name().local_name().into_inner().as_bytes() == name
         }
     }
 
@@ -996,7 +994,7 @@ impl DeserializeHelper {
     pub fn get_dynamic_type_name<'a>(
         &self,
         event: &'a Event<'_>,
-    ) -> Result<Option<Cow<'a, [u8]>>, Error> {
+    ) -> Result<Option<Cow<'a, str>>, Error> {
         if let Some(name) = self.get_dynamic_type_from_attrib(event)? {
             return Ok(Some(name));
         }
@@ -1011,7 +1009,7 @@ impl DeserializeHelper {
     /// element name (e.g. substitution groups). Returns `None` if the event
     /// is not a [`Event::Start`] or [`Event::Empty`].
     #[must_use]
-    pub fn get_dynamic_type_from_tag<'a>(&self, event: &'a Event<'_>) -> Option<Cow<'a, [u8]>> {
+    pub fn get_dynamic_type_from_tag<'a>(&self, event: &'a Event<'_>) -> Option<Cow<'a, str>> {
         let (Event::Start(b) | Event::Empty(b)) = &event else {
             return None;
         };
@@ -1033,7 +1031,7 @@ impl DeserializeHelper {
     pub fn get_dynamic_type_from_attrib<'a>(
         &self,
         event: &'a Event<'_>,
-    ) -> Result<Option<Cow<'a, [u8]>>, Error> {
+    ) -> Result<Option<Cow<'a, str>>, Error> {
         let (Event::Start(b) | Event::Empty(b)) = &event else {
             return Ok(None);
         };
@@ -1054,7 +1052,7 @@ impl DeserializeHelper {
     pub fn get_dynamic_type_from_attrib_bytes<'a>(
         &self,
         bytes: &'a BytesStart<'_>,
-    ) -> Result<Option<Cow<'a, [u8]>>, Error> {
+    ) -> Result<Option<Cow<'a, str>>, Error> {
         let attrib = bytes
             .attributes()
             .find(|attrib| {
@@ -1064,9 +1062,9 @@ impl DeserializeHelper {
                     resolve,
                     ResolveResult::Unbound
                         | ResolveResult::Bound(Namespace(
-                            b"http://www.w3.org/2001/XMLSchema-instance"
+                            "http://www.w3.org/2001/XMLSchema-instance"
                         ))
-                ) && name.as_ref() == b"type"
+                ) && name.into_inner() == "type"
             })
             .transpose()?;
 
@@ -1270,7 +1268,7 @@ impl DeserializeHelper {
                 self.level += 1;
 
                 for a in e.attributes().with_checks(false).flatten() {
-                    if a.key.0.starts_with(b"xmlns") {
+                    if a.key.0.starts_with("xmlns") {
                         self.namespaces.push((self.level, None));
 
                         break;
@@ -1367,7 +1365,7 @@ where
                     self.skip_depth = Some(1);
                 }
             }
-            Some(Event::Text(text)) if text.decode()?.trim().is_empty() => (),
+            Some(Event::Text(text)) if text.trim().is_empty() => (),
             Some(event) => return Err(ErrorKind::UnexpectedEvent(event.into_owned()).into()),
         }
 
@@ -1464,7 +1462,7 @@ mod tests {
         }
 
         fn is_known_start_tag(_helper: &DeserializeHelper, bytes: &BytesStart<'_>) -> bool {
-            bytes.name().local_name().as_ref() == b"known"
+            bytes.name().local_name().as_ref() == "known"
         }
     }
 

@@ -281,7 +281,7 @@ where
                 Some(b"nil")
             ) && matches!(
                 &*attrib.value,
-                b"TRUE" | b"True" | b"true" | b"YES" | b"Yes" | b"yes" | b"1"
+                "TRUE" | "True" | "true" | "YES" | "Yes" | "yes" | "1"
             ) {
                 let artifact = if matches!(&event, Event::Empty(_)) {
                     DeserializerArtifact::Data(Nillable(None))

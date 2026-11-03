@@ -489,7 +489,7 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
                 self.new_inline_entry(name, Node::SimpleType(x), |s| s.process_simple_type(x))?;
 
             self.add_dependency_with_key(
-                NodeDependencyKey::InlineSimpleType(&**x),
+                NodeDependencyKey::InlineSimpleType(&raw const **x),
                 NodeDependency::Weak(ident),
             );
         }

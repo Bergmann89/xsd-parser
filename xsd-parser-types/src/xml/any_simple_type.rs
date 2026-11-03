@@ -273,22 +273,22 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                 use AnySimpleType as S;
 
                 let (type_, content): (Option<QName>, String) = match value {
-                    S::String(x) => (Some(QName::from_bytes(b"xs:string")), x.to_string()),
+                    S::String(x) => (Some(QName::from_bytes(b"xs:string")), x.clone()),
                     S::Boolean(x) => (Some(QName::from_bytes(b"xs:boolean")), x.to_string()),
 
                     S::Float(x) => (Some(QName::from_bytes(b"xs:float")), x.to_string()),
                     S::Double(x) => (Some(QName::from_bytes(b"xs:double")), x.to_string()),
                     S::Decimal(x) => (Some(QName::from_bytes(b"xs:decimal")), x.to_string()),
 
-                    S::Duration(x) => (Some(QName::from_bytes(b"xs:duration")), x.to_string()),
-                    S::DateTime(x) => (Some(QName::from_bytes(b"xs:dateTime")), x.to_string()),
-                    S::Time(x) => (Some(QName::from_bytes(b"xs:time")), x.to_string()),
-                    S::Date(x) => (Some(QName::from_bytes(b"xs:date")), x.to_string()),
-                    S::GYearMonth(x) => (Some(QName::from_bytes(b"xs:gYearMonth")), x.to_string()),
-                    S::GYear(x) => (Some(QName::from_bytes(b"xs:gYear")), x.to_string()),
-                    S::GMonthDay(x) => (Some(QName::from_bytes(b"xs:gMonthDay")), x.to_string()),
-                    S::GMonth(x) => (Some(QName::from_bytes(b"xs:gMonth")), x.to_string()),
-                    S::GDay(x) => (Some(QName::from_bytes(b"xs:gDay")), x.to_string()),
+                    S::Duration(x) => (Some(QName::from_bytes(b"xs:duration")), x.clone()),
+                    S::DateTime(x) => (Some(QName::from_bytes(b"xs:dateTime")), x.clone()),
+                    S::Time(x) => (Some(QName::from_bytes(b"xs:time")), x.clone()),
+                    S::Date(x) => (Some(QName::from_bytes(b"xs:date")), x.clone()),
+                    S::GYearMonth(x) => (Some(QName::from_bytes(b"xs:gYearMonth")), x.clone()),
+                    S::GYear(x) => (Some(QName::from_bytes(b"xs:gYear")), x.clone()),
+                    S::GMonthDay(x) => (Some(QName::from_bytes(b"xs:gMonthDay")), x.clone()),
+                    S::GMonth(x) => (Some(QName::from_bytes(b"xs:gMonth")), x.clone()),
+                    S::GDay(x) => (Some(QName::from_bytes(b"xs:gDay")), x.clone()),
 
                     S::HexBinary(x) => (
                         Some(QName::from_bytes(b"xs:hexBinary")),
@@ -303,9 +303,9 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                         format_base64_binary(x),
                     ),
 
-                    S::AnyURI(x) => (Some(QName::from_bytes(b"xs:anyURI")), x.to_string()),
+                    S::AnyURI(x) => (Some(QName::from_bytes(b"xs:anyURI")), x.clone()),
                     S::QName(x) => (Some(QName::from_bytes(b"xs:QName")), x.to_string()),
-                    S::Notation(x) => (Some(QName::from_bytes(b"xs:NOTATION")), x.to_string()),
+                    S::Notation(x) => (Some(QName::from_bytes(b"xs:NOTATION")), x.clone()),
 
                     S::Integer(x) => (Some(QName::from_bytes(b"xs:integer")), x.to_string()),
                     S::PositiveInteger(x) => (
@@ -343,18 +343,17 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                         (Some(QName::from_bytes(b"xs:unsignedByte")), x.to_string())
                     }
 
-                    S::NormalizedString(x) => (
-                        Some(QName::from_bytes(b"xs:normalizedString")),
-                        x.to_string(),
-                    ),
-                    S::Token(x) => (Some(QName::from_bytes(b"xs:token")), x.to_string()),
-                    S::Language(x) => (Some(QName::from_bytes(b"xs:language")), x.to_string()),
-                    S::NmToken(x) => (Some(QName::from_bytes(b"xs:NMTOKEN")), x.to_string()),
-                    S::Name(x) => (Some(QName::from_bytes(b"xs:Name")), x.to_string()),
-                    S::NcName(x) => (Some(QName::from_bytes(b"xs:NCName")), x.to_string()),
-                    S::Id(x) => (Some(QName::from_bytes(b"xs:ID")), x.to_string()),
-                    S::IdRef(x) => (Some(QName::from_bytes(b"xs:IDREF")), x.to_string()),
-                    S::Entity(x) => (Some(QName::from_bytes(b"xs:ENTITY")), x.to_string()),
+                    S::NormalizedString(x) => {
+                        (Some(QName::from_bytes(b"xs:normalizedString")), x.clone())
+                    }
+                    S::Token(x) => (Some(QName::from_bytes(b"xs:token")), x.clone()),
+                    S::Language(x) => (Some(QName::from_bytes(b"xs:language")), x.clone()),
+                    S::NmToken(x) => (Some(QName::from_bytes(b"xs:NMTOKEN")), x.clone()),
+                    S::Name(x) => (Some(QName::from_bytes(b"xs:Name")), x.clone()),
+                    S::NcName(x) => (Some(QName::from_bytes(b"xs:NCName")), x.clone()),
+                    S::Id(x) => (Some(QName::from_bytes(b"xs:ID")), x.clone()),
+                    S::IdRef(x) => (Some(QName::from_bytes(b"xs:IDREF")), x.clone()),
+                    S::Entity(x) => (Some(QName::from_bytes(b"xs:ENTITY")), x.clone()),
 
                     S::NmTokens(x) => (Some(QName::from_bytes(b"xs:NMTOKENS")), format_vec(x)),
                     S::IdRefs(x) => (Some(QName::from_bytes(b"xs:IDREFS")), format_vec(x)),
@@ -367,7 +366,7 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                     } => {
                         fixed_ns = true;
 
-                        (type_.clone(), content.to_string())
+                        (type_.clone(), content.clone())
                     }
                 };
 
@@ -383,7 +382,11 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                     let type_ = helper.add_qname_namespace(&mut bytes, type_);
 
                     helper.write_xmlns(&mut bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
-                    bytes.push_attribute((&b"xsi:type"[..], type_.as_ref()));
+                    let type_ = match from_utf8(type_.as_ref()) {
+                        Ok(type_) => type_,
+                        Err(err) => return Some(Err(err.into())),
+                    };
+                    bytes.push_attribute(("xsi:type", type_));
                 }
 
                 *self = Self::Content { name, content };

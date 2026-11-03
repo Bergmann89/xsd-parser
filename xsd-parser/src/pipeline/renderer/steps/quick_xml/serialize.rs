@@ -1437,11 +1437,11 @@ impl ComplexDataElement<'_> {
             quote!(false)
         };
 
-        let element_name = self
-            .meta()
-            .is_any()
-            .then(|| quote!(None))
-            .unwrap_or_else(|| quote!(Some(#field_name)));
+        let element_name = if self.meta().is_any() {
+            quote!(None)
+        } else {
+            quote!(Some(#field_name))
+        };
 
         let mut serializer = match self.occurs {
             Occurs::None => crate::unreachable!(),

@@ -1244,7 +1244,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
         if let Some(x) = &ty.simple_type {
             let ident = self
                 .owner
-                .resolve_type_ident_with_key(&NodeDependencyKey::InlineSimpleType(&**x));
+                .resolve_type_ident_with_key(&NodeDependencyKey::InlineSimpleType(&raw const **x));
 
             type_ = Some(ident);
         }

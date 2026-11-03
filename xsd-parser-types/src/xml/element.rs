@@ -2,7 +2,7 @@ use std::borrow::Cow;
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::mem::replace;
 use std::slice::Iter;
-use std::str::from_utf8;
+use std::str::{from_utf8, Utf8Error};
 
 #[cfg(feature = "quick-xml")]
 use quick_xml::{
@@ -57,10 +57,13 @@ impl<'a> Element<'a> {
     }
 
     /// Return the name of the element as [`QName`].
-    #[must_use]
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the name is not valid UTF-8.
     #[cfg(feature = "quick-xml")]
-    pub fn qname(&self) -> QName<'_> {
-        QName(&self.name)
+    pub fn qname(&self) -> Result<QName<'_>, Utf8Error> {
+        Ok(QName(from_utf8(&self.name)?))
     }
 
     /// Set the name of the element.
@@ -230,10 +233,13 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                                 true
                             }
                         })
-                        .map(|(k, v)| Attribute {
-                            key: QName(k),
-                            value: Cow::Borrowed(&v.0),
-                        });
+                        .map(|(k, v)| {
+                            Ok(Attribute {
+                                key: QName(from_utf8(k)?),
+                                value: Cow::Borrowed(from_utf8(&v.0)?),
+                            })
+                        })
+                        .collect::<Result<Vec<_>, Utf8Error>>()?;
                     start.extend_attributes(attributes);
 
                     let event = if element.values.is_empty() {
@@ -364,13 +370,13 @@ impl ElementDeserializer {
         start: &BytesStart<'_>,
         namespaces: NamespacesShared<'static>,
     ) -> Result<Element<'static>, Error> {
-        let name = Cow::Owned(start.name().0.to_owned());
+        let name = Cow::Owned(start.name().0.as_bytes().to_owned());
         let attributes = start
             .attributes()
             .map(|item| match item {
                 Ok(Attribute { key, value }) => {
-                    let key = Cow::Owned(key.0.to_owned());
-                    let value = Cow::Owned(value.into_owned());
+                    let key = Cow::Owned(key.0.as_bytes().to_owned());
+                    let value = Cow::Owned(value.into_owned().into_bytes());
 
                     Ok((AttribKey(key), AttribValue(value)))
                 }
@@ -603,7 +609,7 @@ mod tests {
         let mut iter = root.values.iter();
 
         let value = iter.next().unwrap();
-        assert_text!(value, b"\n    ");
+        assert_text!(value, "\n    ");
 
         let value = iter.next().unwrap();
         let element = assert_element!(value);
@@ -617,7 +623,7 @@ mod tests {
         assert_entry!(element.namespaces, b"ns", b"test");
 
         let value = iter.next().unwrap();
-        assert_text!(value, b"\n    ");
+        assert_text!(value, "\n    ");
 
         let value = iter.next().unwrap();
         let element = assert_element!(value);
@@ -630,7 +636,7 @@ mod tests {
         assert!(Arc::ptr_eq(&root.namespaces.0, &element.namespaces.0));
 
         let value = iter.next().unwrap();
-        assert_text!(value, b"\n");
+        assert_text!(value, "\n");
     }
 
     const XML: &str = r#"
@@ -814,5 +820,58 @@ mod tests {
             output.contains(r#"foo:bar="value""#),
             "foo:bar attribute must be preserved, got: {output}"
         );
+    }
+
+    /// Namespace values are stored as raw (still escaped) attribute values and
+    /// must not be escaped a second time on serialization.
+    #[test]
+    fn roundtrip_namespace_with_entity() {
+        const INPUT: &str = r#"<root xmlns:a="urn:x?a&amp;b"><a:child/></root>"#;
+
+        let mut reader = SliceReader::new(INPUT);
+        let doc1 = Element::deserialize(&mut reader).unwrap();
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+        doc1.serialize("root", &mut writer).unwrap();
+        let output = from_utf8(&buffer).unwrap();
+
+        assert!(
+            output.contains(r#"xmlns:a="urn:x?a&amp;b""#),
+            "namespace must not be escaped twice, got: {output}"
+        );
+    }
+
+    /// Attributes with a non-UTF-8 key must be reported, not dropped.
+    #[test]
+    fn serialize_invalid_utf8_attribute_key_fails() {
+        let el = Element::new()
+            .name(b"root".as_ref())
+            .attribute(b"\xFF".as_ref(), b"value".as_ref());
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+
+        assert!(el.serialize("root", &mut writer).is_err());
+    }
+
+    /// Attributes with a non-UTF-8 value must be reported, not replaced.
+    #[test]
+    fn serialize_invalid_utf8_attribute_value_fails() {
+        let el = Element::new()
+            .name(b"root".as_ref())
+            .attribute(b"key".as_ref(), b"\xFF".as_ref());
+
+        let mut buffer = Vec::new();
+        let mut writer = Writer::new(&mut buffer);
+
+        assert!(el.serialize("root", &mut writer).is_err());
+    }
+
+    #[test]
+    fn qname_invalid_utf8_fails() {
+        let el = Element::new().name(b"\xFF".as_ref());
+
+        assert!(el.qname().is_err());
     }
 }
