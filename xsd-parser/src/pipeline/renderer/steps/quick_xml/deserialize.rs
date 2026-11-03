@@ -1,6 +1,6 @@
 #![allow(clippy::redundant_closure_for_method_calls)]
 
-use std::collections::{hash_map::Entry, HashMap, HashSet};
+use std::collections::{hash_map::Entry, BTreeMap, HashMap, HashSet};
 use std::ops::Not;
 
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
@@ -12,13 +12,13 @@ use crate::models::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataEnum, ComplexDataStruct, ConstrainsData, DataTypeVariant, DerivedType,
         DynamicData, EnumerationData, EnumerationDataVariant, EnumerationVariantValue, Occurs,
-        ReferenceData, SimpleData, StructMode, UnionData, UnionTypeVariant,
+        PathData, ReferenceData, SimpleData, StructMode, UnionData, UnionTypeVariant,
     },
     meta::{
         ComplexMeta, DeriveRelationship, ElementMeta, ElementMetaFlags, ElementMetaVariant,
         ElementMode, MetaTypeVariant, MetaTypes, WhiteSpace,
     },
-    schema::{xs::Use, MaxOccurs},
+    schema::{xs::Use, MaxOccurs, NamespaceId},
     IdentType, TypeIdent,
 };
 
@@ -35,6 +35,14 @@ pub struct QuickXmlDeserializeRenderStep {
     /// Boxing the deserializer will reduce the stack usage, but may decrease
     /// the performance.
     pub boxed_deserializer: bool,
+
+    /// Whether to skip unknown child elements or not.
+    ///
+    /// If enabled, elements that are not part of the content model of their
+    /// parent are skipped together with their content instead of failing.
+    /// Misplaced or duplicated known elements and elements inside simple
+    /// content are still rejected. Defaults to `false` (strict).
+    pub skip_unknown_elements: bool,
 }
 
 macro_rules! resolve_build_in {
@@ -341,6 +349,20 @@ impl DynamicData<'_> {
             })
         });
 
+        /* is_known_start_tag */
+
+        let fn_is_known_start_tag = skip_unknown_elements(ctx).then(|| {
+            let mut tags = KnownStartTags::default();
+
+            for x in derived_types.iter() {
+                if x.key.type_ == IdentType::Element {
+                    tags.add_name(x.key.ns, &x.b_name);
+                }
+            }
+
+            tags.render(ctx)
+        });
+
         /* compile code */
 
         let code = quote! {
@@ -386,6 +408,8 @@ impl DynamicData<'_> {
                         #( #variants_finish )*
                     }
                 }
+
+                #fn_is_known_start_tag
             }
         };
 
@@ -487,16 +511,7 @@ impl DerivedType<'_> {
             });
         };
 
-        if let Some(path) = ctx
-            .types
-            .meta
-            .types
-            .modules
-            .get(&key.ns)
-            .and_then(|x| x.make_ns_const())
-        {
-            let ns_name = ctx.resolve_type_for_deserialize_module(&path);
-
+        if let Some(ns_name) = resolve_ns_const(ctx, key.ns) {
             quote! {
                 if matches!(helper.resolve_local_name(#qname(&type_name), &#ns_name), Some(#b_name)) {
                     #body
@@ -663,6 +678,20 @@ impl ReferenceData<'_> {
         };
         ctx.current_module().append(code);
 
+        let fn_is_known_start_tag = skip_unknown_elements(ctx).then(|| {
+            let bytes_start =
+                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
+
+            quote! {
+                fn is_known_start_tag(
+                    helper: &#deserialize_helper,
+                    x: &#bytes_start<'_>,
+                ) -> bool {
+                    <#target_type as #with_deserializer>::Deserializer::is_known_start_tag(helper, x)
+                }
+            }
+        });
+
         let code = quote! {
             #[derive(Debug)]
             pub struct #deserializer_ident(<#target_type as #with_deserializer>::Deserializer);
@@ -693,6 +722,8 @@ impl ReferenceData<'_> {
                 ) -> #result<super::#type_ident, #error> {
                     Ok(super::#type_ident(self.0.finish(helper)?))
                 }
+
+                #fn_is_known_start_tag
             }
 
             impl #deserializer_ident {
@@ -1074,9 +1105,29 @@ impl ComplexBase<'_> {
         ctx.current_module().append(code);
     }
 
+    /// Whether this element deserializer decides about unknown child elements itself.
+    fn skips_unknown_elements(&self, ctx: &Context<'_, '_>) -> bool {
+        skip_unknown_elements(ctx) && self.represents_element() && !self.has_any()
+    }
+
+    /// Render the decision about a start or empty tag that the state machine
+    /// loop of `next` did not consume.
+    fn render_deserializer_unknown_element(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        if !self.skips_unknown_elements(ctx) {
+            return None;
+        }
+
+        let type_ident = &self.type_ident;
+
+        Some(quote! {
+            let (event, allow_any) = helper.decide_unknown_element::<super::#type_ident>(event, allow_any)?;
+        })
+    }
+
     fn render_deserializer_impl(
         &self,
         ctx: &mut Context<'_, '_>,
+        fn_is_known_start_tag: Option<&TokenStream>,
         fn_init: &TokenStream,
         fn_next: &TokenStream,
         fn_finish: &TokenStream,
@@ -1125,6 +1176,8 @@ impl ComplexBase<'_> {
                 fn finish(#mut_ self, helper: &mut #deserialize_helper) -> #result<super::#type_ident, #error> {
                     #fn_finish
                 }
+
+                #fn_is_known_start_tag
             }
         };
 
@@ -1484,8 +1537,24 @@ impl ComplexDataEnum<'_> {
         let fn_next = self.render_deserializer_fn_next(ctx);
         let fn_finish = self.render_deserializer_fn_finish(ctx);
 
-        self.base
-            .render_deserializer_impl(ctx, &fn_init, &fn_next, &fn_finish, false);
+        let fn_is_known_start_tag = skip_unknown_elements(ctx).then(|| {
+            let mut tags = KnownStartTags::default();
+
+            for x in &self.elements {
+                x.collect_known_start_tags(ctx, &mut tags);
+            }
+
+            tags.render(ctx)
+        });
+
+        self.base.render_deserializer_impl(
+            ctx,
+            fn_is_known_start_tag.as_ref(),
+            &fn_init,
+            &fn_next,
+            &fn_finish,
+            false,
+        );
     }
 
     fn render_deserializer_fn_init(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
@@ -1572,6 +1641,7 @@ impl ComplexDataEnum<'_> {
                 }
             }
         });
+        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1607,6 +1677,8 @@ impl ComplexDataEnum<'_> {
                     }
                 }
             };
+
+            #unknown_element
 
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 #deserializer_artifact::Data(self.finish(helper)?)
@@ -2128,8 +2200,32 @@ impl ComplexDataStruct<'_> {
         let fn_next = self.render_deserializer_fn_next(ctx);
         let fn_finish = self.render_deserializer_fn_finish(ctx);
 
-        self.base
-            .render_deserializer_impl(ctx, &fn_init, &fn_next, &fn_finish, true);
+        let fn_is_known_start_tag =
+            skip_unknown_elements(ctx).then(|| self.render_deserializer_fn_is_known_start_tag(ctx));
+
+        self.base.render_deserializer_impl(
+            ctx,
+            fn_is_known_start_tag.as_ref(),
+            &fn_init,
+            &fn_next,
+            &fn_finish,
+            true,
+        );
+    }
+
+    fn render_deserializer_fn_is_known_start_tag(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let mut tags = KnownStartTags::default();
+
+        for x in self.elements() {
+            x.collect_known_start_tags(ctx, &mut tags);
+        }
+
+        // Only the deserializer of the content type knows the elements of the content.
+        if let StructMode::Content { content } = &self.mode {
+            tags.add_delegate(ctx, &content.target_type);
+        }
+
+        tags.render(ctx)
     }
 
     fn render_deserializer_fn_init(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
@@ -2261,6 +2357,28 @@ impl ComplexDataStruct<'_> {
             }
         });
 
+        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
+        let fallthrough = match unknown_element {
+            Some(unknown_element) => quote! {
+                let event = #deserializer_event::Break(event);
+                let allow_any = #allow_any;
+                #unknown_element
+
+                Ok(#deserializer_output {
+                    artifact: #deserializer_artifact::Deserializer(self),
+                    event,
+                    allow_any,
+                })
+            },
+            None => quote! {
+                Ok(#deserializer_output {
+                    artifact: #deserializer_artifact::Deserializer(self),
+                    event: #deserializer_event::Break(event),
+                    allow_any: #allow_any,
+                })
+            },
+        };
+
         quote! {
             if let #event::End(_) = &event {
                 Ok(#deserializer_output {
@@ -2271,11 +2389,7 @@ impl ComplexDataStruct<'_> {
             }
             #mixed_handler
             else {
-                Ok(#deserializer_output {
-                    artifact: #deserializer_artifact::Deserializer(self),
-                    event: #deserializer_event::Break(event),
-                    allow_any: #allow_any,
-                })
+                #fallthrough
             }
         }
     }
@@ -2417,6 +2531,7 @@ impl ComplexDataStruct<'_> {
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
         let has_done_state = content.need_done_state(self.represents_element());
+        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
         let done_handler = has_done_state.then(|| {
             quote! {
                 (S::Done__, event) => {
@@ -2476,6 +2591,8 @@ impl ComplexDataStruct<'_> {
                 }
             };
 
+            #unknown_element
+
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
             }
@@ -2503,6 +2620,7 @@ impl ComplexDataStruct<'_> {
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
+        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
         let handlers = self
             .elements()
             .iter()
@@ -2536,6 +2654,8 @@ impl ComplexDataStruct<'_> {
                     },
                 }
             };
+
+            #unknown_element
 
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
@@ -2586,6 +2706,8 @@ impl ComplexDataStruct<'_> {
                 let mut any_fallback = None;
             }
         });
+
+        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
 
         let init_set_any = allow_any.then(|| {
             quote! {
@@ -2678,6 +2800,8 @@ impl ComplexDataStruct<'_> {
                     #handler_fallback
                 }
             };
+
+            #unknown_element
 
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
@@ -3135,16 +3259,7 @@ impl ComplexDataAttribute<'_> {
             });
 
             None
-        } else if let Some(path) = ctx
-            .types
-            .meta
-            .types
-            .modules
-            .get(&self.meta.ident.ns)
-            .and_then(|x| x.make_ns_const())
-        {
-            let ns_name = ctx.resolve_type_for_deserialize_module(&path);
-
+        } else if let Some(ns_name) = resolve_ns_const(ctx, self.meta.ident.ns) {
             *index += 1;
 
             Some(quote! {
@@ -3326,16 +3441,7 @@ impl ComplexDataElement<'_> {
             return #call_handler;
         };
 
-        if let Some(path) = ctx
-            .types
-            .meta
-            .types
-            .modules
-            .get(&self.meta().ident.ns)
-            .and_then(|x| x.make_ns_const())
-        {
-            let ns_name = ctx.resolve_type_for_deserialize_module(&path);
-
+        if let Some(ns_name) = resolve_ns_const(ctx, self.meta().ident.ns) {
             Some(quote! {
                 if matches!(helper.resolve_local_name(#get_qname, &#ns_name), Some(#b_name)) {
                     #body
@@ -3347,6 +3453,22 @@ impl ComplexDataElement<'_> {
                     #body
                 }
             })
+        }
+    }
+
+    /// Adds the tags this element contributes to `is_known_start_tag`.
+    fn collect_known_start_tags(&self, ctx: &Context<'_, '_>, tags: &mut KnownStartTags) {
+        if self.treat_as_any() || self.treat_as_text() {
+            return;
+        }
+
+        // Only the deserializer of a group or dynamic type knows its elements.
+        if self.treat_as_group_or_dynamic() {
+            tags.add_delegate(ctx, &self.target_type);
+        }
+
+        if !self.treat_as_group() {
+            tags.add_name(self.meta().ident.ns, &self.b_name);
         }
     }
 
@@ -3713,13 +3835,11 @@ impl ComplexDataElement<'_> {
             false => quote!(break_),
         };
 
-        #[allow(clippy::if_same_then_else)]
-        let continue_or_return = if self.treat_as_text() {
-            quote!(from_event)
-        } else if self.treat_as_group_or_dynamic() {
-            quote!(from_event)
-        } else {
-            quote!(return_to_root)
+        let uses_from_event = self.treat_as_text() || self.treat_as_group_or_dynamic();
+        #[allow(clippy::match_bool)]
+        let continue_or_return = match uses_from_event {
+            true => quote!(from_event),
+            false => quote!(return_to_root),
         };
 
         let values = match self.occurs {
@@ -3738,11 +3858,32 @@ impl ComplexDataElement<'_> {
         let is_defaultable = min == 0 || ctx.is_defaultable_element(self.meta());
         let none_handler = match (is_defaultable, self.occurs) {
             (_, Occurs::None) => unreachable!(),
-            // Single or optional element: This is only triggered by `find_suitable`,
-            // if the deserializer did not produce anything we continue/return.
-            (_, Occurs::Single | Occurs::Optional) => quote! {
-                return Ok(#element_handler_output::#continue_or_return(event, allow_any));
-            },
+            // Single or optional element: From `find_suitable` we continue/return.
+            // With skipping, after a collected value the state is kept and the event goes to the root.
+            (_, Occurs::Single | Occurs::Optional) => {
+                let keep_state = skip_unknown_elements(ctx).then(|| {
+                    let after_value = uses_from_event.then(|| {
+                        quote! {
+                            if !fresh {
+                                return Ok(#element_handler_output::return_to_root(event, allow_any));
+                            }
+                        }
+                    });
+
+                    quote! {
+                        let fresh = values.is_none() && fallback.is_none();
+                        *self.state__ = S::#variant_ident(values, None, fallback);
+
+                        #after_value
+                    }
+                });
+
+                quote! {
+                    #keep_state
+
+                    return Ok(#element_handler_output::#continue_or_return(event, allow_any));
+                }
+            }
             // Defaultable list of type (group or element): If the list and the
             // fallback is empty, we called from `find_suitable`, so we continue/
             // return. If we have a fallback or some values we called from
@@ -3926,14 +4067,7 @@ impl ComplexDataElement<'_> {
             );
 
         let output = if need_name_matcher {
-            let ns_name = ctx
-                .types
-                .meta
-                .types
-                .modules
-                .get(&self.meta().ident.ns)
-                .and_then(|x| x.make_ns_const())
-                .map(|path| ctx.resolve_type_for_deserialize_module(&path))
+            let ns_name = resolve_ns_const(ctx, self.meta().ident.ns)
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             quote! {
@@ -4297,15 +4431,24 @@ impl ComplexDataElement<'_> {
             quote!(S::Done__)
         };
 
+        // Remember the skipped state, so it is restored if the event is handed
+        // back as unknown element and skipped.
+        let keep_state = skip_unknown_elements(ctx).then(|| {
+            quote! {
+                fallback.get_or_insert(S::#variant_ident(None));
+            }
+        });
+
         // Handler for `DeserializerArtifact::None`: Should only be the
         // case if we try to initialize a new deserializer.
         let is_defaultable = ctx.is_defaultable_element(self.meta());
         let handler_none = match (is_defaultable, self.occurs, self.meta().min_occurs) {
             (_, Occurs::None, _) => unreachable!(),
             // If we do not expect any data we continue with the next state.
-            // No fallback is set here: `from_event` stays in the handler loop,
-            // so a stale fallback would let the epilogue overwrite `next_state`.
+            // No fallback is set here (except for skipping): `from_event` stays in
+            // the handler loop, so a stale fallback would overwrite `next_state`.
             (_, _, 0) | (_, Occurs::Optional, _) => quote! {
+                #keep_state
                 *self.state__ = #next_state;
 
                 return Ok(#element_handler_output::from_event(event, allow_any));
@@ -4341,15 +4484,17 @@ impl ComplexDataElement<'_> {
 
                     return Ok(#element_handler_output::return_to_root(event, allow_any));
                 } else {
+                    #keep_state
                     *self.state__ = #next_state;
 
                     return Ok(#element_handler_output::from_event(event, allow_any));
                 }
             },
             // If this is a group, we continue, because groups may be default constructed.
-            // No fallback: same rationale as the optional/zero branch above -
-            // `from_event` stays in the loop, so fallback must not be set.
+            // No fallback (except for skipping): same rationale as the
+            // optional/zero branch above.
             (true, _, _) => quote! {
+                #keep_state
                 *self.state__ = #next_state;
 
                 return Ok(#element_handler_output::from_event(event, allow_any));
@@ -4565,14 +4710,7 @@ impl ComplexDataElement<'_> {
                 }
             };
         } else if need_name_matcher {
-            let ns_name = ctx
-                .types
-                .meta
-                .types
-                .modules
-                .get(&self.meta().ident.ns)
-                .and_then(|x| x.make_ns_const())
-                .map(|path| ctx.resolve_type_for_deserialize_module(&path))
+            let ns_name = resolve_ns_const(ctx, self.meta().ident.ns)
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             body = quote! {
@@ -4799,22 +4937,99 @@ fn make_type_element_matcher(
     let s_name = ident.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());
 
-    if let Some(path) = ctx
-        .types
-        .meta
-        .types
-        .modules
-        .get(&ident.ns)
-        .and_then(|x| x.make_ns_const())
-    {
-        let ns_name = ctx.resolve_type_for_deserialize_module(&path);
-
+    if let Some(ns_name) = resolve_ns_const(ctx, ident.ns) {
         quote! {
             matches!(helper.resolve_local_name(#get_qname, &#ns_name), Some(#b_name))
         }
     } else {
         quote! {
             #get_type_name == #b_name
+        }
+    }
+}
+
+fn skip_unknown_elements(ctx: &Context<'_, '_>) -> bool {
+    ctx.get_ref::<DeserializerConfig>().skip_unknown_elements
+}
+
+fn resolve_ns_const(ctx: &Context<'_, '_>, ns: NamespaceId) -> Option<TokenStream> {
+    let path = ctx
+        .types
+        .meta
+        .types
+        .modules
+        .get(&ns)
+        .and_then(|x| x.make_ns_const())?;
+
+    Some(ctx.resolve_type_for_deserialize_module(&path))
+}
+
+/// Collects what the generated `is_known_start_tag` of a deserializer checks.
+#[derive(Default)]
+struct KnownStartTags {
+    names: BTreeMap<NamespaceId, Vec<Literal>>,
+    delegates: Vec<TokenStream>,
+}
+
+impl KnownStartTags {
+    fn add_name(&mut self, ns: NamespaceId, b_name: &Literal) {
+        let names = self.names.entry(ns).or_default();
+
+        if !names.iter().any(|x| x.to_string() == b_name.to_string()) {
+            names.push(b_name.clone());
+        }
+    }
+
+    fn add_delegate(&mut self, ctx: &Context<'_, '_>, target_type: &PathData) {
+        let target_type = ctx.resolve_type_for_deserialize_module(target_type);
+        let with_deserializer =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::WithDeserializer");
+
+        ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
+
+        self.delegates.push(quote! {
+            if <#target_type as #with_deserializer>::Deserializer::is_known_start_tag(helper, x) {
+                return true;
+            }
+        });
+    }
+
+    fn render(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let deserialize_helper =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
+        let bytes_start =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
+
+        let unused = (self.names.is_empty() && self.delegates.is_empty())
+            .then(|| quote!(let _ = (helper, x);));
+        let names = self.names.iter().map(|(ns, names)| {
+            if let Some(ns_name) = resolve_ns_const(ctx, *ns) {
+                quote! {
+                    if matches!(helper.resolve_local_name(x.name(), &#ns_name), Some(#( #names )|*)) {
+                        return true;
+                    }
+                }
+            } else {
+                quote! {
+                    if matches!(x.name().local_name().as_ref(), #( #names )|*) {
+                        return true;
+                    }
+                }
+            }
+        });
+        let delegates = &self.delegates;
+
+        quote! {
+            fn is_known_start_tag(
+                helper: &#deserialize_helper,
+                x: &#bytes_start<'_>,
+            ) -> bool {
+                #unused
+                #( #names )*
+                #( #delegates )*
+
+                false
+            }
         }
     }
 }

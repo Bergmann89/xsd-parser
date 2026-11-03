@@ -1,0 +1,8 @@
+<tns:Root xmlns:tns="http://example.com">
+    <tns:A>before</tns:A>
+    <tns:Unknown id="x" other:kind="legacy" xmlns:other="urn:other">
+        <other:Child>content</other:Child>
+        <tns:AlsoUnknown>more</tns:AlsoUnknown>
+    </tns:Unknown>
+    <tns:B>after</tns:B>
+</tns:Root>

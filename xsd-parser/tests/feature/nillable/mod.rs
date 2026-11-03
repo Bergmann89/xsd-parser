@@ -103,7 +103,7 @@ fn generate_dynamic_quick_xml() {
     generate_test(
         "tests/feature/nillable/schema.xsd",
         "tests/feature/nillable/expected/dynamic_quick_xml.rs",
-        config().with_quick_xml_config(NamespaceSerialization::Dynamic, None, false),
+        config().with_quick_xml_config(NamespaceSerialization::Dynamic, None, false, false),
     );
 }
 

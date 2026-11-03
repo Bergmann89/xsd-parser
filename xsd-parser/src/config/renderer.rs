@@ -186,6 +186,11 @@ pub enum RenderStep {
         ///
         /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::pipeline::renderer::QuickXmlDeserializeRenderStep::boxed_deserializer).
         boxed_deserializer: bool,
+
+        /// Whether to skip unknown child elements or not.
+        ///
+        /// For more details have a look at [`QuickXmlDeserializeRenderer::skip_unknown_elements`](crate::pipeline::renderer::QuickXmlDeserializeRenderStep::skip_unknown_elements).
+        skip_unknown_elements: bool,
     },
 
     /// Renderer that renders the [`CollectNamespaces`](xsd_parser_types::quick_xml::CollectNamespaces)
@@ -299,9 +304,13 @@ impl RenderStepConfig for RenderStep {
                 namespaces,
                 default_namespace,
             }),
-            Self::QuickXmlDeserialize { boxed_deserializer } => {
-                Box::new(QuickXmlDeserializeRenderStep { boxed_deserializer })
-            }
+            Self::QuickXmlDeserialize {
+                boxed_deserializer,
+                skip_unknown_elements,
+            } => Box::new(QuickXmlDeserializeRenderStep {
+                boxed_deserializer,
+                skip_unknown_elements,
+            }),
             Self::QuickXmlCollectNamespaces => Box::new(QuickXmlCollectNamespacesRenderStep),
             Self::ContentHelpers => Box::new(ContentHelpersRenderStep),
         }

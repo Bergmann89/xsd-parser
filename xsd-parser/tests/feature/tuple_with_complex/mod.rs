@@ -113,7 +113,7 @@ fn generate_quick_xml_boxed() {
     generate_test(
         "tests/feature/tuple_with_complex/schema.xsd",
         "tests/feature/tuple_with_complex/expected/quick_xml_boxed.rs",
-        config().with_quick_xml_deserialize_config(true),
+        config().with_quick_xml_deserialize_config(true, false),
     );
 }
 
@@ -135,4 +135,38 @@ mod quick_xml_boxed {
     #![allow(unused_imports)]
 
     include!("expected/quick_xml_boxed.rs");
+}
+
+/* quick_xml skip unknown elements */
+
+#[test]
+fn generate_quick_xml_skip_unknown_elements() {
+    generate_test(
+        "tests/feature/tuple_with_complex/schema.xsd",
+        "tests/feature/tuple_with_complex/expected/quick_xml_skip_unknown_elements.rs",
+        config().with_quick_xml_deserialize_config(false, true),
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_skip_unknown_elements() {
+    use xsd_parser_types::quick_xml::{DeserializeSync, SliceReader};
+
+    use quick_xml_skip_unknown_elements::Foo;
+
+    let obj = Foo::deserialize(&mut SliceReader::new(
+        "<tns:Foo xmlns:tns=\"http://example.com\"><tns:Z/><tns:Name>abc</tns:Name><tns:Z><tns:Name/></tns:Z><tns:Value>42</tns:Value></tns:Foo>",
+    ))
+    .unwrap();
+
+    assert_eq!(obj.0.name, "abc");
+    assert_eq!(obj.0.value, 42);
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod quick_xml_skip_unknown_elements {
+    #![allow(unused_imports)]
+
+    include!("expected/quick_xml_skip_unknown_elements.rs");
 }

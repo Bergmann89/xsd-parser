@@ -71,7 +71,7 @@ fn main() -> Result<(), Error> {
 
     // Creates the default configuration and enables code generation for
     // `quick_xml` deserialization.
-    let mut config = Config::default().with_quick_xml_deserialize_config(true);
+    let mut config = Config::default().with_quick_xml_deserialize_config(true, false);
 
     // Enables all parser flags (see the flags documentation for details), sets
     // the input file, and activates file resolvers to handle imports and includes.

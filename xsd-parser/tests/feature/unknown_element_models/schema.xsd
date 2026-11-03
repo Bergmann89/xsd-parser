@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <!-- Elements with simple content followed by a known sibling. -->
+    <xs:element name="Holder">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Simple" type="xs:string"/>
+                <xs:element name="Tail" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="TextType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:int"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:element name="TextHolder">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Text" type="tns:TextType"/>
+                <xs:element name="Tail" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Mixed content. -->
+    <xs:element name="Mixed">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element name="A" type="xs:string"/>
+                <xs:element name="B" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Sequence with a complex child that is a sibling of xs:any. -->
+    <xs:complexType name="ChildType">
+        <xs:sequence>
+            <xs:element name="Inner" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="AnyRoot">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Child" type="tns:ChildType"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Dynamic type that is selected by xsi:type instead of the tag name. -->
+    <xs:element name="Zoo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Name" type="xs:string"/>
+                <xs:element name="animal" type="tns:animal" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="animal">
+        <xs:attribute name="id" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="dog">
+        <xs:complexContent>
+            <xs:extension base="tns:animal">
+                <xs:attribute name="name" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Choice list. -->
+    <xs:element name="Many">
+        <xs:complexType>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="X" type="xs:string"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Choice with a model group as variant. -->
+    <xs:group name="PQ">
+        <xs:sequence>
+            <xs:element name="P" type="xs:string"/>
+            <xs:element name="Q" type="xs:string"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="UV">
+        <xs:choice>
+            <xs:element name="U" type="xs:string"/>
+            <xs:element name="V" type="xs:string"/>
+        </xs:choice>
+    </xs:group>
+
+    <xs:element name="ChoiceGroupPick">
+        <xs:complexType>
+            <xs:choice>
+                <xs:group ref="tns:UV"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GroupPick">
+        <xs:complexType>
+            <xs:choice>
+                <xs:group ref="tns:PQ"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="DynPick">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="animal" type="tns:animal"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ShapeType">
+        <xs:attribute name="id" type="xs:int"/>
+    </xs:complexType>
+
+    <xs:element name="Shape" type="tns:ShapeType" abstract="true"/>
+    <xs:element name="Circle" type="tns:ShapeType" substitutionGroup="tns:Shape"/>
+
+    <xs:element name="SubstPick">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="tns:Shape"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Sequence with a complex child, used with and without FLATTEN_CONTENT. -->
+    <xs:element name="Seq">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="A" type="xs:string"/>
+                <xs:element name="Child" type="tns:ChildType"/>
+                <xs:element name="B" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

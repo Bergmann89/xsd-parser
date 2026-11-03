@@ -97,6 +97,15 @@ where
     ///
     /// Returns an [`struct@Error`] if the deserializer could not finish.
     fn finish(self, helper: &mut DeserializeHelper) -> Result<T, Error>;
+
+    /// Returns `true` if the passed start or empty tag is part of the content
+    /// model of `T`, `false` if it is unknown. The default treats every tag as known.
+    #[must_use]
+    fn is_known_start_tag(helper: &DeserializeHelper, bytes: &BytesStart<'_>) -> bool {
+        let _ = (helper, bytes);
+
+        true
+    }
 }
 
 /// Result type returned by the [`Deserializer`] trait.
@@ -649,6 +658,9 @@ where
                     allow_any: false,
                 })
             }
+            event @ (Event::Start(_) | Event::Empty(_)) => {
+                Err(ErrorKind::UnexpectedEvent(event.into_owned()).into())
+            }
             event => Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
                 event: DeserializerEvent::Break(event),
@@ -874,6 +886,41 @@ impl DeserializeHelper {
                     || local == b"nil")
         } else {
             false
+        }
+    }
+
+    /// Decides about a start or empty tag that the deserializer of `T` did not consume.
+    ///
+    /// A tag that is part of the content model of `T` is an error, an unknown tag
+    /// is handed back with `allow_any` set, so the driver skips the whole element.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ErrorKind::UnexpectedEvent`] if the tag is known to `T`.
+    pub fn decide_unknown_element<'de, T>(
+        &self,
+        event: DeserializerEvent<'de>,
+        allow_any: bool,
+    ) -> Result<(DeserializerEvent<'de>, bool), Error>
+    where
+        T: WithDeserializer,
+        T::Deserializer: Deserializer<'de, T>,
+    {
+        match (allow_any, event) {
+            (
+                false,
+                DeserializerEvent::Continue(ev @ (Event::Start(_) | Event::Empty(_)))
+                | DeserializerEvent::Break(ev @ (Event::Start(_) | Event::Empty(_))),
+            ) => {
+                if let Event::Start(x) | Event::Empty(x) = &ev {
+                    if T::Deserializer::is_known_start_tag(self, x) {
+                        return Err(ErrorKind::UnexpectedEvent(ev.into_owned()).into());
+                    }
+                }
+
+                Ok((DeserializerEvent::Break(ev), true))
+            }
+            (allow_any, event) => Ok((event, allow_any)),
         }
     }
 
@@ -1376,6 +1423,122 @@ where
             if let Some(data) = self.handle_event(event)? {
                 return Ok(data);
             }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use quick_xml::events::BytesEnd;
+
+    use super::*;
+
+    #[derive(Debug)]
+    struct Marker;
+
+    #[derive(Debug)]
+    struct MarkerDeserializer;
+
+    impl WithDeserializer for Marker {
+        type Deserializer = MarkerDeserializer;
+    }
+
+    impl<'de> Deserializer<'de, Marker> for MarkerDeserializer {
+        fn init(
+            _helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, Marker> {
+            Err(ErrorKind::UnexpectedEvent(event.into_owned()).into())
+        }
+
+        fn next(
+            self,
+            _helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, Marker> {
+            Err(ErrorKind::UnexpectedEvent(event.into_owned()).into())
+        }
+
+        fn finish(self, _helper: &mut DeserializeHelper) -> Result<Marker, Error> {
+            Ok(Marker)
+        }
+
+        fn is_known_start_tag(_helper: &DeserializeHelper, bytes: &BytesStart<'_>) -> bool {
+            bytes.name().local_name().as_ref() == b"known"
+        }
+    }
+
+    fn decide(
+        event: DeserializerEvent<'_>,
+        allow_any: bool,
+    ) -> Result<(DeserializerEvent<'_>, bool), Error> {
+        DeserializeHelper::default().decide_unknown_element::<Marker>(event, allow_any)
+    }
+
+    #[test]
+    fn decide_unknown_element_breaks_with_allow_any_for_unknown_tag() {
+        for event in [
+            DeserializerEvent::Continue(Event::Start(BytesStart::new("other"))),
+            DeserializerEvent::Break(Event::Empty(BytesStart::new("other"))),
+        ] {
+            let (event, allow_any) = decide(event, false).unwrap();
+
+            assert!(matches!(event, DeserializerEvent::Break(_)));
+            assert!(allow_any);
+        }
+    }
+
+    #[test]
+    fn decide_unknown_element_rejects_known_tag() {
+        for event in [
+            DeserializerEvent::Continue(Event::Start(BytesStart::new("known"))),
+            DeserializerEvent::Break(Event::Empty(BytesStart::new("known"))),
+        ] {
+            let err = decide(event, false).unwrap_err();
+
+            assert!(matches!(err.kind, ErrorKind::UnexpectedEvent(_)), "{err:?}");
+        }
+    }
+
+    #[test]
+    fn decide_unknown_element_keeps_everything_else() {
+        let (event, allow_any) = decide(
+            DeserializerEvent::Break(Event::Start(BytesStart::new("known"))),
+            true,
+        )
+        .unwrap();
+        assert!(matches!(event, DeserializerEvent::Break(Event::Start(_))));
+        assert!(allow_any);
+
+        let (event, allow_any) = decide(
+            DeserializerEvent::Continue(Event::End(BytesEnd::new("other"))),
+            false,
+        )
+        .unwrap();
+        assert!(matches!(event, DeserializerEvent::Continue(Event::End(_))));
+        assert!(!allow_any);
+    }
+
+    #[test]
+    fn content_deserializer_rejects_child_elements() {
+        let mut helper = DeserializeHelper::default();
+
+        for event in [
+            Event::Start(BytesStart::new("child")),
+            Event::Empty(BytesStart::new("child")),
+        ] {
+            let output = ContentDeserializer::<String>::init(
+                &mut helper,
+                Event::Start(BytesStart::new("outer")),
+            )
+            .unwrap();
+            let DeserializerArtifact::Deserializer(deserializer) = output.artifact else {
+                panic!("expected a deserializer");
+            };
+
+            let err = deserializer.next(&mut helper, event).unwrap_err();
+
+            assert!(matches!(err.kind, ErrorKind::UnexpectedEvent(_)), "{err:?}");
         }
     }
 }
