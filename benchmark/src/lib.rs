@@ -54,7 +54,7 @@ pub struct Executor<'a> {
 impl Runner {
     pub fn new(args: Args) -> Result<Self, Error> {
         let mut table = Table::new();
-        table.load_preset(ASCII_MARKDOWN).set_header([
+        table.load_style(ASCII_MARKDOWN).set_header([
             "Schema", "Document", "Engine", "Op", "Min", "Avg", "Mdn", "Max", "Stack",
         ]);
 
@@ -80,23 +80,27 @@ impl Runner {
 
         let sys = System::new_with_specifics(
             RefreshKind::default().with_cpu(CpuRefreshKind::everything()),
-        );
+        )
+        .ok();
+        let cpus = sys.as_ref().map_or(&[][..], System::cpus);
 
         println!();
         println!("--== System ==--");
         println!();
 
-        if let Some(value) = System::long_os_version() {
+        if let Ok(value) = System::long_os_version() {
             println!("OS:                  {value}");
         }
 
-        println!("Kernel:              {}", System::kernel_long_version());
+        if let Ok(value) = System::kernel_long_version() {
+            println!("Kernel:              {value}");
+        }
 
-        if let Some(cpu) = sys.cpus().first() {
+        if let Some(cpu) = cpus.first() {
             println!("CPU Arch:            {}", System::cpu_arch());
             println!("CPU Brand:           {}", cpu.brand());
             println!("CPU Vendor:          {}", cpu.vendor_id());
-            println!("CPU Cores (logical): {}", sys.cpus().len());
+            println!("CPU Cores (logical): {}", cpus.len());
 
             let max_freq = read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq")
                 .map_err(Error::from)
@@ -685,7 +689,7 @@ mod stack_usage {
         unsafe {
             let mut attr: libc::pthread_attr_t = zeroed();
 
-            if libc::pthread_getattr_np(libc::pthread_self(), &mut attr) != 0 {
+            if libc::pthread_getattr_np(libc::pthread_self(), &raw mut attr) != 0 {
                 return None;
             }
 
@@ -693,10 +697,14 @@ mod stack_usage {
             let mut stack_size: usize = 0;
             let mut guard_size: usize = 0;
 
-            let rc1 = libc::pthread_attr_getstack(&attr, &mut stack_addr, &mut stack_size);
-            let rc2 = libc::pthread_attr_getguardsize(&attr, &mut guard_size);
+            let rc1 = libc::pthread_attr_getstack(
+                &raw const attr,
+                &raw mut stack_addr,
+                &raw mut stack_size,
+            );
+            let rc2 = libc::pthread_attr_getguardsize(&raw const attr, &raw mut guard_size);
 
-            libc::pthread_attr_destroy(&mut attr);
+            libc::pthread_attr_destroy(&raw mut attr);
 
             if rc1 != 0 || rc2 != 0 || stack_addr.is_null() || stack_size == 0 {
                 None
@@ -717,6 +725,7 @@ mod stack_usage {
     }
 
     #[inline]
+    #[allow(dangling_pointers_from_locals)]
     fn current_approximately_stack_pointer() -> *mut u8 {
         // Address of a local is “near” the current stack pointer
         let mut x = 0u8;

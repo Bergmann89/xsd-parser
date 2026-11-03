@@ -2,7 +2,6 @@ use std::borrow::Cow;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::mem::replace;
 use std::ops::{Deref, DerefMut};
-use std::str::from_utf8;
 
 #[cfg(feature = "quick-xml")]
 use quick_xml::{
@@ -143,14 +142,12 @@ impl<'de> Deserializer<'de, Text> for TextDeserializer {
 
         let text: Cow<'de, str> = match event {
             Event::Text(x) => {
-                let t = x.decode()?;
-                let u = unescape(&t)?;
+                let u = unescape(&x)?;
                 Cow::Owned(u.into_owned())
             }
-            Event::CData(x) => x.decode()?,
+            Event::CData(x) => x.into_inner(),
             Event::GeneralRef(x) => {
-                let x = from_utf8(x.as_ref())?;
-                let s = format!("&{x};");
+                let s = format!("&{};", &*x);
                 let u = unescape(&s)?;
                 Cow::Owned(u.into_owned())
             }

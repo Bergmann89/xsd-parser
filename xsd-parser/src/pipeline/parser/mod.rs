@@ -605,9 +605,10 @@ where
         if let Event::Start(x) | Event::Empty(x) = &event {
             for a in x.attributes() {
                 let a = a?;
-                if matches!(a.key.prefix(), Some(x) if x.as_ref() == b"xmlns") {
-                    let prefix = NamespacePrefix::new(a.key.local_name().as_ref().to_owned());
-                    let namespace = Namespace::new(a.value.into_owned());
+                if matches!(a.key.prefix(), Some(x) if x.as_ref() == "xmlns") {
+                    let prefix =
+                        NamespacePrefix::new(a.key.local_name().as_ref().as_bytes().to_owned());
+                    let namespace = Namespace::new(a.value.into_owned().into_bytes());
 
                     self.namespaces
                         .entry(Some(namespace))

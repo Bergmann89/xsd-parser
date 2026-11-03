@@ -124,7 +124,7 @@ impl Module {
         } = self;
 
         if sub_modules == SubModules::Files {
-            let modules = modules.iter().map(|(ident, _module)| {
+            let modules = modules.keys().map(|ident| {
                 let name = format_ident!("{ident}");
 
                 quote!(pub mod #name;)

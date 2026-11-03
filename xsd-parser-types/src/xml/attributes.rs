@@ -1,6 +1,7 @@
 use std::borrow::{Borrow, Cow};
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::ops::{Deref, DerefMut};
+use std::str::{from_utf8, Utf8Error};
 
 use encoding_rs::{Encoding, UTF_8};
 use indexmap::{map::Entry, IndexMap};
@@ -19,7 +20,7 @@ use crate::quick_xml::{Error, ErrorKind};
 
 #[cfg(not(feature = "quick-xml"))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct QName<'a>(pub &'a [u8]);
+pub struct QName<'a>(pub &'a str);
 
 #[cfg(not(feature = "quick-xml"))]
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -29,7 +30,7 @@ pub struct Attribute<'a> {
     /// If [`Attributes::with_checks`] is turned off, the key might not be unique.
     pub key: QName<'a>,
     /// The raw value of the attribute.
-    pub value: Cow<'a, [u8]>,
+    pub value: Cow<'a, str>,
 }
 
 /// Represents a list of unstructured XML attributes.
@@ -51,11 +52,11 @@ impl<'a> Attributes<'a> {
     /// the passed attribute is already part of the list.
     #[cfg(feature = "quick-xml")]
     pub fn push(&mut self, attrib: Attribute<'_>) -> Result<(), Error> {
-        let key = Key(Cow::Owned(attrib.key.0.to_owned()));
+        let key = Key(Cow::Owned(attrib.key.0.as_bytes().to_owned()));
 
         match self.0.entry(key) {
             Entry::Vacant(e) => {
-                e.insert(Value(Cow::Owned(attrib.value.into_owned())));
+                e.insert(Value(Cow::Owned(attrib.value.into_owned().into_bytes())));
 
                 Ok(())
             }
@@ -80,10 +81,15 @@ impl<'a> Attributes<'a> {
     }
 
     /// Create an iterator that yields [`Attribute`] items.
+    ///
+    /// Entries with a key that is not valid UTF-8 are skipped, invalid UTF-8
+    /// in a value is replaced by `U+FFFD`.
     pub fn attributes(&self) -> impl Iterator<Item = Attribute<'_>> {
-        self.iter().map(|(k, v)| Attribute {
-            key: QName(k.as_ref()),
-            value: Cow::Borrowed(v.as_ref()),
+        self.iter().filter_map(|(k, v)| {
+            Some(Attribute {
+                key: QName(from_utf8(k).ok()?),
+                value: String::from_utf8_lossy(&v.0),
+            })
         })
     }
 }
@@ -105,8 +111,11 @@ impl DerefMut for Attributes<'_> {
 impl<'a> Extend<Attribute<'a>> for Attributes<'a> {
     fn extend<T: IntoIterator<Item = Attribute<'a>>>(&mut self, iter: T) {
         self.0.extend(iter.into_iter().map(|a| {
-            let key = Key(Cow::Borrowed(a.key.0));
-            let value = Value(a.value.clone());
+            let key = Key(Cow::Borrowed(a.key.0.as_bytes()));
+            let value = Value(match a.value {
+                Cow::Borrowed(x) => Cow::Borrowed(x.as_bytes()),
+                Cow::Owned(x) => Cow::Owned(x.into_bytes()),
+            });
 
             (key, value)
         }));
@@ -131,9 +140,12 @@ pub struct Key<'a>(pub Cow<'a, [u8]>);
 
 impl Key<'_> {
     /// Return the key as [`QName`].
-    #[must_use]
-    pub fn qname(&self) -> QName<'_> {
-        QName(&self.0)
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the key is not valid UTF-8.
+    pub fn qname(&self) -> Result<QName<'_>, Utf8Error> {
+        Ok(QName(from_utf8(&self.0)?))
     }
 }
 
@@ -251,5 +263,16 @@ impl AsRef<[u8]> for Value<'_> {
 impl Borrow<[u8]> for Value<'_> {
     fn borrow(&self) -> &[u8] {
         &self.0
+    }
+}
+
+#[cfg(all(test, feature = "quick-xml"))]
+mod tests {
+    use super::Key;
+
+    #[test]
+    fn key_qname() {
+        assert_eq!(Key(b"a:b"[..].into()).qname().unwrap().0, "a:b");
+        assert!(Key(b"\xFF"[..].into()).qname().is_err());
     }
 }

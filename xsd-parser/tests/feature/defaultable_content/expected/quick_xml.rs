@@ -257,9 +257,9 @@ pub mod quick_xml_deserialize {
             let mut attrib_b: Option<super::xs::StringType> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"attrib-a" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"attrib-a" {
                     helper.read_attrib(&mut attrib_a, b"attrib-a", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"attrib-b" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"attrib-b" {
                     helper.read_attrib(&mut attrib_b, b"attrib-b", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -391,9 +391,9 @@ pub mod quick_xml_deserialize {
             let mut attrib_b: Option<super::xs::StringType> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"attrib-a" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"attrib-a" {
                     helper.read_attrib(&mut attrib_a, b"attrib-a", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"attrib-b" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"attrib-b" {
                     helper.read_attrib(&mut attrib_b, b"attrib-b", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -869,9 +869,9 @@ pub mod quick_xml_deserialize {
             let mut attrib_b: Option<super::xs::StringType> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"attrib-a" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"attrib-a" {
                     helper.read_attrib(&mut attrib_a, b"attrib-a", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"attrib-b" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"attrib-b" {
                     helper.read_attrib(&mut attrib_b, b"attrib-b", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;

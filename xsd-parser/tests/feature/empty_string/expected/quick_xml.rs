@@ -229,7 +229,7 @@ pub mod quick_xml_deserialize {
             let mut lang: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"lang" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"lang" {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -416,7 +416,7 @@ pub mod quick_xml_deserialize {
             let mut lang: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"lang" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"lang" {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;

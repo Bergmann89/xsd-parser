@@ -1201,21 +1201,22 @@ pub mod quick_xml_deserialize {
             let mut minor_version: Option<i32> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"header" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"header" {
                     helper.read_attrib(&mut header, b"header", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"extension-xname" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"extension-xname" {
                     helper.read_attrib(&mut extension_xname, b"extension-xname", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"extension-name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"extension-name" {
                     helper.read_attrib(&mut extension_name, b"extension-name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"extension-multiword" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"extension-multiword"
+                {
                     helper.read_attrib(
                         &mut extension_multiword,
                         b"extension-multiword",
                         &attrib.value,
                     )?;
-                } else if attrib.key.local_name().as_ref() == b"major-version" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"major-version" {
                     helper.read_attrib(&mut major_version, b"major-version", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"minor-version" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"minor-version" {
                     helper.read_attrib(&mut minor_version, b"minor-version", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -1430,54 +1431,54 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"request" {
+                if x.name().local_name().into_inner().as_bytes() == b"request" {
                     let output = <super::RequestType as WithDeserializer>::init(helper, event)?;
                     return self.handle_request(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"event" {
+                if x.name().local_name().into_inner().as_bytes() == b"event" {
                     let output = <super::EventType as WithDeserializer>::init(helper, event)?;
                     return self.handle_event(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"eventcopy" {
+                if x.name().local_name().into_inner().as_bytes() == b"eventcopy" {
                     let output =
                         <super::PacketStructCopyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_eventcopy(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"error" {
+                if x.name().local_name().into_inner().as_bytes() == b"error" {
                     let output =
                         <super::PacketStructType as WithDeserializer>::init(helper, event)?;
                     return self.handle_error(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"errorcopy" {
+                if x.name().local_name().into_inner().as_bytes() == b"errorcopy" {
                     let output =
                         <super::PacketStructCopyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_errorcopy(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"struct" {
+                if x.name().local_name().into_inner().as_bytes() == b"struct" {
                     let output = <super::StructType as WithDeserializer>::init(helper, event)?;
                     return self.handle_struct_(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"union" {
+                if x.name().local_name().into_inner().as_bytes() == b"union" {
                     let output = <super::StructType as WithDeserializer>::init(helper, event)?;
                     return self.handle_union_(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"xidtype" {
+                if x.name().local_name().into_inner().as_bytes() == b"xidtype" {
                     let output = <super::XidtypeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_xidtype(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"xidunion" {
+                if x.name().local_name().into_inner().as_bytes() == b"xidunion" {
                     let output = <super::XidunionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_xidunion(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enum" {
+                if x.name().local_name().into_inner().as_bytes() == b"enum" {
                     let output = <super::EnumType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enum_(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"typedef" {
+                if x.name().local_name().into_inner().as_bytes() == b"typedef" {
                     let output = <super::TypedefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_typedef(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"import" {
+                if x.name().local_name().into_inner().as_bytes() == b"import" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_import(helper, Default::default(), None, output);
                 }
@@ -2511,11 +2512,11 @@ pub mod quick_xml_deserialize {
             let mut combine_adjacent: Option<bool> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"opcode" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"opcode" {
                     helper.read_attrib(&mut opcode, b"opcode", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"combine-adjacent" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"combine-adjacent" {
                     helper.read_attrib(
                         &mut combine_adjacent,
                         b"combine-adjacent",
@@ -2712,40 +2713,40 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"pad" {
+                if x.name().local_name().into_inner().as_bytes() == b"pad" {
                     let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"list" {
+                if x.name().local_name().into_inner().as_bytes() == b"list" {
                     let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fd" {
+                if x.name().local_name().into_inner().as_bytes() == b"fd" {
                     let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"exprfield" {
+                if x.name().local_name().into_inner().as_bytes() == b"exprfield" {
                     let output = <super::ExprfieldType as WithDeserializer>::init(helper, event)?;
                     return self.handle_exprfield(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"valueparam" {
+                if x.name().local_name().into_inner().as_bytes() == b"valueparam" {
                     let output = <super::ValueparamType as WithDeserializer>::init(helper, event)?;
                     return self.handle_valueparam(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"switch" {
+                if x.name().local_name().into_inner().as_bytes() == b"switch" {
                     let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"reply" {
+                if x.name().local_name().into_inner().as_bytes() == b"reply" {
                     let output =
                         <super::RequestReplyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_reply(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"doc" {
+                if x.name().local_name().into_inner().as_bytes() == b"doc" {
                     let output = <super::DocType as WithDeserializer>::init(helper, event)?;
                     return self.handle_doc(helper, Default::default(), None, output);
                 }
@@ -3554,17 +3555,17 @@ pub mod quick_xml_deserialize {
             let mut xge: Option<bool> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"no-sequence-number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"no-sequence-number" {
                     helper.read_attrib(
                         &mut no_sequence_number,
                         b"no-sequence-number",
                         &attrib.value,
                     )?;
-                } else if attrib.key.local_name().as_ref() == b"xge" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"xge" {
                     helper.read_attrib(&mut xge, b"xge", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -3739,23 +3740,23 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"pad" {
+                if x.name().local_name().into_inner().as_bytes() == b"pad" {
                     let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"list" {
+                if x.name().local_name().into_inner().as_bytes() == b"list" {
                     let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fd" {
+                if x.name().local_name().into_inner().as_bytes() == b"fd" {
                     let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"doc" {
+                if x.name().local_name().into_inner().as_bytes() == b"doc" {
                     let output = <super::DocType as WithDeserializer>::init(helper, event)?;
                     return self.handle_doc(helper, Default::default(), None, output);
                 }
@@ -4244,11 +4245,11 @@ pub mod quick_xml_deserialize {
             let mut ref_: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"ref" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"ref" {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -4334,9 +4335,9 @@ pub mod quick_xml_deserialize {
             let mut number: Option<i32> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"number" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"number" {
                     helper.read_attrib(&mut number, b"number", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -4509,19 +4510,19 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"pad" {
+                if x.name().local_name().into_inner().as_bytes() == b"pad" {
                     let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"list" {
+                if x.name().local_name().into_inner().as_bytes() == b"list" {
                     let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fd" {
+                if x.name().local_name().into_inner().as_bytes() == b"fd" {
                     let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), None, output);
                 }
@@ -4942,7 +4943,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -5111,23 +5112,23 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"pad" {
+                if x.name().local_name().into_inner().as_bytes() == b"pad" {
                     let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"list" {
+                if x.name().local_name().into_inner().as_bytes() == b"list" {
                     let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fd" {
+                if x.name().local_name().into_inner().as_bytes() == b"fd" {
                     let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"switch" {
+                if x.name().local_name().into_inner().as_bytes() == b"switch" {
                     let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), None, output);
                 }
@@ -5614,7 +5615,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -5686,7 +5687,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -5868,7 +5869,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -6261,9 +6262,9 @@ pub mod quick_xml_deserialize {
             let mut newname: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"oldname" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"oldname" {
                     helper.read_attrib(&mut oldname, b"oldname", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"newname" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"newname" {
                     helper.read_attrib(&mut newname, b"newname", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -6338,9 +6339,9 @@ pub mod quick_xml_deserialize {
             let mut align: Option<i32> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"bytes" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"bytes" {
                     helper.read_attrib(&mut bytes, b"bytes", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"align" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"align" {
                     helper.read_attrib(&mut align, b"align", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -6421,15 +6422,15 @@ pub mod quick_xml_deserialize {
             let mut mask: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enum" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enum" {
                     helper.read_attrib(&mut enum_, b"enum", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"altenum" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"altenum" {
                     helper.read_attrib(&mut altenum, b"altenum", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"mask" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"mask" {
                     helper.read_attrib(&mut mask, b"mask", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -6519,15 +6520,15 @@ pub mod quick_xml_deserialize {
             let mut mask: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enum" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enum" {
                     helper.read_attrib(&mut enum_, b"enum", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"altenum" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"altenum" {
                     helper.read_attrib(&mut altenum, b"altenum", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"mask" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"mask" {
                     helper.read_attrib(&mut mask, b"mask", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -6721,36 +6722,36 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"op" {
+                if x.name().local_name().into_inner().as_bytes() == b"op" {
                     let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"unop" {
+                if x.name().local_name().into_inner().as_bytes() == b"unop" {
                     let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fieldref" {
+                if x.name().local_name().into_inner().as_bytes() == b"fieldref" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enumref" {
+                if x.name().local_name().into_inner().as_bytes() == b"enumref" {
                     let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"popcount" {
+                if x.name().local_name().into_inner().as_bytes() == b"popcount" {
                     let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"sumof" {
+                if x.name().local_name().into_inner().as_bytes() == b"sumof" {
                     let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
@@ -7534,15 +7535,15 @@ pub mod quick_xml_deserialize {
             let mut mask: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"enum" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"enum" {
                     helper.read_attrib(&mut enum_, b"enum", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"altenum" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"altenum" {
                     helper.read_attrib(&mut altenum, b"altenum", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"mask" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"mask" {
                     helper.read_attrib(&mut mask, b"mask", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -7739,36 +7740,36 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"op" {
+                if x.name().local_name().into_inner().as_bytes() == b"op" {
                     let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"unop" {
+                if x.name().local_name().into_inner().as_bytes() == b"unop" {
                     let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fieldref" {
+                if x.name().local_name().into_inner().as_bytes() == b"fieldref" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enumref" {
+                if x.name().local_name().into_inner().as_bytes() == b"enumref" {
                     let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"popcount" {
+                if x.name().local_name().into_inner().as_bytes() == b"popcount" {
                     let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"sumof" {
+                if x.name().local_name().into_inner().as_bytes() == b"sumof" {
                     let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
@@ -8484,11 +8485,11 @@ pub mod quick_xml_deserialize {
             let mut value_list_name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"value-mask-type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"value-mask-type" {
                     helper.read_attrib(&mut value_mask_type, b"value-mask-type", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"value-mask-name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"value-mask-name" {
                     helper.read_attrib(&mut value_mask_name, b"value-mask-name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"value-list-name" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"value-list-name" {
                     helper.read_attrib(&mut value_list_name, b"value-list-name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -8575,7 +8576,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -8791,56 +8792,56 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"op" {
+                if x.name().local_name().into_inner().as_bytes() == b"op" {
                     let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"unop" {
+                if x.name().local_name().into_inner().as_bytes() == b"unop" {
                     let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fieldref" {
+                if x.name().local_name().into_inner().as_bytes() == b"fieldref" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enumref" {
+                if x.name().local_name().into_inner().as_bytes() == b"enumref" {
                     let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"popcount" {
+                if x.name().local_name().into_inner().as_bytes() == b"popcount" {
                     let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"sumof" {
+                if x.name().local_name().into_inner().as_bytes() == b"sumof" {
                     let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bitcase" {
+                if x.name().local_name().into_inner().as_bytes() == b"bitcase" {
                     let output = <super::CaseexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_bitcase(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"pad" {
+                if x.name().local_name().into_inner().as_bytes() == b"pad" {
                     let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"list" {
+                if x.name().local_name().into_inner().as_bytes() == b"list" {
                     let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fd" {
+                if x.name().local_name().into_inner().as_bytes() == b"fd" {
                     let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), None, output);
                 }
@@ -10112,31 +10113,31 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"pad" {
+                if x.name().local_name().into_inner().as_bytes() == b"pad" {
                     let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"list" {
+                if x.name().local_name().into_inner().as_bytes() == b"list" {
                     let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fd" {
+                if x.name().local_name().into_inner().as_bytes() == b"fd" {
                     let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"valueparam" {
+                if x.name().local_name().into_inner().as_bytes() == b"valueparam" {
                     let output = <super::ValueparamType as WithDeserializer>::init(helper, event)?;
                     return self.handle_valueparam(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"switch" {
+                if x.name().local_name().into_inner().as_bytes() == b"switch" {
                     let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"doc" {
+                if x.name().local_name().into_inner().as_bytes() == b"doc" {
                     let output = <super::DocType as WithDeserializer>::init(helper, event)?;
                     return self.handle_doc(helper, Default::default(), None, output);
                 }
@@ -10956,27 +10957,27 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"brief" {
+                if x.name().local_name().into_inner().as_bytes() == b"brief" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_brief(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"description" {
+                if x.name().local_name().into_inner().as_bytes() == b"description" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_description(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"example" {
+                if x.name().local_name().into_inner().as_bytes() == b"example" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_example(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::FieldType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"error" {
+                if x.name().local_name().into_inner().as_bytes() == b"error" {
                     let output = <super::ErrorType as WithDeserializer>::init(helper, event)?;
                     return self.handle_error(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"see" {
+                if x.name().local_name().into_inner().as_bytes() == b"see" {
                     let output = <super::SeeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_see(helper, Default::default(), None, output);
                 }
@@ -11546,7 +11547,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -11702,12 +11703,12 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
@@ -11970,7 +11971,7 @@ pub mod quick_xml_deserialize {
             let mut op: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"op" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"op" {
                     helper.read_attrib(&mut op, b"op", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -12159,36 +12160,36 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"op" {
+                if x.name().local_name().into_inner().as_bytes() == b"op" {
                     let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"unop" {
+                if x.name().local_name().into_inner().as_bytes() == b"unop" {
                     let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fieldref" {
+                if x.name().local_name().into_inner().as_bytes() == b"fieldref" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enumref" {
+                if x.name().local_name().into_inner().as_bytes() == b"enumref" {
                     let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"popcount" {
+                if x.name().local_name().into_inner().as_bytes() == b"popcount" {
                     let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"sumof" {
+                if x.name().local_name().into_inner().as_bytes() == b"sumof" {
                     let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
@@ -12900,7 +12901,7 @@ pub mod quick_xml_deserialize {
             let mut op: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"op" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"op" {
                     helper.read_attrib(&mut op, b"op", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -13086,36 +13087,36 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"op" {
+                if x.name().local_name().into_inner().as_bytes() == b"op" {
                     let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"unop" {
+                if x.name().local_name().into_inner().as_bytes() == b"unop" {
                     let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fieldref" {
+                if x.name().local_name().into_inner().as_bytes() == b"fieldref" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enumref" {
+                if x.name().local_name().into_inner().as_bytes() == b"enumref" {
                     let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"popcount" {
+                if x.name().local_name().into_inner().as_bytes() == b"popcount" {
                     let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"sumof" {
+                if x.name().local_name().into_inner().as_bytes() == b"sumof" {
                     let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
@@ -13826,7 +13827,7 @@ pub mod quick_xml_deserialize {
             let mut ref_: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"ref" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"ref" {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -13990,36 +13991,36 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"op" {
+                if x.name().local_name().into_inner().as_bytes() == b"op" {
                     let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"unop" {
+                if x.name().local_name().into_inner().as_bytes() == b"unop" {
                     let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fieldref" {
+                if x.name().local_name().into_inner().as_bytes() == b"fieldref" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enumref" {
+                if x.name().local_name().into_inner().as_bytes() == b"enumref" {
                     let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"popcount" {
+                if x.name().local_name().into_inner().as_bytes() == b"popcount" {
                     let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"sumof" {
+                if x.name().local_name().into_inner().as_bytes() == b"sumof" {
                     let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
@@ -14720,7 +14721,7 @@ pub mod quick_xml_deserialize {
             let mut ref_: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"ref" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"ref" {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -14792,7 +14793,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -15001,56 +15002,56 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"op" {
+                if x.name().local_name().into_inner().as_bytes() == b"op" {
                     let output = <super::OpType as WithDeserializer>::init(helper, event)?;
                     return self.handle_op(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"unop" {
+                if x.name().local_name().into_inner().as_bytes() == b"unop" {
                     let output = <super::UnopType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unop(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fieldref" {
+                if x.name().local_name().into_inner().as_bytes() == b"fieldref" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_fieldref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"enumref" {
+                if x.name().local_name().into_inner().as_bytes() == b"enumref" {
                     let output = <super::EnumrefType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumref(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"popcount" {
+                if x.name().local_name().into_inner().as_bytes() == b"popcount" {
                     let output = <super::PopcountType as WithDeserializer>::init(helper, event)?;
                     return self.handle_popcount(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"sumof" {
+                if x.name().local_name().into_inner().as_bytes() == b"sumof" {
                     let output = <super::SumofType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sumof(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"value" {
+                if x.name().local_name().into_inner().as_bytes() == b"value" {
                     let output =
                         <super::DecOrHexIntegerType as WithDeserializer>::init(helper, event)?;
                     return self.handle_value(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"bit" {
+                if x.name().local_name().into_inner().as_bytes() == b"bit" {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_bit(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"pad" {
+                if x.name().local_name().into_inner().as_bytes() == b"pad" {
                     let output = <super::PadType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pad(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"field" {
+                if x.name().local_name().into_inner().as_bytes() == b"field" {
                     let output = <super::VarType as WithDeserializer>::init(helper, event)?;
                     return self.handle_field(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"list" {
+                if x.name().local_name().into_inner().as_bytes() == b"list" {
                     let output = <super::ListType as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"fd" {
+                if x.name().local_name().into_inner().as_bytes() == b"fd" {
                     let output = <super::AnyType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fd(helper, Default::default(), None, output);
                 }
-                if x.name().local_name().as_ref() == b"switch" {
+                if x.name().local_name().into_inner().as_bytes() == b"switch" {
                     let output = <super::SwitchexprType as WithDeserializer>::init(helper, event)?;
                     return self.handle_switch(helper, Default::default(), None, output);
                 }
@@ -16143,7 +16144,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -16270,7 +16271,7 @@ pub mod quick_xml_deserialize {
             let mut type_: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"type" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
@@ -16397,9 +16398,9 @@ pub mod quick_xml_deserialize {
             let mut type_: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                if attrib.key.local_name().as_ref() == b"name" {
+                if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
-                } else if attrib.key.local_name().as_ref() == b"type" {
+                } else if attrib.key.local_name().into_inner().as_bytes() == b"type" {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;

@@ -295,7 +295,7 @@ impl DynamicData<'_> {
         let variants_init_type = variants_init_type.is_empty().not().then(|| {
             let qname = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::QName");
             let get_qname = quote!(#qname(&type_name));
-            let get_type_name = quote!(type_name);
+            let get_type_name = quote!(type_name.as_bytes());
             let matcher = make_type_element_matcher(ctx, &get_qname, &get_type_name);
             let body = if let Some(default) = self.get_default_type_name(ctx) {
                 quote! {
@@ -424,12 +424,11 @@ impl DynamicData<'_> {
 
         let ident = &default.key;
         let s_name = ident.name.to_string();
-        let b_name = Literal::byte_string(s_name.as_bytes());
 
         let cow = resolve_quick_xml_ident!(ctx, "::alloc::borrow::Cow");
 
         Some(quote! {
-            #cow::Borrowed(#b_name)
+            #cow::Borrowed(#s_name)
         })
     }
 }
@@ -519,7 +518,7 @@ impl DerivedType<'_> {
             }
         } else {
             quote! {
-                if type_name == #b_name {
+                if type_name.as_bytes() == #b_name {
                     #body
                 }
             }
@@ -1349,7 +1348,7 @@ impl ComplexDataEnum<'_> {
 
         let elements_by_type = elements_by_type.is_empty().not().then(|| {
             let get_qname = quote!(x.name());
-            let get_type_name = quote!(x.name().local_name().as_ref());
+            let get_type_name = quote!(x.name().local_name().into_inner().as_bytes());
             let matcher = make_type_element_matcher(ctx, &get_qname, &get_type_name);
             let body = if let Some(default) = self.get_default_type_name(ctx) {
                 quote! {
@@ -1405,12 +1404,12 @@ impl ComplexDataEnum<'_> {
             .iter()
             .find(|x| x.meta().flags.contains(ElementMetaFlags::DEFAULT_ELEMENT))?;
 
-        let b_name = &default.b_name;
+        let s_name = &default.s_name;
 
         let cow = resolve_quick_xml_ident!(ctx, "::alloc::borrow::Cow");
 
         Some(quote! {
-            #cow::Borrowed(#b_name)
+            #cow::Borrowed(#s_name)
         })
     }
 
@@ -3271,7 +3270,7 @@ impl ComplexDataAttribute<'_> {
             *index += 1;
 
             Some(quote! {
-                #else_ if attrib.key.local_name().as_ref() == #b_name {
+                #else_ if attrib.key.local_name().into_inner().as_bytes() == #b_name {
                     helper.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
                 }
             })
@@ -3560,7 +3559,7 @@ impl ComplexDataElement<'_> {
             let qname = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::QName");
 
             let get_qname = quote!(#qname(&type_name));
-            let get_type_name = quote!(type_name);
+            let get_type_name = quote!(type_name.as_bytes());
 
             self.deserializer_enum_variant_init_element(ctx, &get_qname, &get_type_name)
         } else {
@@ -3578,7 +3577,7 @@ impl ComplexDataElement<'_> {
             .contains(ElementMetaFlags::IDENTIFY_BY_TAG)
         {
             let get_qname = quote!(x.name());
-            let get_type_name = quote!(x.name().local_name().as_ref());
+            let get_type_name = quote!(x.name().local_name().into_inner().as_bytes());
 
             self.deserializer_enum_variant_init_element(ctx, &get_qname, &get_type_name)
         } else {
@@ -4160,7 +4159,7 @@ impl ComplexDataElement<'_> {
         let handler_ident = self.handler_ident();
         let call_handler = quote!(self.#handler_ident(helper, output, &mut *fallback));
         let get_qname = quote!(x.name());
-        let get_type_name = quote!(x.name().local_name().as_ref());
+        let get_type_name = quote!(x.name().local_name().into_inner().as_bytes());
 
         self.deserializer_init_element(ctx, &call_handler, &get_qname, &get_type_name)
     }
@@ -5011,7 +5010,7 @@ impl KnownStartTags {
                 }
             } else {
                 quote! {
-                    if matches!(x.name().local_name().as_ref(), #( #names )|*) {
+                    if matches!(x.name().local_name().into_inner().as_bytes(), #( #names )|*) {
                         return true;
                     }
                 }

@@ -9,26 +9,26 @@ use super::Element;
 
 #[cfg(not(feature = "quick-xml"))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BytesText<'a>(std::borrow::Cow<'a, [u8]>);
+pub struct BytesText<'a>(std::borrow::Cow<'a, str>);
 
 #[cfg(not(feature = "quick-xml"))]
 impl<'a> std::ops::Deref for BytesText<'a> {
-    type Target = [u8];
+    type Target = str;
 
-    fn deref(&self) -> &[u8] {
+    fn deref(&self) -> &str {
         &self.0
     }
 }
 
 #[cfg(not(feature = "quick-xml"))]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct BytesCData<'a>(std::borrow::Cow<'a, [u8]>);
+pub struct BytesCData<'a>(std::borrow::Cow<'a, str>);
 
 #[cfg(not(feature = "quick-xml"))]
 impl<'a> std::ops::Deref for BytesCData<'a> {
-    type Target = [u8];
+    type Target = str;
 
-    fn deref(&self) -> &[u8] {
+    fn deref(&self) -> &str {
         &self.0
     }
 }
@@ -57,17 +57,17 @@ impl Debug for Value<'_> {
             Self::Element(element) => element.fmt(f)?,
             Self::Comment(comment) => {
                 write!(f, "Comment(\"")?;
-                format_utf8_slice(comment, f)?;
+                format_utf8_slice(comment.as_bytes(), f)?;
                 write!(f, "\")")?;
             }
             Self::CData(cdata) => {
                 write!(f, "CData(\"")?;
-                format_utf8_slice(cdata, f)?;
+                format_utf8_slice(cdata.as_bytes(), f)?;
                 write!(f, "\")")?;
             }
             Self::Text(text) => {
                 write!(f, "Text(\"")?;
-                format_utf8_slice(text, f)?;
+                format_utf8_slice(text.as_bytes(), f)?;
                 write!(f, "\")")?;
             }
         }

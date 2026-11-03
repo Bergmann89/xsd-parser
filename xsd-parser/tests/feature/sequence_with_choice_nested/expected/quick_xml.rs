@@ -314,7 +314,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut allow_any_element = false;
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"Foo" {
+                if x.name().local_name().into_inner().as_bytes() == b"Foo" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_foo(helper, Default::default(), None, output);
                 }
@@ -778,7 +778,7 @@ pub mod quick_xml_deserialize {
             event: Event<'de>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if x.name().local_name().as_ref() == b"Bar" {
+                if x.name().local_name().into_inner().as_bytes() == b"Bar" {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), None, output);
                 }

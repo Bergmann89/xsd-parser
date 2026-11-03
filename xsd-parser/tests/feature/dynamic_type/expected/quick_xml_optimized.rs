@@ -334,7 +334,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     let type_name = helper
                         .get_dynamic_type_from_attrib_bytes(x)?
-                        .unwrap_or(Cow::Borrowed(b"animal"))
+                        .unwrap_or(Cow::Borrowed("animal"))
                         .into_owned();
                     if matches!(
                         helper.resolve_local_name(QName(&type_name), &super::NS_TNS),

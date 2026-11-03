@@ -23,10 +23,7 @@ impl State<'_> {
             };
 
             for (key, derived) in &mut meta.derived_types {
-                loop {
-                    let Some((ident, derived_ty)) = self.types.get_resolved(&derived.type_) else {
-                        break;
-                    };
+                while let Some((ident, derived_ty)) = self.types.get_resolved(&derived.type_) {
                     if key.type_ != ident.type_ {
                         derived.type_ = ident.clone();
                         break;
