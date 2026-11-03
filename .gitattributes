@@ -1,1 +1,4 @@
 xsd-parser/tests/**/*.xml text eol=lf
+
+# Keep CRLF line endings to test schemas written on Windows
+xsd-parser/tests/feature/documentation/schema_crlf.xsd -text

@@ -116,11 +116,16 @@ impl Annotation {
                 }
             }
 
-            if !buffer.is_empty() {
-                let docu = from_utf8(&buffer)?;
-                let docu = unindent(docu).trim_end().to_owned();
+            // Normalize line endings like an XML processor does (XML 1.0, 2.11),
+            // otherwise `unindent` does not recognize `\r` lines as empty.
+            let docu = from_utf8(&buffer)?
+                .replace("\r\n", "\n")
+                .replace('\r', "\n");
+            let docu = unindent(&docu);
+            let docu = docu.trim_end().trim_start_matches('\n');
 
-                docs.push(docu);
+            if !docu.is_empty() {
+                docs.push(docu.to_owned());
             }
         }
 

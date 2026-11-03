@@ -1,5 +1,7 @@
 ///SomeDetails doc string 1
+///
 ///SomeDetails doc string 2
+///
 ///This is a multi line comment with mixed content.
 ///<div>
 ///    You could use for example HTML to apply some <b>formatting</b> to your documentation.
@@ -11,6 +13,11 @@ pub struct SomeDetailsType {
     ///Documentation for attributes is also possible.
     pub test_attrib: Option<IntType>,
     ///Unique user identifier. Range 1000-99999
+    ///
+    ///Documentation starting with empty lines.
+    ///  Relative indentation is kept.
+    ///
+    ///Empty lines inside the documentation are kept as well.
     pub id: IntType,
 }
 pub type IntType = i32;

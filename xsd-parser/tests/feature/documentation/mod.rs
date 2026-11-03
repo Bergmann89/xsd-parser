@@ -21,6 +21,15 @@ fn generate_default() {
     );
 }
 
+#[test]
+fn generate_default_crlf() {
+    generate_test(
+        "tests/feature/documentation/schema_crlf.xsd",
+        "tests/feature/documentation/expected/default.rs",
+        config(),
+    );
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod default {
     #![allow(unused_imports)]

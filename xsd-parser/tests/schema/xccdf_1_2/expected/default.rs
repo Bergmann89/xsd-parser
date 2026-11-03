@@ -2207,6 +2207,7 @@ pub mod cpe {
     }
     ///A reference to a check that always evaluates to a TRUE, FALSE, or ERROR
     ///result.
+    ///
     ///The CheckFactRefType complex type is used to define an element for holding
     ///information about an individual check. It includes a checking system specification URI, string content
     ///identifying the check content to invoke, and an external reference. The checking system specification
