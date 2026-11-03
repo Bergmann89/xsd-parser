@@ -56,6 +56,7 @@ fn generate_quick_xml() {
                 b"http://ns.editeur.org/onix/3.1/reference",
             )),
             false,
+            false,
         ),
     );
 }

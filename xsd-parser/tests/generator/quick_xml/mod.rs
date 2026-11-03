@@ -8,7 +8,7 @@ fn deserializer() {
         "tests/generator/quick_xml/schema.xsd",
         "tests/generator/quick_xml/expected/deserializer.rs",
         Config::test_default()
-            .with_quick_xml_deserialize_config(false)
+            .with_quick_xml_deserialize_config(false, false)
             .with_generate([
                 (IdentType::Type, "tns:MyChoice"),
                 (IdentType::Type, "tns:MySequence"),
@@ -22,7 +22,7 @@ fn deserializer_boxed() {
         "tests/generator/quick_xml/schema.xsd",
         "tests/generator/quick_xml/expected/deserializer_boxed.rs",
         Config::test_default()
-            .with_quick_xml_deserialize_config(true)
+            .with_quick_xml_deserialize_config(true, false)
             .with_generate([
                 (IdentType::Type, "tns:MyChoice"),
                 (IdentType::Type, "tns:MySequence"),

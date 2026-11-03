@@ -290,17 +290,24 @@ impl Config {
 
     /// Enable code generation for [`quick_xml`] deserialization with the default settings.
     pub fn with_quick_xml_deserialize(self) -> Self {
-        self.with_quick_xml_deserialize_config(false)
+        self.with_quick_xml_deserialize_config(false, false)
     }
 
     /// Enable render steps for [`quick_xml`] deserialization
     /// with the passed configuration.
-    pub fn with_quick_xml_deserialize_config(self, boxed_deserializer: bool) -> Self {
+    pub fn with_quick_xml_deserialize_config(
+        self,
+        boxed_deserializer: bool,
+        skip_unknown_elements: bool,
+    ) -> Self {
         self.with_render_steps([
             RenderStep::Types,
             RenderStep::Defaults,
             RenderStep::NamespaceConstants,
-            RenderStep::QuickXmlDeserialize { boxed_deserializer },
+            RenderStep::QuickXmlDeserialize {
+                boxed_deserializer,
+                skip_unknown_elements,
+            },
         ])
     }
 
@@ -317,9 +324,10 @@ impl Config {
         namespace_serialization: NamespaceSerialization,
         default_serialize_namespace: Option<Namespace>,
         boxed_deserializer: bool,
+        skip_unknown_elements: bool,
     ) -> Self {
         self.with_quick_xml_serialize_config(namespace_serialization, default_serialize_namespace)
-            .with_quick_xml_deserialize_config(boxed_deserializer)
+            .with_quick_xml_deserialize_config(boxed_deserializer, skip_unknown_elements)
     }
 
     /// Enable render steps for types with [`quick_xml`] serde support.

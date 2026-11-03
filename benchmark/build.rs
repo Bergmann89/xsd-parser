@@ -49,7 +49,7 @@ fn main() -> Result<(), Error> {
             .generate(
                 config
                     .with_quick_xml_serialize()
-                    .with_quick_xml_deserialize_config(true),
+                    .with_quick_xml_deserialize_config(true, false),
                 ["../xsd-parser/schema/XMLSchema.xsd"],
                 "xs_quick_xml_boxed.rs",
             )
@@ -85,7 +85,7 @@ fn main() -> Result<(), Error> {
                 config
                     .clone()
                     .with_quick_xml_serialize()
-                    .with_quick_xml_deserialize_config(true),
+                    .with_quick_xml_deserialize_config(true, false),
                 ["../xsd-parser/tests/schema/ideal_merchant_acquirer/schema.xsd"],
                 "ideal_merchant_acquirer_quick_xml_boxed.rs",
             )
