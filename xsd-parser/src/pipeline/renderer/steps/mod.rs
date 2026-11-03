@@ -48,7 +48,13 @@ impl Context<'_, '_> {
 
     pub(crate) fn render_docs(&self, flags: RendererFlags, docs: &[String]) -> Option<TokenStream> {
         self.check_renderer_flags(flags).then(|| {
-            let docs = docs.iter().flat_map(|s| s.split('\n')).map(|s| {
+            // Separate the single documentation entries by an empty line, so they
+            // are rendered as separate paragraphs.
+            let docs = docs
+                .iter()
+                .enumerate()
+                .flat_map(|(i, s)| (i > 0).then_some("").into_iter().chain(s.split('\n')));
+            let docs = docs.map(|s| {
                 let s = s.trim_end();
 
                 quote!(#[doc = #s])

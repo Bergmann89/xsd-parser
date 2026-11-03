@@ -71,6 +71,7 @@ impl WithDeserializer for SchemaElementTypeContent {
     type Deserializer = quick_xml_deserialize::SchemaElementTypeContentDeserializer;
 }
 ///A utility type, not for public use
+///
 ///#all or (possibly empty) subset of {extension, restriction, list, union}
 #[derive(Debug)]
 pub enum FullDerivationSetType {
@@ -97,6 +98,7 @@ impl DeserializeBytes for BlockSetItemList {
 }
 impl WithDeserializerFromBytes for BlockSetItemList {}
 ///A utility type, not for public use
+///
 ///#all or (possibly empty) subset of {substitution, extension,
 ///restriction}
 #[derive(Debug)]
@@ -262,6 +264,7 @@ pub struct TopLevelSimpleType {
     pub id: Option<String>,
     pub final_: Option<SimpleDerivationSetType>,
     ///Can be restricted to required or forbidden
+    ///
     ///Required at the top level
     pub name: String,
     pub content: Vec<LocalSimpleContent131Type>,
@@ -475,6 +478,7 @@ impl WithDeserializer for WildcardType {
     type Deserializer = quick_xml_deserialize::WildcardTypeDeserializer;
 }
 ///#all or (possibly empty) subset of {restriction, extension, union, list}
+///
 ///A utility type, not for public use
 #[derive(Debug)]
 pub enum SimpleDerivationSetType {
@@ -553,6 +557,7 @@ impl WithDeserializer for LocalSimpleContent131Type {
     type Deserializer = quick_xml_deserialize::LocalSimpleContent131TypeDeserializer;
 }
 ///A utility type, not for public use
+///
 ///#all or (possibly empty) subset of {extension, restriction}
 #[derive(Debug)]
 pub enum DerivationSetType {
