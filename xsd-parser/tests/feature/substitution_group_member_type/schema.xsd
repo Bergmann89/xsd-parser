@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://example.com" targetNamespace="http://example.com" elementFormDefault="qualified">
+  <xs:complexType name="BaseType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Member without a type takes the type of its head -->
+  <xs:element name="Head" type="tns:BaseType"/>
+  <xs:element name="Member" substitutionGroup="tns:Head"/>
+
+  <!-- Chain of members without a type, declared in reverse order -->
+  <xs:element name="Chain2" substitutionGroup="tns:Chain1"/>
+  <xs:element name="Chain1" substitutionGroup="tns:ChainHead"/>
+  <xs:element name="ChainHead" type="tns:BaseType"/>
+
+  <!-- Head without a type: the member stays xs:anyType -->
+  <xs:element name="UntypedHead" abstract="true"/>
+  <xs:element name="UntypedMember" substitutionGroup="tns:UntypedHead"/>
+</xs:schema>

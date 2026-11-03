@@ -1,6 +1,6 @@
 //! Regression test: substitution group members without a type are aliases of
-//! `xs:anyType`. In `TypedefMode::Typedef` this produced conflicting trait
-//! implementations (E0119) in xsd-parser 1.5.2 (without quick-xml too).
+//! the type of their head. In `TypedefMode::Typedef` this produced conflicting
+//! trait implementations (E0119) in xsd-parser 1.5.2 (without quick-xml too).
 
 use xsd_parser::{config::TypedefMode, Config, IdentType};
 

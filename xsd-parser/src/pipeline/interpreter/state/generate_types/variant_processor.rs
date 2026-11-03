@@ -253,8 +253,16 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
             init_any!(self, Reference, ReferenceMeta::new(type_), true);
         } else {
-            // No type content, default to `xs:anyType`
-            let ident = self.owner.resolve_xs_type(Name::ANY_TYPE)?;
+            // Without own type the element inherits the type of the first
+            // substitution group head, otherwise it defaults to `xs:anyType`
+            let ident = match &ty.substitution_group {
+                Some(groups) => self.substitution_head_type(groups)?,
+                None => None,
+            };
+            let ident = match ident {
+                Some(ident) => ident,
+                None => self.owner.resolve_xs_type(Name::ANY_TYPE)?,
+            };
 
             init_any!(self, Reference, ReferenceMeta::new(ident), true);
         }
@@ -1418,6 +1426,33 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
         }
 
         inner(self, groups, 0, &mut f)
+    }
+
+    fn substitution_head_type(&mut self, groups: &QNameList) -> Result<Option<TypeIdent>, Error> {
+        use crate::models::schema::xs::ElementTypeContent as C;
+
+        let Some(head) = groups.0.first() else {
+            return Ok(None);
+        };
+        let ident = self.owner.resolve_type_ident(head, IdentType::Element)?;
+
+        self.with_element_node(ident, |processor, element, ident| {
+            if let Some(type_) = &element.type_ {
+                return processor
+                    .owner
+                    .resolve_type_ident(type_, IdentType::Type)
+                    .map(Some);
+            }
+
+            if (element.content.iter()).any(|c| matches!(c, C::SimpleType(_) | C::ComplexType(_))) {
+                return Ok(Some(ident.with_type(IdentType::ElementType)));
+            }
+
+            match &element.substitution_group {
+                Some(groups) => processor.substitution_head_type(groups),
+                None => Ok(None),
+            }
+        })
     }
 
     fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>
