@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Bergmann89/xsd-parser/security/advisories/new
+    about: Please report security vulnerabilities privately, see SECURITY.md

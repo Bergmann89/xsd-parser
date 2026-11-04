@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a new feature or an improvement
+labels: ["feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What do you want to do, and why is it not possible or hard with the current version?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How could `xsd-parser` support this? Examples of the schema and the desired generated code help a lot.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: Workarounds or other solutions you have considered

@@ -1,0 +1,51 @@
+name: Bug report
+description: Generated code is wrong, does not compile, or xsd-parser fails for a schema
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Most problems depend on the schema and the configuration, so please fill in as much as possible.
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Versions of `xsd-parser` and `xsd-parser-types`
+      placeholder: xsd-parser 1.6.0, xsd-parser-types 0.3.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happens, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: schema
+    attributes:
+      label: Schema
+      description: The schema (or a minimal schema that reproduces the problem), or a link to it
+      render: xml
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Configuration
+      description: The `Config` you use to generate the code (flags, render steps, custom types)
+      render: rust
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error or generated code
+      description: The full error message, or the part of the generated code that is wrong or does not compile
+      render: text
+  - type: textarea
+    id: xml
+    attributes:
+      label: XML document
+      description: If (de)serialization fails, an XML document that reproduces the problem
+      render: xml
