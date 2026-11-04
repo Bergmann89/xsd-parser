@@ -56,6 +56,59 @@ This library provides the following features:
 - **`quick_xml` Support:** Direct serialization/deserialization support using [`quick_xml`](https://docs.rs/quick-xml), avoiding `serde` limitations and leveraging asynchronous features. Code generated for very large schemas may need a higher `#![recursion_limit]` (e.g. `256`) in the crate that includes it.
 
 
+# Getting Started
+
+The usual setup generates the code in the build script of your crate. Add `xsd-parser` as build dependency and `xsd-parser-types` (with the features your generated code needs, e.g. `quick-xml`) as normal dependency:
+
+```toml
+[dependencies]
+xsd-parser-types = { version = "0.3", features = ["quick-xml"] }
+
+[build-dependencies]
+xsd-parser = "1.6"
+```
+
+Then generate the code in `build.rs` and include it from your crate:
+
+```rust,no_run
+use std::{env, fs, path::PathBuf};
+
+use xsd_parser::{config::Schema, generate, Config, Error};
+
+fn main() -> Result<(), Error> {
+    let config = Config::default()
+        .with_schema(Schema::File("schema/my-schema.xsd".into()))
+        .with_quick_xml();
+
+    let code = generate(config)?;
+
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    fs::write(out_dir.join("my_schema.rs"), code.to_string())?;
+
+    Ok(())
+}
+```
+
+```rust,ignore
+// src/lib.rs
+pub mod my_schema {
+    include!(concat!(env!("OUT_DIR"), "/my_schema.rs"));
+}
+```
+
+The examples in [`xsd-parser/examples`](https://github.com/Bergmann89/xsd-parser/tree/master/xsd-parser/examples) and [`examples`](https://github.com/Bergmann89/xsd-parser/tree/master/examples) show more advanced setups, and the feature tests in [`xsd-parser/tests/feature`](https://github.com/Bergmann89/xsd-parser/tree/master/xsd-parser/tests/feature) contain a small schema, the used `Config` and the generated code for almost every feature.
+
+## Common Pitfalls
+
+- **`GeneratorFlags::all()` includes `ADVANCED_ENUMS`:** Advanced enums need the `RenderStep::EnumConstants` render step, otherwise the generated code does not compile (`VALUE_*` constants are missing). Either use `Config::with_advanced_enums`, which adds both, or remove the flag (`GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS`).
+- **`InterpreterFlags::all()` includes `WITH_NUM_BIG_INT`:** Unbounded XSD integer types are then generated as `num::BigInt` / `num::BigUint`. Add `num` to your dependencies and enable the `num` feature of `xsd-parser-types` if the types are (de)serialized with `quick-xml`.
+- **Features of `xsd-parser-types` must match the render steps:** Code generated with `quick-xml` support needs the `quick-xml` feature (and `async` for the async reader), `serde` support needs the `serde` feature, and the decoding types of `Config::with_base64binary_type` need the `base64` feature.
+- **Unknown elements are rejected by default:** The `quick-xml` deserializer fails on elements that are not part of the schema. Use the `skip_unknown_elements` option of `RenderStep::QuickXmlDeserialize` (or `Config::with_quick_xml_config`) to skip them.
+- **Dynamic types without `abstract`:** Types that are only used through `xsi:type` but are not declared as `abstract` must be marked with `Config::with_dynamic_type`, otherwise the derived types are not taken into account.
+- **Name conflicts:** If two schema types end up with the same Rust name, the generator returns a `DuplicateTypeName` error. Enable `GeneratorFlags::USE_MODULES` (one module per namespace) or assign custom names (see the `custom_names` and `custom_naming` examples).
+- **Very large schemas:** The generated code for large schemas may need a higher `#![recursion_limit]` (e.g. `256`) in the crate that includes it.
+
+
 # Planned Features
 
 - **Schema-Based Validation:** Generate validators directly from schemas to validate XML data during reading or writing.
