@@ -12,6 +12,7 @@ mod build_in;
 mod choice;
 mod choice_flatten_content;
 mod choice_single_option_defaults;
+mod choice_variant_state;
 mod choice_with_sequence;
 mod complex_type_empty;
 mod complex_type_with_group;

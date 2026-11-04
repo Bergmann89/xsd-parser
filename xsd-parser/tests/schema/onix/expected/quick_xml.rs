@@ -80733,6 +80733,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content303(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -81560,6 +81565,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content71(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -90878,6 +90888,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content155(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -110138,6 +110153,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content157(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -110684,6 +110704,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content282(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -120598,6 +120623,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content257(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -122167,6 +122197,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content178(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -123414,6 +123449,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content120(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -123448,6 +123488,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content121(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -123719,6 +123764,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content122(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -125053,6 +125103,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content272(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -130226,6 +130281,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content341(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -130260,6 +130320,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content342(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -142375,6 +142440,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content250(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -150097,6 +150167,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content183(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -155243,6 +155318,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Block(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -155277,6 +155357,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Inline(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -155311,6 +155396,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -156829,6 +156919,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content316(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -157422,6 +157517,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content206(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -157458,6 +157558,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content212(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -157494,6 +157599,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpStructuredName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -157531,6 +157641,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpCorporateName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -158744,6 +158859,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content253(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -158780,6 +158900,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content254(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -159589,6 +159714,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content88(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -163695,6 +163825,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content104(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -163729,6 +163864,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content105(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -163763,6 +163903,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content107(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -172064,6 +172209,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content264(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -173609,6 +173759,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content241(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -178433,6 +178588,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content320(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -180397,6 +180557,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content268(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -181051,6 +181216,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content323(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -181540,6 +181710,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content328(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -183279,6 +183454,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content216(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -184221,6 +184401,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content309(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -190570,6 +190755,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content110(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -191134,6 +191324,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content352(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -191168,6 +191363,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content356(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -191202,6 +191402,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content360(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -192419,6 +192624,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content126(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -192453,6 +192663,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content132(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -192489,6 +192704,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpStructuredName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -192526,6 +192746,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpCorporateName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -201158,6 +201383,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Block(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -201671,6 +201901,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content59(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -201705,6 +201940,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content62(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -203758,6 +203998,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content211(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -204187,6 +204432,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content77(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -204223,6 +204473,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content83(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -204259,6 +204514,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpStructuredName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -204296,6 +204556,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpCorporateName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -208935,6 +209200,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content259(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -209435,6 +209705,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content175(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -214727,6 +215002,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content147(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -215250,6 +215530,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content190(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -217707,6 +217992,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpResourceSpecification(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -219146,6 +219436,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content296(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -228193,6 +228488,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content222(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -232491,6 +232791,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content131(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -233350,6 +233655,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content137(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -236812,6 +237122,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Phrase(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -236846,6 +237161,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Gloss(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -236880,6 +237200,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -239501,6 +239826,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Special(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -239535,6 +239865,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Fontstyle(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -239569,6 +239904,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Phrase(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -239603,6 +239943,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Gloss(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -239637,6 +239982,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -241275,6 +241625,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content208(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -241311,6 +241666,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpStructuredName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -241348,6 +241708,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpCorporateName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -244494,6 +244859,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content82(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -248992,6 +249362,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content142(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -259287,6 +259662,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content162(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -260731,6 +261111,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content354(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -261036,6 +261421,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content358(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -261948,6 +262338,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content128(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -261984,6 +262379,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpStructuredName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -262021,6 +262421,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpCorporateName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -263795,6 +264200,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content61(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -264720,6 +265130,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content210(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -265095,6 +265510,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content79(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -265131,6 +265551,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpStructuredName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -265168,6 +265593,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::GpCorporateName(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -272276,6 +272706,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content130(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -273022,6 +273457,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Special(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -273056,6 +273496,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Fontstyle(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -273090,6 +273535,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Phrase(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -273124,6 +273574,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -274412,6 +274867,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content81(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -278208,6 +278668,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content338(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -278242,6 +278707,11 @@ pub mod onix {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Content339(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {

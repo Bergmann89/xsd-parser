@@ -18795,6 +18795,11 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -22219,6 +22224,11 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -23008,6 +23018,11 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {
@@ -27077,6 +27092,11 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
+                    let fresh = values.is_none() && fallback.is_none();
+                    *self.state__ = S::Text(values, None, fallback);
+                    if !fresh {
+                        return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                    }
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(deserializer) = fallback {

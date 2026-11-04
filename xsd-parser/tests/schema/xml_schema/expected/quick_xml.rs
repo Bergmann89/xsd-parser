@@ -9475,6 +9475,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
+                let fresh = values.is_none() && fallback.is_none();
+                *self.state__ = S::Facet(values, None, fallback);
+                if !fresh {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(deserializer) = fallback {
@@ -18947,6 +18952,11 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
+                let fresh = values.is_none() && fallback.is_none();
+                *self.state__ = S::Facet(values, None, fallback);
+                if !fresh {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(deserializer) = fallback {

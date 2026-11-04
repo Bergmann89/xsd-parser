@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <!-- Choice with a sequence group as variant. -->
+    <xs:group name="PQ">
+        <xs:sequence>
+            <xs:element name="P" type="xs:string"/>
+            <xs:element name="Q" type="xs:string"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:element name="GroupPick">
+        <xs:complexType>
+            <xs:choice>
+                <xs:group ref="tns:PQ"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Choice with a choice group as variant. -->
+    <xs:group name="UV">
+        <xs:choice>
+            <xs:element name="U" type="xs:string"/>
+            <xs:element name="V" type="xs:string"/>
+        </xs:choice>
+    </xs:group>
+
+    <xs:element name="ChoiceGroupPick">
+        <xs:complexType>
+            <xs:choice>
+                <xs:group ref="tns:UV"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Choice with a dynamic type as variant. -->
+    <xs:complexType name="animal">
+        <xs:attribute name="id" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:element name="DynPick">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="animal" type="tns:animal"/>
+                <xs:element name="Y" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Mixed choice without mixed type support. -->
+    <xs:element name="MixedPick">
+        <xs:complexType mixed="true">
+            <xs:choice>
+                <xs:element name="A" type="xs:string"/>
+                <xs:element name="B" type="xs:string"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
