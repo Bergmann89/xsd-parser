@@ -490,7 +490,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_simple_content(&mut self, ty: &'schema SimpleContent) -> Result<(), Error> {
-        use crate::models::schema::xs::SimpleContentContent as C;
+        use crate::models::schema::xs::ContentType as C;
 
         self.content_mode = ContentMode::Simple;
 
@@ -507,7 +507,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_complex_content(&mut self, ty: &'schema ComplexContent) -> Result<(), Error> {
-        use crate::models::schema::xs::ComplexContentContent as C;
+        use crate::models::schema::xs::ContentType as C;
 
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {

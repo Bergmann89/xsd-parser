@@ -25,7 +25,7 @@ use xsd_parser::models::code::IdentPath;
 use xsd_parser::models::data::{
     ComplexData, ConfigValue, DataType, DataTypeVariant, Occurs, PathData, ReferenceData,
 };
-use xsd_parser::models::meta::{CustomMeta, MetaType, ReferenceMeta};
+use xsd_parser::models::meta::{CustomMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta};
 use xsd_parser::models::schema::MaxOccurs;
 use xsd_parser::pipeline::generator::{
     Context as GeneratorContext, Error as GeneratorError, ValueGeneratorMode,
@@ -122,6 +122,8 @@ fn main() -> Result<(), Error> {
     //      of other types.
     //   -  Disables name postfixing for elements and element types, as the schema
     //      already uses distinct names.
+    //   -  Uses the `Type` postfix for the content types of abstract types (like
+    //      `xs:element`), because the restricted types are merged into them.
     //   -  Instructs the generator to produce code for the xs:schema element and
     //      its dependent types.
     //   -  Derives the generated types from `Debug`, `Clone`, `Eq`, and `PartialEq`.
@@ -135,6 +137,7 @@ fn main() -> Result<(), Error> {
         - GeneratorFlags::ADVANCED_ENUMS;
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();
+    config.generator.type_postfix.dynamic_element = String::from("Type");
     config.generator.generate = Generate::Types(vec![IdentQuadruple::from((
         IdentType::ElementType,
         "xs:schema",
@@ -155,6 +158,7 @@ fn main() -> Result<(), Error> {
     let (meta_types, ident_cache) =
         exec_interpreter_with_ident_cache(config.interpreter, &schemas)?;
     let meta_types = exec_optimizer(config.optimizer, meta_types)?;
+    let meta_types = patch_meta_types(&schemas, meta_types)?;
     let data_types = exec_generator_with_ident_cache(
         config.generator,
         &schemas,
@@ -169,6 +173,27 @@ fn main() -> Result<(), Error> {
     write(output, &code)?;
 
     Ok(())
+}
+
+fn patch_meta_types(schemas: &Schemas, mut types: MetaTypes) -> Result<MetaTypes, Error> {
+    /* xs:simpleContent and xs:complexContent share the same content type */
+    let ident = IdentQuadruple::from((IdentType::ElementType, "xs:simpleContent"));
+    let ident = ident.resolve(schemas)?;
+
+    let Some(MetaTypeVariant::ComplexType(ci)) = types.get_variant(&ident) else {
+        anyhow::bail!("Expected xs:simpleContent to be a complex type");
+    };
+    let content = ci
+        .content
+        .clone()
+        .context("Expected xs:simpleContent to have a content type")?;
+    let content = types
+        .items
+        .get_mut(&content)
+        .context("Unable to get content type of xs:simpleContent")?;
+    content.display_name = Some(String::from("ContentType"));
+
+    Ok(types)
 }
 
 fn patch_data_types<'types>(
