@@ -34,11 +34,14 @@ impl BaseMap {
                     ret.insert(ident.clone(), Base::Restriction(si.base.clone()));
                 }
                 MetaTypeVariant::ComplexType(ci) => {
-                    if matches!(
-                        ci.base.as_ident().and_then(|base| types.get_variant(base)),
-                        Some(MetaTypeVariant::ComplexType(_))
-                    ) {
-                        ret.insert(ident.clone(), ci.base.clone());
+                    let base = match &ci.base {
+                        Base::None => None,
+                        Base::Extension(x) => complex_base(types, x).map(Base::Extension),
+                        Base::Restriction(x) => complex_base(types, x).map(Base::Restriction),
+                    };
+
+                    if let Some(base) = base {
+                        ret.insert(ident.clone(), base);
                     }
                 }
                 _ => (),
@@ -53,5 +56,18 @@ impl BaseMap {
             Some(Base::Restriction(base)) => self.get_unrestricted(base),
             _ => ident,
         }
+    }
+}
+
+/// Returns the complex type of `ident`. For a dynamic type this is the type
+/// that stores its content.
+fn complex_base(types: &MetaTypes, ident: &TypeIdent) -> Option<TypeIdent> {
+    match types.get_variant(ident)? {
+        MetaTypeVariant::ComplexType(_) => Some(ident.clone()),
+        MetaTypeVariant::Dynamic(dm) => dm
+            .type_
+            .clone()
+            .filter(|x| matches!(types.get_variant(x), Some(MetaTypeVariant::ComplexType(_)))),
+        _ => None,
     }
 }

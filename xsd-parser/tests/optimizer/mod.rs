@@ -66,6 +66,21 @@ fn use_unrestricted_base_type() {
 }
 
 #[test]
+fn use_unrestricted_base_type_abstract() {
+    optimizer_test(
+        "tests/optimizer/complex_restricted_abstract.xsd",
+        "tests/optimizer/expected0/use_unrestricted_base_type_abstract.rs",
+        "tests/optimizer/expected1/use_unrestricted_base_type_abstract.rs",
+        [
+            (IdentType::Type, "tns:FirstRestrictedType"),
+            (IdentType::Type, "tns:SecondRestrictedType"),
+            (IdentType::Type, "tns:ThirdRestrictedType"),
+        ],
+        OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE,
+    );
+}
+
+#[test]
 fn convert_dynamic_to_choice() {
     optimizer_test(
         "tests/optimizer/abstract.xsd",
