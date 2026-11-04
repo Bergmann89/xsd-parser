@@ -11409,6 +11409,10 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
+                    (state, Event::Text(_) | Event::CData(_)) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::None, false);
+                    }
                     (S::Init__, event) => match self.find_suitable(helper, event)? {
                         ElementHandlerOutput::Break { event, allow_any } => {
                             break (event, allow_any)
@@ -11500,10 +11504,6 @@ pub mod quick_xml_deserialize {
                     (state @ S::Done__(_), event) => {
                         *self.state__ = state;
                         break (DeserializerEvent::Continue(event), false);
-                    }
-                    (state, Event::Text(_) | Event::CData(_)) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::None, false);
                     }
                     (state, event) => {
                         *self.state__ = state;

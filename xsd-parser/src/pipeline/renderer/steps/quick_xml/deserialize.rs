@@ -1659,6 +1659,7 @@ impl ComplexDataEnum<'_> {
                             allow_any: false,
                         });
                     }
+                    #handler_mixed
                     (S::Init__, event) => match self.find_suitable(helper, event)? {
                         #element_handler_output::Break { event, allow_any } => break (event, allow_any),
                         #element_handler_output::Continue { event, .. } => event,
@@ -1669,7 +1670,6 @@ impl ComplexDataEnum<'_> {
 
                         break (#deserializer_event::Continue(event), false);
                     },
-                    #handler_mixed
                     (state, event) => {
                         *self.state__ = state;
                         break (#deserializer_event::Continue(event), false);
@@ -3858,9 +3858,10 @@ impl ComplexDataElement<'_> {
         let none_handler = match (is_defaultable, self.occurs) {
             (_, Occurs::None) => unreachable!(),
             // Single or optional element: From `find_suitable` we continue/return.
-            // With skipping, after a collected value the state is kept and the event goes to the root.
+            // With skipping, or for groups and dynamic types that continue, the state
+            // is kept and after a collected value the event goes to the root.
             (_, Occurs::Single | Occurs::Optional) => {
-                let keep_state = skip_unknown_elements(ctx).then(|| {
+                let keep_state = (skip_unknown_elements(ctx) || uses_from_event).then(|| {
                     let after_value = uses_from_event.then(|| {
                         quote! {
                             if !fresh {
