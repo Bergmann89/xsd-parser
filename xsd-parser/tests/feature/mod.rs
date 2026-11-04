@@ -32,6 +32,7 @@ mod element_default_with_simple_content;
 mod element_refs_with_ns;
 mod element_without_type;
 mod empty_string;
+mod encoding;
 mod enumeration;
 mod enumeration_with_annotation;
 mod extension_base;

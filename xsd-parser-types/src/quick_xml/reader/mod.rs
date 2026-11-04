@@ -1,6 +1,7 @@
 //! Defines and implements different helper traits that are needed for the
 //! deserialization process with the [`quick_xml`] crate.
 
+mod decoding_io_reader;
 mod error_reader;
 mod io_reader;
 mod slice_reader;
@@ -10,6 +11,7 @@ use std::future::Future;
 
 use quick_xml::events::Event;
 
+pub use self::decoding_io_reader::DecodingIoReader;
 pub use self::error_reader::ErrorReader;
 pub use self::io_reader::IoReader;
 pub use self::slice_reader::SliceReader;
