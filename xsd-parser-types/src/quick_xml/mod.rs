@@ -4,6 +4,7 @@
 pub mod reader;
 
 mod deserialize;
+mod encoding_writer;
 mod error;
 mod serialize;
 
@@ -11,6 +12,7 @@ use std::sync::LazyLock;
 
 pub use std::io::Write as XmlWrite;
 
+pub use encoding_rs::Encoding;
 pub use quick_xml::{
     events::{BytesCData, BytesDecl, BytesEnd, BytesPI, BytesStart, BytesText, Event},
     name::{LocalName, Namespace, QName, ResolveResult},
@@ -26,8 +28,11 @@ pub use self::deserialize::{
     DeserializerOutput, DeserializerResult, ElementHandlerOutput, WithDeserializer,
     WithDeserializerFromBytes,
 };
+pub use self::encoding_writer::EncodingWriter;
 pub use self::error::{Error, Kind as ErrorKind, UnionError, ValidateError};
-pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
+pub use self::reader::{
+    DecodingIoReader, ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync,
+};
 pub use self::serialize::{
     BoxedSerializer, CollectNamespaces, ContentSerializer, DerefIter, IterSerializer,
     SerializeBytes, SerializeBytesToString, SerializeHelper, SerializeSync, Serializer,

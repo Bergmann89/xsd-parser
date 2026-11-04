@@ -103,6 +103,7 @@ The examples in [`xsd-parser/examples`](https://github.com/Bergmann89/xsd-parser
 - **`GeneratorFlags::all()` includes `ADVANCED_ENUMS`:** Advanced enums need the `RenderStep::EnumConstants` render step, otherwise the generated code does not compile (`VALUE_*` constants are missing). Either use `Config::with_advanced_enums`, which adds both, or remove the flag (`GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS`).
 - **`InterpreterFlags::all()` includes `WITH_NUM_BIG_INT`:** Unbounded XSD integer types are then generated as `num::BigInt` / `num::BigUint`. Add `num` to your dependencies and enable the `num` feature of `xsd-parser-types` if the types are (de)serialized with `quick-xml`.
 - **Features of `xsd-parser-types` must match the render steps:** Code generated with `quick-xml` support needs the `quick-xml` feature (and `async` for the async reader), `serde` support needs the `serde` feature, and the decoding types of `Config::with_base64binary_type` need the `base64` feature.
+- **Documents that are not UTF-8:** The `IoReader` and `SliceReader` only accept UTF-8. Use the `DecodingIoReader` of `xsd-parser-types` to read other encodings (detected from the BOM or the XML declaration, sync only), and the `EncodingWriter` to write them. Its `write_document` method writes the value as complete document with a matching XML declaration (the serializers themselves never write a declaration).
 - **Unknown elements are rejected by default:** The `quick-xml` deserializer fails on elements that are not part of the schema. Use the `skip_unknown_elements` option of `RenderStep::QuickXmlDeserialize` (or `Config::with_quick_xml_config`) to skip them.
 - **Dynamic types without `abstract`:** Types that are only used through `xsi:type` but are not declared as `abstract` must be marked with `Config::with_dynamic_type`, otherwise the derived types are not taken into account.
 - **Name conflicts:** If two schema types end up with the same Rust name, the generator returns a `DuplicateTypeName` error. Enable `GeneratorFlags::USE_MODULES` (one module per namespace) or assign custom names (see the `custom_names` and `custom_naming` examples).
@@ -149,6 +150,11 @@ The benchmarks were created on the following system:
 # Changelog
 
 Below you can find a short list of the most important changes for each released version.
+
+## xsd-parser-types 0.3.1
+
+- **Reading and Writing Other Encodings**
+  `xsd-parser-types` 0.3.1 adds the `DecodingIoReader`, which decodes the input based on the BOM or the XML declaration (e.g. `Windows-1251` or `UTF-16`), and the `EncodingWriter`, which encodes the serialized output (`write_document` writes a complete document including the matching XML declaration). Since the upgrade to `quick-xml` 0.42 the `IoReader` only accepts UTF-8.
 
 ## Version 1.6.0
 
