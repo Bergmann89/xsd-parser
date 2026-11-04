@@ -97,6 +97,68 @@ The benchmarks were created on the following system:
 
 Below you can find a short list of the most important changes for each released version.
 
+## Version 1.6.0
+
+This release adds proper support for dynamic and abstract types, opt-in skipping of unknown elements and dedicated types for binary data. It also upgrades `quick-xml` to 0.42 and fixes a long list of issues found with real-world schemas. Because `xsd-parser-types` re-exports `quick-xml` types, it gets a new minor version (`0.3.0`). Please have a look at the breaking changes at the end of this section before upgrading.
+
+- **Proper Support for Dynamic and Abstract Types**
+  Abstract complex types and types configured as dynamic (`Config::with_dynamic_type`) are now generated as dynamic types, also in combination with substitution groups. The concrete types of a substitution group or a dynamic type use a separate postfix (`Dyn` by default, see `Config::with_dynamic_element_postfix`). The new optimizer flag `MERGE_DYNAMIC_TYPES` stores substitution group members and derived types of the same element in one dynamic type.
+
+- **Opt-In Skipping of Unknown Elements**
+  The `quick_xml` deserializer can now skip unknown elements including their whole subtree. The option is enabled with the new `skip_unknown_elements` field of `RenderStep::QuickXmlDeserialize` (or the new parameter of `Config::with_quick_xml_deserialize_config` and `Config::with_quick_xml_config`). Known elements at an unexpected position still fail. Without the option the generated code is unchanged and unknown elements are rejected.
+
+- **Types for `base64` and `hex` Encoded Data**
+  `xs:base64Binary` and `xs:hexBinary` are now mapped to the new `Base64String` and `HexString` types of `xsd-parser-types`, which keep the encoded value, instead of `String`. Length facets are now checked against the decoded data instead of the encoded string. The decoding variants `Base64Binary` and `HexBinary` can be used with `Config::with_base64binary_type` and `Config::with_hexbinary_type`.
+
+- **Upgrade to `quick-xml` 0.42**
+  `quick-xml` was upgraded from 0.38 to 0.42 (including the fixes for the RustSec DoS advisories of older versions). The byte-based API of `xsd-parser-types` stays as it is, the changes are handled at the `quick-xml` boundary. Input that is not valid UTF-8 is now rejected with an encoding error. The required toolchain was raised to Rust 1.95 and all other dependencies were updated to their latest versions.
+
+- **Custom Generator Code**
+  Custom types (`CustomMeta`) can carry a `CustomGenerator` that is executed when the generator processes the type, for example to generate dependent types or to resolve type paths.
+
+- **Helper Functions for Flattened Content**
+  The new `RenderStep::ContentHelpers` generates accessor methods for structs with flattened content (e.g. `fn private_note(&self) -> Option<&String>`).
+
+- **Shared Content Types**
+  Complex types that use the same content (e.g. through the same `xs:group`) now share one generated content type instead of getting a copy per owner.
+
+- **Configurable Name for Content Fields**
+  The name of the generated content field can be changed with `Config::with_content_display_name`, to avoid conflicts with schema attributes or elements called `content`.
+
+- **Better Error Reporting**
+  - The interpreter returns errors instead of panicking for types that are missing or not generated yet, and `InterpreterError::NoType` names the affected type
+  - The generator returns the new `Error::DuplicateTypeName` if two schema types would be generated with the same name, instead of producing code that does not compile
+  - Invalid user provided identifier paths (derives, includes of custom types) return errors instead of panicking
+  - File resolver and parser errors now contain the affected file path (`FileResolverError`, `InvalidFilePath`)
+
+- **Additional Bug Fixes**
+  - Fixed a panic for derived types that are declared before their base type
+  - Fixed a panic in the interpreter for multiple schemas without `RESOLVE_INCLUDES`
+  - Fixed `xs:pattern` facets of different derivation steps, they are now combined with AND as required by the XSD specification
+  - Fixed substitution group members without a type, they now use the type of their head instead of `xs:anyType`
+  - Fixed global attributes without a type, they now use `xs:string` like local attributes
+  - Fixed `quick_xml` (de)serialization of newtypes of complex types (`TypedefMode::NewType`)
+  - Fixed default values of `xs:element` for simple content types (e.g. extensions of `xs:boolean`)
+  - Fixed `quick_xml` deserialization of choices with a group variant followed by an unexpected element, and of mixed choices with leading text
+  - Fixed the trait implementation of dynamic types for derived types that are generated before their base
+  - Fixed boxing of recursive types through shared content types
+  - Fixed `USE_UNRESTRICTED_BASE_TYPE_COMPLEX` for types that restrict an abstract base type
+  - Fixed `xmlns` emission for schemas with unqualified elements
+  - Fixed `GENERATE_PREFIXES` not assigning the generated prefix to the namespace
+  - Fixed the `Default` implementation of defaultable choices with a single option
+  - Fixed render steps being added twice by the config helpers
+  - `xs:documentation` entries are now rendered as separate paragraphs, and documentation with CRLF line endings is unindented correctly
+  - `xsd-parser-types` can be built with the `xml` feature but without `quick-xml`
+
+- **Breaking Changes**
+  - `xsd-parser-types` 0.3.0: `quick-xml` types in the public API changed with the upgrade to 0.42. `read_attrib` takes the attribute value as `&str`, the dynamic type name helpers return `Cow<str>`, and `Key::qname`, `Key::prefix_decl`, `Value::namespace` and `Element::qname` return a `Result`.
+  - Input that is not valid UTF-8 is rejected by the `quick_xml` deserializer.
+  - Building requires a newer compiler, the pinned toolchain was raised from Rust 1.86 to 1.95.
+  - `RenderStep::QuickXmlDeserialize` has the new `skip_unknown_elements` field, and `Config::with_quick_xml_deserialize_config` and `Config::with_quick_xml_config` take an additional parameter.
+  - `Constrains::patterns` is grouped per derivation step (`Vec<Vec<String>>`), and the generated pattern validation is stricter.
+  - `InterpreterError::NoType` carries the identifier of the affected type, and the generator error has the new variant `DuplicateTypeName`.
+  - The generated code changes for several schemas: abstract types are generated as dynamic types, content types may be shared between complex types, `xs:base64Binary` and `xs:hexBinary` use the new types, and substitution group members without a type use the type of their head.
+
 ## Version 1.5.0
 
 This release introduces several new schema features, a refactored identifier system, improved deserialization, and a range of bug fixes targeting real-world XSD compatibility.
