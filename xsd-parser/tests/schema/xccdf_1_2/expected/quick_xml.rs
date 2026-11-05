@@ -272,7 +272,7 @@ pub mod cdf {
         pub lang: Option<String>,
         ///Used to manage inheritance.
         pub override_: bool,
-        pub content: Vec<FixTextContent35Type>,
+        pub content: Vec<HtmlTextWithSubTypeContentType>,
     }
     impl HtmlTextWithSubType {
         #[must_use]
@@ -1642,7 +1642,7 @@ pub mod cdf {
         type Deserializer = quick_xml_deserialize::SubTypeDeserializer;
     }
     #[derive(Debug)]
-    pub enum FixTextContent35Type {
+    pub enum HtmlTextWithSubTypeContentType {
         ///Specifies an xccdf:Value or
         ///xccdf:plain-text element to be used for text
         ///substitution
@@ -1650,23 +1650,27 @@ pub mod cdf {
         Any(AnyElement),
         Text(Text),
     }
-    impl WithSerializer for FixTextContent35Type {
-        type Serializer<'x> = quick_xml_serialize::FixTextContent35TypeSerializer<'x>;
+    impl WithSerializer for HtmlTextWithSubTypeContentType {
+        type Serializer<'x> = quick_xml_serialize::HtmlTextWithSubTypeContentTypeSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
-            Ok(quick_xml_serialize::FixTextContent35TypeSerializer {
-                value: self,
-                state: Box::new(quick_xml_serialize::FixTextContent35TypeSerializerState::Init__),
-                is_root,
-            })
+            Ok(
+                quick_xml_serialize::HtmlTextWithSubTypeContentTypeSerializer {
+                    value: self,
+                    state: Box::new(
+                        quick_xml_serialize::HtmlTextWithSubTypeContentTypeSerializerState::Init__,
+                    ),
+                    is_root,
+                },
+            )
         }
     }
-    impl WithDeserializer for FixTextContent35Type {
-        type Deserializer = quick_xml_deserialize::FixTextContent35TypeDeserializer;
+    impl WithDeserializer for HtmlTextWithSubTypeContentType {
+        type Deserializer = quick_xml_deserialize::HtmlTextWithSubTypeContentTypeDeserializer;
     }
     /// Type for a parameter used in the xccdf:model
     ///element, which records scoring model information. The contents of this type
@@ -2136,7 +2140,7 @@ pub mod cdf {
         ///A hint as to the nature of the
         ///warning.
         pub category: WarningCategoryEnumType,
-        pub content: Vec<FixTextContent35Type>,
+        pub content: Vec<HtmlTextWithSubTypeContentType>,
     }
     impl WarningType {
         #[must_use]
@@ -2670,7 +2674,7 @@ pub mod cdf {
         ///The estimated complexity or difficulty of
         ///applying the fix to the target.
         pub complexity: RatingEnumType,
-        pub content: Vec<FixTextContent35Type>,
+        pub content: Vec<HtmlTextWithSubTypeContentType>,
     }
     impl FixTextType {
         #[must_use]
@@ -6654,14 +6658,14 @@ pub mod cdf {
         pub struct HtmlTextWithSubTypeDeserializer {
             lang: Option<String>,
             override_: bool,
-            content: Vec<super::FixTextContent35Type>,
+            content: Vec<super::HtmlTextWithSubTypeContentType>,
             state__: Box<HtmlTextWithSubTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum HtmlTextWithSubTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::FixTextContent35Type as WithDeserializer>::Deserializer),
+            Content__(<super::HtmlTextWithSubTypeContentType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl HtmlTextWithSubTypeDeserializer {
@@ -6705,14 +6709,17 @@ pub mod cdf {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::FixTextContent35Type) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::HtmlTextWithSubTypeContentType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::FixTextContent35Type>,
+                output: DeserializerOutput<'de, super::HtmlTextWithSubTypeContentType>,
                 fallback: &mut Option<HtmlTextWithSubTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use HtmlTextWithSubTypeDeserializerState as S;
@@ -6780,9 +6787,10 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::FixTextContent35Type as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::HtmlTextWithSubTypeContentType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18588,11 +18596,11 @@ pub mod cdf {
             }
         }
         #[derive(Debug)]
-        pub struct FixTextContent35TypeDeserializer {
-            state__: Box<FixTextContent35TypeDeserializerState>,
+        pub struct HtmlTextWithSubTypeContentTypeDeserializer {
+            state__: Box<HtmlTextWithSubTypeContentTypeDeserializerState>,
         }
         #[derive(Debug)]
-        pub enum FixTextContent35TypeDeserializerState {
+        pub enum HtmlTextWithSubTypeContentTypeDeserializerState {
             Init__,
             Sub(
                 Option<super::SubType>,
@@ -18609,10 +18617,10 @@ pub mod cdf {
                 Option<<Text as WithDeserializer>::Deserializer>,
                 Option<<Text as WithDeserializer>::Deserializer>,
             ),
-            Done__(super::FixTextContent35Type),
+            Done__(super::HtmlTextWithSubTypeContentType),
             Unknown__,
         }
-        impl FixTextContent35TypeDeserializer {
+        impl HtmlTextWithSubTypeContentTypeDeserializer {
             fn find_suitable<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
@@ -18646,14 +18654,14 @@ pub mod cdf {
                         }
                     }
                 };
-                *self.state__ = FixTextContent35TypeDeserializerState::Init__;
+                *self.state__ = HtmlTextWithSubTypeContentTypeDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state(
                 helper: &mut DeserializeHelper,
-                state: FixTextContent35TypeDeserializerState,
-            ) -> Result<super::FixTextContent35Type, Error> {
-                use FixTextContent35TypeDeserializerState as S;
+                state: HtmlTextWithSubTypeContentTypeDeserializerState,
+            ) -> Result<super::HtmlTextWithSubTypeContentType, Error> {
+                use HtmlTextWithSubTypeContentTypeDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Sub(mut values, None, deserializer) => {
@@ -18661,7 +18669,7 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_sub(&mut values, value)?;
                         }
-                        Ok(super::FixTextContent35Type::Sub(
+                        Ok(super::HtmlTextWithSubTypeContentType::Sub(
                             helper.finish_element("sub", values)?,
                         ))
                     }
@@ -18670,7 +18678,7 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_any(&mut values, value)?;
                         }
-                        Ok(super::FixTextContent35Type::Any(
+                        Ok(super::HtmlTextWithSubTypeContentType::Any(
                             helper.finish_element("any21", values)?,
                         ))
                     }
@@ -18679,7 +18687,7 @@ pub mod cdf {
                             let value = deserializer.finish(helper)?;
                             Self::store_text(&mut values, value)?;
                         }
-                        Ok(super::FixTextContent35Type::Text(
+                        Ok(super::HtmlTextWithSubTypeContentType::Text(
                             helper.finish_element("text", values)?,
                         ))
                     }
@@ -18720,7 +18728,7 @@ pub mod cdf {
                 fallback: Option<<super::SubType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SubType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use FixTextContent35TypeDeserializerState as S;
+                use HtmlTextWithSubTypeContentTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18754,7 +18762,7 @@ pub mod cdf {
                 fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, AnyElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use FixTextContent35TypeDeserializerState as S;
+                use HtmlTextWithSubTypeContentTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18788,7 +18796,7 @@ pub mod cdf {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use FixTextContent35TypeDeserializerState as S;
+                use HtmlTextWithSubTypeContentTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -18821,18 +18829,23 @@ pub mod cdf {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::FixTextContent35Type> for FixTextContent35TypeDeserializer {
+        impl<'de> Deserializer<'de, super::HtmlTextWithSubTypeContentType>
+            for HtmlTextWithSubTypeContentTypeDeserializer
+        {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::FixTextContent35Type> {
+            ) -> DeserializerResult<'de, super::HtmlTextWithSubTypeContentType> {
                 let deserializer = Self {
-                    state__: Box::new(FixTextContent35TypeDeserializerState::Init__),
+                    state__: Box::new(HtmlTextWithSubTypeContentTypeDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state__, FixTextContent35TypeDeserializerState::Init__) =>
+                        if matches!(
+                            &*x.state__,
+                            HtmlTextWithSubTypeContentTypeDeserializerState::Init__
+                        ) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -18844,8 +18857,8 @@ pub mod cdf {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::FixTextContent35Type> {
-                use FixTextContent35TypeDeserializerState as S;
+            ) -> DeserializerResult<'de, super::HtmlTextWithSubTypeContentType> {
+                use HtmlTextWithSubTypeContentTypeDeserializerState as S;
                 let mut event = event;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
@@ -18958,7 +18971,7 @@ pub mod cdf {
             fn finish(
                 self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::FixTextContent35Type, Error> {
+            ) -> Result<super::HtmlTextWithSubTypeContentType, Error> {
                 Self::finish_state(helper, *self.state__)
             }
         }
@@ -20403,14 +20416,14 @@ pub mod cdf {
             lang: Option<String>,
             override_: bool,
             category: super::WarningCategoryEnumType,
-            content: Vec<super::FixTextContent35Type>,
+            content: Vec<super::HtmlTextWithSubTypeContentType>,
             state__: Box<WarningTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum WarningTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::FixTextContent35Type as WithDeserializer>::Deserializer),
+            Content__(<super::HtmlTextWithSubTypeContentType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl WarningTypeDeserializer {
@@ -20460,14 +20473,17 @@ pub mod cdf {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::FixTextContent35Type) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::HtmlTextWithSubTypeContentType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::FixTextContent35Type>,
+                output: DeserializerOutput<'de, super::HtmlTextWithSubTypeContentType>,
                 fallback: &mut Option<WarningTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use WarningTypeDeserializerState as S;
@@ -20535,9 +20551,10 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::FixTextContent35Type as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::HtmlTextWithSubTypeContentType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -22403,14 +22420,14 @@ pub mod cdf {
             strategy: super::FixStrategyEnumType,
             disruption: super::RatingEnumType,
             complexity: super::RatingEnumType,
-            content: Vec<super::FixTextContent35Type>,
+            content: Vec<super::HtmlTextWithSubTypeContentType>,
             state__: Box<FixTextTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FixTextTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::FixTextContent35Type as WithDeserializer>::Deserializer),
+            Content__(<super::HtmlTextWithSubTypeContentType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl FixTextTypeDeserializer {
@@ -22488,14 +22505,17 @@ pub mod cdf {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::FixTextContent35Type) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::HtmlTextWithSubTypeContentType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::FixTextContent35Type>,
+                output: DeserializerOutput<'de, super::HtmlTextWithSubTypeContentType>,
                 fallback: &mut Option<FixTextTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use FixTextTypeDeserializerState as S;
@@ -22563,9 +22583,10 @@ pub mod cdf {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::FixTextContent35Type as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::HtmlTextWithSubTypeContentType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -28666,8 +28687,8 @@ pub mod cdf {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::FixTextContent35Type],
-                    super::FixTextContent35Type,
+                    &'ser [super::HtmlTextWithSubTypeContentType],
+                    super::HtmlTextWithSubTypeContentType,
                 >,
             ),
             End__,
@@ -31092,13 +31113,13 @@ pub mod cdf {
             }
         }
         #[derive(Debug)]
-        pub struct FixTextContent35TypeSerializer<'ser> {
-            pub(super) value: &'ser super::FixTextContent35Type,
-            pub(super) state: Box<FixTextContent35TypeSerializerState<'ser>>,
+        pub struct HtmlTextWithSubTypeContentTypeSerializer<'ser> {
+            pub(super) value: &'ser super::HtmlTextWithSubTypeContentType,
+            pub(super) state: Box<HtmlTextWithSubTypeContentTypeSerializerState<'ser>>,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
-        pub(super) enum FixTextContent35TypeSerializerState<'ser> {
+        pub(super) enum HtmlTextWithSubTypeContentTypeSerializerState<'ser> {
             Init__,
             Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
             Any(<AnyElement as WithSerializer>::Serializer<'ser>),
@@ -31106,61 +31127,72 @@ pub mod cdf {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> FixTextContent35TypeSerializer<'ser> {
+        impl<'ser> HtmlTextWithSubTypeContentTypeSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        FixTextContent35TypeSerializerState::Init__ => match self.value {
-                            super::FixTextContent35Type::Sub(x) => {
-                                *self.state = FixTextContent35TypeSerializerState::Sub(
+                        HtmlTextWithSubTypeContentTypeSerializerState::Init__ => match self.value {
+                            super::HtmlTextWithSubTypeContentType::Sub(x) => {
+                                *self.state = HtmlTextWithSubTypeContentTypeSerializerState::Sub(
                                     WithSerializer::serializer(x, Some("cdf:sub"), self.is_root)?,
                                 )
                             }
-                            super::FixTextContent35Type::Any(x) => {
-                                *self.state = FixTextContent35TypeSerializerState::Any(
+                            super::HtmlTextWithSubTypeContentType::Any(x) => {
+                                *self.state = HtmlTextWithSubTypeContentTypeSerializerState::Any(
                                     WithSerializer::serializer(x, None, self.is_root)?,
                                 )
                             }
-                            super::FixTextContent35Type::Text(x) => {
-                                *self.state = FixTextContent35TypeSerializerState::Text(
+                            super::HtmlTextWithSubTypeContentType::Text(x) => {
+                                *self.state = HtmlTextWithSubTypeContentTypeSerializerState::Text(
                                     WithSerializer::serializer(x, Some("text"), self.is_root)?,
                                 )
                             }
                         },
-                        FixTextContent35TypeSerializerState::Sub(x) => {
+                        HtmlTextWithSubTypeContentTypeSerializerState::Sub(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = FixTextContent35TypeSerializerState::Done__,
+                                None => {
+                                    *self.state =
+                                        HtmlTextWithSubTypeContentTypeSerializerState::Done__
+                                }
                             }
                         }
-                        FixTextContent35TypeSerializerState::Any(x) => {
+                        HtmlTextWithSubTypeContentTypeSerializerState::Any(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = FixTextContent35TypeSerializerState::Done__,
+                                None => {
+                                    *self.state =
+                                        HtmlTextWithSubTypeContentTypeSerializerState::Done__
+                                }
                             }
                         }
-                        FixTextContent35TypeSerializerState::Text(x) => {
+                        HtmlTextWithSubTypeContentTypeSerializerState::Text(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = FixTextContent35TypeSerializerState::Done__,
+                                None => {
+                                    *self.state =
+                                        HtmlTextWithSubTypeContentTypeSerializerState::Done__
+                                }
                             }
                         }
-                        FixTextContent35TypeSerializerState::Done__ => return Ok(None),
-                        FixTextContent35TypeSerializerState::Phantom__(_) => unreachable!(),
+                        HtmlTextWithSubTypeContentTypeSerializerState::Done__ => return Ok(None),
+                        HtmlTextWithSubTypeContentTypeSerializerState::Phantom__(_) => {
+                            unreachable!()
+                        }
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for FixTextContent35TypeSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for HtmlTextWithSubTypeContentTypeSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = FixTextContent35TypeSerializerState::Done__;
+                        *self.state = HtmlTextWithSubTypeContentTypeSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -31753,8 +31785,8 @@ pub mod cdf {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::FixTextContent35Type],
-                    super::FixTextContent35Type,
+                    &'ser [super::HtmlTextWithSubTypeContentType],
+                    super::HtmlTextWithSubTypeContentType,
                 >,
             ),
             End__,
@@ -32548,8 +32580,8 @@ pub mod cdf {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::FixTextContent35Type],
-                    super::FixTextContent35Type,
+                    &'ser [super::HtmlTextWithSubTypeContentType],
+                    super::HtmlTextWithSubTypeContentType,
                 >,
             ),
             End__,

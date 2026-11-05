@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns="Foo"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:base="Base"
+    targetNamespace="Foo">
+
+    <xs:import namespace="Base" schemaLocation="base.xsd" />
+
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Note">
+                    <xs:complexType>
+                        <xs:complexContent>
+                            <xs:extension base="base:Flow">
+                                <xs:attribute name="lang" type="xs:string" />
+                            </xs:extension>
+                        </xs:complexContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Comment">
+                    <xs:complexType>
+                        <xs:complexContent>
+                            <xs:extension base="base:Flow">
+                                <xs:attribute name="author" type="xs:string" />
+                            </xs:extension>
+                        </xs:complexContent>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Home" type="HomeType" />
+                <xs:element name="Office" type="OfficeType" />
+                <xs:element name="Shop" type="ShopType" />
+                <xs:element name="Depot" type="DepotType" />
+                <xs:element name="Location" type="base:Address" />
+                <xs:element name="Ul" type="UlType" />
+                <xs:element name="Ol" type="OlType" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="HomeType">
+        <xs:sequence>
+            <xs:group ref="base:Contact" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="owner" type="xs:string" />
+    </xs:complexType>
+
+    <xs:complexType name="OfficeType">
+        <xs:sequence>
+            <xs:group ref="base:Contact" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="company" type="xs:string" />
+    </xs:complexType>
+
+    <xs:complexType name="ShopType">
+        <xs:sequence>
+            <xs:group ref="base:Address" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" />
+    </xs:complexType>
+
+    <xs:complexType name="DepotType">
+        <xs:sequence>
+            <xs:group ref="base:Address" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="size" type="xs:int" />
+    </xs:complexType>
+
+    <xs:complexType name="UlType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="Item" type="xs:string" />
+            <xs:element name="Text" type="xs:string" />
+        </xs:choice>
+        <xs:attribute name="compact" type="xs:boolean" />
+    </xs:complexType>
+
+    <xs:complexType name="OlType">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="Item" type="xs:string" />
+            <xs:element name="Text" type="xs:string" />
+        </xs:choice>
+        <xs:attribute name="start" type="xs:int" />
+    </xs:complexType>
+</xs:schema>

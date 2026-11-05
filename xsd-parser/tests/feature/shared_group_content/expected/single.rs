@@ -48,15 +48,15 @@ pub type UnsignedShortType = u16;
 #[derive(Debug)]
 pub struct ElementAType {
     pub attr_1: Option<String>,
-    pub content: ElementAChoiceGroupType,
+    pub content: ChoiceGroupType,
 }
 #[derive(Debug)]
 pub struct ElementBType {
     pub attr_2: Option<String>,
-    pub content: ElementAChoiceGroupType,
+    pub content: ChoiceGroupType,
 }
 #[derive(Debug)]
-pub enum ElementAChoiceGroupType {
+pub enum ChoiceGroupType {
     ElementA(Box<ElementAType>),
     ElementB(Box<ElementBType>),
 }

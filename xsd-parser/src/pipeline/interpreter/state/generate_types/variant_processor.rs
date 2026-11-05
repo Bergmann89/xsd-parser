@@ -490,7 +490,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_simple_content(&mut self, ty: &'schema SimpleContent) -> Result<(), Error> {
-        use crate::models::schema::xs::ContentType as C;
+        use crate::models::schema::xs::SimpleContentContent as C;
 
         self.content_mode = ContentMode::Simple;
 
@@ -507,7 +507,7 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_complex_content(&mut self, ty: &'schema ComplexContent) -> Result<(), Error> {
-        use crate::models::schema::xs::ContentType as C;
+        use crate::models::schema::xs::ComplexContentContent as C;
 
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {
@@ -1591,17 +1591,23 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
 
             f(&mut processor)?;
 
-            let ty = processor.finish()?;
+            let mut ty = processor.finish()?;
 
             let (MetaTypeVariant::All(si)
             | MetaTypeVariant::Choice(si)
-            | MetaTypeVariant::Sequence(si)) = &ty.variant
+            | MetaTypeVariant::Sequence(si)) = &mut ty.variant
             else {
                 return Err(Error::ExpectedGroupType);
             };
 
             if si.elements.is_empty() {
                 return Ok(());
+            }
+
+            // Remember the group only for a plain copy of it, an updated content
+            // also contains the elements of the complex type.
+            if !matches!(update_content_mode, UpdateContentMode::Update) {
+                si.group.clone_from(&group_ident);
             }
 
             Output::Type(ty)

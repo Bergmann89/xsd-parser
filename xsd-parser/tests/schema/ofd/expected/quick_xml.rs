@@ -1,7 +1,4 @@
-use xsd_parser_types::{
-    misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
-};
+use xsd_parser_types::misc::{Namespace, NamespacePrefix};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
@@ -9,37 +6,6 @@ pub const NS_UNNAMED_5: Namespace = Namespace::new_const(b"http://www.ofdspec.or
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
-#[derive(Debug)]
-pub enum CtPageBlockTextObjectContent20XType {
-    Actions(page::CtGraphicUnitActionsXElementType),
-    Clips(page::CtGraphicUnitClipsXElementType),
-    FillColor(page::CtColorXType),
-    StrokeColor(page::CtColorXType),
-    CgTransform(page::CtCgTransformXType),
-    TextCode(page::CtTextTextCodeXElementType),
-}
-impl WithSerializer for CtPageBlockTextObjectContent20XType {
-    type Serializer<'x> = quick_xml_serialize::CtPageBlockTextObjectContent20XTypeSerializer<'x>;
-    fn serializer<'ser>(
-        &'ser self,
-        name: Option<&'ser str>,
-        is_root: bool,
-    ) -> Result<Self::Serializer<'ser>, Error> {
-        let _name = name;
-        Ok(
-            quick_xml_serialize::CtPageBlockTextObjectContent20XTypeSerializer {
-                value: self,
-                state: Box::new(
-                    quick_xml_serialize::CtPageBlockTextObjectContent20XTypeSerializerState::Init__,
-                ),
-                is_root,
-            },
-        )
-    }
-}
-impl WithDeserializer for CtPageBlockTextObjectContent20XType {
-    type Deserializer = quick_xml_deserialize::CtPageBlockTextObjectContent20XTypeDeserializer;
-}
 pub mod annotations {
     use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Annotations = AnnotationsXElementType;
@@ -767,7 +733,7 @@ pub mod annotion {
     #[derive(Debug)]
     pub struct PageAnnotAnnotAppearanceXElementType {
         pub boundary: Option<String>,
-        pub content: Vec<super::page::CtLayerContent9XType>,
+        pub content: Vec<super::page::CtPageBlockContentXType>,
     }
     impl WithSerializer for PageAnnotAnnotAppearanceXElementType {
         type Serializer<'x> =
@@ -1648,14 +1614,16 @@ pub mod annotion {
         #[derive(Debug)]
         pub struct PageAnnotAnnotAppearanceXElementTypeDeserializer {
             boundary: Option<String>,
-            content: Vec<super::super::page::CtLayerContent9XType>,
+            content: Vec<super::super::page::CtPageBlockContentXType>,
             state__: Box<PageAnnotAnnotAppearanceXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageAnnotAnnotAppearanceXElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::super::page::CtLayerContent9XType as WithDeserializer>::Deserializer),
+            Content__(
+                <super::super::page::CtPageBlockContentXType as WithDeserializer>::Deserializer,
+            ),
             Unknown__,
         }
         impl PageAnnotAnnotAppearanceXElementTypeDeserializer {
@@ -1698,7 +1666,7 @@ pub mod annotion {
             }
             fn store_content(
                 &mut self,
-                value: super::super::page::CtLayerContent9XType,
+                value: super::super::page::CtPageBlockContentXType,
             ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
@@ -1706,7 +1674,7 @@ pub mod annotion {
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::super::page::CtLayerContent9XType>,
+                output: DeserializerOutput<'de, super::super::page::CtPageBlockContentXType>,
                 fallback: &mut Option<PageAnnotAnnotAppearanceXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use PageAnnotAnnotAppearanceXElementTypeDeserializerState as S;
@@ -1776,7 +1744,7 @@ pub mod annotion {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: super :: page :: CtLayerContent9XType as WithDeserializer > :: init (helper , event) ? ;
+                            let output = < super :: super :: page :: CtPageBlockContentXType as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2252,8 +2220,8 @@ pub mod annotion {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::super::page::CtLayerContent9XType],
-                    super::super::page::CtLayerContent9XType,
+                    &'ser [super::super::page::CtPageBlockContentXType],
+                    super::super::page::CtPageBlockContentXType,
                 >,
             ),
             End__,
@@ -21083,7 +21051,7 @@ pub mod page {
     pub struct CtLayerXType {
         pub type_: CtLayerTypeXType,
         pub draw_param: Option<u32>,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     impl CtLayerXType {
         #[must_use]
@@ -21111,7 +21079,7 @@ pub mod page {
     }
     #[derive(Debug)]
     pub struct CtPageBlockXType {
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     impl WithSerializer for CtPageBlockXType {
         type Serializer<'x> = quick_xml_serialize::CtPageBlockXTypeSerializer<'x>;
@@ -21329,7 +21297,7 @@ pub mod page {
         pub char_direction: i32,
         pub weight: CtTextWeightXType,
         pub italic: bool,
-        pub content: Vec<super::CtPageBlockTextObjectContent20XType>,
+        pub content: Vec<CtTextContentXType>,
     }
     impl CtTextXType {
         #[must_use]
@@ -21739,7 +21707,7 @@ pub mod page {
         pub weight: CtTextWeightXType,
         pub italic: bool,
         pub id: u32,
-        pub content: Vec<super::CtPageBlockTextObjectContent20XType>,
+        pub content: Vec<CtTextContentXType>,
     }
     impl CtPageBlockTextObjectXElementType {
         #[must_use]
@@ -22133,7 +22101,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtPageBlockPageBlockXElementType {
         pub id: u32,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     impl WithSerializer for CtPageBlockPageBlockXElementType {
         type Serializer<'x> = quick_xml_serialize::CtPageBlockPageBlockXElementTypeSerializer<'x>;
@@ -22149,30 +22117,32 @@ pub mod page {
         type Deserializer = quick_xml_deserialize::CtPageBlockPageBlockXElementTypeDeserializer;
     }
     #[derive(Debug)]
-    pub enum CtLayerContent9XType {
+    pub enum CtPageBlockContentXType {
         TextObject(CtPageBlockTextObjectXElementType),
         PathObject(CtPageBlockPathObjectXElementType),
         ImageObject(CtPageBlockImageObjectXElementType),
         CompositeObject(CtPageBlockCompositeObjectXElementType),
         PageBlock(CtPageBlockPageBlockXElementType),
     }
-    impl WithSerializer for CtLayerContent9XType {
-        type Serializer<'x> = quick_xml_serialize::CtLayerContent9XTypeSerializer<'x>;
+    impl WithSerializer for CtPageBlockContentXType {
+        type Serializer<'x> = quick_xml_serialize::CtPageBlockContentXTypeSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
-            Ok(quick_xml_serialize::CtLayerContent9XTypeSerializer {
+            Ok(quick_xml_serialize::CtPageBlockContentXTypeSerializer {
                 value: self,
-                state: Box::new(quick_xml_serialize::CtLayerContent9XTypeSerializerState::Init__),
+                state: Box::new(
+                    quick_xml_serialize::CtPageBlockContentXTypeSerializerState::Init__,
+                ),
                 is_root,
             })
         }
     }
-    impl WithDeserializer for CtLayerContent9XType {
-        type Deserializer = quick_xml_deserialize::CtLayerContent9XTypeDeserializer;
+    impl WithDeserializer for CtPageBlockContentXType {
+        type Deserializer = quick_xml_deserialize::CtPageBlockContentXTypeDeserializer;
     }
     #[derive(Debug)]
     pub enum CtPathRuleXType {
@@ -22270,7 +22240,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtPatternCellContentXElementType {
         pub thumbnail: Option<u32>,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     impl WithSerializer for CtPatternCellContentXElementType {
         type Serializer<'x> = quick_xml_serialize::CtPatternCellContentXElementTypeSerializer<'x>;
@@ -22368,6 +22338,33 @@ pub mod page {
     }
     impl WithDeserializer for CtTextTextCodeXElementType {
         type Deserializer = quick_xml_deserialize::CtTextTextCodeXElementTypeDeserializer;
+    }
+    #[derive(Debug)]
+    pub enum CtTextContentXType {
+        Actions(CtGraphicUnitActionsXElementType),
+        Clips(CtGraphicUnitClipsXElementType),
+        FillColor(CtColorXType),
+        StrokeColor(CtColorXType),
+        CgTransform(CtCgTransformXType),
+        TextCode(CtTextTextCodeXElementType),
+    }
+    impl WithSerializer for CtTextContentXType {
+        type Serializer<'x> = quick_xml_serialize::CtTextContentXTypeSerializer<'x>;
+        fn serializer<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            let _name = name;
+            Ok(quick_xml_serialize::CtTextContentXTypeSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::CtTextContentXTypeSerializerState::Init__),
+                is_root,
+            })
+        }
+    }
+    impl WithDeserializer for CtTextContentXType {
+        type Deserializer = quick_xml_deserialize::CtTextContentXTypeDeserializer;
     }
     #[derive(Debug)]
     pub struct PageTemplateXElementType {
@@ -22490,7 +22487,7 @@ pub mod page {
         pub type_: CtLayerTypeXType,
         pub draw_param: Option<u32>,
         pub id: u32,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     impl PageContentLayerXElementType {
         #[must_use]
@@ -26627,14 +26624,14 @@ pub mod page {
         pub struct CtLayerXTypeDeserializer {
             type_: super::CtLayerTypeXType,
             draw_param: Option<u32>,
-            content: Vec<super::CtLayerContent9XType>,
+            content: Vec<super::CtPageBlockContentXType>,
             state__: Box<CtLayerXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtLayerXTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::CtLayerContent9XType as WithDeserializer>::Deserializer),
+            Content__(<super::CtPageBlockContentXType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CtLayerXTypeDeserializer {
@@ -26677,14 +26674,17 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::CtLayerContent9XType) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::CtPageBlockContentXType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::CtLayerContent9XType>,
+                output: DeserializerOutput<'de, super::CtPageBlockContentXType>,
                 fallback: &mut Option<CtLayerXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CtLayerXTypeDeserializerState as S;
@@ -26752,9 +26752,10 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::CtLayerContent9XType as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::CtPageBlockContentXType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -26789,14 +26790,14 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockXTypeDeserializer {
-            content: Vec<super::CtLayerContent9XType>,
+            content: Vec<super::CtPageBlockContentXType>,
             state__: Box<CtPageBlockXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockXTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::CtLayerContent9XType as WithDeserializer>::Deserializer),
+            Content__(<super::CtPageBlockContentXType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CtPageBlockXTypeDeserializer {
@@ -26823,14 +26824,17 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::CtLayerContent9XType) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::CtPageBlockContentXType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::CtLayerContent9XType>,
+                output: DeserializerOutput<'de, super::CtPageBlockContentXType>,
                 fallback: &mut Option<CtPageBlockXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CtPageBlockXTypeDeserializerState as S;
@@ -26898,9 +26902,10 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::CtLayerContent9XType as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::CtPageBlockContentXType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -28136,12 +28141,16 @@ pub mod page {
             char_direction: i32,
             weight: super::CtTextWeightXType,
             italic: bool,
-            content: Vec<super::super::CtPageBlockTextObjectContent20XType>,
+            content: Vec<super::CtTextContentXType>,
             state__: Box<CtTextXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtTextXTypeDeserializerState {
-            Init__ , Next__ , Content__ (< super :: super :: CtPageBlockTextObjectContent20XType as WithDeserializer > :: Deserializer) , Unknown__ , }
+            Init__,
+            Next__,
+            Content__(<super::CtTextContentXType as WithDeserializer>::Deserializer),
+            Unknown__,
+        }
         impl CtTextXTypeDeserializer {
             fn from_bytes_start(
                 helper: &mut DeserializeHelper,
@@ -28320,17 +28329,14 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::super::CtPageBlockTextObjectContent20XType,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::CtTextContentXType) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::super::CtPageBlockTextObjectContent20XType>,
+                output: DeserializerOutput<'de, super::CtTextContentXType>,
                 fallback: &mut Option<CtTextXTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CtTextXTypeDeserializerState as S;
@@ -28398,7 +28404,9 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: super :: CtPageBlockTextObjectContent20XType as WithDeserializer > :: init (helper , event) ? ;
+                            let output = <super::CtTextContentXType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30227,12 +30235,16 @@ pub mod page {
             weight: super::CtTextWeightXType,
             italic: bool,
             id: u32,
-            content: Vec<super::super::CtPageBlockTextObjectContent20XType>,
+            content: Vec<super::CtTextContentXType>,
             state__: Box<CtPageBlockTextObjectXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockTextObjectXElementTypeDeserializerState {
-            Init__ , Next__ , Content__ (< super :: super :: CtPageBlockTextObjectContent20XType as WithDeserializer > :: Deserializer) , Unknown__ , }
+            Init__,
+            Next__,
+            Content__(<super::CtTextContentXType as WithDeserializer>::Deserializer),
+            Unknown__,
+        }
         impl CtPageBlockTextObjectXElementTypeDeserializer {
             fn from_bytes_start(
                 helper: &mut DeserializeHelper,
@@ -30434,17 +30446,14 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::super::CtPageBlockTextObjectContent20XType,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::CtTextContentXType) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::super::CtPageBlockTextObjectContent20XType>,
+                output: DeserializerOutput<'de, super::CtTextContentXType>,
                 fallback: &mut Option<CtPageBlockTextObjectXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CtPageBlockTextObjectXElementTypeDeserializerState as S;
@@ -30514,7 +30523,9 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: super :: CtPageBlockTextObjectContent20XType as WithDeserializer > :: init (helper , event) ? ;
+                            let output = <super::CtTextContentXType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -32615,14 +32626,14 @@ pub mod page {
         #[derive(Debug)]
         pub struct CtPageBlockPageBlockXElementTypeDeserializer {
             id: u32,
-            content: Vec<super::CtLayerContent9XType>,
+            content: Vec<super::CtPageBlockContentXType>,
             state__: Box<CtPageBlockPageBlockXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockPageBlockXElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::CtLayerContent9XType as WithDeserializer>::Deserializer),
+            Content__(<super::CtPageBlockContentXType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CtPageBlockPageBlockXElementTypeDeserializer {
@@ -32660,14 +32671,17 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::CtLayerContent9XType) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::CtPageBlockContentXType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::CtLayerContent9XType>,
+                output: DeserializerOutput<'de, super::CtPageBlockContentXType>,
                 fallback: &mut Option<CtPageBlockPageBlockXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CtPageBlockPageBlockXElementTypeDeserializerState as S;
@@ -32737,9 +32751,10 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::CtLayerContent9XType as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::CtPageBlockContentXType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -32775,13 +32790,13 @@ pub mod page {
             }
         }
         #[derive(Debug)]
-        pub struct CtLayerContent9XTypeDeserializer {
-            state__: Box<CtLayerContent9XTypeDeserializerState>,
+        pub struct CtPageBlockContentXTypeDeserializer {
+            state__: Box<CtPageBlockContentXTypeDeserializerState>,
         }
         #[derive(Debug)]
-        pub enum CtLayerContent9XTypeDeserializerState {
-            Init__ , TextObject (Option < super :: CtPageBlockTextObjectXElementType > , Option << super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer > ,) , PathObject (Option < super :: CtPageBlockPathObjectXElementType > , Option << super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer > ,) , ImageObject (Option < super :: CtPageBlockImageObjectXElementType > , Option << super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer > ,) , CompositeObject (Option < super :: CtPageBlockCompositeObjectXElementType > , Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer > ,) , PageBlock (Option < super :: CtPageBlockPageBlockXElementType > , Option << super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer > ,) , Done__ (super :: CtLayerContent9XType) , Unknown__ , }
-        impl CtLayerContent9XTypeDeserializer {
+        pub enum CtPageBlockContentXTypeDeserializerState {
+            Init__ , TextObject (Option < super :: CtPageBlockTextObjectXElementType > , Option << super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer > ,) , PathObject (Option < super :: CtPageBlockPathObjectXElementType > , Option << super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer > ,) , ImageObject (Option < super :: CtPageBlockImageObjectXElementType > , Option << super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer > ,) , CompositeObject (Option < super :: CtPageBlockCompositeObjectXElementType > , Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer > ,) , PageBlock (Option < super :: CtPageBlockPageBlockXElementType > , Option << super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer > , Option << super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer > ,) , Done__ (super :: CtPageBlockContentXType) , Unknown__ , }
+        impl CtPageBlockContentXTypeDeserializer {
             fn find_suitable<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
@@ -32841,14 +32856,14 @@ pub mod page {
                         return self.handle_page_block(helper, Default::default(), None, output);
                     }
                 }
-                *self.state__ = CtLayerContent9XTypeDeserializerState::Init__;
+                *self.state__ = CtPageBlockContentXTypeDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
             }
             fn finish_state(
                 helper: &mut DeserializeHelper,
-                state: CtLayerContent9XTypeDeserializerState,
-            ) -> Result<super::CtLayerContent9XType, Error> {
-                use CtLayerContent9XTypeDeserializerState as S;
+                state: CtPageBlockContentXTypeDeserializerState,
+            ) -> Result<super::CtPageBlockContentXType, Error> {
+                use CtPageBlockContentXTypeDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::TextObject(mut values, None, deserializer) => {
@@ -32856,7 +32871,7 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_text_object(&mut values, value)?;
                         }
-                        Ok(super::CtLayerContent9XType::TextObject(
+                        Ok(super::CtPageBlockContentXType::TextObject(
                             helper.finish_element("TextObject", values)?,
                         ))
                     }
@@ -32865,7 +32880,7 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_path_object(&mut values, value)?;
                         }
-                        Ok(super::CtLayerContent9XType::PathObject(
+                        Ok(super::CtPageBlockContentXType::PathObject(
                             helper.finish_element("PathObject", values)?,
                         ))
                     }
@@ -32874,7 +32889,7 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_image_object(&mut values, value)?;
                         }
-                        Ok(super::CtLayerContent9XType::ImageObject(
+                        Ok(super::CtPageBlockContentXType::ImageObject(
                             helper.finish_element("ImageObject", values)?,
                         ))
                     }
@@ -32883,7 +32898,7 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_composite_object(&mut values, value)?;
                         }
-                        Ok(super::CtLayerContent9XType::CompositeObject(
+                        Ok(super::CtPageBlockContentXType::CompositeObject(
                             helper.finish_element("CompositeObject", values)?,
                         ))
                     }
@@ -32892,7 +32907,7 @@ pub mod page {
                             let value = deserializer.finish(helper)?;
                             Self::store_page_block(&mut values, value)?;
                         }
-                        Ok(super::CtLayerContent9XType::PageBlock(
+                        Ok(super::CtPageBlockContentXType::PageBlock(
                             helper.finish_element("PageBlock", values)?,
                         ))
                     }
@@ -32969,7 +32984,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockTextObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtLayerContent9XTypeDeserializerState as S;
+                use CtPageBlockContentXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33005,7 +33020,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPathObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtLayerContent9XTypeDeserializerState as S;
+                use CtPageBlockContentXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33041,7 +33056,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockImageObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtLayerContent9XTypeDeserializerState as S;
+                use CtPageBlockContentXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33075,7 +33090,7 @@ pub mod page {
                 fallback : Option << super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer >,
                 output: DeserializerOutput<'de, super::CtPageBlockCompositeObjectXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtLayerContent9XTypeDeserializerState as S;
+                use CtPageBlockContentXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33112,7 +33127,7 @@ pub mod page {
                 >,
                 output: DeserializerOutput<'de, super::CtPageBlockPageBlockXElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CtLayerContent9XTypeDeserializerState as S;
+                use CtPageBlockContentXTypeDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -33140,18 +33155,23 @@ pub mod page {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::CtLayerContent9XType> for CtLayerContent9XTypeDeserializer {
+        impl<'de> Deserializer<'de, super::CtPageBlockContentXType>
+            for CtPageBlockContentXTypeDeserializer
+        {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtLayerContent9XType> {
+            ) -> DeserializerResult<'de, super::CtPageBlockContentXType> {
                 let deserializer = Self {
-                    state__: Box::new(CtLayerContent9XTypeDeserializerState::Init__),
+                    state__: Box::new(CtPageBlockContentXTypeDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state__, CtLayerContent9XTypeDeserializerState::Init__) =>
+                        if matches!(
+                            &*x.state__,
+                            CtPageBlockContentXTypeDeserializerState::Init__
+                        ) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -33163,8 +33183,8 @@ pub mod page {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CtLayerContent9XType> {
-                use CtLayerContent9XTypeDeserializerState as S;
+            ) -> DeserializerResult<'de, super::CtPageBlockContentXType> {
+                use CtPageBlockContentXTypeDeserializerState as S;
                 let mut event = event;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
@@ -33339,21 +33359,21 @@ pub mod page {
             fn finish(
                 self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::CtLayerContent9XType, Error> {
+            ) -> Result<super::CtPageBlockContentXType, Error> {
                 Self::finish_state(helper, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct CtPatternCellContentXElementTypeDeserializer {
             thumbnail: Option<u32>,
-            content: Vec<super::CtLayerContent9XType>,
+            content: Vec<super::CtPageBlockContentXType>,
             state__: Box<CtPatternCellContentXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPatternCellContentXElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::CtLayerContent9XType as WithDeserializer>::Deserializer),
+            Content__(<super::CtPageBlockContentXType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CtPatternCellContentXElementTypeDeserializer {
@@ -33391,14 +33411,17 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::CtLayerContent9XType) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::CtPageBlockContentXType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::CtLayerContent9XType>,
+                output: DeserializerOutput<'de, super::CtPageBlockContentXType>,
                 fallback: &mut Option<CtPatternCellContentXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CtPatternCellContentXElementTypeDeserializerState as S;
@@ -33468,9 +33491,10 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::CtLayerContent9XType as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::CtPageBlockContentXType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -33669,6 +33693,687 @@ pub mod page {
                     deltay: self.deltay,
                     content: helper.finish_content(self.content)?,
                 })
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtTextContentXTypeDeserializer {
+            state__: Box<CtTextContentXTypeDeserializerState>,
+        }
+        #[derive(Debug)]
+        pub enum CtTextContentXTypeDeserializerState {
+            Init__,
+            Actions(
+                Option<super::CtGraphicUnitActionsXElementType>,
+                Option<<super::CtGraphicUnitActionsXElementType as WithDeserializer>::Deserializer>,
+                Option<<super::CtGraphicUnitActionsXElementType as WithDeserializer>::Deserializer>,
+            ),
+            Clips(
+                Option<super::CtGraphicUnitClipsXElementType>,
+                Option<<super::CtGraphicUnitClipsXElementType as WithDeserializer>::Deserializer>,
+                Option<<super::CtGraphicUnitClipsXElementType as WithDeserializer>::Deserializer>,
+            ),
+            FillColor(
+                Option<super::CtColorXType>,
+                Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
+                Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
+            ),
+            StrokeColor(
+                Option<super::CtColorXType>,
+                Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
+                Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
+            ),
+            CgTransform(
+                Option<super::CtCgTransformXType>,
+                Option<<super::CtCgTransformXType as WithDeserializer>::Deserializer>,
+                Option<<super::CtCgTransformXType as WithDeserializer>::Deserializer>,
+            ),
+            TextCode(
+                Option<super::CtTextTextCodeXElementType>,
+                Option<<super::CtTextTextCodeXElementType as WithDeserializer>::Deserializer>,
+                Option<<super::CtTextTextCodeXElementType as WithDeserializer>::Deserializer>,
+            ),
+            Done__(super::CtTextContentXType),
+            Unknown__,
+        }
+        impl CtTextContentXTypeDeserializer {
+            fn find_suitable<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                if let Event::Start(x) | Event::Empty(x) = &event {
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        Some(b"Actions")
+                    ) {
+                        let output =
+                            <super::CtGraphicUnitActionsXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
+                        return self.handle_actions(helper, Default::default(), None, output);
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        Some(b"Clips")
+                    ) {
+                        let output =
+                            <super::CtGraphicUnitClipsXElementType as WithDeserializer>::init(
+                                helper, event,
+                            )?;
+                        return self.handle_clips(helper, Default::default(), None, output);
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        Some(b"FillColor")
+                    ) {
+                        let output =
+                            <super::CtColorXType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_fill_color(helper, Default::default(), None, output);
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        Some(b"StrokeColor")
+                    ) {
+                        let output =
+                            <super::CtColorXType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_stroke_color(helper, Default::default(), None, output);
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        Some(b"CGTransform")
+                    ) {
+                        let output =
+                            <super::CtCgTransformXType as WithDeserializer>::init(helper, event)?;
+                        return self.handle_cg_transform(helper, Default::default(), None, output);
+                    }
+                    if matches!(
+                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        Some(b"TextCode")
+                    ) {
+                        let output = <super::CtTextTextCodeXElementType as WithDeserializer>::init(
+                            helper, event,
+                        )?;
+                        return self.handle_text_code(helper, Default::default(), None, output);
+                    }
+                }
+                *self.state__ = CtTextContentXTypeDeserializerState::Init__;
+                Ok(ElementHandlerOutput::return_to_parent(event, false))
+            }
+            fn finish_state(
+                helper: &mut DeserializeHelper,
+                state: CtTextContentXTypeDeserializerState,
+            ) -> Result<super::CtTextContentXType, Error> {
+                use CtTextContentXTypeDeserializerState as S;
+                match state {
+                    S::Init__ => Err(ErrorKind::MissingContent.into()),
+                    S::Actions(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_actions(&mut values, value)?;
+                        }
+                        Ok(super::CtTextContentXType::Actions(
+                            helper.finish_element("Actions", values)?,
+                        ))
+                    }
+                    S::Clips(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_clips(&mut values, value)?;
+                        }
+                        Ok(super::CtTextContentXType::Clips(
+                            helper.finish_element("Clips", values)?,
+                        ))
+                    }
+                    S::FillColor(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_fill_color(&mut values, value)?;
+                        }
+                        Ok(super::CtTextContentXType::FillColor(
+                            helper.finish_element("FillColor", values)?,
+                        ))
+                    }
+                    S::StrokeColor(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_stroke_color(&mut values, value)?;
+                        }
+                        Ok(super::CtTextContentXType::StrokeColor(
+                            helper.finish_element("StrokeColor", values)?,
+                        ))
+                    }
+                    S::CgTransform(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_cg_transform(&mut values, value)?;
+                        }
+                        Ok(super::CtTextContentXType::CgTransform(
+                            helper.finish_element("CGTransform", values)?,
+                        ))
+                    }
+                    S::TextCode(mut values, None, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(helper)?;
+                            Self::store_text_code(&mut values, value)?;
+                        }
+                        Ok(super::CtTextContentXType::TextCode(
+                            helper.finish_element("TextCode", values)?,
+                        ))
+                    }
+                    S::Done__(data) => Ok(data),
+                    _ => unreachable!(),
+                }
+            }
+            fn store_actions(
+                values: &mut Option<super::CtGraphicUnitActionsXElementType>,
+                value: super::CtGraphicUnitActionsXElementType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"Actions",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_clips(
+                values: &mut Option<super::CtGraphicUnitClipsXElementType>,
+                value: super::CtGraphicUnitClipsXElementType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"Clips",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_fill_color(
+                values: &mut Option<super::CtColorXType>,
+                value: super::CtColorXType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"FillColor",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_stroke_color(
+                values: &mut Option<super::CtColorXType>,
+                value: super::CtColorXType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"StrokeColor",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_cg_transform(
+                values: &mut Option<super::CtCgTransformXType>,
+                value: super::CtCgTransformXType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"CGTransform",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_text_code(
+                values: &mut Option<super::CtTextTextCodeXElementType>,
+                value: super::CtTextTextCodeXElementType,
+            ) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                        b"TextCode",
+                    )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn handle_actions<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtGraphicUnitActionsXElementType>,
+                fallback: Option<
+                    <super::CtGraphicUnitActionsXElementType as WithDeserializer>::Deserializer,
+                >,
+                output: DeserializerOutput<'de, super::CtGraphicUnitActionsXElementType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextContentXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_actions(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_actions(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::Actions(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::Actions(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_clips<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtGraphicUnitClipsXElementType>,
+                fallback: Option<
+                    <super::CtGraphicUnitClipsXElementType as WithDeserializer>::Deserializer,
+                >,
+                output: DeserializerOutput<'de, super::CtGraphicUnitClipsXElementType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextContentXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_clips(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_clips(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::Clips(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::Clips(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_fill_color<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtColorXType>,
+                fallback: Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::CtColorXType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextContentXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_fill_color(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_fill_color(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::FillColor(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::FillColor(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_stroke_color<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtColorXType>,
+                fallback: Option<<super::CtColorXType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::CtColorXType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextContentXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_stroke_color(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_stroke_color(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::StrokeColor(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::StrokeColor(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_cg_transform<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtCgTransformXType>,
+                fallback: Option<<super::CtCgTransformXType as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::CtCgTransformXType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextContentXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_cg_transform(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_cg_transform(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::CgTransform(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::CgTransform(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+            fn handle_text_code<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                mut values: Option<super::CtTextTextCodeXElementType>,
+                fallback: Option<
+                    <super::CtTextTextCodeXElementType as WithDeserializer>::Deserializer,
+                >,
+                output: DeserializerOutput<'de, super::CtTextTextCodeXElementType>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use CtTextContentXTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+                if let Some(deserializer) = fallback {
+                    let data = deserializer.finish(helper)?;
+                    Self::store_text_code(&mut values, data)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_text_code(&mut values, data)?;
+                        let data = Self::finish_state(helper, S::TextCode(values, None, None))?;
+                        *self.state__ = S::Done__(data);
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state__ = S::TextCode(values, None, Some(deserializer));
+                        Ok(ElementHandlerOutput::break_(event, allow_any))
+                    }
+                }
+            }
+        }
+        impl<'de> Deserializer<'de, super::CtTextContentXType> for CtTextContentXTypeDeserializer {
+            fn init(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtTextContentXType> {
+                let deserializer = Self {
+                    state__: Box::new(CtTextContentXTypeDeserializerState::Init__),
+                };
+                let mut output = deserializer.next(helper, event)?;
+                output.artifact = match output.artifact {
+                    DeserializerArtifact::Deserializer(x)
+                        if matches!(&*x.state__, CtTextContentXTypeDeserializerState::Init__) =>
+                    {
+                        DeserializerArtifact::None
+                    }
+                    artifact => artifact,
+                };
+                Ok(output)
+            }
+            fn next(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+            ) -> DeserializerResult<'de, super::CtTextContentXType> {
+                use CtTextContentXTypeDeserializerState as S;
+                let mut event = event;
+                let (event, allow_any) = loop {
+                    let state = replace(&mut *self.state__, S::Unknown__);
+                    event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
+                        (S::Actions(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_actions(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Clips(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_clips(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::FillColor(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_fill_color(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::StrokeColor(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_stroke_color(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CgTransform(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_cg_transform(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::TextCode(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_text_code(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state, event @ Event::End(_)) => {
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(Self::finish_state(
+                                    helper, state,
+                                )?),
+                                event: DeserializerEvent::Continue(event),
+                                allow_any: false,
+                            });
+                        }
+                        (S::Init__, event) => match self.find_suitable(helper, event)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        },
+                        (
+                            S::Actions(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"Actions",
+                                true,
+                            )?;
+                            match self.handle_actions(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::Clips(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"Clips",
+                                true,
+                            )?;
+                            match self.handle_clips(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::FillColor(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"FillColor",
+                                true,
+                            )?;
+                            match self.handle_fill_color(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::StrokeColor(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"StrokeColor",
+                                true,
+                            )?;
+                            match self.handle_stroke_color(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CgTransform(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CGTransform",
+                                false,
+                            )?;
+                            match self.handle_cg_transform(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::TextCode(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"TextCode",
+                                false,
+                            )?;
+                            match self.handle_text_code(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state @ S::Done__(_), event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                    }
+                };
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
+                    DeserializerArtifact::Data(self.finish(helper)?)
+                } else {
+                    DeserializerArtifact::Deserializer(self)
+                };
+                Ok(DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                })
+            }
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::CtTextContentXType, Error> {
+                Self::finish_state(helper, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -33960,14 +34665,14 @@ pub mod page {
             type_: super::CtLayerTypeXType,
             draw_param: Option<u32>,
             id: u32,
-            content: Vec<super::CtLayerContent9XType>,
+            content: Vec<super::CtPageBlockContentXType>,
             state__: Box<PageContentLayerXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageContentLayerXElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::CtLayerContent9XType as WithDeserializer>::Deserializer),
+            Content__(<super::CtPageBlockContentXType as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl PageContentLayerXElementTypeDeserializer {
@@ -34019,14 +34724,17 @@ pub mod page {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::CtLayerContent9XType) -> Result<(), Error> {
+            fn store_content(
+                &mut self,
+                value: super::CtPageBlockContentXType,
+            ) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::CtLayerContent9XType>,
+                output: DeserializerOutput<'de, super::CtPageBlockContentXType>,
                 fallback: &mut Option<PageContentLayerXElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use PageContentLayerXElementTypeDeserializerState as S;
@@ -34096,9 +34804,10 @@ pub mod page {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = <super::CtLayerContent9XType as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::CtPageBlockContentXType as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -35346,8 +36055,8 @@ pub mod page {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::CtLayerContent9XType],
-                    super::CtLayerContent9XType,
+                    &'ser [super::CtPageBlockContentXType],
+                    super::CtPageBlockContentXType,
                 >,
             ),
             End__,
@@ -35422,8 +36131,8 @@ pub mod page {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::CtLayerContent9XType],
-                    super::CtLayerContent9XType,
+                    &'ser [super::CtPageBlockContentXType],
+                    super::CtPageBlockContentXType,
                 >,
             ),
             End__,
@@ -35835,11 +36544,7 @@ pub mod page {
         pub(super) enum CtTextXTypeSerializerState<'ser> {
             Init__,
             Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::super::CtPageBlockTextObjectContent20XType],
-                    super::super::CtPageBlockTextObjectContent20XType,
-                >,
+                IterSerializer<'ser, &'ser [super::CtTextContentXType], super::CtTextContentXType>,
             ),
             End__,
             Done__,
@@ -36542,11 +37247,7 @@ pub mod page {
         pub(super) enum CtPageBlockTextObjectXElementTypeSerializerState<'ser> {
             Init__,
             Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::super::CtPageBlockTextObjectContent20XType],
-                    super::super::CtPageBlockTextObjectContent20XType,
-                >,
+                IterSerializer<'ser, &'ser [super::CtTextContentXType], super::CtTextContentXType>,
             ),
             End__,
             Done__,
@@ -37326,8 +38027,8 @@ pub mod page {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::CtLayerContent9XType],
-                    super::CtLayerContent9XType,
+                    &'ser [super::CtPageBlockContentXType],
+                    super::CtPageBlockContentXType,
                 >,
             ),
             End__,
@@ -37391,13 +38092,13 @@ pub mod page {
             }
         }
         #[derive(Debug)]
-        pub struct CtLayerContent9XTypeSerializer<'ser> {
-            pub(super) value: &'ser super::CtLayerContent9XType,
-            pub(super) state: Box<CtLayerContent9XTypeSerializerState<'ser>>,
+        pub struct CtPageBlockContentXTypeSerializer<'ser> {
+            pub(super) value: &'ser super::CtPageBlockContentXType,
+            pub(super) state: Box<CtPageBlockContentXTypeSerializerState<'ser>>,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
-        pub(super) enum CtLayerContent9XTypeSerializerState<'ser> {
+        pub(super) enum CtPageBlockContentXTypeSerializerState<'ser> {
             Init__,
             TextObject(
                 <super::CtPageBlockTextObjectXElementType as WithSerializer>::Serializer<'ser>,
@@ -37417,16 +38118,16 @@ pub mod page {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> CtLayerContent9XTypeSerializer<'ser> {
+        impl<'ser> CtPageBlockContentXTypeSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        CtLayerContent9XTypeSerializerState::Init__ => match self.value {
-                            super::CtLayerContent9XType::TextObject(x) => {
-                                *self.state = CtLayerContent9XTypeSerializerState::TextObject(
+                        CtPageBlockContentXTypeSerializerState::Init__ => match self.value {
+                            super::CtPageBlockContentXType::TextObject(x) => {
+                                *self.state = CtPageBlockContentXTypeSerializerState::TextObject(
                                     WithSerializer::serializer(
                                         x,
                                         Some("TextObject"),
@@ -37434,8 +38135,8 @@ pub mod page {
                                     )?,
                                 )
                             }
-                            super::CtLayerContent9XType::PathObject(x) => {
-                                *self.state = CtLayerContent9XTypeSerializerState::PathObject(
+                            super::CtPageBlockContentXType::PathObject(x) => {
+                                *self.state = CtPageBlockContentXTypeSerializerState::PathObject(
                                     WithSerializer::serializer(
                                         x,
                                         Some("PathObject"),
@@ -37443,8 +38144,8 @@ pub mod page {
                                     )?,
                                 )
                             }
-                            super::CtLayerContent9XType::ImageObject(x) => {
-                                *self.state = CtLayerContent9XTypeSerializerState::ImageObject(
+                            super::CtPageBlockContentXType::ImageObject(x) => {
+                                *self.state = CtPageBlockContentXTypeSerializerState::ImageObject(
                                     WithSerializer::serializer(
                                         x,
                                         Some("ImageObject"),
@@ -37452,64 +38153,75 @@ pub mod page {
                                     )?,
                                 )
                             }
-                            super::CtLayerContent9XType::CompositeObject(x) => {
-                                *self.state = CtLayerContent9XTypeSerializerState::CompositeObject(
-                                    WithSerializer::serializer(
-                                        x,
-                                        Some("CompositeObject"),
-                                        self.is_root,
-                                    )?,
-                                )
+                            super::CtPageBlockContentXType::CompositeObject(x) => {
+                                *self.state =
+                                    CtPageBlockContentXTypeSerializerState::CompositeObject(
+                                        WithSerializer::serializer(
+                                            x,
+                                            Some("CompositeObject"),
+                                            self.is_root,
+                                        )?,
+                                    )
                             }
-                            super::CtLayerContent9XType::PageBlock(x) => {
-                                *self.state = CtLayerContent9XTypeSerializerState::PageBlock(
+                            super::CtPageBlockContentXType::PageBlock(x) => {
+                                *self.state = CtPageBlockContentXTypeSerializerState::PageBlock(
                                     WithSerializer::serializer(x, Some("PageBlock"), self.is_root)?,
                                 )
                             }
                         },
-                        CtLayerContent9XTypeSerializerState::TextObject(x) => {
+                        CtPageBlockContentXTypeSerializerState::TextObject(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = CtLayerContent9XTypeSerializerState::Done__,
+                                None => {
+                                    *self.state = CtPageBlockContentXTypeSerializerState::Done__
+                                }
                             }
                         }
-                        CtLayerContent9XTypeSerializerState::PathObject(x) => {
+                        CtPageBlockContentXTypeSerializerState::PathObject(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = CtLayerContent9XTypeSerializerState::Done__,
+                                None => {
+                                    *self.state = CtPageBlockContentXTypeSerializerState::Done__
+                                }
                             }
                         }
-                        CtLayerContent9XTypeSerializerState::ImageObject(x) => {
+                        CtPageBlockContentXTypeSerializerState::ImageObject(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = CtLayerContent9XTypeSerializerState::Done__,
+                                None => {
+                                    *self.state = CtPageBlockContentXTypeSerializerState::Done__
+                                }
                             }
                         }
-                        CtLayerContent9XTypeSerializerState::CompositeObject(x) => {
+                        CtPageBlockContentXTypeSerializerState::CompositeObject(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = CtLayerContent9XTypeSerializerState::Done__,
+                                None => {
+                                    *self.state = CtPageBlockContentXTypeSerializerState::Done__
+                                }
                             }
                         }
-                        CtLayerContent9XTypeSerializerState::PageBlock(x) => {
+                        CtPageBlockContentXTypeSerializerState::PageBlock(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = CtLayerContent9XTypeSerializerState::Done__,
+                                None => {
+                                    *self.state = CtPageBlockContentXTypeSerializerState::Done__
+                                }
                             }
                         }
-                        CtLayerContent9XTypeSerializerState::Done__ => return Ok(None),
-                        CtLayerContent9XTypeSerializerState::Phantom__(_) => unreachable!(),
+                        CtPageBlockContentXTypeSerializerState::Done__ => return Ok(None),
+                        CtPageBlockContentXTypeSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for CtLayerContent9XTypeSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for CtPageBlockContentXTypeSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = CtLayerContent9XTypeSerializerState::Done__;
+                        *self.state = CtPageBlockContentXTypeSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -37528,8 +38240,8 @@ pub mod page {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::CtLayerContent9XType],
-                    super::CtLayerContent9XType,
+                    &'ser [super::CtPageBlockContentXType],
+                    super::CtPageBlockContentXType,
                 >,
             ),
             End__,
@@ -37660,6 +38372,125 @@ pub mod page {
                     Ok(None) => None,
                     Err(error) => {
                         *self.state = CtTextTextCodeXElementTypeSerializerState::Done__;
+                        Some(Err(error))
+                    }
+                }
+            }
+        }
+        #[derive(Debug)]
+        pub struct CtTextContentXTypeSerializer<'ser> {
+            pub(super) value: &'ser super::CtTextContentXType,
+            pub(super) state: Box<CtTextContentXTypeSerializerState<'ser>>,
+            pub(super) is_root: bool,
+        }
+        #[derive(Debug)]
+        pub(super) enum CtTextContentXTypeSerializerState<'ser> {
+            Init__,
+            Actions(<super::CtGraphicUnitActionsXElementType as WithSerializer>::Serializer<'ser>),
+            Clips(<super::CtGraphicUnitClipsXElementType as WithSerializer>::Serializer<'ser>),
+            FillColor(<super::CtColorXType as WithSerializer>::Serializer<'ser>),
+            StrokeColor(<super::CtColorXType as WithSerializer>::Serializer<'ser>),
+            CgTransform(<super::CtCgTransformXType as WithSerializer>::Serializer<'ser>),
+            TextCode(<super::CtTextTextCodeXElementType as WithSerializer>::Serializer<'ser>),
+            Done__,
+            Phantom__(&'ser ()),
+        }
+        impl<'ser> CtTextContentXTypeSerializer<'ser> {
+            fn next_event(
+                &mut self,
+                helper: &mut SerializeHelper,
+            ) -> Result<Option<Event<'ser>>, Error> {
+                loop {
+                    match &mut *self.state {
+                        CtTextContentXTypeSerializerState::Init__ => match self.value {
+                            super::CtTextContentXType::Actions(x) => {
+                                *self.state = CtTextContentXTypeSerializerState::Actions(
+                                    WithSerializer::serializer(x, Some("Actions"), self.is_root)?,
+                                )
+                            }
+                            super::CtTextContentXType::Clips(x) => {
+                                *self.state = CtTextContentXTypeSerializerState::Clips(
+                                    WithSerializer::serializer(x, Some("Clips"), self.is_root)?,
+                                )
+                            }
+                            super::CtTextContentXType::FillColor(x) => {
+                                *self.state = CtTextContentXTypeSerializerState::FillColor(
+                                    WithSerializer::serializer(x, Some("FillColor"), self.is_root)?,
+                                )
+                            }
+                            super::CtTextContentXType::StrokeColor(x) => {
+                                *self.state = CtTextContentXTypeSerializerState::StrokeColor(
+                                    WithSerializer::serializer(
+                                        x,
+                                        Some("StrokeColor"),
+                                        self.is_root,
+                                    )?,
+                                )
+                            }
+                            super::CtTextContentXType::CgTransform(x) => {
+                                *self.state = CtTextContentXTypeSerializerState::CgTransform(
+                                    WithSerializer::serializer(
+                                        x,
+                                        Some("CGTransform"),
+                                        self.is_root,
+                                    )?,
+                                )
+                            }
+                            super::CtTextContentXType::TextCode(x) => {
+                                *self.state = CtTextContentXTypeSerializerState::TextCode(
+                                    WithSerializer::serializer(x, Some("TextCode"), self.is_root)?,
+                                )
+                            }
+                        },
+                        CtTextContentXTypeSerializerState::Actions(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtTextContentXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtTextContentXTypeSerializerState::Clips(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtTextContentXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtTextContentXTypeSerializerState::FillColor(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtTextContentXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtTextContentXTypeSerializerState::StrokeColor(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtTextContentXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtTextContentXTypeSerializerState::CgTransform(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtTextContentXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtTextContentXTypeSerializerState::TextCode(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = CtTextContentXTypeSerializerState::Done__,
+                            }
+                        }
+                        CtTextContentXTypeSerializerState::Done__ => return Ok(None),
+                        CtTextContentXTypeSerializerState::Phantom__(_) => unreachable!(),
+                    }
+                }
+            }
+        }
+        impl<'ser> Serializer<'ser> for CtTextContentXTypeSerializer<'ser> {
+            fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+                match self.next_event(helper) {
+                    Ok(Some(event)) => Some(Ok(event)),
+                    Ok(None) => None,
+                    Err(error) => {
+                        *self.state = CtTextContentXTypeSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -37804,8 +38635,8 @@ pub mod page {
             Content__(
                 IterSerializer<
                     'ser,
-                    &'ser [super::CtLayerContent9XType],
-                    super::CtLayerContent9XType,
+                    &'ser [super::CtPageBlockContentXType],
+                    super::CtPageBlockContentXType,
                 >,
             ),
             End__,
@@ -37867,869 +38698,6 @@ pub mod page {
                         *self.state = PageContentLayerXElementTypeSerializerState::Done__;
                         Some(Err(error))
                     }
-                }
-            }
-        }
-    }
-}
-pub mod quick_xml_deserialize {
-    use core::mem::replace;
-    use xsd_parser_types::quick_xml::{
-        DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
-        RawByteStr, WithDeserializer,
-    };
-    #[derive(Debug)]
-    pub struct CtPageBlockTextObjectContent20XTypeDeserializer {
-        state__: Box<CtPageBlockTextObjectContent20XTypeDeserializerState>,
-    }
-    #[derive(Debug)]
-    pub enum CtPageBlockTextObjectContent20XTypeDeserializerState {
-        Init__,
-        Actions(
-            Option<super::page::CtGraphicUnitActionsXElementType>,
-            Option<
-                <super::page::CtGraphicUnitActionsXElementType as WithDeserializer>::Deserializer,
-            >,
-            Option<
-                <super::page::CtGraphicUnitActionsXElementType as WithDeserializer>::Deserializer,
-            >,
-        ),
-        Clips(
-            Option<super::page::CtGraphicUnitClipsXElementType>,
-            Option<<super::page::CtGraphicUnitClipsXElementType as WithDeserializer>::Deserializer>,
-            Option<<super::page::CtGraphicUnitClipsXElementType as WithDeserializer>::Deserializer>,
-        ),
-        FillColor(
-            Option<super::page::CtColorXType>,
-            Option<<super::page::CtColorXType as WithDeserializer>::Deserializer>,
-            Option<<super::page::CtColorXType as WithDeserializer>::Deserializer>,
-        ),
-        StrokeColor(
-            Option<super::page::CtColorXType>,
-            Option<<super::page::CtColorXType as WithDeserializer>::Deserializer>,
-            Option<<super::page::CtColorXType as WithDeserializer>::Deserializer>,
-        ),
-        CgTransform(
-            Option<super::page::CtCgTransformXType>,
-            Option<<super::page::CtCgTransformXType as WithDeserializer>::Deserializer>,
-            Option<<super::page::CtCgTransformXType as WithDeserializer>::Deserializer>,
-        ),
-        TextCode(
-            Option<super::page::CtTextTextCodeXElementType>,
-            Option<<super::page::CtTextTextCodeXElementType as WithDeserializer>::Deserializer>,
-            Option<<super::page::CtTextTextCodeXElementType as WithDeserializer>::Deserializer>,
-        ),
-        Done__(super::CtPageBlockTextObjectContent20XType),
-        Unknown__,
-    }
-    impl CtPageBlockTextObjectContent20XTypeDeserializer {
-        fn find_suitable<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            event: Event<'de>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            if let Event::Start(x) | Event::Empty(x) = &event {
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
-                    Some(b"Actions")
-                ) {
-                    let output =
-                        <super::page::CtGraphicUnitActionsXElementType as WithDeserializer>::init(
-                            helper, event,
-                        )?;
-                    return self.handle_actions(helper, Default::default(), None, output);
-                }
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
-                    Some(b"Clips")
-                ) {
-                    let output =
-                        <super::page::CtGraphicUnitClipsXElementType as WithDeserializer>::init(
-                            helper, event,
-                        )?;
-                    return self.handle_clips(helper, Default::default(), None, output);
-                }
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
-                    Some(b"FillColor")
-                ) {
-                    let output =
-                        <super::page::CtColorXType as WithDeserializer>::init(helper, event)?;
-                    return self.handle_fill_color(helper, Default::default(), None, output);
-                }
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
-                    Some(b"StrokeColor")
-                ) {
-                    let output =
-                        <super::page::CtColorXType as WithDeserializer>::init(helper, event)?;
-                    return self.handle_stroke_color(helper, Default::default(), None, output);
-                }
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
-                    Some(b"CGTransform")
-                ) {
-                    let output =
-                        <super::page::CtCgTransformXType as WithDeserializer>::init(helper, event)?;
-                    return self.handle_cg_transform(helper, Default::default(), None, output);
-                }
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
-                    Some(b"TextCode")
-                ) {
-                    let output =
-                        <super::page::CtTextTextCodeXElementType as WithDeserializer>::init(
-                            helper, event,
-                        )?;
-                    return self.handle_text_code(helper, Default::default(), None, output);
-                }
-            }
-            *self.state__ = CtPageBlockTextObjectContent20XTypeDeserializerState::Init__;
-            Ok(ElementHandlerOutput::return_to_parent(event, false))
-        }
-        fn finish_state(
-            helper: &mut DeserializeHelper,
-            state: CtPageBlockTextObjectContent20XTypeDeserializerState,
-        ) -> Result<super::CtPageBlockTextObjectContent20XType, Error> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            match state {
-                S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Actions(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_actions(&mut values, value)?;
-                    }
-                    Ok(super::CtPageBlockTextObjectContent20XType::Actions(
-                        helper.finish_element("Actions", values)?,
-                    ))
-                }
-                S::Clips(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_clips(&mut values, value)?;
-                    }
-                    Ok(super::CtPageBlockTextObjectContent20XType::Clips(
-                        helper.finish_element("Clips", values)?,
-                    ))
-                }
-                S::FillColor(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_fill_color(&mut values, value)?;
-                    }
-                    Ok(super::CtPageBlockTextObjectContent20XType::FillColor(
-                        helper.finish_element("FillColor", values)?,
-                    ))
-                }
-                S::StrokeColor(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_stroke_color(&mut values, value)?;
-                    }
-                    Ok(super::CtPageBlockTextObjectContent20XType::StrokeColor(
-                        helper.finish_element("StrokeColor", values)?,
-                    ))
-                }
-                S::CgTransform(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_cg_transform(&mut values, value)?;
-                    }
-                    Ok(super::CtPageBlockTextObjectContent20XType::CgTransform(
-                        helper.finish_element("CGTransform", values)?,
-                    ))
-                }
-                S::TextCode(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_text_code(&mut values, value)?;
-                    }
-                    Ok(super::CtPageBlockTextObjectContent20XType::TextCode(
-                        helper.finish_element("TextCode", values)?,
-                    ))
-                }
-                S::Done__(data) => Ok(data),
-                _ => unreachable!(),
-            }
-        }
-        fn store_actions(
-            values: &mut Option<super::page::CtGraphicUnitActionsXElementType>,
-            value: super::page::CtGraphicUnitActionsXElementType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Actions",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn store_clips(
-            values: &mut Option<super::page::CtGraphicUnitClipsXElementType>,
-            value: super::page::CtGraphicUnitClipsXElementType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Clips",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn store_fill_color(
-            values: &mut Option<super::page::CtColorXType>,
-            value: super::page::CtColorXType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"FillColor",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn store_stroke_color(
-            values: &mut Option<super::page::CtColorXType>,
-            value: super::page::CtColorXType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"StrokeColor",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn store_cg_transform(
-            values: &mut Option<super::page::CtCgTransformXType>,
-            value: super::page::CtCgTransformXType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"CGTransform",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn store_text_code(
-            values: &mut Option<super::page::CtTextTextCodeXElementType>,
-            value: super::page::CtTextTextCodeXElementType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"TextCode",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn handle_actions<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::page::CtGraphicUnitActionsXElementType>,
-            fallback: Option<
-                <super::page::CtGraphicUnitActionsXElementType as WithDeserializer>::Deserializer,
-            >,
-            output: DeserializerOutput<'de, super::page::CtGraphicUnitActionsXElementType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_actions(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_actions(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::Actions(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::Actions(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-        fn handle_clips<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::page::CtGraphicUnitClipsXElementType>,
-            fallback: Option<
-                <super::page::CtGraphicUnitClipsXElementType as WithDeserializer>::Deserializer,
-            >,
-            output: DeserializerOutput<'de, super::page::CtGraphicUnitClipsXElementType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_clips(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_clips(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::Clips(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::Clips(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-        fn handle_fill_color<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::page::CtColorXType>,
-            fallback: Option<<super::page::CtColorXType as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, super::page::CtColorXType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_fill_color(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_fill_color(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::FillColor(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::FillColor(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-        fn handle_stroke_color<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::page::CtColorXType>,
-            fallback: Option<<super::page::CtColorXType as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, super::page::CtColorXType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_stroke_color(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_stroke_color(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::StrokeColor(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::StrokeColor(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-        fn handle_cg_transform<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::page::CtCgTransformXType>,
-            fallback: Option<<super::page::CtCgTransformXType as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, super::page::CtCgTransformXType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_cg_transform(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_cg_transform(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::CgTransform(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::CgTransform(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-        fn handle_text_code<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::page::CtTextTextCodeXElementType>,
-            fallback: Option<
-                <super::page::CtTextTextCodeXElementType as WithDeserializer>::Deserializer,
-            >,
-            output: DeserializerOutput<'de, super::page::CtTextTextCodeXElementType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_text_code(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_text_code(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::TextCode(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::TextCode(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-    }
-    impl<'de> Deserializer<'de, super::CtPageBlockTextObjectContent20XType>
-        for CtPageBlockTextObjectContent20XTypeDeserializer
-    {
-        fn init(
-            helper: &mut DeserializeHelper,
-            event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CtPageBlockTextObjectContent20XType> {
-            let deserializer = Self {
-                state__: Box::new(CtPageBlockTextObjectContent20XTypeDeserializerState::Init__),
-            };
-            let mut output = deserializer.next(helper, event)?;
-            output.artifact = match output.artifact {
-                DeserializerArtifact::Deserializer(x)
-                    if matches!(
-                        &*x.state__,
-                        CtPageBlockTextObjectContent20XTypeDeserializerState::Init__
-                    ) =>
-                {
-                    DeserializerArtifact::None
-                }
-                artifact => artifact,
-            };
-            Ok(output)
-        }
-        fn next(
-            mut self,
-            helper: &mut DeserializeHelper,
-            event: Event<'de>,
-        ) -> DeserializerResult<'de, super::CtPageBlockTextObjectContent20XType> {
-            use CtPageBlockTextObjectContent20XTypeDeserializerState as S;
-            let mut event = event;
-            let (event, allow_any) = loop {
-                let state = replace(&mut *self.state__, S::Unknown__);
-                event = match (state, event) {
-                    (S::Unknown__, _) => unreachable!(),
-                    (S::Actions(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_actions(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::Clips(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_clips(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::FillColor(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_fill_color(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::StrokeColor(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_stroke_color(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::CgTransform(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_cg_transform(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::TextCode(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_text_code(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (state, event @ Event::End(_)) => {
-                        return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(Self::finish_state(
-                                helper, state,
-                            )?),
-                            event: DeserializerEvent::Continue(event),
-                            allow_any: false,
-                        });
-                    }
-                    (S::Init__, event) => match self.find_suitable(helper, event)? {
-                        ElementHandlerOutput::Break { event, allow_any } => {
-                            break (event, allow_any)
-                        }
-                        ElementHandlerOutput::Continue { event, .. } => event,
-                    },
-                    (
-                        S::Actions(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_UNNAMED_5),
-                            b"Actions",
-                            true,
-                        )?;
-                        match self.handle_actions(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::Clips(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_UNNAMED_5),
-                            b"Clips",
-                            true,
-                        )?;
-                        match self.handle_clips(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::FillColor(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_UNNAMED_5),
-                            b"FillColor",
-                            true,
-                        )?;
-                        match self.handle_fill_color(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::StrokeColor(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_UNNAMED_5),
-                            b"StrokeColor",
-                            true,
-                        )?;
-                        match self.handle_stroke_color(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::CgTransform(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_UNNAMED_5),
-                            b"CGTransform",
-                            false,
-                        )?;
-                        match self.handle_cg_transform(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::TextCode(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_UNNAMED_5),
-                            b"TextCode",
-                            false,
-                        )?;
-                        match self.handle_text_code(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (state @ S::Done__(_), event) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
-                    (state, event) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
-                }
-            };
-            let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(helper)?)
-            } else {
-                DeserializerArtifact::Deserializer(self)
-            };
-            Ok(DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            })
-        }
-        fn finish(
-            self,
-            helper: &mut DeserializeHelper,
-        ) -> Result<super::CtPageBlockTextObjectContent20XType, Error> {
-            Self::finish_state(helper, *self.state__)
-        }
-    }
-}
-pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{Error, Event, SerializeHelper, Serializer, WithSerializer};
-    #[derive(Debug)]
-    pub struct CtPageBlockTextObjectContent20XTypeSerializer<'ser> {
-        pub(super) value: &'ser super::CtPageBlockTextObjectContent20XType,
-        pub(super) state: Box<CtPageBlockTextObjectContent20XTypeSerializerState<'ser>>,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum CtPageBlockTextObjectContent20XTypeSerializerState<'ser> {
-        Init__,
-        Actions(
-            <super::page::CtGraphicUnitActionsXElementType as WithSerializer>::Serializer<'ser>,
-        ),
-        Clips(<super::page::CtGraphicUnitClipsXElementType as WithSerializer>::Serializer<'ser>),
-        FillColor(<super::page::CtColorXType as WithSerializer>::Serializer<'ser>),
-        StrokeColor(<super::page::CtColorXType as WithSerializer>::Serializer<'ser>),
-        CgTransform(<super::page::CtCgTransformXType as WithSerializer>::Serializer<'ser>),
-        TextCode(<super::page::CtTextTextCodeXElementType as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> CtPageBlockTextObjectContent20XTypeSerializer<'ser> {
-        fn next_event(
-            &mut self,
-            helper: &mut SerializeHelper,
-        ) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    CtPageBlockTextObjectContent20XTypeSerializerState::Init__ => {
-                        match self.value {
-                            super::CtPageBlockTextObjectContent20XType::Actions(x) => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Actions(
-                                        WithSerializer::serializer(
-                                            x,
-                                            Some("Actions"),
-                                            self.is_root,
-                                        )?,
-                                    )
-                            }
-                            super::CtPageBlockTextObjectContent20XType::Clips(x) => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Clips(
-                                        WithSerializer::serializer(x, Some("Clips"), self.is_root)?,
-                                    )
-                            }
-                            super::CtPageBlockTextObjectContent20XType::FillColor(x) => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::FillColor(
-                                        WithSerializer::serializer(
-                                            x,
-                                            Some("FillColor"),
-                                            self.is_root,
-                                        )?,
-                                    )
-                            }
-                            super::CtPageBlockTextObjectContent20XType::StrokeColor(x) => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::StrokeColor(
-                                        WithSerializer::serializer(
-                                            x,
-                                            Some("StrokeColor"),
-                                            self.is_root,
-                                        )?,
-                                    )
-                            }
-                            super::CtPageBlockTextObjectContent20XType::CgTransform(x) => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::CgTransform(
-                                        WithSerializer::serializer(
-                                            x,
-                                            Some("CGTransform"),
-                                            self.is_root,
-                                        )?,
-                                    )
-                            }
-                            super::CtPageBlockTextObjectContent20XType::TextCode(x) => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::TextCode(
-                                        WithSerializer::serializer(
-                                            x,
-                                            Some("TextCode"),
-                                            self.is_root,
-                                        )?,
-                                    )
-                            }
-                        }
-                    }
-                    CtPageBlockTextObjectContent20XTypeSerializerState::Actions(x) => {
-                        match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Done__
-                            }
-                        }
-                    }
-                    CtPageBlockTextObjectContent20XTypeSerializerState::Clips(x) => {
-                        match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Done__
-                            }
-                        }
-                    }
-                    CtPageBlockTextObjectContent20XTypeSerializerState::FillColor(x) => {
-                        match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Done__
-                            }
-                        }
-                    }
-                    CtPageBlockTextObjectContent20XTypeSerializerState::StrokeColor(x) => {
-                        match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Done__
-                            }
-                        }
-                    }
-                    CtPageBlockTextObjectContent20XTypeSerializerState::CgTransform(x) => {
-                        match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Done__
-                            }
-                        }
-                    }
-                    CtPageBlockTextObjectContent20XTypeSerializerState::TextCode(x) => {
-                        match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    CtPageBlockTextObjectContent20XTypeSerializerState::Done__
-                            }
-                        }
-                    }
-                    CtPageBlockTextObjectContent20XTypeSerializerState::Done__ => return Ok(None),
-                    CtPageBlockTextObjectContent20XTypeSerializerState::Phantom__(_) => {
-                        unreachable!()
-                    }
-                }
-            }
-        }
-    }
-    impl<'ser> Serializer<'ser> for CtPageBlockTextObjectContent20XTypeSerializer<'ser> {
-        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
-            match self.next_event(helper) {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = CtPageBlockTextObjectContent20XTypeSerializerState::Done__;
-                    Some(Err(error))
                 }
             }
         }

@@ -3056,9 +3056,9 @@ pub mod onix {
         pub gp_authorship: Option<DescriptiveDetailGpAuthorship>,
         pub gp_events: DescriptiveDetailGpEvents,
         pub gp_editions: DescriptiveDetailGpEditions,
-        pub gp_languages: ContentItemGpLanguages,
+        pub gp_languages: GpLanguages,
         pub gp_extents: DescriptiveDetailGpExtents,
-        pub gp_subjects: ContentItemGpSubjects,
+        pub gp_subjects: GpSubjects,
         pub gp_audiences: DescriptiveDetailGpAudiences,
     }
     ///Standard attributes for all ONIX data elements
@@ -3075,8 +3075,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_descriptions_and_marketing_resources:
-            CollateralDetailGpDescriptionsAndMarketingResources,
+        pub gp_descriptions_and_marketing_resources: GpDescriptionsAndMarketingResources,
         pub gp_prizes: CollateralDetailGpPrizes,
     }
     ///Standard attributes for all ONIX data elements
@@ -3438,7 +3437,7 @@ pub mod onix {
         pub religious_text: Option<ReligiousTextElementType>,
     }
     #[derive(Debug)]
-    pub struct ContentItemGpLanguages {
+    pub struct GpLanguages {
         pub language: Vec<LanguageElementType>,
     }
     #[derive(Debug)]
@@ -3450,7 +3449,7 @@ pub mod onix {
         pub ancillary_content: Vec<AncillaryContentElementType>,
     }
     #[derive(Debug)]
-    pub struct ContentItemGpSubjects {
+    pub struct GpSubjects {
         pub subject: Vec<SubjectElementType>,
         pub name_as_subject: Vec<NameAsSubjectElementType>,
     }
@@ -3470,7 +3469,7 @@ pub mod onix {
         Collateraldetail,
     }
     #[derive(Debug)]
-    pub struct CollateralDetailGpDescriptionsAndMarketingResources {
+    pub struct GpDescriptionsAndMarketingResources {
         pub text_content: Vec<TextContentElementType>,
         pub cited_content: Vec<CitedContentElementType>,
         pub supporting_resource: Vec<SupportingResourceElementType>,
@@ -3541,13 +3540,12 @@ pub mod onix {
         pub epub_license: Vec<EpubLicenseWithDateType>,
         pub content_119: ContentItemContent119,
         pub gp_authorship: Option<ContentItemGpAuthorship>,
-        pub gp_languages: ContentItemGpLanguages,
-        pub gp_subjects: ContentItemGpSubjects,
-        pub gp_descriptions_and_marketing_resources:
-            CollateralDetailGpDescriptionsAndMarketingResources,
+        pub gp_languages: GpLanguages,
+        pub gp_subjects: GpSubjects,
+        pub gp_descriptions_and_marketing_resources: GpDescriptionsAndMarketingResources,
         pub publisher: Vec<PublisherElementType>,
         pub content_123: Option<ContentItemContent123>,
-        pub gp_related_materials: ContentItemGpRelatedMaterials,
+        pub gp_related_materials: GpRelatedMaterials,
     }
     #[derive(Debug)]
     pub enum PublishingDetailRefname {
@@ -4491,7 +4489,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -4611,7 +4609,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -4852,7 +4850,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -4988,7 +4986,7 @@ pub mod onix {
         pub copyright_statement_text: Vec<CopyrightStatementTextElementType>,
     }
     #[derive(Debug)]
-    pub struct ContentItemGpRelatedMaterials {
+    pub struct GpRelatedMaterials {
         pub related_work: Vec<RelatedWorkElementType>,
         pub related_product: Vec<RelatedProductElementType>,
     }
@@ -5192,7 +5190,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: BodyManifestGpProductSpecification,
+        pub gp_product_specification: GpProductSpecification,
         pub cover_resource: Vec<CoverResourceElementType>,
     }
     ///Standard attributes for all ONIX data elements
@@ -5209,7 +5207,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: BodyManifestGpProductSpecification,
+        pub gp_product_specification: GpProductSpecification,
         pub body_resource: Vec<BodyResourceElementType>,
     }
     ///Standard attributes for all ONIX data elements
@@ -5226,7 +5224,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: BodyManifestGpProductSpecification,
+        pub gp_product_specification: GpProductSpecification,
         pub insert_point: InsertPointElementType,
         pub insert_resource: Vec<InsertResourceElementType>,
     }
@@ -5379,7 +5377,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -5420,7 +5418,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -5444,7 +5442,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -5468,7 +5466,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -5492,7 +5490,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -5516,7 +5514,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub enum SupplyDetailRefname {
@@ -9626,7 +9624,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -9737,7 +9735,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub enum NoContributorRefname {
@@ -10173,7 +10171,7 @@ pub mod onix {
         Ruby(RubyElementType),
     }
     #[derive(Debug)]
-    pub enum AncillaryContentDescriptionContent85 {
+    pub enum FlowContent {
         Block(BlockElement),
         Inline(InlineElement),
         Text(Text),
@@ -10224,7 +10222,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -10351,7 +10349,7 @@ pub mod onix {
     pub enum NameAsSubjectContent205 {
         Content206(NameAsSubjectContent206),
         Content212(NameAsSubjectContent208),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(NameAsSubjectGpCorporateName),
     }
     ///Standard attributes for all ONIX data elements
@@ -10653,7 +10651,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -10737,7 +10735,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -10866,7 +10864,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -11127,7 +11125,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -11151,7 +11149,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub enum EventIdentifierRefname {
@@ -11436,7 +11434,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -11600,7 +11598,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub struct PublishingDetailContent272 {
@@ -11714,7 +11712,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub enum PublishingDateRefname {
@@ -12146,7 +12144,7 @@ pub mod onix {
         Covermanifest,
     }
     #[derive(Debug)]
-    pub struct BodyManifestGpProductSpecification {
+    pub struct GpProductSpecification {
         pub specification_bundle_name: Vec<SpecificationBundleNameElementType>,
         pub specification_detail: Vec<SpecificationDetailElementType>,
         pub specification_feature: Vec<SpecificationFeatureElementType>,
@@ -12193,7 +12191,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
-        pub gp_resource_specification: BodyResourceGpResourceSpecification,
+        pub gp_resource_specification: GpResourceSpecification,
     }
     #[derive(Debug)]
     pub enum InsertManifestRefname {
@@ -12333,7 +12331,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -14372,7 +14370,7 @@ pub mod onix {
     pub enum ContributorContent125 {
         Content126(ContributorContent126),
         Content132(ContributorContent128),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(ContributorGpCorporateName),
         UnnamedPersons(UnnamedPersonsElementType),
     }
@@ -14415,7 +14413,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -14439,7 +14437,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -14588,7 +14586,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub enum NoEditionRefname {
@@ -16557,7 +16555,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub struct AbbrElementType {
@@ -16624,7 +16622,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<PreContent23>,
+        pub content: Vec<PreContentContent>,
     }
     #[derive(Debug)]
     pub struct BlockquoteElementType {
@@ -16679,7 +16677,7 @@ pub mod onix {
         pub tabindex: Option<String>,
         pub onfocus: Option<String>,
         pub onblur: Option<String>,
-        pub content: Vec<AContent25>,
+        pub content: Vec<AContentContent>,
     }
     #[derive(Debug)]
     pub struct BdoElementType {
@@ -17502,10 +17500,10 @@ pub mod onix {
     #[derive(Debug)]
     pub struct NameAsSubjectContent208 {
         pub gp_unstructured_name: NameAsSubjectGpUnstructuredName,
-        pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
+        pub gp_structured_name: Option<GpStructuredName>,
     }
     #[derive(Debug)]
-    pub struct AlternativeNameGpStructuredName {
+    pub struct GpStructuredName {
         pub titles_before_names: Option<TitlesBeforeNamesElementType>,
         pub names_before_key: Option<NamesBeforeKeyElementType>,
         pub prefix_to_key: Option<PrefixToKeyElementType>,
@@ -17532,7 +17530,7 @@ pub mod onix {
     pub enum AlternativeNameContent76 {
         Content77(AlternativeNameContent77),
         Content83(AlternativeNameContent79),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(AlternativeNameGpCorporateName),
     }
     #[derive(Debug)]
@@ -18673,7 +18671,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
     pub enum ResourceVersionRefname {
@@ -18933,7 +18931,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -20112,7 +20110,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum CoverResourceContent151 {
-        GpResourceSpecification(BodyResourceGpResourceSpecification),
+        GpResourceSpecification(GpResourceSpecification),
         NoResource(NoResourceElementType),
     }
     #[derive(Debug)]
@@ -20124,7 +20122,7 @@ pub mod onix {
         Bodyresource,
     }
     #[derive(Debug)]
-    pub struct BodyResourceGpResourceSpecification {
+    pub struct GpResourceSpecification {
         pub resource_identifier: Vec<ResourceIdentifierElementType>,
         pub resource_role: Option<ResourceRoleElementType>,
         pub resource_file_detail: Vec<ResourceFileDetailElementType>,
@@ -22353,7 +22351,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct ContributorContent128 {
         pub gp_unstructured_name: ContributorGpUnstructuredName,
-        pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
+        pub gp_structured_name: Option<GpStructuredName>,
     }
     #[derive(Debug)]
     pub enum ContributorGpCorporateName {
@@ -23373,7 +23371,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -23433,7 +23431,7 @@ pub mod onix {
         Ruby(RubyElementType),
     }
     #[derive(Debug)]
-    pub enum PreContent23 {
+    pub enum PreContentContent {
         A(AElementType),
         Br(BrElementType),
         Span(AbbrElementType),
@@ -23514,7 +23512,7 @@ pub mod onix {
         Small(Box<AbbrElementType>),
     }
     #[derive(Debug)]
-    pub enum AContent25 {
+    pub enum AContentContent {
         Special(SpecialElement),
         Fontstyle(FontstyleElement),
         Phrase(PhraseElement),
@@ -23594,7 +23592,7 @@ pub mod onix {
     #[derive(Debug)]
     pub enum NameAsSubjectContent207 {
         Content208(NameAsSubjectContent208),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(NameAsSubjectGpCorporateName),
     }
     #[derive(Debug)]
@@ -23893,7 +23891,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct AlternativeNameContent79 {
         pub gp_unstructured_name: AlternativeNameGpUnstructuredName,
-        pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
+        pub gp_structured_name: Option<GpStructuredName>,
     }
     #[derive(Debug)]
     pub enum AlternativeNameGpCorporateName {
@@ -26282,7 +26280,7 @@ pub mod onix {
     #[derive(Debug)]
     pub enum ContributorContent127 {
         Content128(ContributorContent128),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(ContributorGpCorporateName),
         UnnamedPersons(UnnamedPersonsElementType),
     }
@@ -26573,7 +26571,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<RbContent65>,
+        pub content: Vec<RubyContentContent>,
     }
     #[derive(Debug)]
     pub enum RubyContent60 {
@@ -26712,7 +26710,7 @@ pub mod onix {
     #[derive(Debug)]
     pub enum AlternativeNameContent78 {
         Content79(AlternativeNameContent79),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(AlternativeNameGpCorporateName),
     }
     #[derive(Debug)]
@@ -28117,10 +28115,10 @@ pub mod onix {
         pub char: Option<String>,
         pub charoff: Option<String>,
         pub valign: Option<Valign>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     #[derive(Debug)]
-    pub enum RbContent65 {
+    pub enum RubyContentContent {
         A(AElementType),
         Special(SpecialElement),
         Fontstyle(FontstyleElement),
@@ -28136,7 +28134,7 @@ pub mod onix {
         pub lang: Option<String>,
         pub dir: Option<Dir>,
         pub rbspan: Option<i32>,
-        pub content: Vec<RbContent65>,
+        pub content: Vec<RubyContentContent>,
     }
     #[derive(Debug)]
     pub struct RubyContent61 {

@@ -20,6 +20,14 @@ pub struct GroupMeta {
 
     /// List of elements defined in this group.
     pub elements: ElementsMeta,
+
+    /// The `xs:group` this type was created from, if it is the content of a
+    /// group reference.
+    ///
+    /// Each reference to a group creates its own copy of the group, this field
+    /// is used to merge the identical copies back into one type. It is ignored
+    /// when types are compared.
+    pub group: Option<TypeIdent>,
 }
 
 /// Type information that contains data about a complex type.
@@ -92,14 +100,22 @@ impl GroupMeta {
 
 impl TypeEq for GroupMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
-        let Self { is_mixed, elements } = self;
+        let Self {
+            is_mixed,
+            elements,
+            group: _,
+        } = self;
 
         is_mixed.hash(hasher);
         elements.type_hash(hasher, types);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
-        let Self { is_mixed, elements } = self;
+        let Self {
+            is_mixed,
+            elements,
+            group: _,
+        } = self;
 
         is_mixed.eq(&other.is_mixed) && elements.type_eq(&other.elements, types)
     }

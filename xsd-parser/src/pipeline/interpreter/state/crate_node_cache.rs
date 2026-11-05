@@ -543,7 +543,7 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
 
     fn process_simple_content(&mut self, ty: &'schema SimpleContent) -> Result<(), Error> {
         for c in &ty.content {
-            use crate::models::schema::xs::ContentType as C;
+            use crate::models::schema::xs::SimpleContentContent as C;
 
             match c {
                 C::Annotation(_) => (),
@@ -557,7 +557,7 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
 
     fn process_complex_content(&mut self, ty: &'schema ComplexContent) -> Result<(), Error> {
         for c in &ty.content {
-            use crate::models::schema::xs::ContentType as C;
+            use crate::models::schema::xs::ComplexContentContent as C;
 
             match c {
                 C::Annotation(_) => (),
