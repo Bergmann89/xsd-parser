@@ -3,7 +3,7 @@ use std::io::{Error, ErrorKind, Result, Write};
 use std::mem::take;
 use std::str::from_utf8;
 
-use encoding_rs::{Encoder, EncoderResult, Encoding};
+use encoding_rs::{CoderResult, Encoder, EncoderResult, Encoding};
 use quick_xml::events::{BytesDecl, Event};
 
 use super::{Error as XmlError, SerializeSync, Writer};
@@ -33,12 +33,16 @@ use super::{Error as XmlError, SerializeSync, Writer};
 /// To write other content, use it as target of a [`Writer`] and call
 /// [`finish`](Self::finish) after the last write.
 ///
-/// Characters that can not be represented in the target encoding result in an
-/// error, they are not replaced. Encodings that `encoding_rs` can not encode
-/// (`UTF-16` and `replacement`) are rejected by [`EncodingWriter::new`].
+/// Characters that can not be represented in the target encoding are written
+/// as numeric character references (e.g. `&#128512;`) in text and attribute
+/// values. In names, comments, CDATA sections and processing instructions a
+/// reference would change the content, so they result in an error there.
+/// Encodings that `encoding_rs` can not encode (`UTF-16` and `replacement`)
+/// are rejected by [`EncodingWriter::new`].
 pub struct EncodingWriter<W> {
     inner: W,
     encoder: Encoder,
+    state: State,
     pending: Vec<u8>,
     buffer: Vec<u8>,
 }
@@ -62,6 +66,7 @@ impl<W: Write> EncodingWriter<W> {
         Ok(Self {
             inner,
             encoder: encoding.new_encoder(),
+            state: State::Text,
             pending: Vec::new(),
             buffer: vec![0; 4096],
         })
@@ -117,7 +122,41 @@ impl<W: Write> EncodingWriter<W> {
         Ok(self.inner)
     }
 
-    fn encode(&mut self, mut input: &str, last: bool) -> Result<()> {
+    fn encode(&mut self, input: &str, last: bool) -> Result<()> {
+        // Splits the input into runs that either allow character references
+        // or not. The state only changes on ASCII bytes, so every split is at
+        // a character boundary.
+        let mut start = 0;
+        let mut escape = self.state.allows_char_refs();
+
+        for (pos, byte) in input.bytes().enumerate() {
+            self.state = self.state.next(byte);
+
+            let next = self.state.allows_char_refs();
+            if next != escape {
+                self.encode_run(&input[start..=pos], escape, false)?;
+                start = pos + 1;
+                escape = next;
+            }
+        }
+
+        self.encode_run(&input[start..], escape, last)
+    }
+
+    fn encode_run(&mut self, mut input: &str, escape: bool, last: bool) -> Result<()> {
+        if escape {
+            loop {
+                let (result, read, written, _) =
+                    self.encoder.encode_from_utf8(input, &mut self.buffer, last);
+                self.inner.write_all(&self.buffer[..written])?;
+                input = &input[read..];
+
+                if result == CoderResult::InputEmpty {
+                    return Ok(());
+                }
+            }
+        }
+
         loop {
             let (result, read, written) =
                 self.encoder
@@ -182,6 +221,88 @@ impl<W> Debug for EncodingWriter<W> {
     }
 }
 
+/// Tracks where in the XML output the writer currently is, to decide where
+/// characters may be written as character references.
+///
+/// The output of the [`Writer`] is always well-formed, so this only needs to
+/// find the start and the end of the different kinds of markup.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum State {
+    /// Text content between tags.
+    Text,
+
+    /// Directly after a `<`.
+    Open,
+
+    /// Inside a start or end tag, optionally inside a quoted attribute value.
+    Tag { quote: Option<u8> },
+
+    /// Directly after a `<!`.
+    Bang,
+
+    /// Inside a comment, counting the trailing `-`.
+    Comment { dashes: u8 },
+
+    /// Inside a CDATA section, counting the trailing `]`.
+    CData { brackets: u8 },
+
+    /// Inside a processing instruction or the XML declaration.
+    Pi { question: bool },
+
+    /// Inside a document type declaration, tracking the internal subset.
+    DocType { depth: usize },
+}
+
+impl State {
+    fn allows_char_refs(self) -> bool {
+        matches!(self, Self::Text | Self::Tag { quote: Some(_) })
+    }
+
+    fn next(self, byte: u8) -> Self {
+        match (self, byte) {
+            (Self::Text, b'<') => Self::Open,
+            (Self::Text, _) => Self::Text,
+
+            (Self::Open, b'!') => Self::Bang,
+            (Self::Open, b'?') => Self::Pi { question: false },
+            (Self::Open, _) => Self::Tag { quote: None },
+
+            (Self::Tag { quote: None }, b'>') => Self::Text,
+            (Self::Tag { quote: None }, b'"' | b'\'') => Self::Tag { quote: Some(byte) },
+            (Self::Tag { quote: Some(quote) }, _) if quote == byte => Self::Tag { quote: None },
+            (Self::Tag { .. }, _) => self,
+
+            (Self::Bang, b'-') => Self::Comment { dashes: 0 },
+            (Self::Bang, b'[') => Self::CData { brackets: 0 },
+            (Self::Bang, _) => Self::DocType { depth: 0 },
+
+            (Self::Comment { dashes }, b'>') if dashes >= 2 => Self::Text,
+            (Self::Comment { dashes }, b'-') => Self::Comment {
+                dashes: dashes.saturating_add(1),
+            },
+            (Self::Comment { .. }, _) => Self::Comment { dashes: 0 },
+
+            (Self::CData { brackets }, b'>') if brackets >= 2 => Self::Text,
+            (Self::CData { brackets }, b']') => Self::CData {
+                brackets: brackets.saturating_add(1),
+            },
+            (Self::CData { .. }, _) => Self::CData { brackets: 0 },
+
+            (Self::Pi { question: true }, b'>') => Self::Text,
+            (Self::Pi { .. }, _) => Self::Pi {
+                question: byte == b'?',
+            },
+
+            (Self::DocType { depth: 0 }, b'>') => Self::Text,
+            (Self::DocType { depth }, b'[') => Self::DocType { depth: depth + 1 },
+            (Self::DocType { depth }, b']') => Self::DocType {
+                depth: depth.saturating_sub(1),
+            },
+            (Self::DocType { .. }, _) => self,
+        }
+    }
+}
+
 fn invalid_utf8() -> Error {
     Error::new(ErrorKind::InvalidData, "Written data is not valid UTF-8")
 }
@@ -192,7 +313,6 @@ mod tests {
 
     use encoding_rs::{UTF_16LE, UTF_8, WINDOWS_1251};
 
-    use super::super::ErrorKind as ErrorKind2;
     use super::EncodingWriter;
 
     #[test]
@@ -229,12 +349,50 @@ mod tests {
         assert_eq!(writer.finish().unwrap(), "<a>Привет 😀</a>".as_bytes());
     }
 
-    #[test]
-    fn rejects_unmappable_characters() {
+    fn encode(input: &str) -> std::io::Result<Vec<u8>> {
         let mut writer = EncodingWriter::new(Vec::new(), WINDOWS_1251).unwrap();
-        let error = writer.write_all("<a>😀</a>".as_bytes()).unwrap_err();
+        writer.write_all(input.as_bytes())?;
+        writer.finish()
+    }
 
-        assert_eq!(error.kind(), ErrorKind::InvalidData);
+    fn encode_bytewise(input: &str) -> std::io::Result<Vec<u8>> {
+        let mut writer = EncodingWriter::new(Vec::new(), WINDOWS_1251).unwrap();
+        for byte in input.as_bytes() {
+            writer.write_all(&[*byte])?;
+        }
+        writer.finish()
+    }
+
+    #[test]
+    fn writes_char_refs_in_text_and_attributes() {
+        let input = "<?xml version=\"1.0\"?><!DOCTYPE a [<!ENTITY e \"x\">]><a b=\"😀\" c='😀'><!-- - --><![CDATA[]]]>😀<?pi ?>😀</a>";
+        let expected = "<?xml version=\"1.0\"?><!DOCTYPE a [<!ENTITY e \"x\">]><a b=\"&#128512;\" c='&#128512;'><!-- - --><![CDATA[]]]>&#128512;<?pi ?>&#128512;</a>";
+
+        assert_eq!(encode(input).unwrap(), expected.as_bytes());
+        assert_eq!(encode_bytewise(input).unwrap(), expected.as_bytes());
+    }
+
+    #[test]
+    fn rejects_unmappable_characters_outside_of_text_and_attributes() {
+        for input in [
+            "<😀/>",
+            "<a 😀=\"x\"/>",
+            "<a></😀>",
+            "<!--😀-->",
+            "<!-- -->x<!--😀-->",
+            "<![CDATA[😀]]>",
+            "<![CDATA[]]]>x<![CDATA[]>😀]]>",
+            "<?pi 😀?>",
+            "<!DOCTYPE a [<!ENTITY e \"😀\">]>",
+        ] {
+            for result in [encode(input), encode_bytewise(input)] {
+                assert_eq!(
+                    result.unwrap_err().kind(),
+                    ErrorKind::InvalidData,
+                    "{input}"
+                );
+            }
+        }
     }
 
     #[test]
@@ -260,16 +418,17 @@ mod tests {
     }
 
     #[test]
-    fn write_document_fails_for_unmappable_characters() {
-        let error = EncodingWriter::new(Vec::new(), WINDOWS_1251)
+    fn write_document_writes_char_refs_for_unmappable_characters() {
+        let bytes = EncodingWriter::new(Vec::new(), WINDOWS_1251)
             .unwrap()
-            .write_document(&String::from("😀"), "a")
-            .unwrap_err();
+            .write_document(&String::from("Привет 😀"), "a")
+            .unwrap();
 
-        assert!(
-            matches!(&error.kind, ErrorKind2::XmlError(quick_xml::Error::Io(x)) if x.kind() == ErrorKind::InvalidData),
-            "{error:?}"
-        );
+        let mut expected = b"<?xml version=\"1.0\" encoding=\"windows-1251\"?><a>".to_vec();
+        expected.extend_from_slice(&[0xCF, 0xF0, 0xE8, 0xE2, 0xE5, 0xF2]);
+        expected.extend_from_slice(b" &#128512;</a>");
+
+        assert_eq!(bytes, expected);
     }
 
     #[test]
