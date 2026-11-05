@@ -147,7 +147,7 @@ pub mod cdf {
         pub lang: Option<String>,
         ///Used to manage inheritance.
         pub override_: bool,
-        pub content: Vec<FixTextContent35Type>,
+        pub content: Vec<HtmlTextWithSubTypeContentType>,
     }
     ///Data type for an xccdf:notice element.
     ///xccdf:notice elements are used to include legal notices (licensing
@@ -1023,7 +1023,7 @@ pub mod cdf {
         pub use_: SubUseEnumType,
     }
     #[derive(Debug)]
-    pub enum FixTextContent35Type {
+    pub enum HtmlTextWithSubTypeContentType {
         ///Specifies an xccdf:Value or
         ///xccdf:plain-text element to be used for text
         ///substitution
@@ -1249,7 +1249,7 @@ pub mod cdf {
         ///A hint as to the nature of the
         ///warning.
         pub category: WarningCategoryEnumType,
-        pub content: Vec<FixTextContent35Type>,
+        pub content: Vec<HtmlTextWithSubTypeContentType>,
     }
     /// This type is for an element that has string content
     ///and a @selector attribute for use in tailoring.
@@ -1477,7 +1477,7 @@ pub mod cdf {
         ///The estimated complexity or difficulty of
         ///applying the fix to the target.
         pub complexity: RatingEnumType,
-        pub content: Vec<FixTextContent35Type>,
+        pub content: Vec<HtmlTextWithSubTypeContentType>,
     }
     /// Data type for the xccdf:fix element. The body
     ///of this element contains a command string, script, or other system modification

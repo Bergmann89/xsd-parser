@@ -48,19 +48,19 @@ pub type UnsignedShortType = u16;
 #[derive(Debug)]
 pub struct ElementAType {
     pub attr_1: Option<String>,
-    pub content: Vec<ElementAContent2Type>,
+    pub content: Vec<FlowTypeContentType>,
 }
 #[derive(Debug)]
 pub struct ElementBType {
     pub attr_2: Option<String>,
-    pub content: Vec<ElementAContent2Type>,
+    pub content: Vec<FlowTypeContentType>,
 }
 #[derive(Debug)]
 pub struct FlowType {
-    pub content: Vec<ElementAContent2Type>,
+    pub content: Vec<FlowTypeContentType>,
 }
 #[derive(Debug)]
-pub enum ElementAContent2Type {
+pub enum FlowTypeContentType {
     ElementA(ElementAType),
     ElementB(ElementBType),
     Text(Text),

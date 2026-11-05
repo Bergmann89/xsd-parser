@@ -50,19 +50,20 @@ pub struct Content0Type;
 #[derive(Debug)]
 pub struct ElementAType {
     pub attr_1: Option<String>,
-    pub content: ElementAChoiceGroupType,
+    pub content: ChoiceGroupType,
 }
 #[derive(Debug)]
-pub enum ElementAChoiceGroupType {
+pub enum ChoiceGroupType {
     ElementA(Box<ElementAType>),
     ElementB(Box<ElementBType>),
 }
-pub type ElementAContent1Type = ElementAChoiceGroupType;
+pub type ElementAChoiceGroupType = ChoiceGroupType;
+pub type ElementAContent1Type = ChoiceGroupType;
 pub type ElementB = ElementBType;
 #[derive(Debug)]
 pub struct ElementBType {
     pub attr_2: Option<String>,
-    pub content: ElementAChoiceGroupType,
+    pub content: ChoiceGroupType,
 }
-pub type ElementBChoiceGroupType = ElementAChoiceGroupType;
-pub type ElementBContent2Type = ElementAChoiceGroupType;
+pub type ElementBChoiceGroupType = ChoiceGroupType;
+pub type ElementBContent2Type = ChoiceGroupType;

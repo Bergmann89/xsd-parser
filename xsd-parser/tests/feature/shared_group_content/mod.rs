@@ -170,7 +170,7 @@ fn generate_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
-    use quick_xml::{ElementAChoiceGroupType, ElementAType};
+    use quick_xml::{ChoiceGroupType, ElementAType};
 
     let obj = crate::utils::quick_xml_read_test::<ElementAType, _>(
         "tests/feature/shared_group_content/example/default.xml",
@@ -180,27 +180,27 @@ fn read_quick_xml() {
     assert_eq!(obj.content.len(), 2);
     assert!(matches!(
         &obj.content[0],
-        ElementAChoiceGroupType::ElementA(x) if x.attr_1.as_deref() == Some("inner-a"),
+        ChoiceGroupType::ElementA(x) if x.attr_1.as_deref() == Some("inner-a"),
     ));
     assert!(matches!(
         &obj.content[1],
-        ElementAChoiceGroupType::ElementB(x) if x.attr_2.as_deref() == Some("inner-b"),
+        ChoiceGroupType::ElementB(x) if x.attr_2.as_deref() == Some("inner-b"),
     ));
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
-    use quick_xml::{ElementAChoiceGroupType, ElementAType, ElementBType};
+    use quick_xml::{ChoiceGroupType, ElementAType, ElementBType};
 
     let obj = ElementAType {
         attr_1: Some("a".into()),
         content: vec![
-            ElementAChoiceGroupType::ElementA(ElementAType {
+            ChoiceGroupType::ElementA(ElementAType {
                 attr_1: Some("inner-a".into()),
                 content: Vec::new(),
             }),
-            ElementAChoiceGroupType::ElementB(ElementBType {
+            ChoiceGroupType::ElementB(ElementBType {
                 attr_2: Some("inner-b".into()),
                 content: Vec::new(),
             }),

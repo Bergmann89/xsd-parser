@@ -88,7 +88,7 @@ pub type UnsignedShortType = u16;
 #[derive(Debug)]
 pub struct ElementAType {
     pub attr_1: Option<String>,
-    pub content: Vec<ElementAChoiceGroupType>,
+    pub content: Vec<ChoiceGroupType>,
 }
 impl WithSerializer for ElementAType {
     type Serializer<'x> = quick_xml_serialize::ElementATypeSerializer<'x>;
@@ -111,7 +111,7 @@ impl WithDeserializer for ElementAType {
 #[derive(Debug)]
 pub struct ElementBType {
     pub attr_2: Option<String>,
-    pub content: Vec<ElementAChoiceGroupType>,
+    pub content: Vec<ChoiceGroupType>,
 }
 impl WithSerializer for ElementBType {
     type Serializer<'x> = quick_xml_serialize::ElementBTypeSerializer<'x>;
@@ -132,27 +132,27 @@ impl WithDeserializer for ElementBType {
     type Deserializer = quick_xml_deserialize::ElementBTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum ElementAChoiceGroupType {
+pub enum ChoiceGroupType {
     ElementA(ElementAType),
     ElementB(ElementBType),
 }
-impl WithSerializer for ElementAChoiceGroupType {
-    type Serializer<'x> = quick_xml_serialize::ElementAChoiceGroupTypeSerializer<'x>;
+impl WithSerializer for ChoiceGroupType {
+    type Serializer<'x> = quick_xml_serialize::ChoiceGroupTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
-        Ok(quick_xml_serialize::ElementAChoiceGroupTypeSerializer {
+        Ok(quick_xml_serialize::ChoiceGroupTypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::ElementAChoiceGroupTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::ChoiceGroupTypeSerializerState::Init__),
             is_root,
         })
     }
 }
-impl WithDeserializer for ElementAChoiceGroupType {
-    type Deserializer = quick_xml_deserialize::ElementAChoiceGroupTypeDeserializer;
+impl WithDeserializer for ChoiceGroupType {
+    type Deserializer = quick_xml_deserialize::ChoiceGroupTypeDeserializer;
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
@@ -164,14 +164,14 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct ElementATypeDeserializer {
         attr_1: Option<String>,
-        content: Vec<super::ElementAChoiceGroupType>,
+        content: Vec<super::ChoiceGroupType>,
         state__: Box<ElementATypeDeserializerState>,
     }
     #[derive(Debug)]
     enum ElementATypeDeserializerState {
         Init__,
         Next__,
-        Content__(<super::ElementAChoiceGroupType as WithDeserializer>::Deserializer),
+        Content__(<super::ChoiceGroupType as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl ElementATypeDeserializer {
@@ -207,14 +207,14 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: super::ElementAChoiceGroupType) -> Result<(), Error> {
+        fn store_content(&mut self, value: super::ChoiceGroupType) -> Result<(), Error> {
             self.content.push(value);
             Ok(())
         }
         fn handle_content<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, super::ElementAChoiceGroupType>,
+            output: DeserializerOutput<'de, super::ChoiceGroupType>,
             fallback: &mut Option<ElementATypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use ElementATypeDeserializerState as S;
@@ -282,9 +282,8 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = <super::ElementAChoiceGroupType as WithDeserializer>::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::ChoiceGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -316,14 +315,14 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct ElementBTypeDeserializer {
         attr_2: Option<String>,
-        content: Vec<super::ElementAChoiceGroupType>,
+        content: Vec<super::ChoiceGroupType>,
         state__: Box<ElementBTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum ElementBTypeDeserializerState {
         Init__,
         Next__,
-        Content__(<super::ElementAChoiceGroupType as WithDeserializer>::Deserializer),
+        Content__(<super::ChoiceGroupType as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl ElementBTypeDeserializer {
@@ -359,14 +358,14 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: super::ElementAChoiceGroupType) -> Result<(), Error> {
+        fn store_content(&mut self, value: super::ChoiceGroupType) -> Result<(), Error> {
             self.content.push(value);
             Ok(())
         }
         fn handle_content<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, super::ElementAChoiceGroupType>,
+            output: DeserializerOutput<'de, super::ChoiceGroupType>,
             fallback: &mut Option<ElementBTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use ElementBTypeDeserializerState as S;
@@ -434,9 +433,8 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = <super::ElementAChoiceGroupType as WithDeserializer>::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::ChoiceGroupType as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -466,11 +464,11 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct ElementAChoiceGroupTypeDeserializer {
-        state__: Box<ElementAChoiceGroupTypeDeserializerState>,
+    pub struct ChoiceGroupTypeDeserializer {
+        state__: Box<ChoiceGroupTypeDeserializerState>,
     }
     #[derive(Debug)]
-    pub enum ElementAChoiceGroupTypeDeserializerState {
+    pub enum ChoiceGroupTypeDeserializerState {
         Init__,
         ElementA(
             Option<super::ElementAType>,
@@ -482,10 +480,10 @@ pub mod quick_xml_deserialize {
             Option<<super::ElementBType as WithDeserializer>::Deserializer>,
             Option<<super::ElementBType as WithDeserializer>::Deserializer>,
         ),
-        Done__(super::ElementAChoiceGroupType),
+        Done__(super::ChoiceGroupType),
         Unknown__,
     }
-    impl ElementAChoiceGroupTypeDeserializer {
+    impl ChoiceGroupTypeDeserializer {
         fn find_suitable<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
@@ -507,14 +505,14 @@ pub mod quick_xml_deserialize {
                     return self.handle_element_b(helper, Default::default(), None, output);
                 }
             }
-            *self.state__ = ElementAChoiceGroupTypeDeserializerState::Init__;
+            *self.state__ = ChoiceGroupTypeDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state(
             helper: &mut DeserializeHelper,
-            state: ElementAChoiceGroupTypeDeserializerState,
-        ) -> Result<super::ElementAChoiceGroupType, Error> {
-            use ElementAChoiceGroupTypeDeserializerState as S;
+            state: ChoiceGroupTypeDeserializerState,
+        ) -> Result<super::ChoiceGroupType, Error> {
+            use ChoiceGroupTypeDeserializerState as S;
             match state {
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::ElementA(mut values, None, deserializer) => {
@@ -522,7 +520,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_element_a(&mut values, value)?;
                     }
-                    Ok(super::ElementAChoiceGroupType::ElementA(
+                    Ok(super::ChoiceGroupType::ElementA(
                         helper.finish_element("ElementA", values)?,
                     ))
                 }
@@ -531,7 +529,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(helper)?;
                         Self::store_element_b(&mut values, value)?;
                     }
-                    Ok(super::ElementAChoiceGroupType::ElementB(
+                    Ok(super::ChoiceGroupType::ElementB(
                         helper.finish_element("ElementB", values)?,
                     ))
                 }
@@ -570,7 +568,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::ElementAType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ElementAType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use ElementAChoiceGroupTypeDeserializerState as S;
+            use ChoiceGroupTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -604,7 +602,7 @@ pub mod quick_xml_deserialize {
             fallback: Option<<super::ElementBType as WithDeserializer>::Deserializer>,
             output: DeserializerOutput<'de, super::ElementBType>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use ElementAChoiceGroupTypeDeserializerState as S;
+            use ChoiceGroupTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -632,23 +630,18 @@ pub mod quick_xml_deserialize {
             }
         }
     }
-    impl<'de> Deserializer<'de, super::ElementAChoiceGroupType>
-        for ElementAChoiceGroupTypeDeserializer
-    {
+    impl<'de> Deserializer<'de, super::ChoiceGroupType> for ChoiceGroupTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ElementAChoiceGroupType> {
+        ) -> DeserializerResult<'de, super::ChoiceGroupType> {
             let deserializer = Self {
-                state__: Box::new(ElementAChoiceGroupTypeDeserializerState::Init__),
+                state__: Box::new(ChoiceGroupTypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(
-                        &*x.state__,
-                        ElementAChoiceGroupTypeDeserializerState::Init__
-                    ) =>
+                    if matches!(&*x.state__, ChoiceGroupTypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -660,8 +653,8 @@ pub mod quick_xml_deserialize {
             mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ElementAChoiceGroupType> {
-            use ElementAChoiceGroupTypeDeserializerState as S;
+        ) -> DeserializerResult<'de, super::ChoiceGroupType> {
+            use ChoiceGroupTypeDeserializerState as S;
             let mut event = event;
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state__, S::Unknown__);
@@ -755,10 +748,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish(
-            self,
-            helper: &mut DeserializeHelper,
-        ) -> Result<super::ElementAChoiceGroupType, Error> {
+        fn finish(self, helper: &mut DeserializeHelper) -> Result<super::ChoiceGroupType, Error> {
             Self::finish_state(helper, *self.state__)
         }
     }
@@ -778,13 +768,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum ElementATypeSerializerState<'ser> {
         Init__,
-        Content__(
-            IterSerializer<
-                'ser,
-                &'ser [super::ElementAChoiceGroupType],
-                super::ElementAChoiceGroupType,
-            >,
-        ),
+        Content__(IterSerializer<'ser, &'ser [super::ChoiceGroupType], super::ChoiceGroupType>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -849,13 +833,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum ElementBTypeSerializerState<'ser> {
         Init__,
-        Content__(
-            IterSerializer<
-                'ser,
-                &'ser [super::ElementAChoiceGroupType],
-                super::ElementAChoiceGroupType,
-            >,
-        ),
+        Content__(IterSerializer<'ser, &'ser [super::ChoiceGroupType], super::ChoiceGroupType>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -911,63 +889,63 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct ElementAChoiceGroupTypeSerializer<'ser> {
-        pub(super) value: &'ser super::ElementAChoiceGroupType,
-        pub(super) state: Box<ElementAChoiceGroupTypeSerializerState<'ser>>,
+    pub struct ChoiceGroupTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ChoiceGroupType,
+        pub(super) state: Box<ChoiceGroupTypeSerializerState<'ser>>,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum ElementAChoiceGroupTypeSerializerState<'ser> {
+    pub(super) enum ChoiceGroupTypeSerializerState<'ser> {
         Init__,
         ElementA(<super::ElementAType as WithSerializer>::Serializer<'ser>),
         ElementB(<super::ElementBType as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> ElementAChoiceGroupTypeSerializer<'ser> {
+    impl<'ser> ChoiceGroupTypeSerializer<'ser> {
         fn next_event(
             &mut self,
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    ElementAChoiceGroupTypeSerializerState::Init__ => match self.value {
-                        super::ElementAChoiceGroupType::ElementA(x) => {
-                            *self.state = ElementAChoiceGroupTypeSerializerState::ElementA(
+                    ChoiceGroupTypeSerializerState::Init__ => match self.value {
+                        super::ChoiceGroupType::ElementA(x) => {
+                            *self.state = ChoiceGroupTypeSerializerState::ElementA(
                                 WithSerializer::serializer(x, Some("ElementA"), self.is_root)?,
                             )
                         }
-                        super::ElementAChoiceGroupType::ElementB(x) => {
-                            *self.state = ElementAChoiceGroupTypeSerializerState::ElementB(
+                        super::ChoiceGroupType::ElementB(x) => {
+                            *self.state = ChoiceGroupTypeSerializerState::ElementB(
                                 WithSerializer::serializer(x, Some("ElementB"), self.is_root)?,
                             )
                         }
                     },
-                    ElementAChoiceGroupTypeSerializerState::ElementA(x) => {
+                    ChoiceGroupTypeSerializerState::ElementA(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = ElementAChoiceGroupTypeSerializerState::Done__,
+                            None => *self.state = ChoiceGroupTypeSerializerState::Done__,
                         }
                     }
-                    ElementAChoiceGroupTypeSerializerState::ElementB(x) => {
+                    ChoiceGroupTypeSerializerState::ElementB(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = ElementAChoiceGroupTypeSerializerState::Done__,
+                            None => *self.state = ChoiceGroupTypeSerializerState::Done__,
                         }
                     }
-                    ElementAChoiceGroupTypeSerializerState::Done__ => return Ok(None),
-                    ElementAChoiceGroupTypeSerializerState::Phantom__(_) => unreachable!(),
+                    ChoiceGroupTypeSerializerState::Done__ => return Ok(None),
+                    ChoiceGroupTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Serializer<'ser> for ElementAChoiceGroupTypeSerializer<'ser> {
+    impl<'ser> Serializer<'ser> for ChoiceGroupTypeSerializer<'ser> {
         fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
             match self.next_event(helper) {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = ElementAChoiceGroupTypeSerializerState::Done__;
+                    *self.state = ChoiceGroupTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

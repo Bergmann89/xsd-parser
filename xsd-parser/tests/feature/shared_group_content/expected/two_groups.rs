@@ -50,38 +50,40 @@ pub struct Content0Type;
 #[derive(Debug)]
 pub struct AlphaType {
     pub alpha: Option<String>,
-    pub content: AlphaContent1Type,
+    pub content: GroupAType,
 }
 #[derive(Debug)]
 pub struct BetaType {
     pub beta: Option<String>,
-    pub content: BetaContent2Type,
+    pub content: GroupBType,
 }
+pub type AlphaContent1Type = GroupAType;
+pub type AlphaGroupAType = GroupAType;
+pub type BetaContent2Type = GroupBType;
+pub type BetaGroupBType = GroupBType;
 #[derive(Debug)]
-pub enum AlphaContent1Type {
+pub enum GroupAType {
     NestedBeta(Box<NestedBetaType>),
     LeafA(String),
 }
-pub type AlphaGroupAType = AlphaContent1Type;
 #[derive(Debug)]
-pub enum BetaContent2Type {
+pub enum GroupBType {
     NestedAlpha(Box<NestedAlphaType>),
     LeafB(String),
 }
-pub type BetaGroupBType = BetaContent2Type;
 pub type NestedAlpha = NestedAlphaType;
 #[derive(Debug)]
 pub struct NestedAlphaType {
     pub nested_alpha: Option<String>,
-    pub content: AlphaContent1Type,
+    pub content: GroupAType,
 }
-pub type NestedAlphaContent4Type = AlphaContent1Type;
-pub type NestedAlphaGroupAType = AlphaContent1Type;
+pub type NestedAlphaContent4Type = GroupAType;
+pub type NestedAlphaGroupAType = GroupAType;
 pub type NestedBeta = NestedBetaType;
 #[derive(Debug)]
 pub struct NestedBetaType {
     pub nested_beta: Option<String>,
-    pub content: BetaContent2Type,
+    pub content: GroupBType,
 }
-pub type NestedBetaContent3Type = BetaContent2Type;
-pub type NestedBetaGroupBType = BetaContent2Type;
+pub type NestedBetaContent3Type = GroupBType;
+pub type NestedBetaGroupBType = GroupBType;

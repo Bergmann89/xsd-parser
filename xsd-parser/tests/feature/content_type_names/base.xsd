@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:base="Base" targetNamespace="Base">
+    <xs:complexType name="Flow">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Para" type="xs:string" />
+            <xs:element name="Break" type="xs:string" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:group name="Contact">
+        <xs:choice>
+            <xs:element name="Phone" type="xs:string" />
+            <xs:element name="Email" type="xs:string" />
+        </xs:choice>
+    </xs:group>
+
+    <!-- The name of the group is already used by a complex type -->
+    <xs:complexType name="Address">
+        <xs:attribute name="id" type="xs:string" />
+    </xs:complexType>
+
+    <xs:group name="Address">
+        <xs:choice>
+            <xs:element name="Street" type="xs:string" />
+            <xs:element name="PostBox" type="xs:string" />
+        </xs:choice>
+    </xs:group>
+</xs:schema>

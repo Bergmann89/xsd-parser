@@ -87,10 +87,19 @@ impl Optimizer {
             return Err(Error::MissingContentType(ident));
         };
 
-        if let Some((occurs, variant)) = Flatten::new(&self.types, usize::MAX, true)
+        let group = content_group(&self.types, &content_ident);
+
+        if let Some((occurs, mut variant)) = Flatten::new(&self.types, usize::MAX, true)
             .exec(&content_ident, 0)?
             .into_variant()
         {
+            if let MetaTypeVariant::All(gi)
+            | MetaTypeVariant::Choice(gi)
+            | MetaTypeVariant::Sequence(gi) = &mut variant
+            {
+                gi.group = group;
+            }
+
             let type_ = MetaType::new(variant);
 
             self.types.items.insert(content_ident, type_);
@@ -102,6 +111,33 @@ impl Optimizer {
         }
 
         Ok(())
+    }
+}
+
+/// Returns the `xs:group` the content type `ident` was created from: either the
+/// content is a copy of the group itself, or it only contains a reference to
+/// such a copy.
+fn content_group(types: &MetaTypes, ident: &TypeIdent) -> Option<TypeIdent> {
+    let (MetaTypeVariant::All(gi) | MetaTypeVariant::Choice(gi) | MetaTypeVariant::Sequence(gi)) =
+        types.get_variant(ident)?
+    else {
+        return None;
+    };
+
+    if gi.group.is_some() {
+        return gi.group.clone();
+    }
+
+    let [element] = &gi.elements[..] else {
+        return None;
+    };
+
+    match &element.variant {
+        ElementMetaVariant::Type {
+            type_,
+            mode: ElementMode::Group,
+        } => content_group(types, type_),
+        _ => None,
     }
 }
 
@@ -339,6 +375,7 @@ impl<'types> Builder<'types> {
         self.meta_new.get_or_insert_with(|| GroupMeta {
             is_mixed: self.meta_old.is_mixed,
             elements: ElementsMeta(prev.to_vec()),
+            group: None,
         });
 
         match (self.mode_new, other.mode_new) {

@@ -673,10 +673,19 @@ impl WithDeserializerFromBytes for DerivationSetType {}
 pub struct SimpleContentElementType {
     pub any_attribute: AnyAttributes,
     pub id: Option<String>,
-    pub content: Vec<ComplexContent55Type>,
+    pub content: Vec<SimpleContentElementTypeContent>,
+}
+#[derive(Debug)]
+pub enum SimpleContentElementTypeContent {
+    Annotation(AnnotationElementType),
+    Restriction(RestrictionType),
+    Extension(ExtensionType),
 }
 impl WithDeserializer for SimpleContentElementType {
     type Deserializer = quick_xml_deserialize::SimpleContentElementTypeDeserializer;
+}
+impl WithDeserializer for SimpleContentElementTypeContent {
+    type Deserializer = quick_xml_deserialize::SimpleContentElementTypeContentDeserializer;
 }
 #[derive(Debug)]
 pub struct ComplexContentElementType {
@@ -684,10 +693,19 @@ pub struct ComplexContentElementType {
     pub id: Option<String>,
     ///Overrides any setting on complexType parent.
     pub mixed: Option<bool>,
-    pub content: Vec<ComplexContent55Type>,
+    pub content: Vec<ComplexContentElementTypeContent>,
+}
+#[derive(Debug)]
+pub enum ComplexContentElementTypeContent {
+    Annotation(AnnotationElementType),
+    Restriction(RestrictionType),
+    Extension(ExtensionType),
 }
 impl WithDeserializer for ComplexContentElementType {
     type Deserializer = quick_xml_deserialize::ComplexContentElementTypeDeserializer;
+}
+impl WithDeserializer for ComplexContentElementTypeContent {
+    type Deserializer = quick_xml_deserialize::ComplexContentElementTypeContentDeserializer;
 }
 #[derive(Debug)]
 pub struct OpenContentElementType {
@@ -818,7 +836,7 @@ pub struct KeybaseType {
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
-    pub content: Option<KeybaseContent118Type>,
+    pub content: Option<KeybaseContentType>,
 }
 impl WithDeserializer for KeybaseType {
     type Deserializer = quick_xml_deserialize::KeybaseTypeDeserializer;
@@ -830,7 +848,7 @@ pub struct KeyrefElementType {
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub refer: Option<String>,
-    pub content: Option<KeybaseContent118Type>,
+    pub content: Option<KeybaseContentType>,
 }
 impl WithDeserializer for KeyrefElementType {
     type Deserializer = quick_xml_deserialize::KeyrefElementTypeDeserializer;
@@ -1038,15 +1056,6 @@ impl WithDeserializer for ExtensionTypeContent {
     type Deserializer = quick_xml_deserialize::ExtensionTypeContentDeserializer;
 }
 #[derive(Debug)]
-pub enum ComplexContent55Type {
-    Annotation(AnnotationElementType),
-    Restriction(RestrictionType),
-    Extension(ExtensionType),
-}
-impl WithDeserializer for ComplexContent55Type {
-    type Deserializer = quick_xml_deserialize::ComplexContent55TypeDeserializer;
-}
-#[derive(Debug)]
 pub enum OpenContentModeType {
     None,
     Interleave,
@@ -1095,13 +1104,13 @@ impl WithDeserializer for FieldElementType {
     type Deserializer = quick_xml_deserialize::FieldElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct KeybaseContent118Type {
+pub struct KeybaseContentType {
     pub annotation: Option<AnnotationElementType>,
     pub selector: FieldElementType,
     pub field: Vec<FieldElementType>,
 }
-impl WithDeserializer for KeybaseContent118Type {
-    type Deserializer = quick_xml_deserialize::KeybaseContent118TypeDeserializer;
+impl WithDeserializer for KeybaseContentType {
+    type Deserializer = quick_xml_deserialize::KeybaseContentTypeDeserializer;
 }
 ///A utility type, not for public use
 #[derive(Debug, Default)]
@@ -13482,14 +13491,14 @@ pub mod quick_xml_deserialize {
     pub struct SimpleContentElementTypeDeserializer {
         any_attribute: AnyAttributes,
         id: Option<String>,
-        content: Vec<super::ComplexContent55Type>,
+        content: Vec<super::SimpleContentElementTypeContent>,
         state__: Box<SimpleContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum SimpleContentElementTypeDeserializerState {
         Init__,
         Next__,
-        Content__(<super::ComplexContent55Type as WithDeserializer>::Deserializer),
+        Content__(<super::SimpleContentElementTypeContent as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl SimpleContentElementTypeDeserializer {
@@ -13527,14 +13536,17 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: super::ComplexContent55Type) -> Result<(), Error> {
+        fn store_content(
+            &mut self,
+            value: super::SimpleContentElementTypeContent,
+        ) -> Result<(), Error> {
             self.content.push(value);
             Ok(())
         }
         fn handle_content<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, super::ComplexContent55Type>,
+            output: DeserializerOutput<'de, super::SimpleContentElementTypeContent>,
             fallback: &mut Option<SimpleContentElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use SimpleContentElementTypeDeserializerState as S;
@@ -13610,7 +13622,9 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ComplexContent55Type as WithDeserializer>::init(helper, event)?;
+                            <super::SimpleContentElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -13647,18 +13661,409 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
+    pub struct SimpleContentElementTypeContentDeserializer {
+        state__: Box<SimpleContentElementTypeContentDeserializerState>,
+    }
+    #[derive(Debug)]
+    pub enum SimpleContentElementTypeContentDeserializerState {
+        Init__,
+        Annotation(
+            Option<super::AnnotationElementType>,
+            Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
+            Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
+        ),
+        Restriction(
+            Option<super::RestrictionType>,
+            Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
+            Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
+        ),
+        Extension(
+            Option<super::ExtensionType>,
+            Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
+            Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
+        ),
+        Done__(super::SimpleContentElementTypeContent),
+        Unknown__,
+    }
+    impl SimpleContentElementTypeContentDeserializer {
+        fn find_suitable<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    Some(b"annotation")
+                ) {
+                    let output =
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_annotation(helper, Default::default(), None, output);
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    Some(b"restriction")
+                ) {
+                    let output = <super::RestrictionType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_restriction(helper, Default::default(), None, output);
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    Some(b"extension")
+                ) {
+                    let output = <super::ExtensionType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_extension(helper, Default::default(), None, output);
+                }
+            }
+            *self.state__ = SimpleContentElementTypeContentDeserializerState::Init__;
+            Ok(ElementHandlerOutput::return_to_parent(event, false))
+        }
+        fn finish_state(
+            helper: &mut DeserializeHelper,
+            state: SimpleContentElementTypeContentDeserializerState,
+        ) -> Result<super::SimpleContentElementTypeContent, Error> {
+            use SimpleContentElementTypeContentDeserializerState as S;
+            match state {
+                S::Init__ => Err(ErrorKind::MissingContent.into()),
+                S::Annotation(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_annotation(&mut values, value)?;
+                    }
+                    Ok(super::SimpleContentElementTypeContent::Annotation(
+                        helper.finish_element("annotation", values)?,
+                    ))
+                }
+                S::Restriction(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_restriction(&mut values, value)?;
+                    }
+                    Ok(super::SimpleContentElementTypeContent::Restriction(
+                        helper.finish_element("restriction", values)?,
+                    ))
+                }
+                S::Extension(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_extension(&mut values, value)?;
+                    }
+                    Ok(super::SimpleContentElementTypeContent::Extension(
+                        helper.finish_element("extension", values)?,
+                    ))
+                }
+                S::Done__(data) => Ok(data),
+                _ => unreachable!(),
+            }
+        }
+        fn store_annotation(
+            values: &mut Option<super::AnnotationElementType>,
+            value: super::AnnotationElementType,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"annotation",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_restriction(
+            values: &mut Option<super::RestrictionType>,
+            value: super::RestrictionType,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"restriction",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_extension(
+            values: &mut Option<super::ExtensionType>,
+            value: super::ExtensionType,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"extension",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn handle_annotation<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::AnnotationElementType>,
+            fallback: Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::AnnotationElementType>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SimpleContentElementTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_annotation(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_annotation(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::Annotation(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::Annotation(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
+        fn handle_restriction<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::RestrictionType>,
+            fallback: Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::RestrictionType>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SimpleContentElementTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_restriction(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_restriction(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::Restriction(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::Restriction(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
+        fn handle_extension<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::ExtensionType>,
+            fallback: Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::ExtensionType>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use SimpleContentElementTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_extension(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_extension(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::Extension(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::Extension(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
+    }
+    impl<'de> Deserializer<'de, super::SimpleContentElementTypeContent>
+        for SimpleContentElementTypeContentDeserializer
+    {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::SimpleContentElementTypeContent> {
+            let deserializer = Self {
+                state__: Box::new(SimpleContentElementTypeContentDeserializerState::Init__),
+            };
+            let mut output = deserializer.next(helper, event)?;
+            output.artifact = match output.artifact {
+                DeserializerArtifact::Deserializer(x)
+                    if matches!(
+                        &*x.state__,
+                        SimpleContentElementTypeContentDeserializerState::Init__
+                    ) =>
+                {
+                    DeserializerArtifact::None
+                }
+                artifact => artifact,
+            };
+            Ok(output)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::SimpleContentElementTypeContent> {
+            use SimpleContentElementTypeContentDeserializerState as S;
+            let mut event = event;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state__, S::Unknown__);
+                event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
+                    (S::Annotation(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_annotation(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Restriction(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_restriction(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Extension(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_extension(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (state, event @ Event::End(_)) => {
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(Self::finish_state(
+                                helper, state,
+                            )?),
+                            event: DeserializerEvent::Continue(event),
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
+                        ElementHandlerOutput::Break { event, allow_any } => {
+                            break (event, allow_any)
+                        }
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                    },
+                    (
+                        S::Annotation(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_XS),
+                            b"annotation",
+                            true,
+                        )?;
+                        match self.handle_annotation(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (
+                        S::Restriction(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_XS),
+                            b"restriction",
+                            true,
+                        )?;
+                        match self.handle_restriction(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (
+                        S::Extension(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_XS),
+                            b"extension",
+                            true,
+                        )?;
+                        match self.handle_extension(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Continue(event), false);
+                    }
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Continue(event), false);
+                    }
+                }
+            };
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
+                DeserializerArtifact::Data(self.finish(helper)?)
+            } else {
+                DeserializerArtifact::Deserializer(self)
+            };
+            Ok(DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            })
+        }
+        fn finish(
+            self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::SimpleContentElementTypeContent, Error> {
+            Self::finish_state(helper, *self.state__)
+        }
+    }
+    #[derive(Debug)]
     pub struct ComplexContentElementTypeDeserializer {
         any_attribute: AnyAttributes,
         id: Option<String>,
         mixed: Option<bool>,
-        content: Vec<super::ComplexContent55Type>,
+        content: Vec<super::ComplexContentElementTypeContent>,
         state__: Box<ComplexContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum ComplexContentElementTypeDeserializerState {
         Init__,
         Next__,
-        Content__(<super::ComplexContent55Type as WithDeserializer>::Deserializer),
+        Content__(<super::ComplexContentElementTypeContent as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl ComplexContentElementTypeDeserializer {
@@ -13703,14 +14108,17 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: super::ComplexContent55Type) -> Result<(), Error> {
+        fn store_content(
+            &mut self,
+            value: super::ComplexContentElementTypeContent,
+        ) -> Result<(), Error> {
             self.content.push(value);
             Ok(())
         }
         fn handle_content<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, super::ComplexContent55Type>,
+            output: DeserializerOutput<'de, super::ComplexContentElementTypeContent>,
             fallback: &mut Option<ComplexContentElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use ComplexContentElementTypeDeserializerState as S;
@@ -13786,7 +14194,9 @@ pub mod quick_xml_deserialize {
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output =
-                            <super::ComplexContent55Type as WithDeserializer>::init(helper, event)?;
+                            <super::ComplexContentElementTypeContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -13821,6 +14231,397 @@ pub mod quick_xml_deserialize {
                 mixed: self.mixed,
                 content: helper.finish_vec(1usize, Some(2usize), self.content)?,
             })
+        }
+    }
+    #[derive(Debug)]
+    pub struct ComplexContentElementTypeContentDeserializer {
+        state__: Box<ComplexContentElementTypeContentDeserializerState>,
+    }
+    #[derive(Debug)]
+    pub enum ComplexContentElementTypeContentDeserializerState {
+        Init__,
+        Annotation(
+            Option<super::AnnotationElementType>,
+            Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
+            Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
+        ),
+        Restriction(
+            Option<super::RestrictionType>,
+            Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
+            Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
+        ),
+        Extension(
+            Option<super::ExtensionType>,
+            Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
+            Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
+        ),
+        Done__(super::ComplexContentElementTypeContent),
+        Unknown__,
+    }
+    impl ComplexContentElementTypeContentDeserializer {
+        fn find_suitable<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    Some(b"annotation")
+                ) {
+                    let output =
+                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_annotation(helper, Default::default(), None, output);
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    Some(b"restriction")
+                ) {
+                    let output = <super::RestrictionType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_restriction(helper, Default::default(), None, output);
+                }
+                if matches!(
+                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    Some(b"extension")
+                ) {
+                    let output = <super::ExtensionType as WithDeserializer>::init(helper, event)?;
+                    return self.handle_extension(helper, Default::default(), None, output);
+                }
+            }
+            *self.state__ = ComplexContentElementTypeContentDeserializerState::Init__;
+            Ok(ElementHandlerOutput::return_to_parent(event, false))
+        }
+        fn finish_state(
+            helper: &mut DeserializeHelper,
+            state: ComplexContentElementTypeContentDeserializerState,
+        ) -> Result<super::ComplexContentElementTypeContent, Error> {
+            use ComplexContentElementTypeContentDeserializerState as S;
+            match state {
+                S::Init__ => Err(ErrorKind::MissingContent.into()),
+                S::Annotation(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_annotation(&mut values, value)?;
+                    }
+                    Ok(super::ComplexContentElementTypeContent::Annotation(
+                        helper.finish_element("annotation", values)?,
+                    ))
+                }
+                S::Restriction(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_restriction(&mut values, value)?;
+                    }
+                    Ok(super::ComplexContentElementTypeContent::Restriction(
+                        helper.finish_element("restriction", values)?,
+                    ))
+                }
+                S::Extension(mut values, None, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(helper)?;
+                        Self::store_extension(&mut values, value)?;
+                    }
+                    Ok(super::ComplexContentElementTypeContent::Extension(
+                        helper.finish_element("extension", values)?,
+                    ))
+                }
+                S::Done__(data) => Ok(data),
+                _ => unreachable!(),
+            }
+        }
+        fn store_annotation(
+            values: &mut Option<super::AnnotationElementType>,
+            value: super::AnnotationElementType,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"annotation",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_restriction(
+            values: &mut Option<super::RestrictionType>,
+            value: super::RestrictionType,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"restriction",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_extension(
+            values: &mut Option<super::ExtensionType>,
+            value: super::ExtensionType,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"extension",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn handle_annotation<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::AnnotationElementType>,
+            fallback: Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::AnnotationElementType>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ComplexContentElementTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_annotation(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_annotation(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::Annotation(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::Annotation(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
+        fn handle_restriction<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::RestrictionType>,
+            fallback: Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::RestrictionType>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ComplexContentElementTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_restriction(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_restriction(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::Restriction(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::Restriction(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
+        fn handle_extension<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            mut values: Option<super::ExtensionType>,
+            fallback: Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
+            output: DeserializerOutput<'de, super::ExtensionType>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ComplexContentElementTypeContentDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+            }
+            if let Some(deserializer) = fallback {
+                let data = deserializer.finish(helper)?;
+                Self::store_extension(&mut values, data)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_extension(&mut values, data)?;
+                    let data = Self::finish_state(helper, S::Extension(values, None, None))?;
+                    *self.state__ = S::Done__(data);
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state__ = S::Extension(values, None, Some(deserializer));
+                    Ok(ElementHandlerOutput::break_(event, allow_any))
+                }
+            }
+        }
+    }
+    impl<'de> Deserializer<'de, super::ComplexContentElementTypeContent>
+        for ComplexContentElementTypeContentDeserializer
+    {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ComplexContentElementTypeContent> {
+            let deserializer = Self {
+                state__: Box::new(ComplexContentElementTypeContentDeserializerState::Init__),
+            };
+            let mut output = deserializer.next(helper, event)?;
+            output.artifact = match output.artifact {
+                DeserializerArtifact::Deserializer(x)
+                    if matches!(
+                        &*x.state__,
+                        ComplexContentElementTypeContentDeserializerState::Init__
+                    ) =>
+                {
+                    DeserializerArtifact::None
+                }
+                artifact => artifact,
+            };
+            Ok(output)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ComplexContentElementTypeContent> {
+            use ComplexContentElementTypeContentDeserializerState as S;
+            let mut event = event;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state__, S::Unknown__);
+                event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
+                    (S::Annotation(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_annotation(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Restriction(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_restriction(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Extension(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_extension(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (state, event @ Event::End(_)) => {
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(Self::finish_state(
+                                helper, state,
+                            )?),
+                            event: DeserializerEvent::Continue(event),
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => match self.find_suitable(helper, event)? {
+                        ElementHandlerOutput::Break { event, allow_any } => {
+                            break (event, allow_any)
+                        }
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                    },
+                    (
+                        S::Annotation(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_XS),
+                            b"annotation",
+                            true,
+                        )?;
+                        match self.handle_annotation(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (
+                        S::Restriction(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_XS),
+                            b"restriction",
+                            true,
+                        )?;
+                        match self.handle_restriction(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (
+                        S::Extension(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_XS),
+                            b"extension",
+                            true,
+                        )?;
+                        match self.handle_extension(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Continue(event), false);
+                    }
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Continue(event), false);
+                    }
+                }
+            };
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
+                DeserializerArtifact::Data(self.finish(helper)?)
+            } else {
+                DeserializerArtifact::Deserializer(self)
+            };
+            Ok(DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            })
+        }
+        fn finish(
+            self,
+            helper: &mut DeserializeHelper,
+        ) -> Result<super::ComplexContentElementTypeContent, Error> {
+            Self::finish_state(helper, *self.state__)
         }
     }
     #[derive(Debug)]
@@ -15381,14 +16182,14 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
-        content: Option<super::KeybaseContent118Type>,
+        content: Option<super::KeybaseContentType>,
         state__: Box<KeybaseTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum KeybaseTypeDeserializerState {
         Init__,
         Next__,
-        Content__(<super::KeybaseContent118Type as WithDeserializer>::Deserializer),
+        Content__(<super::KeybaseContentType as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl KeybaseTypeDeserializer {
@@ -15440,7 +16241,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: super::KeybaseContent118Type) -> Result<(), Error> {
+        fn store_content(&mut self, value: super::KeybaseContentType) -> Result<(), Error> {
             if self.content.is_some() {
                 Err(ErrorKind::DuplicateContent)?;
             }
@@ -15450,7 +16251,7 @@ pub mod quick_xml_deserialize {
         fn handle_content<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, super::KeybaseContent118Type>,
+            output: DeserializerOutput<'de, super::KeybaseContentType>,
             fallback: &mut Option<KeybaseTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use KeybaseTypeDeserializerState as S;
@@ -15517,9 +16318,8 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = <super::KeybaseContent118Type as WithDeserializer>::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::KeybaseContentType as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -15558,14 +16358,14 @@ pub mod quick_xml_deserialize {
         name: Option<String>,
         ref_: Option<String>,
         refer: Option<String>,
-        content: Option<super::KeybaseContent118Type>,
+        content: Option<super::KeybaseContentType>,
         state__: Box<KeyrefElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum KeyrefElementTypeDeserializerState {
         Init__,
         Next__,
-        Content__(<super::KeybaseContent118Type as WithDeserializer>::Deserializer),
+        Content__(<super::KeybaseContentType as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl KeyrefElementTypeDeserializer {
@@ -15624,7 +16424,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: super::KeybaseContent118Type) -> Result<(), Error> {
+        fn store_content(&mut self, value: super::KeybaseContentType) -> Result<(), Error> {
             if self.content.is_some() {
                 Err(ErrorKind::DuplicateContent)?;
             }
@@ -15634,7 +16434,7 @@ pub mod quick_xml_deserialize {
         fn handle_content<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
-            output: DeserializerOutput<'de, super::KeybaseContent118Type>,
+            output: DeserializerOutput<'de, super::KeybaseContentType>,
             fallback: &mut Option<KeyrefElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             use KeyrefElementTypeDeserializerState as S;
@@ -15701,9 +16501,8 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = <super::KeybaseContent118Type as WithDeserializer>::init(
-                            helper, event,
-                        )?;
+                        let output =
+                            <super::KeybaseContentType as WithDeserializer>::init(helper, event)?;
                         match self.handle_content(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -19846,392 +20645,6 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct ComplexContent55TypeDeserializer {
-        state__: Box<ComplexContent55TypeDeserializerState>,
-    }
-    #[derive(Debug)]
-    pub enum ComplexContent55TypeDeserializerState {
-        Init__,
-        Annotation(
-            Option<super::AnnotationElementType>,
-            Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
-            Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
-        ),
-        Restriction(
-            Option<super::RestrictionType>,
-            Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
-            Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
-        ),
-        Extension(
-            Option<super::ExtensionType>,
-            Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
-            Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
-        ),
-        Done__(super::ComplexContent55Type),
-        Unknown__,
-    }
-    impl ComplexContent55TypeDeserializer {
-        fn find_suitable<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            event: Event<'de>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            if let Event::Start(x) | Event::Empty(x) = &event {
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
-                    Some(b"annotation")
-                ) {
-                    let output =
-                        <super::AnnotationElementType as WithDeserializer>::init(helper, event)?;
-                    return self.handle_annotation(helper, Default::default(), None, output);
-                }
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
-                    Some(b"restriction")
-                ) {
-                    let output = <super::RestrictionType as WithDeserializer>::init(helper, event)?;
-                    return self.handle_restriction(helper, Default::default(), None, output);
-                }
-                if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
-                    Some(b"extension")
-                ) {
-                    let output = <super::ExtensionType as WithDeserializer>::init(helper, event)?;
-                    return self.handle_extension(helper, Default::default(), None, output);
-                }
-            }
-            *self.state__ = ComplexContent55TypeDeserializerState::Init__;
-            Ok(ElementHandlerOutput::return_to_parent(event, false))
-        }
-        fn finish_state(
-            helper: &mut DeserializeHelper,
-            state: ComplexContent55TypeDeserializerState,
-        ) -> Result<super::ComplexContent55Type, Error> {
-            use ComplexContent55TypeDeserializerState as S;
-            match state {
-                S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Annotation(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_annotation(&mut values, value)?;
-                    }
-                    Ok(super::ComplexContent55Type::Annotation(
-                        helper.finish_element("annotation", values)?,
-                    ))
-                }
-                S::Restriction(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_restriction(&mut values, value)?;
-                    }
-                    Ok(super::ComplexContent55Type::Restriction(
-                        helper.finish_element("restriction", values)?,
-                    ))
-                }
-                S::Extension(mut values, None, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(helper)?;
-                        Self::store_extension(&mut values, value)?;
-                    }
-                    Ok(super::ComplexContent55Type::Extension(
-                        helper.finish_element("extension", values)?,
-                    ))
-                }
-                S::Done__(data) => Ok(data),
-                _ => unreachable!(),
-            }
-        }
-        fn store_annotation(
-            values: &mut Option<super::AnnotationElementType>,
-            value: super::AnnotationElementType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"annotation",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn store_restriction(
-            values: &mut Option<super::RestrictionType>,
-            value: super::RestrictionType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"restriction",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn store_extension(
-            values: &mut Option<super::ExtensionType>,
-            value: super::ExtensionType,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"extension",
-                )))?;
-            }
-            *values = Some(value);
-            Ok(())
-        }
-        fn handle_annotation<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::AnnotationElementType>,
-            fallback: Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, super::AnnotationElementType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use ComplexContent55TypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_annotation(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_annotation(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::Annotation(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::Annotation(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-        fn handle_restriction<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::RestrictionType>,
-            fallback: Option<<super::RestrictionType as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, super::RestrictionType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use ComplexContent55TypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_restriction(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_restriction(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::Restriction(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::Restriction(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-        fn handle_extension<'de>(
-            &mut self,
-            helper: &mut DeserializeHelper,
-            mut values: Option<super::ExtensionType>,
-            fallback: Option<<super::ExtensionType as WithDeserializer>::Deserializer>,
-            output: DeserializerOutput<'de, super::ExtensionType>,
-        ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use ComplexContent55TypeDeserializerState as S;
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-            }
-            if let Some(deserializer) = fallback {
-                let data = deserializer.finish(helper)?;
-                Self::store_extension(&mut values, data)?;
-            }
-            match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_extension(&mut values, data)?;
-                    let data = Self::finish_state(helper, S::Extension(values, None, None))?;
-                    *self.state__ = S::Done__(data);
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state__ = S::Extension(values, None, Some(deserializer));
-                    Ok(ElementHandlerOutput::break_(event, allow_any))
-                }
-            }
-        }
-    }
-    impl<'de> Deserializer<'de, super::ComplexContent55Type> for ComplexContent55TypeDeserializer {
-        fn init(
-            helper: &mut DeserializeHelper,
-            event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ComplexContent55Type> {
-            let deserializer = Self {
-                state__: Box::new(ComplexContent55TypeDeserializerState::Init__),
-            };
-            let mut output = deserializer.next(helper, event)?;
-            output.artifact = match output.artifact {
-                DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state__, ComplexContent55TypeDeserializerState::Init__) =>
-                {
-                    DeserializerArtifact::None
-                }
-                artifact => artifact,
-            };
-            Ok(output)
-        }
-        fn next(
-            mut self,
-            helper: &mut DeserializeHelper,
-            event: Event<'de>,
-        ) -> DeserializerResult<'de, super::ComplexContent55Type> {
-            use ComplexContent55TypeDeserializerState as S;
-            let mut event = event;
-            let (event, allow_any) = loop {
-                let state = replace(&mut *self.state__, S::Unknown__);
-                event = match (state, event) {
-                    (S::Unknown__, _) => unreachable!(),
-                    (S::Annotation(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_annotation(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::Restriction(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_restriction(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::Extension(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_extension(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (state, event @ Event::End(_)) => {
-                        return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(Self::finish_state(
-                                helper, state,
-                            )?),
-                            event: DeserializerEvent::Continue(event),
-                            allow_any: false,
-                        });
-                    }
-                    (S::Init__, event) => match self.find_suitable(helper, event)? {
-                        ElementHandlerOutput::Break { event, allow_any } => {
-                            break (event, allow_any)
-                        }
-                        ElementHandlerOutput::Continue { event, .. } => event,
-                    },
-                    (
-                        S::Annotation(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_XS),
-                            b"annotation",
-                            true,
-                        )?;
-                        match self.handle_annotation(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::Restriction(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_XS),
-                            b"restriction",
-                            true,
-                        )?;
-                        match self.handle_restriction(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::Extension(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_XS),
-                            b"extension",
-                            true,
-                        )?;
-                        match self.handle_extension(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (state @ S::Done__(_), event) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
-                    (state, event) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
-                }
-            };
-            let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(helper)?)
-            } else {
-                DeserializerArtifact::Deserializer(self)
-            };
-            Ok(DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            })
-        }
-        fn finish(
-            self,
-            helper: &mut DeserializeHelper,
-        ) -> Result<super::ComplexContent55Type, Error> {
-            Self::finish_state(helper, *self.state__)
-        }
-    }
-    #[derive(Debug)]
     pub struct FieldElementTypeDeserializer {
         any_attribute: AnyAttributes,
         id: Option<String>,
@@ -20449,14 +20862,14 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct KeybaseContent118TypeDeserializer {
+    pub struct KeybaseContentTypeDeserializer {
         annotation: Option<super::AnnotationElementType>,
         selector: Option<super::FieldElementType>,
         field: Vec<super::FieldElementType>,
-        state__: Box<KeybaseContent118TypeDeserializerState>,
+        state__: Box<KeybaseContentTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum KeybaseContent118TypeDeserializerState {
+    enum KeybaseContentTypeDeserializerState {
         Init__,
         Annotation(Option<<super::AnnotationElementType as WithDeserializer>::Deserializer>),
         Selector(Option<<super::FieldElementType as WithDeserializer>::Deserializer>),
@@ -20464,13 +20877,13 @@ pub mod quick_xml_deserialize {
         Done__,
         Unknown__,
     }
-    impl KeybaseContent118TypeDeserializer {
+    impl KeybaseContentTypeDeserializer {
         fn finish_state(
             &mut self,
             helper: &mut DeserializeHelper,
-            state: KeybaseContent118TypeDeserializerState,
+            state: KeybaseContentTypeDeserializerState,
         ) -> Result<(), Error> {
-            use KeybaseContent118TypeDeserializerState as S;
+            use KeybaseContentTypeDeserializerState as S;
             match state {
                 S::Annotation(Some(deserializer)) => {
                     self.store_annotation(deserializer.finish(helper)?)?
@@ -20509,9 +20922,9 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::AnnotationElementType>,
-            fallback: &mut Option<KeybaseContent118TypeDeserializerState>,
+            fallback: &mut Option<KeybaseContentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use KeybaseContent118TypeDeserializerState as S;
+            use KeybaseContentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20542,9 +20955,9 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::FieldElementType>,
-            fallback: &mut Option<KeybaseContent118TypeDeserializerState>,
+            fallback: &mut Option<KeybaseContentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use KeybaseContent118TypeDeserializerState as S;
+            use KeybaseContentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20579,9 +20992,9 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::FieldElementType>,
-            fallback: &mut Option<KeybaseContent118TypeDeserializerState>,
+            fallback: &mut Option<KeybaseContentTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error> {
-            use KeybaseContent118TypeDeserializerState as S;
+            use KeybaseContentTypeDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20620,21 +21033,21 @@ pub mod quick_xml_deserialize {
             }
         }
     }
-    impl<'de> Deserializer<'de, super::KeybaseContent118Type> for KeybaseContent118TypeDeserializer {
+    impl<'de> Deserializer<'de, super::KeybaseContentType> for KeybaseContentTypeDeserializer {
         fn init(
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::KeybaseContent118Type> {
+        ) -> DeserializerResult<'de, super::KeybaseContentType> {
             let deserializer = Self {
                 annotation: None,
                 selector: None,
                 field: Vec::new(),
-                state__: Box::new(KeybaseContent118TypeDeserializerState::Init__),
+                state__: Box::new(KeybaseContentTypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(helper, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state__, KeybaseContent118TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state__, KeybaseContentTypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -20646,8 +21059,8 @@ pub mod quick_xml_deserialize {
             mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::KeybaseContent118Type> {
-            use KeybaseContent118TypeDeserializerState as S;
+        ) -> DeserializerResult<'de, super::KeybaseContentType> {
+            use KeybaseContentTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -20779,13 +21192,13 @@ pub mod quick_xml_deserialize {
         fn finish(
             mut self,
             helper: &mut DeserializeHelper,
-        ) -> Result<super::KeybaseContent118Type, Error> {
+        ) -> Result<super::KeybaseContentType, Error> {
             let state = replace(
                 &mut *self.state__,
-                KeybaseContent118TypeDeserializerState::Unknown__,
+                KeybaseContentTypeDeserializerState::Unknown__,
             );
             self.finish_state(helper, state)?;
-            Ok(super::KeybaseContent118Type {
+            Ok(super::KeybaseContentType {
                 annotation: self.annotation,
                 selector: helper.finish_element("selector", self.selector)?,
                 field: helper.finish_vec(1usize, None, self.field)?,

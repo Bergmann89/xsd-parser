@@ -1,12 +1,3 @@
-#[derive(Debug)]
-pub enum CtPageBlockTextObjectContent20XType {
-    Actions(page::CtGraphicUnitActionsXElementType),
-    Clips(page::CtGraphicUnitClipsXElementType),
-    FillColor(page::CtColorXType),
-    StrokeColor(page::CtColorXType),
-    CgTransform(page::CtCgTransformXType),
-    TextCode(page::CtTextTextCodeXElementType),
-}
 pub mod annotations {
     pub type Annotations = AnnotationsXElementType;
     #[derive(Debug)]
@@ -56,7 +47,7 @@ pub mod annotion {
     #[derive(Debug)]
     pub struct PageAnnotAnnotAppearanceXElementType {
         pub boundary: Option<String>,
-        pub content: Vec<super::page::CtLayerContent9XType>,
+        pub content: Vec<super::page::CtPageBlockContentXType>,
     }
     #[derive(Debug)]
     pub struct PageAnnotAnnotParametersParameterXElementType {
@@ -571,11 +562,11 @@ pub mod page {
     pub struct CtLayerXType {
         pub type_: CtLayerTypeXType,
         pub draw_param: Option<u32>,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     #[derive(Debug)]
     pub struct CtPageBlockXType {
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     #[derive(Debug)]
     pub struct CtPathXType {
@@ -647,7 +638,7 @@ pub mod page {
         pub char_direction: i32,
         pub weight: CtTextWeightXType,
         pub italic: bool,
-        pub content: Vec<super::CtPageBlockTextObjectContent20XType>,
+        pub content: Vec<CtTextContentXType>,
     }
     pub type Page = PageXElementType;
     #[derive(Debug)]
@@ -738,7 +729,7 @@ pub mod page {
         pub weight: CtTextWeightXType,
         pub italic: bool,
         pub id: u32,
-        pub content: Vec<super::CtPageBlockTextObjectContent20XType>,
+        pub content: Vec<CtTextContentXType>,
     }
     #[derive(Debug)]
     pub struct CtPageBlockPathObjectXElementType {
@@ -830,10 +821,10 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtPageBlockPageBlockXElementType {
         pub id: u32,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     #[derive(Debug)]
-    pub enum CtLayerContent9XType {
+    pub enum CtPageBlockContentXType {
         TextObject(CtPageBlockTextObjectXElementType),
         PathObject(CtPageBlockPathObjectXElementType),
         ImageObject(CtPageBlockImageObjectXElementType),
@@ -860,7 +851,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtPatternCellContentXElementType {
         pub thumbnail: Option<u32>,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
     #[derive(Debug)]
     pub enum CtTextWeightXType {
@@ -883,6 +874,15 @@ pub mod page {
         pub delta_x: Option<String>,
         pub deltay: Option<String>,
         pub content: String,
+    }
+    #[derive(Debug)]
+    pub enum CtTextContentXType {
+        Actions(CtGraphicUnitActionsXElementType),
+        Clips(CtGraphicUnitClipsXElementType),
+        FillColor(CtColorXType),
+        StrokeColor(CtColorXType),
+        CgTransform(CtCgTransformXType),
+        TextCode(CtTextTextCodeXElementType),
     }
     #[derive(Debug)]
     pub struct PageTemplateXElementType {
@@ -909,7 +909,7 @@ pub mod page {
         pub type_: CtLayerTypeXType,
         pub draw_param: Option<u32>,
         pub id: u32,
-        pub content: Vec<CtLayerContent9XType>,
+        pub content: Vec<CtPageBlockContentXType>,
     }
 }
 pub mod res {

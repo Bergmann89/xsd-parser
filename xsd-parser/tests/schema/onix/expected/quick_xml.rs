@@ -5781,9 +5781,9 @@ pub mod onix {
         pub gp_authorship: Option<DescriptiveDetailGpAuthorship>,
         pub gp_events: DescriptiveDetailGpEvents,
         pub gp_editions: DescriptiveDetailGpEditions,
-        pub gp_languages: ContentItemGpLanguages,
+        pub gp_languages: GpLanguages,
         pub gp_extents: DescriptiveDetailGpExtents,
-        pub gp_subjects: ContentItemGpSubjects,
+        pub gp_subjects: GpSubjects,
         pub gp_audiences: DescriptiveDetailGpAudiences,
     }
     impl WithSerializer for DescriptiveDetailElementType {
@@ -5822,8 +5822,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_descriptions_and_marketing_resources:
-            CollateralDetailGpDescriptionsAndMarketingResources,
+        pub gp_descriptions_and_marketing_resources: GpDescriptionsAndMarketingResources,
         pub gp_prizes: CollateralDetailGpPrizes,
     }
     impl WithSerializer for CollateralDetailElementType {
@@ -6854,11 +6853,11 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::DescriptiveDetailGpEditionsDeserializer;
     }
     #[derive(Debug)]
-    pub struct ContentItemGpLanguages {
+    pub struct GpLanguages {
         pub language: Vec<LanguageElementType>,
     }
-    impl WithSerializer for ContentItemGpLanguages {
-        type Serializer<'x> = quick_xml_serialize::ContentItemGpLanguagesSerializer<'x>;
+    impl WithSerializer for GpLanguages {
+        type Serializer<'x> = quick_xml_serialize::GpLanguagesSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
@@ -6866,14 +6865,14 @@ pub mod onix {
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
             let _is_root = is_root;
-            Ok(quick_xml_serialize::ContentItemGpLanguagesSerializer {
+            Ok(quick_xml_serialize::GpLanguagesSerializer {
                 value: self,
-                state: Box::new(quick_xml_serialize::ContentItemGpLanguagesSerializerState::Init__),
+                state: Box::new(quick_xml_serialize::GpLanguagesSerializerState::Init__),
             })
         }
     }
-    impl WithDeserializer for ContentItemGpLanguages {
-        type Deserializer = quick_xml_deserialize::ContentItemGpLanguagesDeserializer;
+    impl WithDeserializer for GpLanguages {
+        type Deserializer = quick_xml_deserialize::GpLanguagesDeserializer;
     }
     #[derive(Debug)]
     pub struct DescriptiveDetailGpExtents {
@@ -6904,12 +6903,12 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::DescriptiveDetailGpExtentsDeserializer;
     }
     #[derive(Debug)]
-    pub struct ContentItemGpSubjects {
+    pub struct GpSubjects {
         pub subject: Vec<SubjectElementType>,
         pub name_as_subject: Vec<NameAsSubjectElementType>,
     }
-    impl WithSerializer for ContentItemGpSubjects {
-        type Serializer<'x> = quick_xml_serialize::ContentItemGpSubjectsSerializer<'x>;
+    impl WithSerializer for GpSubjects {
+        type Serializer<'x> = quick_xml_serialize::GpSubjectsSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
@@ -6917,14 +6916,14 @@ pub mod onix {
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
             let _is_root = is_root;
-            Ok(quick_xml_serialize::ContentItemGpSubjectsSerializer {
+            Ok(quick_xml_serialize::GpSubjectsSerializer {
                 value: self,
-                state: Box::new(quick_xml_serialize::ContentItemGpSubjectsSerializerState::Init__),
+                state: Box::new(quick_xml_serialize::GpSubjectsSerializerState::Init__),
             })
         }
     }
-    impl WithDeserializer for ContentItemGpSubjects {
-        type Deserializer = quick_xml_deserialize::ContentItemGpSubjectsDeserializer;
+    impl WithDeserializer for GpSubjects {
+        type Deserializer = quick_xml_deserialize::GpSubjectsDeserializer;
     }
     #[derive(Debug)]
     pub struct DescriptiveDetailGpAudiences {
@@ -7008,14 +7007,14 @@ pub mod onix {
     }
     impl WithDeserializerFromBytes for CollateralDetailShortname {}
     #[derive(Debug)]
-    pub struct CollateralDetailGpDescriptionsAndMarketingResources {
+    pub struct GpDescriptionsAndMarketingResources {
         pub text_content: Vec<TextContentElementType>,
         pub cited_content: Vec<CitedContentElementType>,
         pub supporting_resource: Vec<SupportingResourceElementType>,
     }
-    impl WithSerializer for CollateralDetailGpDescriptionsAndMarketingResources {
+    impl WithSerializer for GpDescriptionsAndMarketingResources {
         type Serializer<'x> =
-            quick_xml_serialize::CollateralDetailGpDescriptionsAndMarketingResourcesSerializer<'x>;
+            quick_xml_serialize::GpDescriptionsAndMarketingResourcesSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
@@ -7023,12 +7022,11 @@ pub mod onix {
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
             let _is_root = is_root;
-            Ok (quick_xml_serialize :: CollateralDetailGpDescriptionsAndMarketingResourcesSerializer { value : self , state : Box :: new (quick_xml_serialize :: CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: Init__) , })
+            Ok (quick_xml_serialize :: GpDescriptionsAndMarketingResourcesSerializer { value : self , state : Box :: new (quick_xml_serialize :: GpDescriptionsAndMarketingResourcesSerializerState :: Init__) , })
         }
     }
-    impl WithDeserializer for CollateralDetailGpDescriptionsAndMarketingResources {
-        type Deserializer =
-            quick_xml_deserialize::CollateralDetailGpDescriptionsAndMarketingResourcesDeserializer;
+    impl WithDeserializer for GpDescriptionsAndMarketingResources {
+        type Deserializer = quick_xml_deserialize::GpDescriptionsAndMarketingResourcesDeserializer;
     }
     #[derive(Debug)]
     pub struct CollateralDetailGpPrizes {
@@ -7224,13 +7222,12 @@ pub mod onix {
         pub epub_license: Vec<EpubLicenseWithDateType>,
         pub content_119: ContentItemContent119,
         pub gp_authorship: Option<ContentItemGpAuthorship>,
-        pub gp_languages: ContentItemGpLanguages,
-        pub gp_subjects: ContentItemGpSubjects,
-        pub gp_descriptions_and_marketing_resources:
-            CollateralDetailGpDescriptionsAndMarketingResources,
+        pub gp_languages: GpLanguages,
+        pub gp_subjects: GpSubjects,
+        pub gp_descriptions_and_marketing_resources: GpDescriptionsAndMarketingResources,
         pub publisher: Vec<PublisherElementType>,
         pub content_123: Option<ContentItemContent123>,
-        pub gp_related_materials: ContentItemGpRelatedMaterials,
+        pub gp_related_materials: GpRelatedMaterials,
     }
     impl WithSerializer for ContentItemElementType {
         type Serializer<'x> = quick_xml_serialize::ContentItemElementTypeSerializer<'x>;
@@ -9756,7 +9753,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for IllustrationsNoteElementType {
         type Serializer<'x> = quick_xml_serialize::IllustrationsNoteElementTypeSerializer<'x>;
@@ -9994,7 +9991,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for AudienceDescriptionElementType {
         type Serializer<'x> = quick_xml_serialize::AudienceDescriptionElementTypeSerializer<'x>;
@@ -10511,7 +10508,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for EventDescriptionElementType {
         type Serializer<'x> = quick_xml_serialize::EventDescriptionElementTypeSerializer<'x>;
@@ -10905,12 +10902,12 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::ContentItemContent123Deserializer;
     }
     #[derive(Debug)]
-    pub struct ContentItemGpRelatedMaterials {
+    pub struct GpRelatedMaterials {
         pub related_work: Vec<RelatedWorkElementType>,
         pub related_product: Vec<RelatedProductElementType>,
     }
-    impl WithSerializer for ContentItemGpRelatedMaterials {
-        type Serializer<'x> = quick_xml_serialize::ContentItemGpRelatedMaterialsSerializer<'x>;
+    impl WithSerializer for GpRelatedMaterials {
+        type Serializer<'x> = quick_xml_serialize::GpRelatedMaterialsSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
@@ -10918,18 +10915,14 @@ pub mod onix {
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
             let _is_root = is_root;
-            Ok(
-                quick_xml_serialize::ContentItemGpRelatedMaterialsSerializer {
-                    value: self,
-                    state: Box::new(
-                        quick_xml_serialize::ContentItemGpRelatedMaterialsSerializerState::Init__,
-                    ),
-                },
-            )
+            Ok(quick_xml_serialize::GpRelatedMaterialsSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::GpRelatedMaterialsSerializerState::Init__),
+            })
         }
     }
-    impl WithDeserializer for ContentItemGpRelatedMaterials {
-        type Deserializer = quick_xml_deserialize::ContentItemGpRelatedMaterialsDeserializer;
+    impl WithDeserializer for GpRelatedMaterials {
+        type Deserializer = quick_xml_deserialize::GpRelatedMaterialsDeserializer;
     }
     #[derive(Debug)]
     pub enum PublishingDetailContent271 {
@@ -11511,7 +11504,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: BodyManifestGpProductSpecification,
+        pub gp_product_specification: GpProductSpecification,
         pub cover_resource: Vec<CoverResourceElementType>,
     }
     impl WithSerializer for CoverManifestElementType {
@@ -11548,7 +11541,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: BodyManifestGpProductSpecification,
+        pub gp_product_specification: GpProductSpecification,
         pub body_resource: Vec<BodyResourceElementType>,
     }
     impl WithSerializer for BodyManifestElementType {
@@ -11585,7 +11578,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub gp_product_specification: BodyManifestGpProductSpecification,
+        pub gp_product_specification: GpProductSpecification,
         pub insert_point: InsertPointElementType,
         pub insert_resource: Vec<InsertResourceElementType>,
     }
@@ -11996,7 +11989,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for MarketPublishingStatusNoteElementType {
         type Serializer<'x> =
@@ -12070,7 +12063,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for PromotionCampaignElementType {
         type Serializer<'x> = quick_xml_serialize::PromotionCampaignElementTypeSerializer<'x>;
@@ -12116,7 +12109,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for InitialPrintRunElementType {
         type Serializer<'x> = quick_xml_serialize::InitialPrintRunElementTypeSerializer<'x>;
@@ -12160,7 +12153,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for ReprintDetailElementType {
         type Serializer<'x> = quick_xml_serialize::ReprintDetailElementTypeSerializer<'x>;
@@ -12204,7 +12197,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for CopiesSoldElementType {
         type Serializer<'x> = quick_xml_serialize::CopiesSoldElementTypeSerializer<'x>;
@@ -12246,7 +12239,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for BookClubAdoptionElementType {
         type Serializer<'x> = quick_xml_serialize::BookClubAdoptionElementTypeSerializer<'x>;
@@ -20397,7 +20390,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for TitleStatementElementType {
         type Serializer<'x> = quick_xml_serialize::TitleStatementElementTypeSerializer<'x>;
@@ -20604,7 +20597,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for ContributorStatementElementType {
         type Serializer<'x> = quick_xml_serialize::ContributorStatementElementTypeSerializer<'x>;
@@ -21838,25 +21831,28 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::InlineElementDeserializer;
     }
     #[derive(Debug)]
-    pub enum AncillaryContentDescriptionContent85 {
+    pub enum FlowContent {
         Block(BlockElement),
         Inline(InlineElement),
         Text(Text),
     }
-    impl WithSerializer for AncillaryContentDescriptionContent85 {
-        type Serializer<'x> =
-            quick_xml_serialize::AncillaryContentDescriptionContent85Serializer<'x>;
+    impl WithSerializer for FlowContent {
+        type Serializer<'x> = quick_xml_serialize::FlowContentSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
-            Ok (quick_xml_serialize :: AncillaryContentDescriptionContent85Serializer { value : self , state : Box :: new (quick_xml_serialize :: AncillaryContentDescriptionContent85SerializerState :: Init__) , is_root , })
+            Ok(quick_xml_serialize::FlowContentSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::FlowContentSerializerState::Init__),
+                is_root,
+            })
         }
     }
-    impl WithDeserializer for AncillaryContentDescriptionContent85 {
-        type Deserializer = quick_xml_deserialize::AncillaryContentDescriptionContent85Deserializer;
+    impl WithDeserializer for FlowContent {
+        type Deserializer = quick_xml_deserialize::FlowContentDeserializer;
     }
     #[derive(Debug)]
     pub enum AncillaryContentRefname {
@@ -21970,7 +21966,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for AncillaryContentDescriptionElementType {
         type Serializer<'x> =
@@ -22329,7 +22325,7 @@ pub mod onix {
     pub enum NameAsSubjectContent205 {
         Content206(NameAsSubjectContent206),
         Content212(NameAsSubjectContent208),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(NameAsSubjectGpCorporateName),
     }
     impl WithSerializer for NameAsSubjectContent205 {
@@ -23158,7 +23154,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for TextElementType {
         type Serializer<'x> = quick_xml_serialize::TextElementTypeSerializer<'x>;
@@ -23320,7 +23316,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for TextSourceDescriptionElementType {
         type Serializer<'x> = quick_xml_serialize::TextSourceDescriptionElementTypeSerializer<'x>;
@@ -23618,7 +23614,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for CitationNoteElementType {
         type Serializer<'x> = quick_xml_serialize::CitationNoteElementTypeSerializer<'x>;
@@ -24221,7 +24217,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for PrizeStatementElementType {
         type Serializer<'x> = quick_xml_serialize::PrizeStatementElementTypeSerializer<'x>;
@@ -24265,7 +24261,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for PrizeJuryElementType {
         type Serializer<'x> = quick_xml_serialize::PrizeJuryElementTypeSerializer<'x>;
@@ -25208,7 +25204,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for WebsiteDescriptionElementType {
         type Serializer<'x> = quick_xml_serialize::WebsiteDescriptionElementTypeSerializer<'x>;
@@ -25650,7 +25646,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for CopyrightStatementTextElementType {
         type Serializer<'x> = quick_xml_serialize::CopyrightStatementTextElementTypeSerializer<'x>;
@@ -26029,7 +26025,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for PublishingStatusNoteElementType {
         type Serializer<'x> = quick_xml_serialize::PublishingStatusNoteElementTypeSerializer<'x>;
@@ -27037,14 +27033,14 @@ pub mod onix {
     }
     impl WithDeserializerFromBytes for CoverManifestShortname {}
     #[derive(Debug)]
-    pub struct BodyManifestGpProductSpecification {
+    pub struct GpProductSpecification {
         pub specification_bundle_name: Vec<SpecificationBundleNameElementType>,
         pub specification_detail: Vec<SpecificationDetailElementType>,
         pub specification_feature: Vec<SpecificationFeatureElementType>,
         pub specification_description: Vec<SpecificationDescriptionElementType>,
     }
-    impl WithSerializer for BodyManifestGpProductSpecification {
-        type Serializer<'x> = quick_xml_serialize::BodyManifestGpProductSpecificationSerializer<'x>;
+    impl WithSerializer for GpProductSpecification {
+        type Serializer<'x> = quick_xml_serialize::GpProductSpecificationSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
@@ -27052,11 +27048,14 @@ pub mod onix {
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
             let _is_root = is_root;
-            Ok (quick_xml_serialize :: BodyManifestGpProductSpecificationSerializer { value : self , state : Box :: new (quick_xml_serialize :: BodyManifestGpProductSpecificationSerializerState :: Init__) , })
+            Ok(quick_xml_serialize::GpProductSpecificationSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::GpProductSpecificationSerializerState::Init__),
+            })
         }
     }
-    impl WithDeserializer for BodyManifestGpProductSpecification {
-        type Deserializer = quick_xml_deserialize::BodyManifestGpProductSpecificationDeserializer;
+    impl WithDeserializer for GpProductSpecification {
+        type Deserializer = quick_xml_deserialize::GpProductSpecificationDeserializer;
     }
     ///Standard attributes for all ONIX data elements
     ///
@@ -27163,7 +27162,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
-        pub gp_resource_specification: BodyResourceGpResourceSpecification,
+        pub gp_resource_specification: GpResourceSpecification,
     }
     impl WithSerializer for BodyResourceElementType {
         type Serializer<'x> = quick_xml_serialize::BodyResourceElementTypeSerializer<'x>;
@@ -27635,7 +27634,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for SalesRestrictionNoteElementType {
         type Serializer<'x> = quick_xml_serialize::SalesRestrictionNoteElementTypeSerializer<'x>;
@@ -33378,7 +33377,7 @@ pub mod onix {
     pub enum ContributorContent125 {
         Content126(ContributorContent126),
         Content132(ContributorContent128),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(ContributorGpCorporateName),
         UnnamedPersons(UnnamedPersonsElementType),
     }
@@ -33459,7 +33458,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for BiographicalNoteElementType {
         type Serializer<'x> = quick_xml_serialize::BiographicalNoteElementTypeSerializer<'x>;
@@ -33503,7 +33502,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for ContributorDescriptionElementType {
         type Serializer<'x> = quick_xml_serialize::ContributorDescriptionElementTypeSerializer<'x>;
@@ -34069,7 +34068,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for EditionStatementElementType {
         type Serializer<'x> = quick_xml_serialize::EditionStatementElementTypeSerializer<'x>;
@@ -37969,7 +37968,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for DdElementType {
         type Serializer<'x> = quick_xml_serialize::DdElementTypeSerializer<'x>;
@@ -38162,7 +38161,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<PreContent23>,
+        pub content: Vec<PreContentContent>,
     }
     impl WithSerializer for PreElementType {
         type Serializer<'x> = quick_xml_serialize::PreElementTypeSerializer<'x>;
@@ -38271,7 +38270,7 @@ pub mod onix {
         pub tabindex: Option<String>,
         pub onfocus: Option<String>,
         pub onblur: Option<String>,
-        pub content: Vec<AContent25>,
+        pub content: Vec<AContentContent>,
     }
     impl AElementType {
         #[must_use]
@@ -40082,7 +40081,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct NameAsSubjectContent208 {
         pub gp_unstructured_name: NameAsSubjectGpUnstructuredName,
-        pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
+        pub gp_structured_name: Option<GpStructuredName>,
     }
     impl WithSerializer for NameAsSubjectContent208 {
         type Serializer<'x> = quick_xml_serialize::NameAsSubjectContent208Serializer<'x>;
@@ -40105,7 +40104,7 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::NameAsSubjectContent208Deserializer;
     }
     #[derive(Debug)]
-    pub struct AlternativeNameGpStructuredName {
+    pub struct GpStructuredName {
         pub titles_before_names: Option<TitlesBeforeNamesElementType>,
         pub names_before_key: Option<NamesBeforeKeyElementType>,
         pub prefix_to_key: Option<PrefixToKeyElementType>,
@@ -40115,8 +40114,8 @@ pub mod onix {
         pub letters_after_names: Option<LettersAfterNamesElementType>,
         pub titles_after_names: Option<TitlesAfterNamesElementType>,
     }
-    impl WithSerializer for AlternativeNameGpStructuredName {
-        type Serializer<'x> = quick_xml_serialize::AlternativeNameGpStructuredNameSerializer<'x>;
+    impl WithSerializer for GpStructuredName {
+        type Serializer<'x> = quick_xml_serialize::GpStructuredNameSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
@@ -40124,18 +40123,14 @@ pub mod onix {
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
             let _is_root = is_root;
-            Ok(
-                quick_xml_serialize::AlternativeNameGpStructuredNameSerializer {
-                    value: self,
-                    state: Box::new(
-                        quick_xml_serialize::AlternativeNameGpStructuredNameSerializerState::Init__,
-                    ),
-                },
-            )
+            Ok(quick_xml_serialize::GpStructuredNameSerializer {
+                value: self,
+                state: Box::new(quick_xml_serialize::GpStructuredNameSerializerState::Init__),
+            })
         }
     }
-    impl WithDeserializer for AlternativeNameGpStructuredName {
-        type Deserializer = quick_xml_deserialize::AlternativeNameGpStructuredNameDeserializer;
+    impl WithDeserializer for GpStructuredName {
+        type Deserializer = quick_xml_deserialize::GpStructuredNameDeserializer;
     }
     #[derive(Debug)]
     pub enum NameAsSubjectGpCorporateName {
@@ -40220,7 +40215,7 @@ pub mod onix {
     pub enum AlternativeNameContent76 {
         Content77(AlternativeNameContent77),
         Content83(AlternativeNameContent79),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(AlternativeNameGpCorporateName),
     }
     impl WithSerializer for AlternativeNameContent76 {
@@ -43387,7 +43382,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for FeatureNoteElementType {
         type Serializer<'x> = quick_xml_serialize::FeatureNoteElementTypeSerializer<'x>;
@@ -44400,7 +44395,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for VenueNoteElementType {
         type Serializer<'x> = quick_xml_serialize::VenueNoteElementTypeSerializer<'x>;
@@ -47491,7 +47486,7 @@ pub mod onix {
     impl WithDeserializerFromBytes for CoverResourceShortname {}
     #[derive(Debug)]
     pub enum CoverResourceContent151 {
-        GpResourceSpecification(BodyResourceGpResourceSpecification),
+        GpResourceSpecification(GpResourceSpecification),
         NoResource(NoResourceElementType),
     }
     impl WithSerializer for CoverResourceContent151 {
@@ -47567,7 +47562,7 @@ pub mod onix {
     }
     impl WithDeserializerFromBytes for BodyResourceShortname {}
     #[derive(Debug)]
-    pub struct BodyResourceGpResourceSpecification {
+    pub struct GpResourceSpecification {
         pub resource_identifier: Vec<ResourceIdentifierElementType>,
         pub resource_role: Option<ResourceRoleElementType>,
         pub resource_file_detail: Vec<ResourceFileDetailElementType>,
@@ -47577,9 +47572,8 @@ pub mod onix {
         pub resource_file_link: Vec<ResourceFileLinkElementType>,
         pub resource_file_date: Vec<ResourceFileDateElementType>,
     }
-    impl WithSerializer for BodyResourceGpResourceSpecification {
-        type Serializer<'x> =
-            quick_xml_serialize::BodyResourceGpResourceSpecificationSerializer<'x>;
+    impl WithSerializer for GpResourceSpecification {
+        type Serializer<'x> = quick_xml_serialize::GpResourceSpecificationSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
@@ -47587,11 +47581,16 @@ pub mod onix {
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
             let _is_root = is_root;
-            Ok (quick_xml_serialize :: BodyResourceGpResourceSpecificationSerializer { value : self , state : Box :: new (quick_xml_serialize :: BodyResourceGpResourceSpecificationSerializerState :: Init__) , })
+            Ok(quick_xml_serialize::GpResourceSpecificationSerializer {
+                value: self,
+                state: Box::new(
+                    quick_xml_serialize::GpResourceSpecificationSerializerState::Init__,
+                ),
+            })
         }
     }
-    impl WithDeserializer for BodyResourceGpResourceSpecification {
-        type Deserializer = quick_xml_deserialize::BodyResourceGpResourceSpecificationDeserializer;
+    impl WithDeserializer for GpResourceSpecification {
+        type Deserializer = quick_xml_deserialize::GpResourceSpecificationDeserializer;
     }
     #[derive(Debug)]
     pub enum InsertPointRefname {
@@ -53584,7 +53583,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct ContributorContent128 {
         pub gp_unstructured_name: ContributorGpUnstructuredName,
-        pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
+        pub gp_structured_name: Option<GpStructuredName>,
     }
     impl WithSerializer for ContributorContent128 {
         type Serializer<'x> = quick_xml_serialize::ContributorContent128Serializer<'x>;
@@ -55969,7 +55968,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub language: Option<List74>,
         pub textformat: Option<List34>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl WithSerializer for ReligiousTextFeatureDescriptionElementType {
         type Serializer<'x> =
@@ -56196,7 +56195,7 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::GlossElementDeserializer;
     }
     #[derive(Debug)]
-    pub enum PreContent23 {
+    pub enum PreContentContent {
         A(AElementType),
         Br(BrElementType),
         Span(AbbrElementType),
@@ -56209,23 +56208,23 @@ pub mod onix {
         Gloss(GlossElement),
         Text(Text),
     }
-    impl WithSerializer for PreContent23 {
-        type Serializer<'x> = quick_xml_serialize::PreContent23Serializer<'x>;
+    impl WithSerializer for PreContentContent {
+        type Serializer<'x> = quick_xml_serialize::PreContentContentSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
-            Ok(quick_xml_serialize::PreContent23Serializer {
+            Ok(quick_xml_serialize::PreContentContentSerializer {
                 value: self,
-                state: Box::new(quick_xml_serialize::PreContent23SerializerState::Init__),
+                state: Box::new(quick_xml_serialize::PreContentContentSerializerState::Init__),
                 is_root,
             })
         }
     }
-    impl WithDeserializer for PreContent23 {
-        type Deserializer = quick_xml_deserialize::PreContent23Deserializer;
+    impl WithDeserializer for PreContentContent {
+        type Deserializer = quick_xml_deserialize::PreContentContentDeserializer;
     }
     #[derive(Debug)]
     pub enum TFrame {
@@ -56481,30 +56480,30 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::FontstyleElementDeserializer;
     }
     #[derive(Debug)]
-    pub enum AContent25 {
+    pub enum AContentContent {
         Special(SpecialElement),
         Fontstyle(FontstyleElement),
         Phrase(PhraseElement),
         Gloss(GlossElement),
         Text(Text),
     }
-    impl WithSerializer for AContent25 {
-        type Serializer<'x> = quick_xml_serialize::AContent25Serializer<'x>;
+    impl WithSerializer for AContentContent {
+        type Serializer<'x> = quick_xml_serialize::AContentContentSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
-            Ok(quick_xml_serialize::AContent25Serializer {
+            Ok(quick_xml_serialize::AContentContentSerializer {
                 value: self,
-                state: Box::new(quick_xml_serialize::AContent25SerializerState::Init__),
+                state: Box::new(quick_xml_serialize::AContentContentSerializerState::Init__),
                 is_root,
             })
         }
     }
-    impl WithDeserializer for AContent25 {
-        type Deserializer = quick_xml_deserialize::AContent25Deserializer;
+    impl WithDeserializer for AContentContent {
+        type Deserializer = quick_xml_deserialize::AContentContentDeserializer;
     }
     #[derive(Debug)]
     pub enum Ismap {
@@ -56743,7 +56742,7 @@ pub mod onix {
     #[derive(Debug)]
     pub enum NameAsSubjectContent207 {
         Content208(NameAsSubjectContent208),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(NameAsSubjectGpCorporateName),
     }
     impl WithSerializer for NameAsSubjectContent207 {
@@ -57295,7 +57294,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct AlternativeNameContent79 {
         pub gp_unstructured_name: AlternativeNameGpUnstructuredName,
-        pub gp_structured_name: Option<AlternativeNameGpStructuredName>,
+        pub gp_structured_name: Option<GpStructuredName>,
     }
     impl WithSerializer for AlternativeNameContent79 {
         type Serializer<'x> = quick_xml_serialize::AlternativeNameContent79Serializer<'x>;
@@ -65218,7 +65217,7 @@ pub mod onix {
     #[derive(Debug)]
     pub enum ContributorContent127 {
         Content128(ContributorContent128),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(ContributorGpCorporateName),
         UnnamedPersons(UnnamedPersonsElementType),
     }
@@ -66261,7 +66260,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub content: Vec<RbContent65>,
+        pub content: Vec<RubyContentContent>,
     }
     impl WithSerializer for RbElementType {
         type Serializer<'x> = quick_xml_serialize::RbElementTypeSerializer<'x>;
@@ -66994,7 +66993,7 @@ pub mod onix {
     #[derive(Debug)]
     pub enum AlternativeNameContent78 {
         Content79(AlternativeNameContent79),
-        GpStructuredName(AlternativeNameGpStructuredName),
+        GpStructuredName(GpStructuredName),
         GpCorporateName(AlternativeNameGpCorporateName),
     }
     impl WithSerializer for AlternativeNameContent78 {
@@ -72102,7 +72101,7 @@ pub mod onix {
         pub char: Option<String>,
         pub charoff: Option<String>,
         pub valign: Option<Valign>,
-        pub content: Vec<AncillaryContentDescriptionContent85>,
+        pub content: Vec<FlowContent>,
     }
     impl TdElementType {
         #[must_use]
@@ -72133,30 +72132,30 @@ pub mod onix {
         type Deserializer = quick_xml_deserialize::TdElementTypeDeserializer;
     }
     #[derive(Debug)]
-    pub enum RbContent65 {
+    pub enum RubyContentContent {
         A(AElementType),
         Special(SpecialElement),
         Fontstyle(FontstyleElement),
         Phrase(PhraseElement),
         Text(Text),
     }
-    impl WithSerializer for RbContent65 {
-        type Serializer<'x> = quick_xml_serialize::RbContent65Serializer<'x>;
+    impl WithSerializer for RubyContentContent {
+        type Serializer<'x> = quick_xml_serialize::RubyContentContentSerializer<'x>;
         fn serializer<'ser>(
             &'ser self,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
-            Ok(quick_xml_serialize::RbContent65Serializer {
+            Ok(quick_xml_serialize::RubyContentContentSerializer {
                 value: self,
-                state: Box::new(quick_xml_serialize::RbContent65SerializerState::Init__),
+                state: Box::new(quick_xml_serialize::RubyContentContentSerializerState::Init__),
                 is_root,
             })
         }
     }
-    impl WithDeserializer for RbContent65 {
-        type Deserializer = quick_xml_deserialize::RbContent65Deserializer;
+    impl WithDeserializer for RubyContentContent {
+        type Deserializer = quick_xml_deserialize::RubyContentContentDeserializer;
     }
     #[derive(Debug)]
     pub struct RtElementType {
@@ -72167,7 +72166,7 @@ pub mod onix {
         pub lang: Option<String>,
         pub dir: Option<Dir>,
         pub rbspan: Option<i32>,
-        pub content: Vec<RbContent65>,
+        pub content: Vec<RubyContentContent>,
     }
     impl WithSerializer for RtElementType {
         type Serializer<'x> = quick_xml_serialize::RtElementTypeSerializer<'x>;
@@ -82662,9 +82661,9 @@ pub mod onix {
             gp_authorship: Option<super::DescriptiveDetailGpAuthorship>,
             gp_events: Option<super::DescriptiveDetailGpEvents>,
             gp_editions: Option<super::DescriptiveDetailGpEditions>,
-            gp_languages: Option<super::ContentItemGpLanguages>,
+            gp_languages: Option<super::GpLanguages>,
             gp_extents: Option<super::DescriptiveDetailGpExtents>,
-            gp_subjects: Option<super::ContentItemGpSubjects>,
+            gp_subjects: Option<super::GpSubjects>,
             gp_audiences: Option<super::DescriptiveDetailGpAudiences>,
             state__: Box<DescriptiveDetailElementTypeDeserializerState>,
         }
@@ -82685,11 +82684,11 @@ pub mod onix {
             GpEditions(
                 Option<<super::DescriptiveDetailGpEditions as WithDeserializer>::Deserializer>,
             ),
-            GpLanguages(Option<<super::ContentItemGpLanguages as WithDeserializer>::Deserializer>),
+            GpLanguages(Option<<super::GpLanguages as WithDeserializer>::Deserializer>),
             GpExtents(
                 Option<<super::DescriptiveDetailGpExtents as WithDeserializer>::Deserializer>,
             ),
-            GpSubjects(Option<<super::ContentItemGpSubjects as WithDeserializer>::Deserializer>),
+            GpSubjects(Option<<super::GpSubjects as WithDeserializer>::Deserializer>),
             GpAudiences(
                 Option<<super::DescriptiveDetailGpAudiences as WithDeserializer>::Deserializer>,
             ),
@@ -82869,10 +82868,7 @@ pub mod onix {
                 self.gp_editions = Some(value);
                 Ok(())
             }
-            fn store_gp_languages(
-                &mut self,
-                value: super::ContentItemGpLanguages,
-            ) -> Result<(), Error> {
+            fn store_gp_languages(&mut self, value: super::GpLanguages) -> Result<(), Error> {
                 if self.gp_languages.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"gp.languages",
@@ -82893,10 +82889,7 @@ pub mod onix {
                 self.gp_extents = Some(value);
                 Ok(())
             }
-            fn store_gp_subjects(
-                &mut self,
-                value: super::ContentItemGpSubjects,
-            ) -> Result<(), Error> {
+            fn store_gp_subjects(&mut self, value: super::GpSubjects) -> Result<(), Error> {
                 if self.gp_subjects.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"gp.subjects",
@@ -83130,7 +83123,7 @@ pub mod onix {
             fn handle_gp_languages<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::ContentItemGpLanguages>,
+                output: DeserializerOutput<'de, super::GpLanguages>,
                 fallback: &mut Option<DescriptiveDetailElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use DescriptiveDetailElementTypeDeserializerState as S;
@@ -83196,7 +83189,7 @@ pub mod onix {
             fn handle_gp_subjects<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::ContentItemGpSubjects>,
+                output: DeserializerOutput<'de, super::GpSubjects>,
                 fallback: &mut Option<DescriptiveDetailElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use DescriptiveDetailElementTypeDeserializerState as S;
@@ -83508,9 +83501,8 @@ pub mod onix {
                             }
                         }
                         (S::GpLanguages(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = <super::ContentItemGpLanguages as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::GpLanguages as WithDeserializer>::init(helper, event)?;
                             match self.handle_gp_languages(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -83537,9 +83529,8 @@ pub mod onix {
                             }
                         }
                         (S::GpSubjects(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = <super::ContentItemGpSubjects as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::GpSubjects as WithDeserializer>::init(helper, event)?;
                             match self.handle_gp_subjects(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -83621,13 +83612,22 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             gp_descriptions_and_marketing_resources:
-                Option<super::CollateralDetailGpDescriptionsAndMarketingResources>,
+                Option<super::GpDescriptionsAndMarketingResources>,
             gp_prizes: Option<super::CollateralDetailGpPrizes>,
             state__: Box<CollateralDetailElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CollateralDetailElementTypeDeserializerState {
-            Init__ , GpDescriptionsAndMarketingResources (Option << super :: CollateralDetailGpDescriptionsAndMarketingResources as WithDeserializer > :: Deserializer >) , GpPrizes (Option << super :: CollateralDetailGpPrizes as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
+            Init__,
+            GpDescriptionsAndMarketingResources(
+                Option<
+                    <super::GpDescriptionsAndMarketingResources as WithDeserializer>::Deserializer,
+                >,
+            ),
+            GpPrizes(Option<<super::CollateralDetailGpPrizes as WithDeserializer>::Deserializer>),
+            Done__,
+            Unknown__,
+        }
         impl CollateralDetailElementTypeDeserializer {
             fn from_bytes_start(
                 helper: &mut DeserializeHelper,
@@ -83700,7 +83700,7 @@ pub mod onix {
             }
             fn store_gp_descriptions_and_marketing_resources(
                 &mut self,
-                value: super::CollateralDetailGpDescriptionsAndMarketingResources,
+                value: super::GpDescriptionsAndMarketingResources,
             ) -> Result<(), Error> {
                 if self.gp_descriptions_and_marketing_resources.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -83725,10 +83725,7 @@ pub mod onix {
             fn handle_gp_descriptions_and_marketing_resources<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<
-                    'de,
-                    super::CollateralDetailGpDescriptionsAndMarketingResources,
-                >,
+                output: DeserializerOutput<'de, super::GpDescriptionsAndMarketingResources>,
                 fallback: &mut Option<CollateralDetailElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CollateralDetailElementTypeDeserializerState as S;
@@ -83863,7 +83860,7 @@ pub mod onix {
                             S::GpDescriptionsAndMarketingResources(None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = < super :: CollateralDetailGpDescriptionsAndMarketingResources as WithDeserializer > :: init (helper , event) ? ;
+                            let output = < super :: GpDescriptionsAndMarketingResources as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_gp_descriptions_and_marketing_resources(
                                 helper,
                                 output,
@@ -91536,24 +91533,24 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct ContentItemGpLanguagesDeserializer {
+        pub struct GpLanguagesDeserializer {
             language: Vec<super::LanguageElementType>,
-            state__: Box<ContentItemGpLanguagesDeserializerState>,
+            state__: Box<GpLanguagesDeserializerState>,
         }
         #[derive(Debug)]
-        enum ContentItemGpLanguagesDeserializerState {
+        enum GpLanguagesDeserializerState {
             Init__,
             Language(Option<<super::LanguageElementType as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
-        impl ContentItemGpLanguagesDeserializer {
+        impl GpLanguagesDeserializer {
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: ContentItemGpLanguagesDeserializerState,
+                state: GpLanguagesDeserializerState,
             ) -> Result<(), Error> {
-                use ContentItemGpLanguagesDeserializerState as S;
+                use GpLanguagesDeserializerState as S;
                 match state {
                     S::Language(Some(deserializer)) => {
                         self.store_language(deserializer.finish(helper)?)?
@@ -91570,9 +91567,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::LanguageElementType>,
-                fallback: &mut Option<ContentItemGpLanguagesDeserializerState>,
+                fallback: &mut Option<GpLanguagesDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use ContentItemGpLanguagesDeserializerState as S;
+                use GpLanguagesDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -91600,30 +91597,27 @@ pub mod onix {
                 }
             }
         }
-        impl Default for ContentItemGpLanguagesDeserializer {
+        impl Default for GpLanguagesDeserializer {
             fn default() -> Self {
                 Self {
                     language: Vec::new(),
-                    state__: Box::new(ContentItemGpLanguagesDeserializerState::Init__),
+                    state__: Box::new(GpLanguagesDeserializerState::Init__),
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::ContentItemGpLanguages> for ContentItemGpLanguagesDeserializer {
+        impl<'de> Deserializer<'de, super::GpLanguages> for GpLanguagesDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::ContentItemGpLanguages> {
+            ) -> DeserializerResult<'de, super::GpLanguages> {
                 let deserializer = Self {
                     language: Vec::new(),
-                    state__: Box::new(ContentItemGpLanguagesDeserializerState::Init__),
+                    state__: Box::new(GpLanguagesDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(
-                            &*x.state__,
-                            ContentItemGpLanguagesDeserializerState::Init__
-                        ) =>
+                        if matches!(&*x.state__, GpLanguagesDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -91635,8 +91629,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::ContentItemGpLanguages> {
-                use ContentItemGpLanguagesDeserializerState as S;
+            ) -> DeserializerResult<'de, super::GpLanguages> {
+                use GpLanguagesDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -91710,13 +91704,10 @@ pub mod onix {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::ContentItemGpLanguages, Error> {
-                let state = replace(
-                    &mut *self.state__,
-                    ContentItemGpLanguagesDeserializerState::Unknown__,
-                );
+            ) -> Result<super::GpLanguages, Error> {
+                let state = replace(&mut *self.state__, GpLanguagesDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
-                Ok(super::ContentItemGpLanguages {
+                Ok(super::GpLanguages {
                     language: self.language,
                 })
             }
@@ -92251,13 +92242,13 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct ContentItemGpSubjectsDeserializer {
+        pub struct GpSubjectsDeserializer {
             subject: Vec<super::SubjectElementType>,
             name_as_subject: Vec<super::NameAsSubjectElementType>,
-            state__: Box<ContentItemGpSubjectsDeserializerState>,
+            state__: Box<GpSubjectsDeserializerState>,
         }
         #[derive(Debug)]
-        enum ContentItemGpSubjectsDeserializerState {
+        enum GpSubjectsDeserializerState {
             Init__,
             Subject(Option<<super::SubjectElementType as WithDeserializer>::Deserializer>),
             NameAsSubject(
@@ -92266,13 +92257,13 @@ pub mod onix {
             Done__,
             Unknown__,
         }
-        impl ContentItemGpSubjectsDeserializer {
+        impl GpSubjectsDeserializer {
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: ContentItemGpSubjectsDeserializerState,
+                state: GpSubjectsDeserializerState,
             ) -> Result<(), Error> {
-                use ContentItemGpSubjectsDeserializerState as S;
+                use GpSubjectsDeserializerState as S;
                 match state {
                     S::Subject(Some(deserializer)) => {
                         self.store_subject(deserializer.finish(helper)?)?
@@ -92299,9 +92290,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SubjectElementType>,
-                fallback: &mut Option<ContentItemGpSubjectsDeserializerState>,
+                fallback: &mut Option<GpSubjectsDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use ContentItemGpSubjectsDeserializerState as S;
+                use GpSubjectsDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -92332,9 +92323,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::NameAsSubjectElementType>,
-                fallback: &mut Option<ContentItemGpSubjectsDeserializerState>,
+                fallback: &mut Option<GpSubjectsDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use ContentItemGpSubjectsDeserializerState as S;
+                use GpSubjectsDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -92362,32 +92353,29 @@ pub mod onix {
                 }
             }
         }
-        impl Default for ContentItemGpSubjectsDeserializer {
+        impl Default for GpSubjectsDeserializer {
             fn default() -> Self {
                 Self {
                     subject: Vec::new(),
                     name_as_subject: Vec::new(),
-                    state__: Box::new(ContentItemGpSubjectsDeserializerState::Init__),
+                    state__: Box::new(GpSubjectsDeserializerState::Init__),
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::ContentItemGpSubjects> for ContentItemGpSubjectsDeserializer {
+        impl<'de> Deserializer<'de, super::GpSubjects> for GpSubjectsDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::ContentItemGpSubjects> {
+            ) -> DeserializerResult<'de, super::GpSubjects> {
                 let deserializer = Self {
                     subject: Vec::new(),
                     name_as_subject: Vec::new(),
-                    state__: Box::new(ContentItemGpSubjectsDeserializerState::Init__),
+                    state__: Box::new(GpSubjectsDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(
-                            &*x.state__,
-                            ContentItemGpSubjectsDeserializerState::Init__
-                        ) =>
+                        if matches!(&*x.state__, GpSubjectsDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -92399,8 +92387,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::ContentItemGpSubjects> {
-                use ContentItemGpSubjectsDeserializerState as S;
+            ) -> DeserializerResult<'de, super::GpSubjects> {
+                use GpSubjectsDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -92503,13 +92491,10 @@ pub mod onix {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::ContentItemGpSubjects, Error> {
-                let state = replace(
-                    &mut *self.state__,
-                    ContentItemGpSubjectsDeserializerState::Unknown__,
-                );
+            ) -> Result<super::GpSubjects, Error> {
+                let state = replace(&mut *self.state__, GpSubjectsDeserializerState::Unknown__);
                 self.finish_state(helper, state)?;
-                Ok(super::ContentItemGpSubjects {
+                Ok(super::GpSubjects {
                     subject: self.subject,
                     name_as_subject: self.name_as_subject,
                 })
@@ -92942,14 +92927,14 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct CollateralDetailGpDescriptionsAndMarketingResourcesDeserializer {
+        pub struct GpDescriptionsAndMarketingResourcesDeserializer {
             text_content: Vec<super::TextContentElementType>,
             cited_content: Vec<super::CitedContentElementType>,
             supporting_resource: Vec<super::SupportingResourceElementType>,
-            state__: Box<CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState>,
+            state__: Box<GpDescriptionsAndMarketingResourcesDeserializerState>,
         }
         #[derive(Debug)]
-        enum CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState {
+        enum GpDescriptionsAndMarketingResourcesDeserializerState {
             Init__,
             TextContent(Option<<super::TextContentElementType as WithDeserializer>::Deserializer>),
             CitedContent(
@@ -92961,13 +92946,13 @@ pub mod onix {
             Done__,
             Unknown__,
         }
-        impl CollateralDetailGpDescriptionsAndMarketingResourcesDeserializer {
+        impl GpDescriptionsAndMarketingResourcesDeserializer {
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState,
+                state: GpDescriptionsAndMarketingResourcesDeserializerState,
             ) -> Result<(), Error> {
-                use CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState as S;
+                use GpDescriptionsAndMarketingResourcesDeserializerState as S;
                 match state {
                     S::TextContent(Some(deserializer)) => {
                         self.store_text_content(deserializer.finish(helper)?)?
@@ -93007,11 +92992,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TextContentElementType>,
-                fallback: &mut Option<
-                    CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState,
-                >,
+                fallback: &mut Option<GpDescriptionsAndMarketingResourcesDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState as S;
+                use GpDescriptionsAndMarketingResourcesDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -93042,11 +93025,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CitedContentElementType>,
-                fallback: &mut Option<
-                    CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState,
-                >,
+                fallback: &mut Option<GpDescriptionsAndMarketingResourcesDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState as S;
+                use GpDescriptionsAndMarketingResourcesDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -93077,11 +93058,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SupportingResourceElementType>,
-                fallback: &mut Option<
-                    CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState,
-                >,
+                fallback: &mut Option<GpDescriptionsAndMarketingResourcesDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState as S;
+                use GpDescriptionsAndMarketingResourcesDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -93109,31 +93088,49 @@ pub mod onix {
                 }
             }
         }
-        impl Default for CollateralDetailGpDescriptionsAndMarketingResourcesDeserializer {
+        impl Default for GpDescriptionsAndMarketingResourcesDeserializer {
             fn default() -> Self {
-                Self { text_content : Vec :: new () , cited_content : Vec :: new () , supporting_resource : Vec :: new () , state__ : Box :: new (CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState :: Init__) , }
+                Self {
+                    text_content: Vec::new(),
+                    cited_content: Vec::new(),
+                    supporting_resource: Vec::new(),
+                    state__: Box::new(GpDescriptionsAndMarketingResourcesDeserializerState::Init__),
+                }
             }
         }
-        impl<'de> Deserializer<'de, super::CollateralDetailGpDescriptionsAndMarketingResources>
-            for CollateralDetailGpDescriptionsAndMarketingResourcesDeserializer
+        impl<'de> Deserializer<'de, super::GpDescriptionsAndMarketingResources>
+            for GpDescriptionsAndMarketingResourcesDeserializer
         {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CollateralDetailGpDescriptionsAndMarketingResources>
-            {
-                let deserializer = Self { text_content : Vec :: new () , cited_content : Vec :: new () , supporting_resource : Vec :: new () , state__ : Box :: new (CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState :: Init__) , } ;
+            ) -> DeserializerResult<'de, super::GpDescriptionsAndMarketingResources> {
+                let deserializer = Self {
+                    text_content: Vec::new(),
+                    cited_content: Vec::new(),
+                    supporting_resource: Vec::new(),
+                    state__: Box::new(GpDescriptionsAndMarketingResourcesDeserializerState::Init__),
+                };
                 let mut output = deserializer.next(helper, event)?;
-                output . artifact = match output . artifact { DeserializerArtifact :: Deserializer (x) if matches ! (& * x . state__ , CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState :: Init__) => DeserializerArtifact :: None , artifact => artifact , } ;
+                output.artifact = match output.artifact {
+                    DeserializerArtifact::Deserializer(x)
+                        if matches!(
+                            &*x.state__,
+                            GpDescriptionsAndMarketingResourcesDeserializerState::Init__
+                        ) =>
+                    {
+                        DeserializerArtifact::None
+                    }
+                    artifact => artifact,
+                };
                 Ok(output)
             }
             fn next(
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::CollateralDetailGpDescriptionsAndMarketingResources>
-            {
-                use CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState as S;
+            ) -> DeserializerResult<'de, super::GpDescriptionsAndMarketingResources> {
+                use GpDescriptionsAndMarketingResourcesDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -93268,14 +93265,13 @@ pub mod onix {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::CollateralDetailGpDescriptionsAndMarketingResources, Error>
-            {
+            ) -> Result<super::GpDescriptionsAndMarketingResources, Error> {
                 let state = replace(
                     &mut *self.state__,
-                    CollateralDetailGpDescriptionsAndMarketingResourcesDeserializerState::Unknown__,
+                    GpDescriptionsAndMarketingResourcesDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::CollateralDetailGpDescriptionsAndMarketingResources {
+                Ok(super::GpDescriptionsAndMarketingResources {
                     text_content: self.text_content,
                     cited_content: self.cited_content,
                     supporting_resource: self.supporting_resource,
@@ -94537,18 +94533,45 @@ pub mod onix {
             epub_license: Vec<super::EpubLicenseWithDateType>,
             content_119: Option<super::ContentItemContent119>,
             gp_authorship: Option<super::ContentItemGpAuthorship>,
-            gp_languages: Option<super::ContentItemGpLanguages>,
-            gp_subjects: Option<super::ContentItemGpSubjects>,
+            gp_languages: Option<super::GpLanguages>,
+            gp_subjects: Option<super::GpSubjects>,
             gp_descriptions_and_marketing_resources:
-                Option<super::CollateralDetailGpDescriptionsAndMarketingResources>,
+                Option<super::GpDescriptionsAndMarketingResources>,
             publisher: Vec<super::PublisherElementType>,
             content_123: Option<super::ContentItemContent123>,
-            gp_related_materials: Option<super::ContentItemGpRelatedMaterials>,
+            gp_related_materials: Option<super::GpRelatedMaterials>,
             state__: Box<ContentItemElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ContentItemElementTypeDeserializerState {
-            Init__ , LevelSequenceNumber (Option << super :: LevelSequenceNumberElementType as WithDeserializer > :: Deserializer >) , Content118 (Option << super :: ContentItemContent118 as WithDeserializer > :: Deserializer >) , EpubUsageConstraint (Option << super :: EpubUsageConstraintElementType as WithDeserializer > :: Deserializer >) , EpubLicense (Option << super :: EpubLicenseWithDateType as WithDeserializer > :: Deserializer >) , Content119 (Option << super :: ContentItemContent119 as WithDeserializer > :: Deserializer >) , GpAuthorship (Option << super :: ContentItemGpAuthorship as WithDeserializer > :: Deserializer >) , GpLanguages (Option << super :: ContentItemGpLanguages as WithDeserializer > :: Deserializer >) , GpSubjects (Option << super :: ContentItemGpSubjects as WithDeserializer > :: Deserializer >) , GpDescriptionsAndMarketingResources (Option << super :: CollateralDetailGpDescriptionsAndMarketingResources as WithDeserializer > :: Deserializer >) , Publisher (Option << super :: PublisherElementType as WithDeserializer > :: Deserializer >) , Content123 (Option << super :: ContentItemContent123 as WithDeserializer > :: Deserializer >) , GpRelatedMaterials (Option << super :: ContentItemGpRelatedMaterials as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
+            Init__,
+            LevelSequenceNumber(
+                Option<<super::LevelSequenceNumberElementType as WithDeserializer>::Deserializer>,
+            ),
+            Content118(Option<<super::ContentItemContent118 as WithDeserializer>::Deserializer>),
+            EpubUsageConstraint(
+                Option<<super::EpubUsageConstraintElementType as WithDeserializer>::Deserializer>,
+            ),
+            EpubLicense(Option<<super::EpubLicenseWithDateType as WithDeserializer>::Deserializer>),
+            Content119(Option<<super::ContentItemContent119 as WithDeserializer>::Deserializer>),
+            GpAuthorship(
+                Option<<super::ContentItemGpAuthorship as WithDeserializer>::Deserializer>,
+            ),
+            GpLanguages(Option<<super::GpLanguages as WithDeserializer>::Deserializer>),
+            GpSubjects(Option<<super::GpSubjects as WithDeserializer>::Deserializer>),
+            GpDescriptionsAndMarketingResources(
+                Option<
+                    <super::GpDescriptionsAndMarketingResources as WithDeserializer>::Deserializer,
+                >,
+            ),
+            Publisher(Option<<super::PublisherElementType as WithDeserializer>::Deserializer>),
+            Content123(Option<<super::ContentItemContent123 as WithDeserializer>::Deserializer>),
+            GpRelatedMaterials(
+                Option<<super::GpRelatedMaterials as WithDeserializer>::Deserializer>,
+            ),
+            Done__,
+            Unknown__,
+        }
         impl ContentItemElementTypeDeserializer {
             fn from_bytes_start(
                 helper: &mut DeserializeHelper,
@@ -94721,10 +94744,7 @@ pub mod onix {
                 self.gp_authorship = Some(value);
                 Ok(())
             }
-            fn store_gp_languages(
-                &mut self,
-                value: super::ContentItemGpLanguages,
-            ) -> Result<(), Error> {
+            fn store_gp_languages(&mut self, value: super::GpLanguages) -> Result<(), Error> {
                 if self.gp_languages.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"gp.languages",
@@ -94733,10 +94753,7 @@ pub mod onix {
                 self.gp_languages = Some(value);
                 Ok(())
             }
-            fn store_gp_subjects(
-                &mut self,
-                value: super::ContentItemGpSubjects,
-            ) -> Result<(), Error> {
+            fn store_gp_subjects(&mut self, value: super::GpSubjects) -> Result<(), Error> {
                 if self.gp_subjects.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"gp.subjects",
@@ -94747,7 +94764,7 @@ pub mod onix {
             }
             fn store_gp_descriptions_and_marketing_resources(
                 &mut self,
-                value: super::CollateralDetailGpDescriptionsAndMarketingResources,
+                value: super::GpDescriptionsAndMarketingResources,
             ) -> Result<(), Error> {
                 if self.gp_descriptions_and_marketing_resources.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -94775,7 +94792,7 @@ pub mod onix {
             }
             fn store_gp_related_materials(
                 &mut self,
-                value: super::ContentItemGpRelatedMaterials,
+                value: super::GpRelatedMaterials,
             ) -> Result<(), Error> {
                 if self.gp_related_materials.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -94994,7 +95011,7 @@ pub mod onix {
             fn handle_gp_languages<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::ContentItemGpLanguages>,
+                output: DeserializerOutput<'de, super::GpLanguages>,
                 fallback: &mut Option<ContentItemElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContentItemElementTypeDeserializerState as S;
@@ -95027,7 +95044,7 @@ pub mod onix {
             fn handle_gp_subjects<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::ContentItemGpSubjects>,
+                output: DeserializerOutput<'de, super::GpSubjects>,
                 fallback: &mut Option<ContentItemElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContentItemElementTypeDeserializerState as S;
@@ -95060,10 +95077,7 @@ pub mod onix {
             fn handle_gp_descriptions_and_marketing_resources<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<
-                    'de,
-                    super::CollateralDetailGpDescriptionsAndMarketingResources,
-                >,
+                output: DeserializerOutput<'de, super::GpDescriptionsAndMarketingResources>,
                 fallback: &mut Option<ContentItemElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContentItemElementTypeDeserializerState as S;
@@ -95164,7 +95178,7 @@ pub mod onix {
             fn handle_gp_related_materials<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::ContentItemGpRelatedMaterials>,
+                output: DeserializerOutput<'de, super::GpRelatedMaterials>,
                 fallback: &mut Option<ContentItemElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContentItemElementTypeDeserializerState as S;
@@ -95495,9 +95509,8 @@ pub mod onix {
                             }
                         }
                         (S::GpLanguages(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = <super::ContentItemGpLanguages as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::GpLanguages as WithDeserializer>::init(helper, event)?;
                             match self.handle_gp_languages(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -95509,9 +95522,8 @@ pub mod onix {
                             }
                         }
                         (S::GpSubjects(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = <super::ContentItemGpSubjects as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <super::GpSubjects as WithDeserializer>::init(helper, event)?;
                             match self.handle_gp_subjects(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -95526,7 +95538,7 @@ pub mod onix {
                             S::GpDescriptionsAndMarketingResources(None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = < super :: CollateralDetailGpDescriptionsAndMarketingResources as WithDeserializer > :: init (helper , event) ? ;
+                            let output = < super :: GpDescriptionsAndMarketingResources as WithDeserializer > :: init (helper , event) ? ;
                             match self.handle_gp_descriptions_and_marketing_resources(
                                 helper,
                                 output,
@@ -95576,10 +95588,9 @@ pub mod onix {
                             S::GpRelatedMaterials(None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output =
-                                <super::ContentItemGpRelatedMaterials as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                            let output = <super::GpRelatedMaterials as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_gp_related_materials(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -112178,16 +112189,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<IllustrationsNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum IllustrationsNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl IllustrationsNoteElementTypeDeserializer {
@@ -112267,17 +112276,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<IllustrationsNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use IllustrationsNoteElementTypeDeserializerState as S;
@@ -112347,7 +112353,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -114971,16 +114978,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<AudienceDescriptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AudienceDescriptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl AudienceDescriptionElementTypeDeserializer {
@@ -115060,17 +115065,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<AudienceDescriptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use AudienceDescriptionElementTypeDeserializerState as S;
@@ -115140,7 +115142,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -120823,16 +120826,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<EventDescriptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum EventDescriptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl EventDescriptionElementTypeDeserializer {
@@ -120911,17 +120912,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<EventDescriptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use EventDescriptionElementTypeDeserializerState as S;
@@ -120991,7 +120989,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -124712,13 +124711,13 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct ContentItemGpRelatedMaterialsDeserializer {
+        pub struct GpRelatedMaterialsDeserializer {
             related_work: Vec<super::RelatedWorkElementType>,
             related_product: Vec<super::RelatedProductElementType>,
-            state__: Box<ContentItemGpRelatedMaterialsDeserializerState>,
+            state__: Box<GpRelatedMaterialsDeserializerState>,
         }
         #[derive(Debug)]
-        enum ContentItemGpRelatedMaterialsDeserializerState {
+        enum GpRelatedMaterialsDeserializerState {
             Init__,
             RelatedWork(Option<<super::RelatedWorkElementType as WithDeserializer>::Deserializer>),
             RelatedProduct(
@@ -124727,13 +124726,13 @@ pub mod onix {
             Done__,
             Unknown__,
         }
-        impl ContentItemGpRelatedMaterialsDeserializer {
+        impl GpRelatedMaterialsDeserializer {
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: ContentItemGpRelatedMaterialsDeserializerState,
+                state: GpRelatedMaterialsDeserializerState,
             ) -> Result<(), Error> {
-                use ContentItemGpRelatedMaterialsDeserializerState as S;
+                use GpRelatedMaterialsDeserializerState as S;
                 match state {
                     S::RelatedWork(Some(deserializer)) => {
                         self.store_related_work(deserializer.finish(helper)?)?
@@ -124763,9 +124762,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::RelatedWorkElementType>,
-                fallback: &mut Option<ContentItemGpRelatedMaterialsDeserializerState>,
+                fallback: &mut Option<GpRelatedMaterialsDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use ContentItemGpRelatedMaterialsDeserializerState as S;
+                use GpRelatedMaterialsDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -124796,9 +124795,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::RelatedProductElementType>,
-                fallback: &mut Option<ContentItemGpRelatedMaterialsDeserializerState>,
+                fallback: &mut Option<GpRelatedMaterialsDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use ContentItemGpRelatedMaterialsDeserializerState as S;
+                use GpRelatedMaterialsDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -124826,34 +124825,29 @@ pub mod onix {
                 }
             }
         }
-        impl Default for ContentItemGpRelatedMaterialsDeserializer {
+        impl Default for GpRelatedMaterialsDeserializer {
             fn default() -> Self {
                 Self {
                     related_work: Vec::new(),
                     related_product: Vec::new(),
-                    state__: Box::new(ContentItemGpRelatedMaterialsDeserializerState::Init__),
+                    state__: Box::new(GpRelatedMaterialsDeserializerState::Init__),
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::ContentItemGpRelatedMaterials>
-            for ContentItemGpRelatedMaterialsDeserializer
-        {
+        impl<'de> Deserializer<'de, super::GpRelatedMaterials> for GpRelatedMaterialsDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::ContentItemGpRelatedMaterials> {
+            ) -> DeserializerResult<'de, super::GpRelatedMaterials> {
                 let deserializer = Self {
                     related_work: Vec::new(),
                     related_product: Vec::new(),
-                    state__: Box::new(ContentItemGpRelatedMaterialsDeserializerState::Init__),
+                    state__: Box::new(GpRelatedMaterialsDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(
-                            &*x.state__,
-                            ContentItemGpRelatedMaterialsDeserializerState::Init__
-                        ) =>
+                        if matches!(&*x.state__, GpRelatedMaterialsDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -124865,8 +124859,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::ContentItemGpRelatedMaterials> {
-                use ContentItemGpRelatedMaterialsDeserializerState as S;
+            ) -> DeserializerResult<'de, super::GpRelatedMaterials> {
+                use GpRelatedMaterialsDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -124969,13 +124963,13 @@ pub mod onix {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::ContentItemGpRelatedMaterials, Error> {
+            ) -> Result<super::GpRelatedMaterials, Error> {
                 let state = replace(
                     &mut *self.state__,
-                    ContentItemGpRelatedMaterialsDeserializerState::Unknown__,
+                    GpRelatedMaterialsDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::ContentItemGpRelatedMaterials {
+                Ok(super::GpRelatedMaterials {
                     related_work: self.related_work,
                     related_product: self.related_product,
                 })
@@ -128483,7 +128477,7 @@ pub mod onix {
             datestamp: Option<String>,
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
-            gp_product_specification: Option<super::BodyManifestGpProductSpecification>,
+            gp_product_specification: Option<super::GpProductSpecification>,
             cover_resource: Vec<super::CoverResourceElementType>,
             state__: Box<CoverManifestElementTypeDeserializerState>,
         }
@@ -128491,9 +128485,7 @@ pub mod onix {
         enum CoverManifestElementTypeDeserializerState {
             Init__,
             GpProductSpecification(
-                Option<
-                    <super::BodyManifestGpProductSpecification as WithDeserializer>::Deserializer,
-                >,
+                Option<<super::GpProductSpecification as WithDeserializer>::Deserializer>,
             ),
             CoverResource(
                 Option<<super::CoverResourceElementType as WithDeserializer>::Deserializer>,
@@ -128572,7 +128564,7 @@ pub mod onix {
             }
             fn store_gp_product_specification(
                 &mut self,
-                value: super::BodyManifestGpProductSpecification,
+                value: super::GpProductSpecification,
             ) -> Result<(), Error> {
                 if self.gp_product_specification.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -128592,7 +128584,7 @@ pub mod onix {
             fn handle_gp_product_specification<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::BodyManifestGpProductSpecification>,
+                output: DeserializerOutput<'de, super::GpProductSpecification>,
                 fallback: &mut Option<CoverManifestElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CoverManifestElementTypeDeserializerState as S;
@@ -128736,7 +128728,9 @@ pub mod onix {
                             S::GpProductSpecification(None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = < super :: BodyManifestGpProductSpecification as WithDeserializer > :: init (helper , event) ? ;
+                            let output = <super::GpProductSpecification as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_gp_product_specification(
                                 helper,
                                 output,
@@ -128815,7 +128809,7 @@ pub mod onix {
             datestamp: Option<String>,
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
-            gp_product_specification: Option<super::BodyManifestGpProductSpecification>,
+            gp_product_specification: Option<super::GpProductSpecification>,
             body_resource: Vec<super::BodyResourceElementType>,
             state__: Box<BodyManifestElementTypeDeserializerState>,
         }
@@ -128823,9 +128817,7 @@ pub mod onix {
         enum BodyManifestElementTypeDeserializerState {
             Init__,
             GpProductSpecification(
-                Option<
-                    <super::BodyManifestGpProductSpecification as WithDeserializer>::Deserializer,
-                >,
+                Option<<super::GpProductSpecification as WithDeserializer>::Deserializer>,
             ),
             BodyResource(
                 Option<<super::BodyResourceElementType as WithDeserializer>::Deserializer>,
@@ -128904,7 +128896,7 @@ pub mod onix {
             }
             fn store_gp_product_specification(
                 &mut self,
-                value: super::BodyManifestGpProductSpecification,
+                value: super::GpProductSpecification,
             ) -> Result<(), Error> {
                 if self.gp_product_specification.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -128924,7 +128916,7 @@ pub mod onix {
             fn handle_gp_product_specification<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::BodyManifestGpProductSpecification>,
+                output: DeserializerOutput<'de, super::GpProductSpecification>,
                 fallback: &mut Option<BodyManifestElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use BodyManifestElementTypeDeserializerState as S;
@@ -129068,7 +129060,9 @@ pub mod onix {
                             S::GpProductSpecification(None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = < super :: BodyManifestGpProductSpecification as WithDeserializer > :: init (helper , event) ? ;
+                            let output = <super::GpProductSpecification as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_gp_product_specification(
                                 helper,
                                 output,
@@ -129147,7 +129141,7 @@ pub mod onix {
             datestamp: Option<String>,
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
-            gp_product_specification: Option<super::BodyManifestGpProductSpecification>,
+            gp_product_specification: Option<super::GpProductSpecification>,
             insert_point: Option<super::InsertPointElementType>,
             insert_resource: Vec<super::InsertResourceElementType>,
             state__: Box<InsertManifestElementTypeDeserializerState>,
@@ -129156,9 +129150,7 @@ pub mod onix {
         enum InsertManifestElementTypeDeserializerState {
             Init__,
             GpProductSpecification(
-                Option<
-                    <super::BodyManifestGpProductSpecification as WithDeserializer>::Deserializer,
-                >,
+                Option<<super::GpProductSpecification as WithDeserializer>::Deserializer>,
             ),
             InsertPoint(Option<<super::InsertPointElementType as WithDeserializer>::Deserializer>),
             InsertResource(
@@ -129242,7 +129234,7 @@ pub mod onix {
             }
             fn store_gp_product_specification(
                 &mut self,
-                value: super::BodyManifestGpProductSpecification,
+                value: super::GpProductSpecification,
             ) -> Result<(), Error> {
                 if self.gp_product_specification.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -129274,7 +129266,7 @@ pub mod onix {
             fn handle_gp_product_specification<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::BodyManifestGpProductSpecification>,
+                output: DeserializerOutput<'de, super::GpProductSpecification>,
                 fallback: &mut Option<InsertManifestElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use InsertManifestElementTypeDeserializerState as S;
@@ -129467,7 +129459,9 @@ pub mod onix {
                             S::GpProductSpecification(None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = < super :: BodyManifestGpProductSpecification as WithDeserializer > :: init (helper , event) ? ;
+                            let output = <super::GpProductSpecification as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_gp_product_specification(
                                 helper,
                                 output,
@@ -131854,16 +131848,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<MarketPublishingStatusNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum MarketPublishingStatusNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl MarketPublishingStatusNoteElementTypeDeserializer {
@@ -131946,17 +131938,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<MarketPublishingStatusNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use MarketPublishingStatusNoteElementTypeDeserializerState as S;
@@ -132026,7 +132015,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -132391,16 +132381,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<PromotionCampaignElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PromotionCampaignElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl PromotionCampaignElementTypeDeserializer {
@@ -132480,17 +132468,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<PromotionCampaignElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use PromotionCampaignElementTypeDeserializerState as S;
@@ -132560,7 +132545,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -132610,16 +132596,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<InitialPrintRunElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum InitialPrintRunElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl InitialPrintRunElementTypeDeserializer {
@@ -132698,17 +132682,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<InitialPrintRunElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use InitialPrintRunElementTypeDeserializerState as S;
@@ -132778,7 +132759,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -132828,16 +132810,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<ReprintDetailElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ReprintDetailElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl ReprintDetailElementTypeDeserializer {
@@ -132915,17 +132895,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<ReprintDetailElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ReprintDetailElementTypeDeserializerState as S;
@@ -132995,7 +132972,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -133045,16 +133023,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<CopiesSoldElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CopiesSoldElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CopiesSoldElementTypeDeserializer {
@@ -133132,17 +133108,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<CopiesSoldElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CopiesSoldElementTypeDeserializerState as S;
@@ -133210,7 +133183,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -133260,16 +133234,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<BookClubAdoptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum BookClubAdoptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl BookClubAdoptionElementTypeDeserializer {
@@ -133348,17 +133320,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<BookClubAdoptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use BookClubAdoptionElementTypeDeserializerState as S;
@@ -133428,7 +133397,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -144140,16 +144110,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<TitleStatementElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TitleStatementElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl TitleStatementElementTypeDeserializer {
@@ -144227,17 +144195,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<TitleStatementElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use TitleStatementElementTypeDeserializerState as S;
@@ -144307,7 +144272,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -146176,16 +146142,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<ContributorStatementElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ContributorStatementElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl ContributorStatementElementTypeDeserializer {
@@ -146265,17 +146229,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<ContributorStatementElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContributorStatementElementTypeDeserializerState as S;
@@ -146345,7 +146306,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -155160,11 +155122,11 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct AncillaryContentDescriptionContent85Deserializer {
-            state__: Box<AncillaryContentDescriptionContent85DeserializerState>,
+        pub struct FlowContentDeserializer {
+            state__: Box<FlowContentDeserializerState>,
         }
         #[derive(Debug)]
-        pub enum AncillaryContentDescriptionContent85DeserializerState {
+        pub enum FlowContentDeserializerState {
             Init__,
             Block(
                 Option<super::BlockElement>,
@@ -155181,10 +155143,10 @@ pub mod onix {
                 Option<<Text as WithDeserializer>::Deserializer>,
                 Option<<Text as WithDeserializer>::Deserializer>,
             ),
-            Done__(super::AncillaryContentDescriptionContent85),
+            Done__(super::FlowContent),
             Unknown__,
         }
-        impl AncillaryContentDescriptionContent85Deserializer {
+        impl FlowContentDeserializer {
             fn find_suitable<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
@@ -155229,7 +155191,7 @@ pub mod onix {
                         }
                     }
                 };
-                *self.state__ = AncillaryContentDescriptionContent85DeserializerState::Init__;
+                *self.state__ = FlowContentDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(
                     event,
                     allow_any_element,
@@ -155237,9 +155199,9 @@ pub mod onix {
             }
             fn finish_state(
                 helper: &mut DeserializeHelper,
-                state: AncillaryContentDescriptionContent85DeserializerState,
-            ) -> Result<super::AncillaryContentDescriptionContent85, Error> {
-                use AncillaryContentDescriptionContent85DeserializerState as S;
+                state: FlowContentDeserializerState,
+            ) -> Result<super::FlowContent, Error> {
+                use FlowContentDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Block(mut values, None, deserializer) => {
@@ -155247,7 +155209,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_block(&mut values, value)?;
                         }
-                        Ok(super::AncillaryContentDescriptionContent85::Block(
+                        Ok(super::FlowContent::Block(
                             helper.finish_element("block", values)?,
                         ))
                     }
@@ -155256,7 +155218,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_inline(&mut values, value)?;
                         }
-                        Ok(super::AncillaryContentDescriptionContent85::Inline(
+                        Ok(super::FlowContent::Inline(
                             helper.finish_element("inline", values)?,
                         ))
                     }
@@ -155265,7 +155227,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_text(&mut values, value)?;
                         }
-                        Ok(super::AncillaryContentDescriptionContent85::Text(
+                        Ok(super::FlowContent::Text(
                             helper.finish_element("text", values)?,
                         ))
                     }
@@ -155311,7 +155273,7 @@ pub mod onix {
                 fallback: Option<<super::BlockElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::BlockElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AncillaryContentDescriptionContent85DeserializerState as S;
+                use FlowContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -155350,7 +155312,7 @@ pub mod onix {
                 fallback: Option<<super::InlineElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::InlineElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AncillaryContentDescriptionContent85DeserializerState as S;
+                use FlowContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -155389,7 +155351,7 @@ pub mod onix {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AncillaryContentDescriptionContent85DeserializerState as S;
+                use FlowContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -155422,25 +155384,18 @@ pub mod onix {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::AncillaryContentDescriptionContent85>
-            for AncillaryContentDescriptionContent85Deserializer
-        {
+        impl<'de> Deserializer<'de, super::FlowContent> for FlowContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AncillaryContentDescriptionContent85> {
+            ) -> DeserializerResult<'de, super::FlowContent> {
                 let deserializer = Self {
-                    state__: Box::new(
-                        AncillaryContentDescriptionContent85DeserializerState::Init__,
-                    ),
+                    state__: Box::new(FlowContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(
-                            &*x.state__,
-                            AncillaryContentDescriptionContent85DeserializerState::Init__
-                        ) =>
+                        if matches!(&*x.state__, FlowContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -155452,8 +155407,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AncillaryContentDescriptionContent85> {
-                use AncillaryContentDescriptionContent85DeserializerState as S;
+            ) -> DeserializerResult<'de, super::FlowContent> {
+                use FlowContentDeserializerState as S;
                 let mut event = event;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
@@ -155560,10 +155515,7 @@ pub mod onix {
                     allow_any,
                 })
             }
-            fn finish(
-                self,
-                helper: &mut DeserializeHelper,
-            ) -> Result<super::AncillaryContentDescriptionContent85, Error> {
+            fn finish(self, helper: &mut DeserializeHelper) -> Result<super::FlowContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
         }
@@ -155752,16 +155704,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<AncillaryContentDescriptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AncillaryContentDescriptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl AncillaryContentDescriptionElementTypeDeserializer {
@@ -155844,17 +155794,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<AncillaryContentDescriptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use AncillaryContentDescriptionElementTypeDeserializerState as S;
@@ -155926,7 +155873,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -157310,9 +157258,9 @@ pub mod onix {
                 Option<<super::NameAsSubjectContent208 as WithDeserializer>::Deserializer>,
             ),
             GpStructuredName(
-                Option<super::AlternativeNameGpStructuredName>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
+                Option<super::GpStructuredName>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
             ),
             GpCorporateName(
                 Option<super::NameAsSubjectGpCorporateName>,
@@ -157361,9 +157309,7 @@ pub mod onix {
                     };
                     event = {
                         let output =
-                            <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                         match self.handle_gp_structured_name(
                             helper,
                             Default::default(),
@@ -157478,8 +157424,8 @@ pub mod onix {
                 Ok(())
             }
             fn store_gp_structured_name(
-                values: &mut Option<super::AlternativeNameGpStructuredName>,
-                value: super::AlternativeNameGpStructuredName,
+                values: &mut Option<super::GpStructuredName>,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -157586,11 +157532,9 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                mut values: Option<super::AlternativeNameGpStructuredName>,
-                fallback: Option<
-                    <super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer,
-                >,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                mut values: Option<super::GpStructuredName>,
+                fallback: Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use NameAsSubjectContent205DeserializerState as S;
                 let DeserializerOutput {
@@ -157791,9 +157735,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self
                                 .handle_gp_structured_name(helper, values, fallback, output)?
                             {
@@ -161450,16 +161392,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<TextElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TextElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl TextElementTypeDeserializer {
@@ -161537,17 +161477,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<TextElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use TextElementTypeDeserializerState as S;
@@ -161615,7 +161552,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -162421,16 +162359,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<TextSourceDescriptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TextSourceDescriptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl TextSourceDescriptionElementTypeDeserializer {
@@ -162510,17 +162446,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<TextSourceDescriptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use TextSourceDescriptionElementTypeDeserializerState as S;
@@ -162590,7 +162523,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -164077,16 +164011,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<CitationNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CitationNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CitationNoteElementTypeDeserializer {
@@ -164164,17 +164096,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<CitationNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CitationNoteElementTypeDeserializerState as S;
@@ -164244,7 +164173,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -167357,16 +167287,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<PrizeStatementElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PrizeStatementElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl PrizeStatementElementTypeDeserializer {
@@ -167444,17 +167372,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<PrizeStatementElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use PrizeStatementElementTypeDeserializerState as S;
@@ -167524,7 +167449,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -167574,16 +167500,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<PrizeJuryElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PrizeJuryElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl PrizeJuryElementTypeDeserializer {
@@ -167661,17 +167585,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<PrizeJuryElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use PrizeJuryElementTypeDeserializerState as S;
@@ -167739,7 +167660,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -169947,16 +169869,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<WebsiteDescriptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum WebsiteDescriptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl WebsiteDescriptionElementTypeDeserializer {
@@ -170036,17 +169956,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<WebsiteDescriptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use WebsiteDescriptionElementTypeDeserializerState as S;
@@ -170116,7 +170033,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -172975,16 +172893,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<CopyrightStatementTextElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CopyrightStatementTextElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl CopyrightStatementTextElementTypeDeserializer {
@@ -173064,17 +172980,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<CopyrightStatementTextElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CopyrightStatementTextElementTypeDeserializerState as S;
@@ -173144,7 +173057,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -174838,16 +174752,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<PublishingStatusNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PublishingStatusNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl PublishingStatusNoteElementTypeDeserializer {
@@ -174927,17 +174839,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<PublishingStatusNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use PublishingStatusNoteElementTypeDeserializerState as S;
@@ -175007,7 +174916,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -176313,15 +176223,15 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct BodyManifestGpProductSpecificationDeserializer {
+        pub struct GpProductSpecificationDeserializer {
             specification_bundle_name: Vec<super::SpecificationBundleNameElementType>,
             specification_detail: Vec<super::SpecificationDetailElementType>,
             specification_feature: Vec<super::SpecificationFeatureElementType>,
             specification_description: Vec<super::SpecificationDescriptionElementType>,
-            state__: Box<BodyManifestGpProductSpecificationDeserializerState>,
+            state__: Box<GpProductSpecificationDeserializerState>,
         }
         #[derive(Debug)]
-        enum BodyManifestGpProductSpecificationDeserializerState {
+        enum GpProductSpecificationDeserializerState {
             Init__,
             SpecificationBundleName(
                 Option<
@@ -176342,13 +176252,13 @@ pub mod onix {
             Done__,
             Unknown__,
         }
-        impl BodyManifestGpProductSpecificationDeserializer {
+        impl GpProductSpecificationDeserializer {
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: BodyManifestGpProductSpecificationDeserializerState,
+                state: GpProductSpecificationDeserializerState,
             ) -> Result<(), Error> {
-                use BodyManifestGpProductSpecificationDeserializerState as S;
+                use GpProductSpecificationDeserializerState as S;
                 match state {
                     S::SpecificationBundleName(Some(deserializer)) => {
                         self.store_specification_bundle_name(deserializer.finish(helper)?)?
@@ -176398,9 +176308,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SpecificationBundleNameElementType>,
-                fallback: &mut Option<BodyManifestGpProductSpecificationDeserializerState>,
+                fallback: &mut Option<GpProductSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyManifestGpProductSpecificationDeserializerState as S;
+                use GpProductSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -176431,9 +176341,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SpecificationDetailElementType>,
-                fallback: &mut Option<BodyManifestGpProductSpecificationDeserializerState>,
+                fallback: &mut Option<GpProductSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyManifestGpProductSpecificationDeserializerState as S;
+                use GpProductSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -176464,9 +176374,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SpecificationFeatureElementType>,
-                fallback: &mut Option<BodyManifestGpProductSpecificationDeserializerState>,
+                fallback: &mut Option<GpProductSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyManifestGpProductSpecificationDeserializerState as S;
+                use GpProductSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -176497,9 +176407,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SpecificationDescriptionElementType>,
-                fallback: &mut Option<BodyManifestGpProductSpecificationDeserializerState>,
+                fallback: &mut Option<GpProductSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyManifestGpProductSpecificationDeserializerState as S;
+                use GpProductSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -176527,37 +176437,35 @@ pub mod onix {
                 }
             }
         }
-        impl Default for BodyManifestGpProductSpecificationDeserializer {
+        impl Default for GpProductSpecificationDeserializer {
             fn default() -> Self {
                 Self {
                     specification_bundle_name: Vec::new(),
                     specification_detail: Vec::new(),
                     specification_feature: Vec::new(),
                     specification_description: Vec::new(),
-                    state__: Box::new(BodyManifestGpProductSpecificationDeserializerState::Init__),
+                    state__: Box::new(GpProductSpecificationDeserializerState::Init__),
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::BodyManifestGpProductSpecification>
-            for BodyManifestGpProductSpecificationDeserializer
-        {
+        impl<'de> Deserializer<'de, super::GpProductSpecification> for GpProductSpecificationDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::BodyManifestGpProductSpecification> {
+            ) -> DeserializerResult<'de, super::GpProductSpecification> {
                 let deserializer = Self {
                     specification_bundle_name: Vec::new(),
                     specification_detail: Vec::new(),
                     specification_feature: Vec::new(),
                     specification_description: Vec::new(),
-                    state__: Box::new(BodyManifestGpProductSpecificationDeserializerState::Init__),
+                    state__: Box::new(GpProductSpecificationDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
                             &*x.state__,
-                            BodyManifestGpProductSpecificationDeserializerState::Init__
+                            GpProductSpecificationDeserializerState::Init__
                         ) =>
                     {
                         DeserializerArtifact::None
@@ -176570,8 +176478,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::BodyManifestGpProductSpecification> {
-                use BodyManifestGpProductSpecificationDeserializerState as S;
+            ) -> DeserializerResult<'de, super::GpProductSpecification> {
+                use GpProductSpecificationDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -176768,13 +176676,13 @@ pub mod onix {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::BodyManifestGpProductSpecification, Error> {
+            ) -> Result<super::GpProductSpecification, Error> {
                 let state = replace(
                     &mut *self.state__,
-                    BodyManifestGpProductSpecificationDeserializerState::Unknown__,
+                    GpProductSpecificationDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::BodyManifestGpProductSpecification {
+                Ok(super::GpProductSpecification {
                     specification_bundle_name: self.specification_bundle_name,
                     specification_detail: self.specification_detail,
                     specification_feature: self.specification_feature,
@@ -177183,7 +177091,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             sequence_number: Option<super::SequenceNumberElementType>,
-            gp_resource_specification: Option<super::BodyResourceGpResourceSpecification>,
+            gp_resource_specification: Option<super::GpResourceSpecification>,
             state__: Box<BodyResourceElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -177193,9 +177101,7 @@ pub mod onix {
                 Option<<super::SequenceNumberElementType as WithDeserializer>::Deserializer>,
             ),
             GpResourceSpecification(
-                Option<
-                    <super::BodyResourceGpResourceSpecification as WithDeserializer>::Deserializer,
-                >,
+                Option<<super::GpResourceSpecification as WithDeserializer>::Deserializer>,
             ),
             Done__,
             Unknown__,
@@ -177283,7 +177189,7 @@ pub mod onix {
             }
             fn store_gp_resource_specification(
                 &mut self,
-                value: super::BodyResourceGpResourceSpecification,
+                value: super::GpResourceSpecification,
             ) -> Result<(), Error> {
                 if self.gp_resource_specification.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -177329,7 +177235,7 @@ pub mod onix {
             fn handle_gp_resource_specification<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::BodyResourceGpResourceSpecification>,
+                output: DeserializerOutput<'de, super::GpResourceSpecification>,
                 fallback: &mut Option<BodyResourceElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use BodyResourceElementTypeDeserializerState as S;
@@ -177450,7 +177356,10 @@ pub mod onix {
                             S::GpResourceSpecification(None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = < super :: BodyResourceGpResourceSpecification as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::GpResourceSpecification as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_gp_resource_specification(
                                 helper,
                                 output,
@@ -179681,16 +179590,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<SalesRestrictionNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SalesRestrictionNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl SalesRestrictionNoteElementTypeDeserializer {
@@ -179770,17 +179677,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<SalesRestrictionNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use SalesRestrictionNoteElementTypeDeserializerState as S;
@@ -179850,7 +179754,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -192380,9 +192285,9 @@ pub mod onix {
                 Option<<super::ContributorContent128 as WithDeserializer>::Deserializer>,
             ),
             GpStructuredName(
-                Option<super::AlternativeNameGpStructuredName>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
+                Option<super::GpStructuredName>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
             ),
             GpCorporateName(
                 Option<super::ContributorGpCorporateName>,
@@ -192450,9 +192355,7 @@ pub mod onix {
                     };
                     event = {
                         let output =
-                            <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                         match self.handle_gp_structured_name(
                             helper,
                             Default::default(),
@@ -192575,8 +192478,8 @@ pub mod onix {
                 Ok(())
             }
             fn store_gp_structured_name(
-                values: &mut Option<super::AlternativeNameGpStructuredName>,
-                value: super::AlternativeNameGpStructuredName,
+                values: &mut Option<super::GpStructuredName>,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -192691,11 +192594,9 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                mut values: Option<super::AlternativeNameGpStructuredName>,
-                fallback: Option<
-                    <super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer,
-                >,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                mut values: Option<super::GpStructuredName>,
+                fallback: Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContributorContent125DeserializerState as S;
                 let DeserializerOutput {
@@ -192938,9 +192839,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self
                                 .handle_gp_structured_name(helper, values, fallback, output)?
                             {
@@ -193347,16 +193246,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<BiographicalNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum BiographicalNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl BiographicalNoteElementTypeDeserializer {
@@ -193435,17 +193332,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<BiographicalNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use BiographicalNoteElementTypeDeserializerState as S;
@@ -193515,7 +193409,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -193565,16 +193460,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<ContributorDescriptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ContributorDescriptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl ContributorDescriptionElementTypeDeserializer {
@@ -193654,17 +193547,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<ContributorDescriptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContributorDescriptionElementTypeDeserializerState as S;
@@ -193734,7 +193624,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -194661,16 +194552,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<EditionStatementElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum EditionStatementElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl EditionStatementElementTypeDeserializer {
@@ -194749,17 +194638,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<EditionStatementElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use EditionStatementElementTypeDeserializerState as S;
@@ -194829,7 +194715,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -197158,16 +197045,14 @@ pub mod onix {
             title: Option<String>,
             lang: Option<String>,
             dir: Option<super::Dir>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<DdElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DdElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl DdElementTypeDeserializer {
@@ -197238,17 +197123,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<DdElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use DdElementTypeDeserializerState as S;
@@ -197316,7 +197198,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -198785,14 +198668,14 @@ pub mod onix {
             title: Option<String>,
             lang: Option<String>,
             dir: Option<super::Dir>,
-            content: Vec<super::PreContent23>,
+            content: Vec<super::PreContentContent>,
             state__: Box<PreElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PreElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::PreContent23 as WithDeserializer>::Deserializer),
+            Content__(<super::PreContentContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl PreElementTypeDeserializer {
@@ -198863,14 +198746,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::PreContent23) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::PreContentContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::PreContent23>,
+                output: DeserializerOutput<'de, super::PreContentContent>,
                 fallback: &mut Option<PreElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use PreElementTypeDeserializerState as S;
@@ -198938,8 +198821,9 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output =
-                                <super::PreContent23 as WithDeserializer>::init(helper, event)?;
+                            let output = <super::PreContentContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -199843,14 +199727,14 @@ pub mod onix {
             tabindex: Option<String>,
             onfocus: Option<String>,
             onblur: Option<String>,
-            content: Vec<super::AContent25>,
+            content: Vec<super::AContentContent>,
             state__: Box<AElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::AContent25 as WithDeserializer>::Deserializer),
+            Content__(<super::AContentContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl AElementTypeDeserializer {
@@ -200012,14 +199896,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::AContent25) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::AContentContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AContent25>,
+                output: DeserializerOutput<'de, super::AContentContent>,
                 fallback: &mut Option<AElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use AElementTypeDeserializerState as S;
@@ -200088,7 +199972,7 @@ pub mod onix {
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
                             let output =
-                                <super::AContent25 as WithDeserializer>::init(helper, event)?;
+                                <super::AContentContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -202817,7 +202701,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct NameAsSubjectContent208Deserializer {
             gp_unstructured_name: Option<super::NameAsSubjectGpUnstructuredName>,
-            gp_structured_name: Option<super::AlternativeNameGpStructuredName>,
+            gp_structured_name: Option<super::GpStructuredName>,
             state__: Box<NameAsSubjectContent208DeserializerState>,
         }
         #[derive(Debug)]
@@ -202826,9 +202710,7 @@ pub mod onix {
             GpUnstructuredName(
                 Option<<super::NameAsSubjectGpUnstructuredName as WithDeserializer>::Deserializer>,
             ),
-            GpStructuredName(
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-            ),
+            GpStructuredName(Option<<super::GpStructuredName as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -202864,7 +202746,7 @@ pub mod onix {
             }
             fn store_gp_structured_name(
                 &mut self,
-                value: super::AlternativeNameGpStructuredName,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if self.gp_structured_name.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -202914,7 +202796,7 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
                 fallback: &mut Option<NameAsSubjectContent208DeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use NameAsSubjectContent208DeserializerState as S;
@@ -203046,9 +202928,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self.handle_gp_structured_name(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -203095,7 +202975,7 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct AlternativeNameGpStructuredNameDeserializer {
+        pub struct GpStructuredNameDeserializer {
             titles_before_names: Option<super::TitlesBeforeNamesElementType>,
             names_before_key: Option<super::NamesBeforeKeyElementType>,
             prefix_to_key: Option<super::PrefixToKeyElementType>,
@@ -203104,10 +202984,10 @@ pub mod onix {
             suffix_to_key: Option<super::SuffixToKeyElementType>,
             letters_after_names: Option<super::LettersAfterNamesElementType>,
             titles_after_names: Option<super::TitlesAfterNamesElementType>,
-            state__: Box<AlternativeNameGpStructuredNameDeserializerState>,
+            state__: Box<GpStructuredNameDeserializerState>,
         }
         #[derive(Debug)]
-        enum AlternativeNameGpStructuredNameDeserializerState {
+        enum GpStructuredNameDeserializerState {
             Init__,
             TitlesBeforeNames(
                 Option<<super::TitlesBeforeNamesElementType as WithDeserializer>::Deserializer>,
@@ -203130,13 +203010,13 @@ pub mod onix {
             Done__,
             Unknown__,
         }
-        impl AlternativeNameGpStructuredNameDeserializer {
+        impl GpStructuredNameDeserializer {
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: AlternativeNameGpStructuredNameDeserializerState,
+                state: GpStructuredNameDeserializerState,
             ) -> Result<(), Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 match state {
                     S::TitlesBeforeNames(Some(deserializer)) => {
                         self.store_titles_before_names(deserializer.finish(helper)?)?
@@ -203263,9 +203143,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitlesBeforeNamesElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203296,9 +203176,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::NamesBeforeKeyElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203329,9 +203209,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PrefixToKeyElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203362,9 +203242,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::KeyNamesElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203399,9 +203279,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::NamesAfterKeyElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203432,9 +203312,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SuffixToKeyElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203465,9 +203345,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::LettersAfterNamesElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203498,9 +203378,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitlesAfterNamesElementType>,
-                fallback: &mut Option<AlternativeNameGpStructuredNameDeserializerState>,
+                fallback: &mut Option<GpStructuredNameDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+                use GpStructuredNameDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -203528,13 +203408,11 @@ pub mod onix {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::AlternativeNameGpStructuredName>
-            for AlternativeNameGpStructuredNameDeserializer
-        {
+        impl<'de> Deserializer<'de, super::GpStructuredName> for GpStructuredNameDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AlternativeNameGpStructuredName> {
+            ) -> DeserializerResult<'de, super::GpStructuredName> {
                 let deserializer = Self {
                     titles_before_names: None,
                     names_before_key: None,
@@ -203544,15 +203422,12 @@ pub mod onix {
                     suffix_to_key: None,
                     letters_after_names: None,
                     titles_after_names: None,
-                    state__: Box::new(AlternativeNameGpStructuredNameDeserializerState::Init__),
+                    state__: Box::new(GpStructuredNameDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(
-                            &*x.state__,
-                            AlternativeNameGpStructuredNameDeserializerState::Init__
-                        ) =>
+                        if matches!(&*x.state__, GpStructuredNameDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -203564,8 +203439,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AlternativeNameGpStructuredName> {
-                use AlternativeNameGpStructuredNameDeserializerState as S;
+            ) -> DeserializerResult<'de, super::GpStructuredName> {
+                use GpStructuredNameDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -203851,13 +203726,13 @@ pub mod onix {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::AlternativeNameGpStructuredName, Error> {
+            ) -> Result<super::GpStructuredName, Error> {
                 let state = replace(
                     &mut *self.state__,
-                    AlternativeNameGpStructuredNameDeserializerState::Unknown__,
+                    GpStructuredNameDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::AlternativeNameGpStructuredName {
+                Ok(super::GpStructuredName {
                     titles_before_names: self.titles_before_names,
                     names_before_key: self.names_before_key,
                     prefix_to_key: self.prefix_to_key,
@@ -204225,9 +204100,9 @@ pub mod onix {
                 Option<<super::AlternativeNameContent79 as WithDeserializer>::Deserializer>,
             ),
             GpStructuredName(
-                Option<super::AlternativeNameGpStructuredName>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
+                Option<super::GpStructuredName>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
             ),
             GpCorporateName(
                 Option<super::AlternativeNameGpCorporateName>,
@@ -204276,9 +204151,7 @@ pub mod onix {
                     };
                     event = {
                         let output =
-                            <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                         match self.handle_gp_structured_name(
                             helper,
                             Default::default(),
@@ -204393,8 +204266,8 @@ pub mod onix {
                 Ok(())
             }
             fn store_gp_structured_name(
-                values: &mut Option<super::AlternativeNameGpStructuredName>,
-                value: super::AlternativeNameGpStructuredName,
+                values: &mut Option<super::GpStructuredName>,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -204501,11 +204374,9 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                mut values: Option<super::AlternativeNameGpStructuredName>,
-                fallback: Option<
-                    <super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer,
-                >,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                mut values: Option<super::GpStructuredName>,
+                fallback: Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use AlternativeNameContent76DeserializerState as S;
                 let DeserializerOutput {
@@ -204706,9 +204577,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self
                                 .handle_gp_structured_name(helper, values, fallback, output)?
                             {
@@ -208124,16 +207993,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<FeatureNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FeatureNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl FeatureNoteElementTypeDeserializer {
@@ -208211,17 +208078,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<FeatureNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use FeatureNoteElementTypeDeserializerState as S;
@@ -208289,7 +208153,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -210358,16 +210223,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<VenueNoteElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum VenueNoteElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl VenueNoteElementTypeDeserializer {
@@ -210445,17 +210308,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<VenueNoteElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use VenueNoteElementTypeDeserializerState as S;
@@ -210523,7 +210383,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -217862,13 +217723,9 @@ pub mod onix {
         pub enum CoverResourceContent151DeserializerState {
             Init__,
             GpResourceSpecification(
-                Option<super::BodyResourceGpResourceSpecification>,
-                Option<
-                    <super::BodyResourceGpResourceSpecification as WithDeserializer>::Deserializer,
-                >,
-                Option<
-                    <super::BodyResourceGpResourceSpecification as WithDeserializer>::Deserializer,
-                >,
+                Option<super::GpResourceSpecification>,
+                Option<<super::GpResourceSpecification as WithDeserializer>::Deserializer>,
+                Option<<super::GpResourceSpecification as WithDeserializer>::Deserializer>,
             ),
             NoResource(
                 Option<super::NoResourceElementType>,
@@ -217897,10 +217754,9 @@ pub mod onix {
                         return self.handle_no_resource(helper, Default::default(), None, output);
                     }
                     event = {
-                        let output =
-                            <super::BodyResourceGpResourceSpecification as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                        let output = <super::GpResourceSpecification as WithDeserializer>::init(
+                            helper, event,
+                        )?;
                         match self.handle_gp_resource_specification(
                             helper,
                             Default::default(),
@@ -217953,8 +217809,8 @@ pub mod onix {
                 }
             }
             fn store_gp_resource_specification(
-                values: &mut Option<super::BodyResourceGpResourceSpecification>,
-                value: super::BodyResourceGpResourceSpecification,
+                values: &mut Option<super::GpResourceSpecification>,
+                value: super::GpResourceSpecification,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -217979,11 +217835,11 @@ pub mod onix {
             fn handle_gp_resource_specification<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                mut values: Option<super::BodyResourceGpResourceSpecification>,
+                mut values: Option<super::GpResourceSpecification>,
                 fallback: Option<
-                    <super::BodyResourceGpResourceSpecification as WithDeserializer>::Deserializer,
+                    <super::GpResourceSpecification as WithDeserializer>::Deserializer,
                 >,
-                output: DeserializerOutput<'de, super::BodyResourceGpResourceSpecification>,
+                output: DeserializerOutput<'de, super::GpResourceSpecification>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use CoverResourceContent151DeserializerState as S;
                 let DeserializerOutput {
@@ -218133,7 +217989,10 @@ pub mod onix {
                             S::GpResourceSpecification(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output = < super :: BodyResourceGpResourceSpecification as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::GpResourceSpecification as WithDeserializer>::init(
+                                    helper, event,
+                                )?;
                             match self.handle_gp_resource_specification(
                                 helper, values, fallback, output,
                             )? {
@@ -218189,7 +218048,7 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct BodyResourceGpResourceSpecificationDeserializer {
+        pub struct GpResourceSpecificationDeserializer {
             resource_identifier: Vec<super::ResourceIdentifierElementType>,
             resource_role: Option<super::ResourceRoleElementType>,
             resource_file_detail: Vec<super::ResourceFileDetailElementType>,
@@ -218199,18 +218058,18 @@ pub mod onix {
                 Vec<super::ResourceFileContentDescriptionElementType>,
             resource_file_link: Vec<super::ResourceFileLinkElementType>,
             resource_file_date: Vec<super::ResourceFileDateElementType>,
-            state__: Box<BodyResourceGpResourceSpecificationDeserializerState>,
+            state__: Box<GpResourceSpecificationDeserializerState>,
         }
         #[derive(Debug)]
-        enum BodyResourceGpResourceSpecificationDeserializerState {
+        enum GpResourceSpecificationDeserializerState {
             Init__ , ResourceIdentifier (Option << super :: ResourceIdentifierElementType as WithDeserializer > :: Deserializer >) , ResourceRole (Option << super :: ResourceRoleElementType as WithDeserializer > :: Deserializer >) , ResourceFileDetail (Option << super :: ResourceFileDetailElementType as WithDeserializer > :: Deserializer >) , ResourceFileFeature (Option << super :: ResourceFileFeatureElementType as WithDeserializer > :: Deserializer >) , ResourceFileDescription (Option << super :: ResourceFileDescriptionElementType as WithDeserializer > :: Deserializer >) , ResourceFileContentDescription (Option << super :: ResourceFileContentDescriptionElementType as WithDeserializer > :: Deserializer >) , ResourceFileLink (Option << super :: ResourceFileLinkElementType as WithDeserializer > :: Deserializer >) , ResourceFileDate (Option << super :: ResourceFileDateElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
-        impl BodyResourceGpResourceSpecificationDeserializer {
+        impl GpResourceSpecificationDeserializer {
             fn finish_state(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                state: BodyResourceGpResourceSpecificationDeserializerState,
+                state: GpResourceSpecificationDeserializerState,
             ) -> Result<(), Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 match state {
                     S::ResourceIdentifier(Some(deserializer)) => {
                         self.store_resource_identifier(deserializer.finish(helper)?)?
@@ -218305,9 +218164,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceIdentifierElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218338,9 +218197,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceRoleElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218371,9 +218230,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceFileDetailElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218404,9 +218263,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceFileFeatureElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218437,9 +218296,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceFileDescriptionElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218470,9 +218329,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceFileContentDescriptionElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218504,9 +218363,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceFileLinkElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218548,9 +218407,9 @@ pub mod onix {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ResourceFileDateElementType>,
-                fallback: &mut Option<BodyResourceGpResourceSpecificationDeserializerState>,
+                fallback: &mut Option<GpResourceSpecificationDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+                use GpResourceSpecificationDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -218578,13 +218437,13 @@ pub mod onix {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::BodyResourceGpResourceSpecification>
-            for BodyResourceGpResourceSpecificationDeserializer
+        impl<'de> Deserializer<'de, super::GpResourceSpecification>
+            for GpResourceSpecificationDeserializer
         {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::BodyResourceGpResourceSpecification> {
+            ) -> DeserializerResult<'de, super::GpResourceSpecification> {
                 let deserializer = Self {
                     resource_identifier: Vec::new(),
                     resource_role: None,
@@ -218594,14 +218453,14 @@ pub mod onix {
                     resource_file_content_description: Vec::new(),
                     resource_file_link: Vec::new(),
                     resource_file_date: Vec::new(),
-                    state__: Box::new(BodyResourceGpResourceSpecificationDeserializerState::Init__),
+                    state__: Box::new(GpResourceSpecificationDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
                             &*x.state__,
-                            BodyResourceGpResourceSpecificationDeserializerState::Init__
+                            GpResourceSpecificationDeserializerState::Init__
                         ) =>
                     {
                         DeserializerArtifact::None
@@ -218614,8 +218473,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::BodyResourceGpResourceSpecification> {
-                use BodyResourceGpResourceSpecificationDeserializerState as S;
+            ) -> DeserializerResult<'de, super::GpResourceSpecification> {
+                use GpResourceSpecificationDeserializerState as S;
                 let mut event = event;
                 let mut fallback = None;
                 let mut allow_any_element = false;
@@ -218937,13 +218796,13 @@ pub mod onix {
             fn finish(
                 mut self,
                 helper: &mut DeserializeHelper,
-            ) -> Result<super::BodyResourceGpResourceSpecification, Error> {
+            ) -> Result<super::GpResourceSpecification, Error> {
                 let state = replace(
                     &mut *self.state__,
-                    BodyResourceGpResourceSpecificationDeserializerState::Unknown__,
+                    GpResourceSpecificationDeserializerState::Unknown__,
                 );
                 self.finish_state(helper, state)?;
-                Ok(super::BodyResourceGpResourceSpecification {
+                Ok(super::GpResourceSpecification {
                     resource_identifier: self.resource_identifier,
                     resource_role: self.resource_role,
                     resource_file_detail: self.resource_file_detail,
@@ -232387,7 +232246,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct ContributorContent128Deserializer {
             gp_unstructured_name: Option<super::ContributorGpUnstructuredName>,
-            gp_structured_name: Option<super::AlternativeNameGpStructuredName>,
+            gp_structured_name: Option<super::GpStructuredName>,
             state__: Box<ContributorContent128DeserializerState>,
         }
         #[derive(Debug)]
@@ -232396,9 +232255,7 @@ pub mod onix {
             GpUnstructuredName(
                 Option<<super::ContributorGpUnstructuredName as WithDeserializer>::Deserializer>,
             ),
-            GpStructuredName(
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-            ),
+            GpStructuredName(Option<<super::GpStructuredName as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -232434,7 +232291,7 @@ pub mod onix {
             }
             fn store_gp_structured_name(
                 &mut self,
-                value: super::AlternativeNameGpStructuredName,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if self.gp_structured_name.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -232484,7 +232341,7 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
                 fallback: &mut Option<ContributorContent128DeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContributorContent128DeserializerState as S;
@@ -232614,9 +232471,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self.handle_gp_structured_name(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -234556,16 +234411,14 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             language: Option<super::List74>,
             textformat: Option<super::List34>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<ReligiousTextFeatureDescriptionElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ReligiousTextFeatureDescriptionElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl ReligiousTextFeatureDescriptionElementTypeDeserializer {
@@ -234648,17 +234501,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<ReligiousTextFeatureDescriptionElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ReligiousTextFeatureDescriptionElementTypeDeserializerState as S;
@@ -234730,7 +234580,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -236442,11 +236293,11 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct PreContent23Deserializer {
-            state__: Box<PreContent23DeserializerState>,
+        pub struct PreContentContentDeserializer {
+            state__: Box<PreContentContentDeserializerState>,
         }
         #[derive(Debug)]
-        pub enum PreContent23DeserializerState {
+        pub enum PreContentContentDeserializerState {
             Init__,
             A(
                 Option<super::AElementType>,
@@ -236503,10 +236354,10 @@ pub mod onix {
                 Option<<Text as WithDeserializer>::Deserializer>,
                 Option<<Text as WithDeserializer>::Deserializer>,
             ),
-            Done__(super::PreContent23),
+            Done__(super::PreContentContent),
             Unknown__,
         }
-        impl PreContent23Deserializer {
+        impl PreContentContentDeserializer {
             fn find_suitable<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
@@ -236615,7 +236466,7 @@ pub mod onix {
                         }
                     }
                 };
-                *self.state__ = PreContent23DeserializerState::Init__;
+                *self.state__ = PreContentContentDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(
                     event,
                     allow_any_element,
@@ -236623,9 +236474,9 @@ pub mod onix {
             }
             fn finish_state(
                 helper: &mut DeserializeHelper,
-                state: PreContent23DeserializerState,
-            ) -> Result<super::PreContent23, Error> {
-                use PreContent23DeserializerState as S;
+                state: PreContentContentDeserializerState,
+            ) -> Result<super::PreContentContent, Error> {
+                use PreContentContentDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::A(mut values, None, deserializer) => {
@@ -236633,14 +236484,16 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_a(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::A(helper.finish_element("a", values)?))
+                        Ok(super::PreContentContent::A(
+                            helper.finish_element("a", values)?,
+                        ))
                     }
                     S::Br(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_br(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Br(
+                        Ok(super::PreContentContent::Br(
                             helper.finish_element("br", values)?,
                         ))
                     }
@@ -236649,7 +236502,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_span(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Span(
+                        Ok(super::PreContentContent::Span(
                             helper.finish_element("span", values)?,
                         ))
                     }
@@ -236658,7 +236511,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_bdo(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Bdo(
+                        Ok(super::PreContentContent::Bdo(
                             helper.finish_element("bdo", values)?,
                         ))
                     }
@@ -236667,7 +236520,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_map(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Map(
+                        Ok(super::PreContentContent::Map(
                             helper.finish_element("map", values)?,
                         ))
                     }
@@ -236676,7 +236529,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_tt(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Tt(
+                        Ok(super::PreContentContent::Tt(
                             helper.finish_element("tt", values)?,
                         ))
                     }
@@ -236685,21 +236538,25 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_i(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::I(helper.finish_element("i", values)?))
+                        Ok(super::PreContentContent::I(
+                            helper.finish_element("i", values)?,
+                        ))
                     }
                     S::B(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_b(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::B(helper.finish_element("b", values)?))
+                        Ok(super::PreContentContent::B(
+                            helper.finish_element("b", values)?,
+                        ))
                     }
                     S::Phrase(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_phrase(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Phrase(
+                        Ok(super::PreContentContent::Phrase(
                             helper.finish_element("phrase", values)?,
                         ))
                     }
@@ -236708,7 +236565,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_gloss(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Gloss(
+                        Ok(super::PreContentContent::Gloss(
                             helper.finish_element("gloss", values)?,
                         ))
                     }
@@ -236717,7 +236574,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_text(&mut values, value)?;
                         }
-                        Ok(super::PreContent23::Text(
+                        Ok(super::PreContentContent::Text(
                             helper.finish_element("text", values)?,
                         ))
                     }
@@ -236843,7 +236700,7 @@ pub mod onix {
                 fallback: Option<<super::AElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::AElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -236877,7 +236734,7 @@ pub mod onix {
                 fallback: Option<<super::BrElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::BrElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -236911,7 +236768,7 @@ pub mod onix {
                 fallback: Option<<super::AbbrElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::AbbrElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -236945,7 +236802,7 @@ pub mod onix {
                 fallback: Option<<super::BdoElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::BdoElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -236979,7 +236836,7 @@ pub mod onix {
                 fallback: Option<<super::MapElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::MapElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -237013,7 +236870,7 @@ pub mod onix {
                 fallback: Option<<super::AbbrElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::AbbrElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -237047,7 +236904,7 @@ pub mod onix {
                 fallback: Option<<super::AbbrElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::AbbrElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -237081,7 +236938,7 @@ pub mod onix {
                 fallback: Option<<super::AbbrElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::AbbrElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -237115,7 +236972,7 @@ pub mod onix {
                 fallback: Option<<super::PhraseElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PhraseElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -237154,7 +237011,7 @@ pub mod onix {
                 fallback: Option<<super::GlossElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::GlossElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -237193,7 +237050,7 @@ pub mod onix {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use PreContent23DeserializerState as S;
+                use PreContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -237226,18 +237083,18 @@ pub mod onix {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::PreContent23> for PreContent23Deserializer {
+        impl<'de> Deserializer<'de, super::PreContentContent> for PreContentContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::PreContent23> {
+            ) -> DeserializerResult<'de, super::PreContentContent> {
                 let deserializer = Self {
-                    state__: Box::new(PreContent23DeserializerState::Init__),
+                    state__: Box::new(PreContentContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state__, PreContent23DeserializerState::Init__) =>
+                        if matches!(&*x.state__, PreContentContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -237249,8 +237106,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::PreContent23> {
-                use PreContent23DeserializerState as S;
+            ) -> DeserializerResult<'de, super::PreContentContent> {
+                use PreContentContentDeserializerState as S;
                 let mut event = event;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
@@ -237565,7 +237422,10 @@ pub mod onix {
                     allow_any,
                 })
             }
-            fn finish(self, helper: &mut DeserializeHelper) -> Result<super::PreContent23, Error> {
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::PreContentContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
         }
@@ -239590,11 +239450,11 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct AContent25Deserializer {
-            state__: Box<AContent25DeserializerState>,
+        pub struct AContentContentDeserializer {
+            state__: Box<AContentContentDeserializerState>,
         }
         #[derive(Debug)]
-        pub enum AContent25DeserializerState {
+        pub enum AContentContentDeserializerState {
             Init__,
             Special(
                 Option<super::SpecialElement>,
@@ -239621,10 +239481,10 @@ pub mod onix {
                 Option<<Text as WithDeserializer>::Deserializer>,
                 Option<<Text as WithDeserializer>::Deserializer>,
             ),
-            Done__(super::AContent25),
+            Done__(super::AContentContent),
             Unknown__,
         }
-        impl AContent25Deserializer {
+        impl AContentContentDeserializer {
             fn find_suitable<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
@@ -239695,7 +239555,7 @@ pub mod onix {
                         }
                     }
                 };
-                *self.state__ = AContent25DeserializerState::Init__;
+                *self.state__ = AContentContentDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(
                     event,
                     allow_any_element,
@@ -239703,9 +239563,9 @@ pub mod onix {
             }
             fn finish_state(
                 helper: &mut DeserializeHelper,
-                state: AContent25DeserializerState,
-            ) -> Result<super::AContent25, Error> {
-                use AContent25DeserializerState as S;
+                state: AContentContentDeserializerState,
+            ) -> Result<super::AContentContent, Error> {
+                use AContentContentDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::Special(mut values, None, deserializer) => {
@@ -239713,7 +239573,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_special(&mut values, value)?;
                         }
-                        Ok(super::AContent25::Special(
+                        Ok(super::AContentContent::Special(
                             helper.finish_element("special", values)?,
                         ))
                     }
@@ -239722,7 +239582,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_fontstyle(&mut values, value)?;
                         }
-                        Ok(super::AContent25::Fontstyle(
+                        Ok(super::AContentContent::Fontstyle(
                             helper.finish_element("fontstyle", values)?,
                         ))
                     }
@@ -239731,7 +239591,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_phrase(&mut values, value)?;
                         }
-                        Ok(super::AContent25::Phrase(
+                        Ok(super::AContentContent::Phrase(
                             helper.finish_element("phrase", values)?,
                         ))
                     }
@@ -239740,7 +239600,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_gloss(&mut values, value)?;
                         }
-                        Ok(super::AContent25::Gloss(
+                        Ok(super::AContentContent::Gloss(
                             helper.finish_element("gloss", values)?,
                         ))
                     }
@@ -239749,7 +239609,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_text(&mut values, value)?;
                         }
-                        Ok(super::AContent25::Text(
+                        Ok(super::AContentContent::Text(
                             helper.finish_element("text", values)?,
                         ))
                     }
@@ -239819,7 +239679,7 @@ pub mod onix {
                 fallback: Option<<super::SpecialElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SpecialElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AContent25DeserializerState as S;
+                use AContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -239858,7 +239718,7 @@ pub mod onix {
                 fallback: Option<<super::FontstyleElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::FontstyleElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AContent25DeserializerState as S;
+                use AContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -239897,7 +239757,7 @@ pub mod onix {
                 fallback: Option<<super::PhraseElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PhraseElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AContent25DeserializerState as S;
+                use AContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -239936,7 +239796,7 @@ pub mod onix {
                 fallback: Option<<super::GlossElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::GlossElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AContent25DeserializerState as S;
+                use AContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -239975,7 +239835,7 @@ pub mod onix {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use AContent25DeserializerState as S;
+                use AContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -240008,18 +239868,18 @@ pub mod onix {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::AContent25> for AContent25Deserializer {
+        impl<'de> Deserializer<'de, super::AContentContent> for AContentContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AContent25> {
+            ) -> DeserializerResult<'de, super::AContentContent> {
                 let deserializer = Self {
-                    state__: Box::new(AContent25DeserializerState::Init__),
+                    state__: Box::new(AContentContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state__, AContent25DeserializerState::Init__) =>
+                        if matches!(&*x.state__, AContentContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -240031,8 +239891,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::AContent25> {
-                use AContent25DeserializerState as S;
+            ) -> DeserializerResult<'de, super::AContentContent> {
+                use AContentContentDeserializerState as S;
                 let mut event = event;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
@@ -240183,7 +240043,10 @@ pub mod onix {
                     allow_any,
                 })
             }
-            fn finish(self, helper: &mut DeserializeHelper) -> Result<super::AContent25, Error> {
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::AContentContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
         }
@@ -241453,9 +241316,9 @@ pub mod onix {
                 Option<<super::NameAsSubjectContent208 as WithDeserializer>::Deserializer>,
             ),
             GpStructuredName(
-                Option<super::AlternativeNameGpStructuredName>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
+                Option<super::GpStructuredName>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
             ),
             GpCorporateName(
                 Option<super::NameAsSubjectGpCorporateName>,
@@ -241490,9 +241353,7 @@ pub mod onix {
                     };
                     event = {
                         let output =
-                            <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                         match self.handle_gp_structured_name(
                             helper,
                             Default::default(),
@@ -241586,8 +241447,8 @@ pub mod onix {
                 Ok(())
             }
             fn store_gp_structured_name(
-                values: &mut Option<super::AlternativeNameGpStructuredName>,
-                value: super::AlternativeNameGpStructuredName,
+                values: &mut Option<super::GpStructuredName>,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -241653,11 +241514,9 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                mut values: Option<super::AlternativeNameGpStructuredName>,
-                fallback: Option<
-                    <super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer,
-                >,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                mut values: Option<super::GpStructuredName>,
+                fallback: Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use NameAsSubjectContent207DeserializerState as S;
                 let DeserializerOutput {
@@ -241834,9 +241693,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self
                                 .handle_gp_structured_name(helper, values, fallback, output)?
                             {
@@ -244452,7 +244309,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct AlternativeNameContent79Deserializer {
             gp_unstructured_name: Option<super::AlternativeNameGpUnstructuredName>,
-            gp_structured_name: Option<super::AlternativeNameGpStructuredName>,
+            gp_structured_name: Option<super::GpStructuredName>,
             state__: Box<AlternativeNameContent79DeserializerState>,
         }
         #[derive(Debug)]
@@ -244463,9 +244320,7 @@ pub mod onix {
                     <super::AlternativeNameGpUnstructuredName as WithDeserializer>::Deserializer,
                 >,
             ),
-            GpStructuredName(
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-            ),
+            GpStructuredName(Option<<super::GpStructuredName as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -244501,7 +244356,7 @@ pub mod onix {
             }
             fn store_gp_structured_name(
                 &mut self,
-                value: super::AlternativeNameGpStructuredName,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if self.gp_structured_name.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -244551,7 +244406,7 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
                 fallback: &mut Option<AlternativeNameContent79DeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use AlternativeNameContent79DeserializerState as S;
@@ -244680,9 +244535,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self.handle_gp_structured_name(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -262129,9 +261982,9 @@ pub mod onix {
                 Option<<super::ContributorContent128 as WithDeserializer>::Deserializer>,
             ),
             GpStructuredName(
-                Option<super::AlternativeNameGpStructuredName>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
+                Option<super::GpStructuredName>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
             ),
             GpCorporateName(
                 Option<super::ContributorGpCorporateName>,
@@ -262185,9 +262038,7 @@ pub mod onix {
                     };
                     event = {
                         let output =
-                            <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                         match self.handle_gp_structured_name(
                             helper,
                             Default::default(),
@@ -262289,8 +262140,8 @@ pub mod onix {
                 Ok(())
             }
             fn store_gp_structured_name(
-                values: &mut Option<super::AlternativeNameGpStructuredName>,
-                value: super::AlternativeNameGpStructuredName,
+                values: &mut Option<super::GpStructuredName>,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -262366,11 +262217,9 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                mut values: Option<super::AlternativeNameGpStructuredName>,
-                fallback: Option<
-                    <super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer,
-                >,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                mut values: Option<super::GpStructuredName>,
+                fallback: Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use ContributorContent127DeserializerState as S;
                 let DeserializerOutput {
@@ -262590,9 +262439,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self
                                 .handle_gp_structured_name(helper, values, fallback, output)?
                             {
@@ -263850,14 +263697,14 @@ pub mod onix {
             title: Option<String>,
             lang: Option<String>,
             dir: Option<super::Dir>,
-            content: Vec<super::RbContent65>,
+            content: Vec<super::RubyContentContent>,
             state__: Box<RbElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum RbElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::RbContent65 as WithDeserializer>::Deserializer),
+            Content__(<super::RubyContentContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl RbElementTypeDeserializer {
@@ -263928,14 +263775,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::RbContent65) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::RubyContentContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::RbContent65>,
+                output: DeserializerOutput<'de, super::RubyContentContent>,
                 fallback: &mut Option<RbElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use RbElementTypeDeserializerState as S;
@@ -264003,8 +263850,9 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output =
-                                <super::RbContent65 as WithDeserializer>::init(helper, event)?;
+                            let output = <super::RubyContentContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -265338,9 +265186,9 @@ pub mod onix {
                 Option<<super::AlternativeNameContent79 as WithDeserializer>::Deserializer>,
             ),
             GpStructuredName(
-                Option<super::AlternativeNameGpStructuredName>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
-                Option<<super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer>,
+                Option<super::GpStructuredName>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
             ),
             GpCorporateName(
                 Option<super::AlternativeNameGpCorporateName>,
@@ -265375,9 +265223,7 @@ pub mod onix {
                     };
                     event = {
                         let output =
-                            <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                         match self.handle_gp_structured_name(
                             helper,
                             Default::default(),
@@ -265471,8 +265317,8 @@ pub mod onix {
                 Ok(())
             }
             fn store_gp_structured_name(
-                values: &mut Option<super::AlternativeNameGpStructuredName>,
-                value: super::AlternativeNameGpStructuredName,
+                values: &mut Option<super::GpStructuredName>,
+                value: super::GpStructuredName,
             ) -> Result<(), Error> {
                 if values.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -265538,11 +265384,9 @@ pub mod onix {
             fn handle_gp_structured_name<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                mut values: Option<super::AlternativeNameGpStructuredName>,
-                fallback: Option<
-                    <super::AlternativeNameGpStructuredName as WithDeserializer>::Deserializer,
-                >,
-                output: DeserializerOutput<'de, super::AlternativeNameGpStructuredName>,
+                mut values: Option<super::GpStructuredName>,
+                fallback: Option<<super::GpStructuredName as WithDeserializer>::Deserializer>,
+                output: DeserializerOutput<'de, super::GpStructuredName>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use AlternativeNameContent78DeserializerState as S;
                 let DeserializerOutput {
@@ -265719,9 +265563,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::AlternativeNameGpStructuredName as WithDeserializer>::init(
-                                    helper, event,
-                                )?;
+                                <super::GpStructuredName as WithDeserializer>::init(helper, event)?;
                             match self
                                 .handle_gp_structured_name(helper, values, fallback, output)?
                             {
@@ -272917,16 +272759,14 @@ pub mod onix {
             char: Option<String>,
             charoff: Option<String>,
             valign: Option<super::Valign>,
-            content: Vec<super::AncillaryContentDescriptionContent85>,
+            content: Vec<super::FlowContent>,
             state__: Box<TdElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TdElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(
-                <super::AncillaryContentDescriptionContent85 as WithDeserializer>::Deserializer,
-            ),
+            Content__(<super::FlowContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl TdElementTypeDeserializer {
@@ -273067,17 +272907,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(
-                &mut self,
-                value: super::AncillaryContentDescriptionContent85,
-            ) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::FlowContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::AncillaryContentDescriptionContent85>,
+                output: DeserializerOutput<'de, super::FlowContent>,
                 fallback: &mut Option<TdElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use TdElementTypeDeserializerState as S;
@@ -273145,7 +272982,8 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output = < super :: AncillaryContentDescriptionContent85 as WithDeserializer > :: init (helper , event) ? ;
+                            let output =
+                                <super::FlowContent as WithDeserializer>::init(helper, event)?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -273196,11 +273034,11 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct RbContent65Deserializer {
-            state__: Box<RbContent65DeserializerState>,
+        pub struct RubyContentContentDeserializer {
+            state__: Box<RubyContentContentDeserializerState>,
         }
         #[derive(Debug)]
-        pub enum RbContent65DeserializerState {
+        pub enum RubyContentContentDeserializerState {
             Init__,
             A(
                 Option<super::AElementType>,
@@ -273227,10 +273065,10 @@ pub mod onix {
                 Option<<Text as WithDeserializer>::Deserializer>,
                 Option<<Text as WithDeserializer>::Deserializer>,
             ),
-            Done__(super::RbContent65),
+            Done__(super::RubyContentContent),
             Unknown__,
         }
-        impl RbContent65Deserializer {
+        impl RubyContentContentDeserializer {
             fn find_suitable<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
@@ -273296,7 +273134,7 @@ pub mod onix {
                         }
                     }
                 };
-                *self.state__ = RbContent65DeserializerState::Init__;
+                *self.state__ = RubyContentContentDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(
                     event,
                     allow_any_element,
@@ -273304,9 +273142,9 @@ pub mod onix {
             }
             fn finish_state(
                 helper: &mut DeserializeHelper,
-                state: RbContent65DeserializerState,
-            ) -> Result<super::RbContent65, Error> {
-                use RbContent65DeserializerState as S;
+                state: RubyContentContentDeserializerState,
+            ) -> Result<super::RubyContentContent, Error> {
+                use RubyContentContentDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
                     S::A(mut values, None, deserializer) => {
@@ -273314,14 +273152,16 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_a(&mut values, value)?;
                         }
-                        Ok(super::RbContent65::A(helper.finish_element("a", values)?))
+                        Ok(super::RubyContentContent::A(
+                            helper.finish_element("a", values)?,
+                        ))
                     }
                     S::Special(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
                             Self::store_special(&mut values, value)?;
                         }
-                        Ok(super::RbContent65::Special(
+                        Ok(super::RubyContentContent::Special(
                             helper.finish_element("special", values)?,
                         ))
                     }
@@ -273330,7 +273170,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_fontstyle(&mut values, value)?;
                         }
-                        Ok(super::RbContent65::Fontstyle(
+                        Ok(super::RubyContentContent::Fontstyle(
                             helper.finish_element("fontstyle", values)?,
                         ))
                     }
@@ -273339,7 +273179,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_phrase(&mut values, value)?;
                         }
-                        Ok(super::RbContent65::Phrase(
+                        Ok(super::RubyContentContent::Phrase(
                             helper.finish_element("phrase", values)?,
                         ))
                     }
@@ -273348,7 +273188,7 @@ pub mod onix {
                             let value = deserializer.finish(helper)?;
                             Self::store_text(&mut values, value)?;
                         }
-                        Ok(super::RbContent65::Text(
+                        Ok(super::RubyContentContent::Text(
                             helper.finish_element("text", values)?,
                         ))
                     }
@@ -273416,7 +273256,7 @@ pub mod onix {
                 fallback: Option<<super::AElementType as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::AElementType>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use RbContent65DeserializerState as S;
+                use RubyContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -273450,7 +273290,7 @@ pub mod onix {
                 fallback: Option<<super::SpecialElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::SpecialElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use RbContent65DeserializerState as S;
+                use RubyContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -273489,7 +273329,7 @@ pub mod onix {
                 fallback: Option<<super::FontstyleElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::FontstyleElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use RbContent65DeserializerState as S;
+                use RubyContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -273528,7 +273368,7 @@ pub mod onix {
                 fallback: Option<<super::PhraseElement as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, super::PhraseElement>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use RbContent65DeserializerState as S;
+                use RubyContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -273567,7 +273407,7 @@ pub mod onix {
                 fallback: Option<<Text as WithDeserializer>::Deserializer>,
                 output: DeserializerOutput<'de, Text>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use RbContent65DeserializerState as S;
+                use RubyContentContentDeserializerState as S;
                 let DeserializerOutput {
                     artifact,
                     event,
@@ -273600,18 +273440,18 @@ pub mod onix {
                 }
             }
         }
-        impl<'de> Deserializer<'de, super::RbContent65> for RbContent65Deserializer {
+        impl<'de> Deserializer<'de, super::RubyContentContent> for RubyContentContentDeserializer {
             fn init(
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::RbContent65> {
+            ) -> DeserializerResult<'de, super::RubyContentContent> {
                 let deserializer = Self {
-                    state__: Box::new(RbContent65DeserializerState::Init__),
+                    state__: Box::new(RubyContentContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state__, RbContent65DeserializerState::Init__) =>
+                        if matches!(&*x.state__, RubyContentContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -273623,8 +273463,8 @@ pub mod onix {
                 mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
-            ) -> DeserializerResult<'de, super::RbContent65> {
-                use RbContent65DeserializerState as S;
+            ) -> DeserializerResult<'de, super::RubyContentContent> {
+                use RubyContentContentDeserializerState as S;
                 let mut event = event;
                 let (event, allow_any) = loop {
                     let state = replace(&mut *self.state__, S::Unknown__);
@@ -273779,7 +273619,10 @@ pub mod onix {
                     allow_any,
                 })
             }
-            fn finish(self, helper: &mut DeserializeHelper) -> Result<super::RbContent65, Error> {
+            fn finish(
+                self,
+                helper: &mut DeserializeHelper,
+            ) -> Result<super::RubyContentContent, Error> {
                 Self::finish_state(helper, *self.state__)
             }
         }
@@ -273792,14 +273635,14 @@ pub mod onix {
             lang: Option<String>,
             dir: Option<super::Dir>,
             rbspan: Option<i32>,
-            content: Vec<super::RbContent65>,
+            content: Vec<super::RubyContentContent>,
             state__: Box<RtElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum RtElementTypeDeserializerState {
             Init__,
             Next__,
-            Content__(<super::RbContent65 as WithDeserializer>::Deserializer),
+            Content__(<super::RubyContentContent as WithDeserializer>::Deserializer),
             Unknown__,
         }
         impl RtElementTypeDeserializer {
@@ -273877,14 +273720,14 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content(&mut self, value: super::RbContent65) -> Result<(), Error> {
+            fn store_content(&mut self, value: super::RubyContentContent) -> Result<(), Error> {
                 self.content.push(value);
                 Ok(())
             }
             fn handle_content<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
-                output: DeserializerOutput<'de, super::RbContent65>,
+                output: DeserializerOutput<'de, super::RubyContentContent>,
                 fallback: &mut Option<RtElementTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 use RtElementTypeDeserializerState as S;
@@ -273952,8 +273795,9 @@ pub mod onix {
                         }
                         (state @ (S::Init__ | S::Next__), event) => {
                             fallback.get_or_insert(state);
-                            let output =
-                                <super::RbContent65 as WithDeserializer>::init(helper, event)?;
+                            let output = <super::RubyContentContent as WithDeserializer>::init(
+                                helper, event,
+                            )?;
                             match self.handle_content(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -282318,9 +282162,9 @@ pub mod onix {
             ),
             GpEvents(<super::DescriptiveDetailGpEvents as WithSerializer>::Serializer<'ser>),
             GpEditions(<super::DescriptiveDetailGpEditions as WithSerializer>::Serializer<'ser>),
-            GpLanguages(<super::ContentItemGpLanguages as WithSerializer>::Serializer<'ser>),
+            GpLanguages(<super::GpLanguages as WithSerializer>::Serializer<'ser>),
             GpExtents(<super::DescriptiveDetailGpExtents as WithSerializer>::Serializer<'ser>),
-            GpSubjects(<super::ContentItemGpSubjects as WithSerializer>::Serializer<'ser>),
+            GpSubjects(<super::GpSubjects as WithSerializer>::Serializer<'ser>),
             GpAudiences(<super::DescriptiveDetailGpAudiences as WithSerializer>::Serializer<'ser>),
             End__,
             Done__,
@@ -282545,7 +282389,15 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub(super) enum CollateralDetailElementTypeSerializerState<'ser> {
-            Init__ , GpDescriptionsAndMarketingResources (< super :: CollateralDetailGpDescriptionsAndMarketingResources as WithSerializer > :: Serializer < 'ser >) , GpPrizes (< super :: CollateralDetailGpPrizes as WithSerializer > :: Serializer < 'ser >) , End__ , Done__ , Phantom__ (& 'ser ()) , }
+            Init__,
+            GpDescriptionsAndMarketingResources(
+                <super::GpDescriptionsAndMarketingResources as WithSerializer>::Serializer<'ser>,
+            ),
+            GpPrizes(<super::CollateralDetailGpPrizes as WithSerializer>::Serializer<'ser>),
+            End__,
+            Done__,
+            Phantom__(&'ser ()),
+        }
         impl<'ser> CollateralDetailElementTypeSerializer<'ser> {
             fn next_event(
                 &mut self,
@@ -284769,12 +284621,12 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct ContentItemGpLanguagesSerializer<'ser> {
-            pub(super) value: &'ser super::ContentItemGpLanguages,
-            pub(super) state: Box<ContentItemGpLanguagesSerializerState<'ser>>,
+        pub struct GpLanguagesSerializer<'ser> {
+            pub(super) value: &'ser super::GpLanguages,
+            pub(super) state: Box<GpLanguagesSerializerState<'ser>>,
         }
         #[derive(Debug)]
-        pub(super) enum ContentItemGpLanguagesSerializerState<'ser> {
+        pub(super) enum GpLanguagesSerializerState<'ser> {
             Init__,
             Language(
                 IterSerializer<
@@ -284786,41 +284638,40 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> ContentItemGpLanguagesSerializer<'ser> {
+        impl<'ser> GpLanguagesSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        ContentItemGpLanguagesSerializerState::Init__ => {
-                            *self.state = ContentItemGpLanguagesSerializerState::Language(
-                                IterSerializer::new(
+                        GpLanguagesSerializerState::Init__ => {
+                            *self.state =
+                                GpLanguagesSerializerState::Language(IterSerializer::new(
                                     &self.value.language[..],
                                     Some("Language"),
                                     false,
-                                ),
-                            );
+                                ));
                         }
-                        ContentItemGpLanguagesSerializerState::Language(x) => {
+                        GpLanguagesSerializerState::Language(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = ContentItemGpLanguagesSerializerState::Done__,
+                                None => *self.state = GpLanguagesSerializerState::Done__,
                             }
                         }
-                        ContentItemGpLanguagesSerializerState::Done__ => return Ok(None),
-                        ContentItemGpLanguagesSerializerState::Phantom__(_) => unreachable!(),
+                        GpLanguagesSerializerState::Done__ => return Ok(None),
+                        GpLanguagesSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for ContentItemGpLanguagesSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for GpLanguagesSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = ContentItemGpLanguagesSerializerState::Done__;
+                        *self.state = GpLanguagesSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -284967,12 +284818,12 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct ContentItemGpSubjectsSerializer<'ser> {
-            pub(super) value: &'ser super::ContentItemGpSubjects,
-            pub(super) state: Box<ContentItemGpSubjectsSerializerState<'ser>>,
+        pub struct GpSubjectsSerializer<'ser> {
+            pub(super) value: &'ser super::GpSubjects,
+            pub(super) state: Box<GpSubjectsSerializerState<'ser>>,
         }
         #[derive(Debug)]
-        pub(super) enum ContentItemGpSubjectsSerializerState<'ser> {
+        pub(super) enum GpSubjectsSerializerState<'ser> {
             Init__,
             Subject(
                 IterSerializer<'ser, &'ser [super::SubjectElementType], super::SubjectElementType>,
@@ -284987,55 +284838,53 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> ContentItemGpSubjectsSerializer<'ser> {
+        impl<'ser> GpSubjectsSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        ContentItemGpSubjectsSerializerState::Init__ => {
-                            *self.state =
-                                ContentItemGpSubjectsSerializerState::Subject(IterSerializer::new(
-                                    &self.value.subject[..],
-                                    Some("Subject"),
-                                    false,
-                                ));
+                        GpSubjectsSerializerState::Init__ => {
+                            *self.state = GpSubjectsSerializerState::Subject(IterSerializer::new(
+                                &self.value.subject[..],
+                                Some("Subject"),
+                                false,
+                            ));
                         }
-                        ContentItemGpSubjectsSerializerState::Subject(x) => {
+                        GpSubjectsSerializerState::Subject(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        ContentItemGpSubjectsSerializerState::NameAsSubject(
-                                            IterSerializer::new(
-                                                &self.value.name_as_subject[..],
-                                                Some("NameAsSubject"),
-                                                false,
-                                            ),
-                                        )
+                                    *self.state = GpSubjectsSerializerState::NameAsSubject(
+                                        IterSerializer::new(
+                                            &self.value.name_as_subject[..],
+                                            Some("NameAsSubject"),
+                                            false,
+                                        ),
+                                    )
                                 }
                             }
                         }
-                        ContentItemGpSubjectsSerializerState::NameAsSubject(x) => {
+                        GpSubjectsSerializerState::NameAsSubject(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = ContentItemGpSubjectsSerializerState::Done__,
+                                None => *self.state = GpSubjectsSerializerState::Done__,
                             }
                         }
-                        ContentItemGpSubjectsSerializerState::Done__ => return Ok(None),
-                        ContentItemGpSubjectsSerializerState::Phantom__(_) => unreachable!(),
+                        GpSubjectsSerializerState::Done__ => return Ok(None),
+                        GpSubjectsSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for ContentItemGpSubjectsSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for GpSubjectsSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = ContentItemGpSubjectsSerializerState::Done__;
+                        *self.state = GpSubjectsSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -285170,13 +285019,12 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct CollateralDetailGpDescriptionsAndMarketingResourcesSerializer<'ser> {
-            pub(super) value: &'ser super::CollateralDetailGpDescriptionsAndMarketingResources,
-            pub(super) state:
-                Box<CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState<'ser>>,
+        pub struct GpDescriptionsAndMarketingResourcesSerializer<'ser> {
+            pub(super) value: &'ser super::GpDescriptionsAndMarketingResources,
+            pub(super) state: Box<GpDescriptionsAndMarketingResourcesSerializerState<'ser>>,
         }
         #[derive(Debug)]
-        pub(super) enum CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState<'ser> {
+        pub(super) enum GpDescriptionsAndMarketingResourcesSerializerState<'ser> {
             Init__,
             TextContent(
                 IterSerializer<
@@ -285202,25 +285050,23 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> CollateralDetailGpDescriptionsAndMarketingResourcesSerializer<'ser> {
+        impl<'ser> GpDescriptionsAndMarketingResourcesSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: Init__ => { * self . state = CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: TextContent (IterSerializer :: new (& self . value . text_content [..] , Some ("TextContent") , false)) ; } CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: TextContent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: CitedContent (IterSerializer :: new (& self . value . cited_content [..] , Some ("CitedContent") , false)) , } CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: CitedContent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: SupportingResource (IterSerializer :: new (& self . value . supporting_resource [..] , Some ("SupportingResource") , false)) , } CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: SupportingResource (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: Done__ , } CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: Done__ => return Ok (None) , CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { GpDescriptionsAndMarketingResourcesSerializerState :: Init__ => { * self . state = GpDescriptionsAndMarketingResourcesSerializerState :: TextContent (IterSerializer :: new (& self . value . text_content [..] , Some ("TextContent") , false)) ; } GpDescriptionsAndMarketingResourcesSerializerState :: TextContent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpDescriptionsAndMarketingResourcesSerializerState :: CitedContent (IterSerializer :: new (& self . value . cited_content [..] , Some ("CitedContent") , false)) , } GpDescriptionsAndMarketingResourcesSerializerState :: CitedContent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpDescriptionsAndMarketingResourcesSerializerState :: SupportingResource (IterSerializer :: new (& self . value . supporting_resource [..] , Some ("SupportingResource") , false)) , } GpDescriptionsAndMarketingResourcesSerializerState :: SupportingResource (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpDescriptionsAndMarketingResourcesSerializerState :: Done__ , } GpDescriptionsAndMarketingResourcesSerializerState :: Done__ => return Ok (None) , GpDescriptionsAndMarketingResourcesSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Serializer<'ser>
-            for CollateralDetailGpDescriptionsAndMarketingResourcesSerializer<'ser>
-        {
+        impl<'ser> Serializer<'ser> for GpDescriptionsAndMarketingResourcesSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        * self . state = CollateralDetailGpDescriptionsAndMarketingResourcesSerializerState :: Done__ ;
+                        *self.state = GpDescriptionsAndMarketingResourcesSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -285593,7 +285439,61 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub(super) enum ContentItemElementTypeSerializerState<'ser> {
-            Init__ , LevelSequenceNumber (IterSerializer < 'ser , Option < & 'ser super :: LevelSequenceNumberElementType > , super :: LevelSequenceNumberElementType >) , Content118 (< super :: ContentItemContent118 as WithSerializer > :: Serializer < 'ser >) , EpubUsageConstraint (IterSerializer < 'ser , & 'ser [super :: EpubUsageConstraintElementType] , super :: EpubUsageConstraintElementType >) , EpubLicense (IterSerializer < 'ser , & 'ser [super :: EpubLicenseWithDateType] , super :: EpubLicenseWithDateType >) , Content119 (< super :: ContentItemContent119 as WithSerializer > :: Serializer < 'ser >) , GpAuthorship (IterSerializer < 'ser , Option < & 'ser super :: ContentItemGpAuthorship > , super :: ContentItemGpAuthorship >) , GpLanguages (< super :: ContentItemGpLanguages as WithSerializer > :: Serializer < 'ser >) , GpSubjects (< super :: ContentItemGpSubjects as WithSerializer > :: Serializer < 'ser >) , GpDescriptionsAndMarketingResources (< super :: CollateralDetailGpDescriptionsAndMarketingResources as WithSerializer > :: Serializer < 'ser >) , Publisher (IterSerializer < 'ser , & 'ser [super :: PublisherElementType] , super :: PublisherElementType >) , Content123 (IterSerializer < 'ser , Option < & 'ser super :: ContentItemContent123 > , super :: ContentItemContent123 >) , GpRelatedMaterials (< super :: ContentItemGpRelatedMaterials as WithSerializer > :: Serializer < 'ser >) , End__ , Done__ , Phantom__ (& 'ser ()) , }
+            Init__,
+            LevelSequenceNumber(
+                IterSerializer<
+                    'ser,
+                    Option<&'ser super::LevelSequenceNumberElementType>,
+                    super::LevelSequenceNumberElementType,
+                >,
+            ),
+            Content118(<super::ContentItemContent118 as WithSerializer>::Serializer<'ser>),
+            EpubUsageConstraint(
+                IterSerializer<
+                    'ser,
+                    &'ser [super::EpubUsageConstraintElementType],
+                    super::EpubUsageConstraintElementType,
+                >,
+            ),
+            EpubLicense(
+                IterSerializer<
+                    'ser,
+                    &'ser [super::EpubLicenseWithDateType],
+                    super::EpubLicenseWithDateType,
+                >,
+            ),
+            Content119(<super::ContentItemContent119 as WithSerializer>::Serializer<'ser>),
+            GpAuthorship(
+                IterSerializer<
+                    'ser,
+                    Option<&'ser super::ContentItemGpAuthorship>,
+                    super::ContentItemGpAuthorship,
+                >,
+            ),
+            GpLanguages(<super::GpLanguages as WithSerializer>::Serializer<'ser>),
+            GpSubjects(<super::GpSubjects as WithSerializer>::Serializer<'ser>),
+            GpDescriptionsAndMarketingResources(
+                <super::GpDescriptionsAndMarketingResources as WithSerializer>::Serializer<'ser>,
+            ),
+            Publisher(
+                IterSerializer<
+                    'ser,
+                    &'ser [super::PublisherElementType],
+                    super::PublisherElementType,
+                >,
+            ),
+            Content123(
+                IterSerializer<
+                    'ser,
+                    Option<&'ser super::ContentItemContent123>,
+                    super::ContentItemContent123,
+                >,
+            ),
+            GpRelatedMaterials(<super::GpRelatedMaterials as WithSerializer>::Serializer<'ser>),
+            End__,
+            Done__,
+            Phantom__(&'ser ()),
+        }
         impl<'ser> ContentItemElementTypeSerializer<'ser> {
             fn next_event(
                 &mut self,
@@ -290775,13 +290675,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum IllustrationsNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -291571,13 +291465,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum AudienceDescriptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -293429,13 +293317,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum EventDescriptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -294586,12 +294468,12 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct ContentItemGpRelatedMaterialsSerializer<'ser> {
-            pub(super) value: &'ser super::ContentItemGpRelatedMaterials,
-            pub(super) state: Box<ContentItemGpRelatedMaterialsSerializerState<'ser>>,
+        pub struct GpRelatedMaterialsSerializer<'ser> {
+            pub(super) value: &'ser super::GpRelatedMaterials,
+            pub(super) state: Box<GpRelatedMaterialsSerializerState<'ser>>,
         }
         #[derive(Debug)]
-        pub(super) enum ContentItemGpRelatedMaterialsSerializerState<'ser> {
+        pub(super) enum GpRelatedMaterialsSerializerState<'ser> {
             Init__,
             RelatedWork(
                 IterSerializer<
@@ -294610,15 +294492,15 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> ContentItemGpRelatedMaterialsSerializer<'ser> {
+        impl<'ser> GpRelatedMaterialsSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        ContentItemGpRelatedMaterialsSerializerState::Init__ => {
-                            *self.state = ContentItemGpRelatedMaterialsSerializerState::RelatedWork(
+                        GpRelatedMaterialsSerializerState::Init__ => {
+                            *self.state = GpRelatedMaterialsSerializerState::RelatedWork(
                                 IterSerializer::new(
                                     &self.value.related_work[..],
                                     Some("RelatedWork"),
@@ -294626,45 +294508,39 @@ pub mod onix {
                                 ),
                             );
                         }
-                        ContentItemGpRelatedMaterialsSerializerState::RelatedWork(x) => {
+                        GpRelatedMaterialsSerializerState::RelatedWork(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        ContentItemGpRelatedMaterialsSerializerState::RelatedProduct(
-                                            IterSerializer::new(
-                                                &self.value.related_product[..],
-                                                Some("RelatedProduct"),
-                                                false,
-                                            ),
-                                        )
+                                    *self.state = GpRelatedMaterialsSerializerState::RelatedProduct(
+                                        IterSerializer::new(
+                                            &self.value.related_product[..],
+                                            Some("RelatedProduct"),
+                                            false,
+                                        ),
+                                    )
                                 }
                             }
                         }
-                        ContentItemGpRelatedMaterialsSerializerState::RelatedProduct(x) => {
+                        GpRelatedMaterialsSerializerState::RelatedProduct(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        ContentItemGpRelatedMaterialsSerializerState::Done__
-                                }
+                                None => *self.state = GpRelatedMaterialsSerializerState::Done__,
                             }
                         }
-                        ContentItemGpRelatedMaterialsSerializerState::Done__ => return Ok(None),
-                        ContentItemGpRelatedMaterialsSerializerState::Phantom__(_) => {
-                            unreachable!()
-                        }
+                        GpRelatedMaterialsSerializerState::Done__ => return Ok(None),
+                        GpRelatedMaterialsSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for ContentItemGpRelatedMaterialsSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for GpRelatedMaterialsSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = ContentItemGpRelatedMaterialsSerializerState::Done__;
+                        *self.state = GpRelatedMaterialsSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -295875,7 +295751,7 @@ pub mod onix {
         pub(super) enum CoverManifestElementTypeSerializerState<'ser> {
             Init__,
             GpProductSpecification(
-                <super::BodyManifestGpProductSpecification as WithSerializer>::Serializer<'ser>,
+                <super::GpProductSpecification as WithSerializer>::Serializer<'ser>,
             ),
             CoverResource(
                 IterSerializer<
@@ -295988,7 +295864,7 @@ pub mod onix {
         pub(super) enum BodyManifestElementTypeSerializerState<'ser> {
             Init__,
             GpProductSpecification(
-                <super::BodyManifestGpProductSpecification as WithSerializer>::Serializer<'ser>,
+                <super::GpProductSpecification as WithSerializer>::Serializer<'ser>,
             ),
             BodyResource(
                 IterSerializer<
@@ -296100,7 +295976,7 @@ pub mod onix {
         pub(super) enum InsertManifestElementTypeSerializerState<'ser> {
             Init__,
             GpProductSpecification(
-                <super::BodyManifestGpProductSpecification as WithSerializer>::Serializer<'ser>,
+                <super::GpProductSpecification as WithSerializer>::Serializer<'ser>,
             ),
             InsertPoint(<super::InsertPointElementType as WithSerializer>::Serializer<'ser>),
             InsertResource(
@@ -296977,13 +296853,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum MarketPublishingStatusNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -297187,13 +297057,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum PromotionCampaignElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -297288,13 +297152,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum InitialPrintRunElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -297388,13 +297246,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum ReprintDetailElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -297488,13 +297340,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum CopiesSoldElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -297587,13 +297433,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum BookClubAdoptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -301528,13 +301368,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum TitleStatementElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -302243,13 +302077,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum ContributorStatementElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -304600,13 +304428,13 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct AncillaryContentDescriptionContent85Serializer<'ser> {
-            pub(super) value: &'ser super::AncillaryContentDescriptionContent85,
-            pub(super) state: Box<AncillaryContentDescriptionContent85SerializerState<'ser>>,
+        pub struct FlowContentSerializer<'ser> {
+            pub(super) value: &'ser super::FlowContent,
+            pub(super) state: Box<FlowContentSerializerState<'ser>>,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
-        pub(super) enum AncillaryContentDescriptionContent85SerializerState<'ser> {
+        pub(super) enum FlowContentSerializerState<'ser> {
             Init__,
             Block(<super::BlockElement as WithSerializer>::Serializer<'ser>),
             Inline(<super::InlineElement as WithSerializer>::Serializer<'ser>),
@@ -304614,91 +304442,59 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> AncillaryContentDescriptionContent85Serializer<'ser> {
+        impl<'ser> FlowContentSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        AncillaryContentDescriptionContent85SerializerState::Init__ => {
-                            match self.value {
-                                super::AncillaryContentDescriptionContent85::Block(x) => {
-                                    *self.state =
-                                        AncillaryContentDescriptionContent85SerializerState::Block(
-                                            WithSerializer::serializer(
-                                                x,
-                                                Some("block"),
-                                                self.is_root,
-                                            )?,
-                                        )
-                                }
-                                super::AncillaryContentDescriptionContent85::Inline(x) => {
-                                    *self.state =
-                                        AncillaryContentDescriptionContent85SerializerState::Inline(
-                                            WithSerializer::serializer(
-                                                x,
-                                                Some("inline"),
-                                                self.is_root,
-                                            )?,
-                                        )
-                                }
-                                super::AncillaryContentDescriptionContent85::Text(x) => {
-                                    *self.state =
-                                        AncillaryContentDescriptionContent85SerializerState::Text(
-                                            WithSerializer::serializer(
-                                                x,
-                                                Some("text"),
-                                                self.is_root,
-                                            )?,
-                                        )
-                                }
+                        FlowContentSerializerState::Init__ => match self.value {
+                            super::FlowContent::Block(x) => {
+                                *self.state = FlowContentSerializerState::Block(
+                                    WithSerializer::serializer(x, Some("block"), self.is_root)?,
+                                )
                             }
-                        }
-                        AncillaryContentDescriptionContent85SerializerState::Block(x) => {
+                            super::FlowContent::Inline(x) => {
+                                *self.state = FlowContentSerializerState::Inline(
+                                    WithSerializer::serializer(x, Some("inline"), self.is_root)?,
+                                )
+                            }
+                            super::FlowContent::Text(x) => {
+                                *self.state = FlowContentSerializerState::Text(
+                                    WithSerializer::serializer(x, Some("text"), self.is_root)?,
+                                )
+                            }
+                        },
+                        FlowContentSerializerState::Block(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        AncillaryContentDescriptionContent85SerializerState::Done__
-                                }
+                                None => *self.state = FlowContentSerializerState::Done__,
                             }
                         }
-                        AncillaryContentDescriptionContent85SerializerState::Inline(x) => {
+                        FlowContentSerializerState::Inline(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        AncillaryContentDescriptionContent85SerializerState::Done__
-                                }
+                                None => *self.state = FlowContentSerializerState::Done__,
                             }
                         }
-                        AncillaryContentDescriptionContent85SerializerState::Text(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        AncillaryContentDescriptionContent85SerializerState::Done__
-                                }
-                            }
-                        }
-                        AncillaryContentDescriptionContent85SerializerState::Done__ => {
-                            return Ok(None)
-                        }
-                        AncillaryContentDescriptionContent85SerializerState::Phantom__(_) => {
-                            unreachable!()
-                        }
+                        FlowContentSerializerState::Text(x) => match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = FlowContentSerializerState::Done__,
+                        },
+                        FlowContentSerializerState::Done__ => return Ok(None),
+                        FlowContentSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for AncillaryContentDescriptionContent85Serializer<'ser> {
+        impl<'ser> Serializer<'ser> for FlowContentSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = AncillaryContentDescriptionContent85SerializerState::Done__;
+                        *self.state = FlowContentSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -304802,13 +304598,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum AncillaryContentDescriptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -305492,9 +305282,7 @@ pub mod onix {
             Init__,
             Content206(<super::NameAsSubjectContent206 as WithSerializer>::Serializer<'ser>),
             Content212(<super::NameAsSubjectContent208 as WithSerializer>::Serializer<'ser>),
-            GpStructuredName(
-                <super::AlternativeNameGpStructuredName as WithSerializer>::Serializer<'ser>,
-            ),
+            GpStructuredName(<super::GpStructuredName as WithSerializer>::Serializer<'ser>),
             GpCorporateName(
                 <super::NameAsSubjectGpCorporateName as WithSerializer>::Serializer<'ser>,
             ),
@@ -306957,13 +306745,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum TextElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -307368,13 +307150,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum TextSourceDescriptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -308008,13 +307784,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum CitationNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -309334,13 +309104,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum PrizeStatementElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -309434,13 +309198,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum PrizeJuryElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -310291,13 +310049,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum WebsiteDescriptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -311321,13 +311073,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum CopyrightStatementTextElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -311967,13 +311713,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum PublishingStatusNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -312579,12 +312319,12 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct BodyManifestGpProductSpecificationSerializer<'ser> {
-            pub(super) value: &'ser super::BodyManifestGpProductSpecification,
-            pub(super) state: Box<BodyManifestGpProductSpecificationSerializerState<'ser>>,
+        pub struct GpProductSpecificationSerializer<'ser> {
+            pub(super) value: &'ser super::GpProductSpecification,
+            pub(super) state: Box<GpProductSpecificationSerializerState<'ser>>,
         }
         #[derive(Debug)]
-        pub(super) enum BodyManifestGpProductSpecificationSerializerState<'ser> {
+        pub(super) enum GpProductSpecificationSerializerState<'ser> {
             Init__,
             SpecificationBundleName(
                 IterSerializer<
@@ -312617,23 +312357,85 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> BodyManifestGpProductSpecificationSerializer<'ser> {
+        impl<'ser> GpProductSpecificationSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { BodyManifestGpProductSpecificationSerializerState :: Init__ => { * self . state = BodyManifestGpProductSpecificationSerializerState :: SpecificationBundleName (IterSerializer :: new (& self . value . specification_bundle_name [..] , Some ("SpecificationBundleName") , false)) ; } BodyManifestGpProductSpecificationSerializerState :: SpecificationBundleName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyManifestGpProductSpecificationSerializerState :: SpecificationDetail (IterSerializer :: new (& self . value . specification_detail [..] , Some ("SpecificationDetail") , false)) , } BodyManifestGpProductSpecificationSerializerState :: SpecificationDetail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyManifestGpProductSpecificationSerializerState :: SpecificationFeature (IterSerializer :: new (& self . value . specification_feature [..] , Some ("SpecificationFeature") , false)) , } BodyManifestGpProductSpecificationSerializerState :: SpecificationFeature (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyManifestGpProductSpecificationSerializerState :: SpecificationDescription (IterSerializer :: new (& self . value . specification_description [..] , Some ("SpecificationDescription") , false)) , } BodyManifestGpProductSpecificationSerializerState :: SpecificationDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyManifestGpProductSpecificationSerializerState :: Done__ , } BodyManifestGpProductSpecificationSerializerState :: Done__ => return Ok (None) , BodyManifestGpProductSpecificationSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match &mut *self.state {
+                        GpProductSpecificationSerializerState::Init__ => {
+                            *self.state =
+                                GpProductSpecificationSerializerState::SpecificationBundleName(
+                                    IterSerializer::new(
+                                        &self.value.specification_bundle_name[..],
+                                        Some("SpecificationBundleName"),
+                                        false,
+                                    ),
+                                );
+                        }
+                        GpProductSpecificationSerializerState::SpecificationBundleName(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        GpProductSpecificationSerializerState::SpecificationDetail(
+                                            IterSerializer::new(
+                                                &self.value.specification_detail[..],
+                                                Some("SpecificationDetail"),
+                                                false,
+                                            ),
+                                        )
+                                }
+                            }
+                        }
+                        GpProductSpecificationSerializerState::SpecificationDetail(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state =
+                                        GpProductSpecificationSerializerState::SpecificationFeature(
+                                            IterSerializer::new(
+                                                &self.value.specification_feature[..],
+                                                Some("SpecificationFeature"),
+                                                false,
+                                            ),
+                                        )
+                                }
+                            }
+                        }
+                        GpProductSpecificationSerializerState::SpecificationFeature(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state =
+                                    GpProductSpecificationSerializerState::SpecificationDescription(
+                                        IterSerializer::new(
+                                            &self.value.specification_description[..],
+                                            Some("SpecificationDescription"),
+                                            false,
+                                        ),
+                                    ),
+                            }
+                        }
+                        GpProductSpecificationSerializerState::SpecificationDescription(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GpProductSpecificationSerializerState::Done__,
+                            }
+                        }
+                        GpProductSpecificationSerializerState::Done__ => return Ok(None),
+                        GpProductSpecificationSerializerState::Phantom__(_) => unreachable!(),
+                    }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for BodyManifestGpProductSpecificationSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for GpProductSpecificationSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = BodyManifestGpProductSpecificationSerializerState::Done__;
+                        *self.state = GpProductSpecificationSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -312789,7 +312591,7 @@ pub mod onix {
                 >,
             ),
             GpResourceSpecification(
-                <super::BodyResourceGpResourceSpecification as WithSerializer>::Serializer<'ser>,
+                <super::GpResourceSpecification as WithSerializer>::Serializer<'ser>,
             ),
             End__,
             Done__,
@@ -313579,13 +313381,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum SalesRestrictionNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -318245,9 +318041,7 @@ pub mod onix {
             Init__,
             Content126(<super::ContributorContent126 as WithSerializer>::Serializer<'ser>),
             Content132(<super::ContributorContent128 as WithSerializer>::Serializer<'ser>),
-            GpStructuredName(
-                <super::AlternativeNameGpStructuredName as WithSerializer>::Serializer<'ser>,
-            ),
+            GpStructuredName(<super::GpStructuredName as WithSerializer>::Serializer<'ser>),
             GpCorporateName(
                 <super::ContributorGpCorporateName as WithSerializer>::Serializer<'ser>,
             ),
@@ -318473,13 +318267,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum BiographicalNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -318573,13 +318361,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum ContributorDescriptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -318969,13 +318751,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum EditionStatementElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -319964,13 +319740,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum DdElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -320457,7 +320227,9 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum PreElementTypeSerializerState<'ser> {
             Init__,
-            Content__(IterSerializer<'ser, &'ser [super::PreContent23], super::PreContent23>),
+            Content__(
+                IterSerializer<'ser, &'ser [super::PreContentContent], super::PreContentContent>,
+            ),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -320754,7 +320526,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum AElementTypeSerializerState<'ser> {
             Init__,
-            Content__(IterSerializer<'ser, &'ser [super::AContent25], super::AContent25>),
+            Content__(IterSerializer<'ser, &'ser [super::AContentContent], super::AContentContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -321665,8 +321437,8 @@ pub mod onix {
             GpStructuredName(
                 IterSerializer<
                     'ser,
-                    Option<&'ser super::AlternativeNameGpStructuredName>,
-                    super::AlternativeNameGpStructuredName,
+                    Option<&'ser super::GpStructuredName>,
+                    super::GpStructuredName,
                 >,
             ),
             Done__,
@@ -321730,12 +321502,12 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct AlternativeNameGpStructuredNameSerializer<'ser> {
-            pub(super) value: &'ser super::AlternativeNameGpStructuredName,
-            pub(super) state: Box<AlternativeNameGpStructuredNameSerializerState<'ser>>,
+        pub struct GpStructuredNameSerializer<'ser> {
+            pub(super) value: &'ser super::GpStructuredName,
+            pub(super) state: Box<GpStructuredNameSerializerState<'ser>>,
         }
         #[derive(Debug)]
-        pub(super) enum AlternativeNameGpStructuredNameSerializerState<'ser> {
+        pub(super) enum GpStructuredNameSerializerState<'ser> {
             Init__,
             TitlesBeforeNames(
                 IterSerializer<
@@ -321790,23 +321562,139 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> AlternativeNameGpStructuredNameSerializer<'ser> {
+        impl<'ser> GpStructuredNameSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { AlternativeNameGpStructuredNameSerializerState :: Init__ => { * self . state = AlternativeNameGpStructuredNameSerializerState :: TitlesBeforeNames (IterSerializer :: new (self . value . titles_before_names . as_ref () , Some ("TitlesBeforeNames") , false)) ; } AlternativeNameGpStructuredNameSerializerState :: TitlesBeforeNames (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: NamesBeforeKey (IterSerializer :: new (self . value . names_before_key . as_ref () , Some ("NamesBeforeKey") , false)) , } AlternativeNameGpStructuredNameSerializerState :: NamesBeforeKey (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: PrefixToKey (IterSerializer :: new (self . value . prefix_to_key . as_ref () , Some ("PrefixToKey") , false)) , } AlternativeNameGpStructuredNameSerializerState :: PrefixToKey (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: KeyNames (WithSerializer :: serializer (& self . value . key_names , Some ("KeyNames") , false) ?) , } AlternativeNameGpStructuredNameSerializerState :: KeyNames (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: NamesAfterKey (IterSerializer :: new (self . value . names_after_key . as_ref () , Some ("NamesAfterKey") , false)) , } AlternativeNameGpStructuredNameSerializerState :: NamesAfterKey (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: SuffixToKey (IterSerializer :: new (self . value . suffix_to_key . as_ref () , Some ("SuffixToKey") , false)) , } AlternativeNameGpStructuredNameSerializerState :: SuffixToKey (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: LettersAfterNames (IterSerializer :: new (self . value . letters_after_names . as_ref () , Some ("LettersAfterNames") , false)) , } AlternativeNameGpStructuredNameSerializerState :: LettersAfterNames (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: TitlesAfterNames (IterSerializer :: new (self . value . titles_after_names . as_ref () , Some ("TitlesAfterNames") , false)) , } AlternativeNameGpStructuredNameSerializerState :: TitlesAfterNames (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AlternativeNameGpStructuredNameSerializerState :: Done__ , } AlternativeNameGpStructuredNameSerializerState :: Done__ => return Ok (None) , AlternativeNameGpStructuredNameSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match &mut *self.state {
+                        GpStructuredNameSerializerState::Init__ => {
+                            *self.state = GpStructuredNameSerializerState::TitlesBeforeNames(
+                                IterSerializer::new(
+                                    self.value.titles_before_names.as_ref(),
+                                    Some("TitlesBeforeNames"),
+                                    false,
+                                ),
+                            );
+                        }
+                        GpStructuredNameSerializerState::TitlesBeforeNames(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = GpStructuredNameSerializerState::NamesBeforeKey(
+                                        IterSerializer::new(
+                                            self.value.names_before_key.as_ref(),
+                                            Some("NamesBeforeKey"),
+                                            false,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                        GpStructuredNameSerializerState::NamesBeforeKey(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = GpStructuredNameSerializerState::PrefixToKey(
+                                        IterSerializer::new(
+                                            self.value.prefix_to_key.as_ref(),
+                                            Some("PrefixToKey"),
+                                            false,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                        GpStructuredNameSerializerState::PrefixToKey(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = GpStructuredNameSerializerState::KeyNames(
+                                        WithSerializer::serializer(
+                                            &self.value.key_names,
+                                            Some("KeyNames"),
+                                            false,
+                                        )?,
+                                    )
+                                }
+                            }
+                        }
+                        GpStructuredNameSerializerState::KeyNames(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = GpStructuredNameSerializerState::NamesAfterKey(
+                                        IterSerializer::new(
+                                            self.value.names_after_key.as_ref(),
+                                            Some("NamesAfterKey"),
+                                            false,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                        GpStructuredNameSerializerState::NamesAfterKey(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = GpStructuredNameSerializerState::SuffixToKey(
+                                        IterSerializer::new(
+                                            self.value.suffix_to_key.as_ref(),
+                                            Some("SuffixToKey"),
+                                            false,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                        GpStructuredNameSerializerState::SuffixToKey(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = GpStructuredNameSerializerState::LettersAfterNames(
+                                        IterSerializer::new(
+                                            self.value.letters_after_names.as_ref(),
+                                            Some("LettersAfterNames"),
+                                            false,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                        GpStructuredNameSerializerState::LettersAfterNames(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = GpStructuredNameSerializerState::TitlesAfterNames(
+                                        IterSerializer::new(
+                                            self.value.titles_after_names.as_ref(),
+                                            Some("TitlesAfterNames"),
+                                            false,
+                                        ),
+                                    )
+                                }
+                            }
+                        }
+                        GpStructuredNameSerializerState::TitlesAfterNames(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = GpStructuredNameSerializerState::Done__,
+                            }
+                        }
+                        GpStructuredNameSerializerState::Done__ => return Ok(None),
+                        GpStructuredNameSerializerState::Phantom__(_) => unreachable!(),
+                    }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for AlternativeNameGpStructuredNameSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for GpStructuredNameSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = AlternativeNameGpStructuredNameSerializerState::Done__;
+                        *self.state = GpStructuredNameSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -321865,9 +321753,7 @@ pub mod onix {
             Init__,
             Content77(<super::AlternativeNameContent77 as WithSerializer>::Serializer<'ser>),
             Content83(<super::AlternativeNameContent79 as WithSerializer>::Serializer<'ser>),
-            GpStructuredName(
-                <super::AlternativeNameGpStructuredName as WithSerializer>::Serializer<'ser>,
-            ),
+            GpStructuredName(<super::GpStructuredName as WithSerializer>::Serializer<'ser>),
             GpCorporateName(
                 <super::AlternativeNameGpCorporateName as WithSerializer>::Serializer<'ser>,
             ),
@@ -323183,13 +323069,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum FeatureNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -323904,13 +323784,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum VenueNoteElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -326522,7 +326396,7 @@ pub mod onix {
         pub(super) enum CoverResourceContent151SerializerState<'ser> {
             Init__,
             GpResourceSpecification(
-                <super::BodyResourceGpResourceSpecification as WithSerializer>::Serializer<'ser>,
+                <super::GpResourceSpecification as WithSerializer>::Serializer<'ser>,
             ),
             NoResource(<super::NoResourceElementType as WithSerializer>::Serializer<'ser>),
             Done__,
@@ -326591,12 +326465,12 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct BodyResourceGpResourceSpecificationSerializer<'ser> {
-            pub(super) value: &'ser super::BodyResourceGpResourceSpecification,
-            pub(super) state: Box<BodyResourceGpResourceSpecificationSerializerState<'ser>>,
+        pub struct GpResourceSpecificationSerializer<'ser> {
+            pub(super) value: &'ser super::GpResourceSpecification,
+            pub(super) state: Box<GpResourceSpecificationSerializerState<'ser>>,
         }
         #[derive(Debug)]
-        pub(super) enum BodyResourceGpResourceSpecificationSerializerState<'ser> {
+        pub(super) enum GpResourceSpecificationSerializerState<'ser> {
             Init__,
             ResourceIdentifier(
                 IterSerializer<
@@ -326657,23 +326531,23 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> BodyResourceGpResourceSpecificationSerializer<'ser> {
+        impl<'ser> GpResourceSpecificationSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { BodyResourceGpResourceSpecificationSerializerState :: Init__ => { * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceIdentifier (IterSerializer :: new (& self . value . resource_identifier [..] , Some ("ResourceIdentifier") , false)) ; } BodyResourceGpResourceSpecificationSerializerState :: ResourceIdentifier (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceRole (IterSerializer :: new (self . value . resource_role . as_ref () , Some ("ResourceRole") , false)) , } BodyResourceGpResourceSpecificationSerializerState :: ResourceRole (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceFileDetail (IterSerializer :: new (& self . value . resource_file_detail [..] , Some ("ResourceFileDetail") , false)) , } BodyResourceGpResourceSpecificationSerializerState :: ResourceFileDetail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceFileFeature (IterSerializer :: new (& self . value . resource_file_feature [..] , Some ("ResourceFileFeature") , false)) , } BodyResourceGpResourceSpecificationSerializerState :: ResourceFileFeature (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceFileDescription (IterSerializer :: new (& self . value . resource_file_description [..] , Some ("ResourceFileDescription") , false)) , } BodyResourceGpResourceSpecificationSerializerState :: ResourceFileDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceFileContentDescription (IterSerializer :: new (& self . value . resource_file_content_description [..] , Some ("ResourceFileContentDescription") , false)) , } BodyResourceGpResourceSpecificationSerializerState :: ResourceFileContentDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceFileLink (IterSerializer :: new (& self . value . resource_file_link [..] , Some ("ResourceFileLink") , false)) , } BodyResourceGpResourceSpecificationSerializerState :: ResourceFileLink (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: ResourceFileDate (IterSerializer :: new (& self . value . resource_file_date [..] , Some ("ResourceFileDate") , false)) , } BodyResourceGpResourceSpecificationSerializerState :: ResourceFileDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = BodyResourceGpResourceSpecificationSerializerState :: Done__ , } BodyResourceGpResourceSpecificationSerializerState :: Done__ => return Ok (None) , BodyResourceGpResourceSpecificationSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { GpResourceSpecificationSerializerState :: Init__ => { * self . state = GpResourceSpecificationSerializerState :: ResourceIdentifier (IterSerializer :: new (& self . value . resource_identifier [..] , Some ("ResourceIdentifier") , false)) ; } GpResourceSpecificationSerializerState :: ResourceIdentifier (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: ResourceRole (IterSerializer :: new (self . value . resource_role . as_ref () , Some ("ResourceRole") , false)) , } GpResourceSpecificationSerializerState :: ResourceRole (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: ResourceFileDetail (IterSerializer :: new (& self . value . resource_file_detail [..] , Some ("ResourceFileDetail") , false)) , } GpResourceSpecificationSerializerState :: ResourceFileDetail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: ResourceFileFeature (IterSerializer :: new (& self . value . resource_file_feature [..] , Some ("ResourceFileFeature") , false)) , } GpResourceSpecificationSerializerState :: ResourceFileFeature (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: ResourceFileDescription (IterSerializer :: new (& self . value . resource_file_description [..] , Some ("ResourceFileDescription") , false)) , } GpResourceSpecificationSerializerState :: ResourceFileDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: ResourceFileContentDescription (IterSerializer :: new (& self . value . resource_file_content_description [..] , Some ("ResourceFileContentDescription") , false)) , } GpResourceSpecificationSerializerState :: ResourceFileContentDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: ResourceFileLink (IterSerializer :: new (& self . value . resource_file_link [..] , Some ("ResourceFileLink") , false)) , } GpResourceSpecificationSerializerState :: ResourceFileLink (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: ResourceFileDate (IterSerializer :: new (& self . value . resource_file_date [..] , Some ("ResourceFileDate") , false)) , } GpResourceSpecificationSerializerState :: ResourceFileDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = GpResourceSpecificationSerializerState :: Done__ , } GpResourceSpecificationSerializerState :: Done__ => return Ok (None) , GpResourceSpecificationSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for BodyResourceGpResourceSpecificationSerializer<'ser> {
+        impl<'ser> Serializer<'ser> for GpResourceSpecificationSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = BodyResourceGpResourceSpecificationSerializerState::Done__;
+                        *self.state = GpResourceSpecificationSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -331569,8 +331443,8 @@ pub mod onix {
             GpStructuredName(
                 IterSerializer<
                     'ser,
-                    Option<&'ser super::AlternativeNameGpStructuredName>,
-                    super::AlternativeNameGpStructuredName,
+                    Option<&'ser super::GpStructuredName>,
+                    super::GpStructuredName,
                 >,
             ),
             Done__,
@@ -332417,13 +332291,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum ReligiousTextFeatureDescriptionElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -332781,13 +332649,13 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct PreContent23Serializer<'ser> {
-            pub(super) value: &'ser super::PreContent23,
-            pub(super) state: Box<PreContent23SerializerState<'ser>>,
+        pub struct PreContentContentSerializer<'ser> {
+            pub(super) value: &'ser super::PreContentContent,
+            pub(super) state: Box<PreContentContentSerializerState<'ser>>,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
-        pub(super) enum PreContent23SerializerState<'ser> {
+        pub(super) enum PreContentContentSerializerState<'ser> {
             Init__,
             A(<super::AElementType as WithSerializer>::Serializer<'ser>),
             Br(<super::BrElementType as WithSerializer>::Serializer<'ser>),
@@ -332803,135 +332671,149 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> PreContent23Serializer<'ser> {
+        impl<'ser> PreContentContentSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        PreContent23SerializerState::Init__ => match self.value {
-                            super::PreContent23::A(x) => {
-                                *self.state = PreContent23SerializerState::A(
+                        PreContentContentSerializerState::Init__ => match self.value {
+                            super::PreContentContent::A(x) => {
+                                *self.state = PreContentContentSerializerState::A(
                                     WithSerializer::serializer(x, Some("a"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Br(x) => {
-                                *self.state = PreContent23SerializerState::Br(
+                            super::PreContentContent::Br(x) => {
+                                *self.state = PreContentContentSerializerState::Br(
                                     WithSerializer::serializer(x, Some("br"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Span(x) => {
-                                *self.state = PreContent23SerializerState::Span(
+                            super::PreContentContent::Span(x) => {
+                                *self.state = PreContentContentSerializerState::Span(
                                     WithSerializer::serializer(x, Some("span"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Bdo(x) => {
-                                *self.state = PreContent23SerializerState::Bdo(
+                            super::PreContentContent::Bdo(x) => {
+                                *self.state = PreContentContentSerializerState::Bdo(
                                     WithSerializer::serializer(x, Some("bdo"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Map(x) => {
-                                *self.state = PreContent23SerializerState::Map(
+                            super::PreContentContent::Map(x) => {
+                                *self.state = PreContentContentSerializerState::Map(
                                     WithSerializer::serializer(x, Some("map"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Tt(x) => {
-                                *self.state = PreContent23SerializerState::Tt(
+                            super::PreContentContent::Tt(x) => {
+                                *self.state = PreContentContentSerializerState::Tt(
                                     WithSerializer::serializer(x, Some("tt"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::I(x) => {
-                                *self.state = PreContent23SerializerState::I(
+                            super::PreContentContent::I(x) => {
+                                *self.state = PreContentContentSerializerState::I(
                                     WithSerializer::serializer(x, Some("i"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::B(x) => {
-                                *self.state = PreContent23SerializerState::B(
+                            super::PreContentContent::B(x) => {
+                                *self.state = PreContentContentSerializerState::B(
                                     WithSerializer::serializer(x, Some("b"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Phrase(x) => {
-                                *self.state = PreContent23SerializerState::Phrase(
+                            super::PreContentContent::Phrase(x) => {
+                                *self.state = PreContentContentSerializerState::Phrase(
                                     WithSerializer::serializer(x, Some("phrase"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Gloss(x) => {
-                                *self.state = PreContent23SerializerState::Gloss(
+                            super::PreContentContent::Gloss(x) => {
+                                *self.state = PreContentContentSerializerState::Gloss(
                                     WithSerializer::serializer(x, Some("gloss"), self.is_root)?,
                                 )
                             }
-                            super::PreContent23::Text(x) => {
-                                *self.state = PreContent23SerializerState::Text(
+                            super::PreContentContent::Text(x) => {
+                                *self.state = PreContentContentSerializerState::Text(
                                     WithSerializer::serializer(x, Some("text"), self.is_root)?,
                                 )
                             }
                         },
-                        PreContent23SerializerState::A(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PreContent23SerializerState::Done__,
-                        },
-                        PreContent23SerializerState::Br(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PreContent23SerializerState::Done__,
-                        },
-                        PreContent23SerializerState::Span(x) => {
+                        PreContentContentSerializerState::A(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = PreContent23SerializerState::Done__,
+                                None => *self.state = PreContentContentSerializerState::Done__,
                             }
                         }
-                        PreContent23SerializerState::Bdo(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PreContent23SerializerState::Done__,
-                        },
-                        PreContent23SerializerState::Map(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PreContent23SerializerState::Done__,
-                        },
-                        PreContent23SerializerState::Tt(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PreContent23SerializerState::Done__,
-                        },
-                        PreContent23SerializerState::I(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PreContent23SerializerState::Done__,
-                        },
-                        PreContent23SerializerState::B(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PreContent23SerializerState::Done__,
-                        },
-                        PreContent23SerializerState::Phrase(x) => {
+                        PreContentContentSerializerState::Br(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = PreContent23SerializerState::Done__,
+                                None => *self.state = PreContentContentSerializerState::Done__,
                             }
                         }
-                        PreContent23SerializerState::Gloss(x) => {
+                        PreContentContentSerializerState::Span(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = PreContent23SerializerState::Done__,
+                                None => *self.state = PreContentContentSerializerState::Done__,
                             }
                         }
-                        PreContent23SerializerState::Text(x) => {
+                        PreContentContentSerializerState::Bdo(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = PreContent23SerializerState::Done__,
+                                None => *self.state = PreContentContentSerializerState::Done__,
                             }
                         }
-                        PreContent23SerializerState::Done__ => return Ok(None),
-                        PreContent23SerializerState::Phantom__(_) => unreachable!(),
+                        PreContentContentSerializerState::Map(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PreContentContentSerializerState::Done__,
+                            }
+                        }
+                        PreContentContentSerializerState::Tt(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PreContentContentSerializerState::Done__,
+                            }
+                        }
+                        PreContentContentSerializerState::I(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PreContentContentSerializerState::Done__,
+                            }
+                        }
+                        PreContentContentSerializerState::B(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PreContentContentSerializerState::Done__,
+                            }
+                        }
+                        PreContentContentSerializerState::Phrase(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PreContentContentSerializerState::Done__,
+                            }
+                        }
+                        PreContentContentSerializerState::Gloss(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PreContentContentSerializerState::Done__,
+                            }
+                        }
+                        PreContentContentSerializerState::Text(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = PreContentContentSerializerState::Done__,
+                            }
+                        }
+                        PreContentContentSerializerState::Done__ => return Ok(None),
+                        PreContentContentSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for PreContent23Serializer<'ser> {
+        impl<'ser> Serializer<'ser> for PreContentContentSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = PreContent23SerializerState::Done__;
+                        *self.state = PreContentContentSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -333342,13 +333224,13 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct AContent25Serializer<'ser> {
-            pub(super) value: &'ser super::AContent25,
-            pub(super) state: Box<AContent25SerializerState<'ser>>,
+        pub struct AContentContentSerializer<'ser> {
+            pub(super) value: &'ser super::AContentContent,
+            pub(super) state: Box<AContentContentSerializerState<'ser>>,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
-        pub(super) enum AContent25SerializerState<'ser> {
+        pub(super) enum AContentContentSerializerState<'ser> {
             Init__,
             Special(<super::SpecialElement as WithSerializer>::Serializer<'ser>),
             Fontstyle(<super::FontstyleElement as WithSerializer>::Serializer<'ser>),
@@ -333358,79 +333240,83 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> AContent25Serializer<'ser> {
+        impl<'ser> AContentContentSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        AContent25SerializerState::Init__ => match self.value {
-                            super::AContent25::Special(x) => {
-                                *self.state = AContent25SerializerState::Special(
+                        AContentContentSerializerState::Init__ => match self.value {
+                            super::AContentContent::Special(x) => {
+                                *self.state = AContentContentSerializerState::Special(
                                     WithSerializer::serializer(x, Some("special"), self.is_root)?,
                                 )
                             }
-                            super::AContent25::Fontstyle(x) => {
-                                *self.state = AContent25SerializerState::Fontstyle(
+                            super::AContentContent::Fontstyle(x) => {
+                                *self.state = AContentContentSerializerState::Fontstyle(
                                     WithSerializer::serializer(x, Some("fontstyle"), self.is_root)?,
                                 )
                             }
-                            super::AContent25::Phrase(x) => {
-                                *self.state = AContent25SerializerState::Phrase(
+                            super::AContentContent::Phrase(x) => {
+                                *self.state = AContentContentSerializerState::Phrase(
                                     WithSerializer::serializer(x, Some("phrase"), self.is_root)?,
                                 )
                             }
-                            super::AContent25::Gloss(x) => {
-                                *self.state = AContent25SerializerState::Gloss(
+                            super::AContentContent::Gloss(x) => {
+                                *self.state = AContentContentSerializerState::Gloss(
                                     WithSerializer::serializer(x, Some("gloss"), self.is_root)?,
                                 )
                             }
-                            super::AContent25::Text(x) => {
-                                *self.state = AContent25SerializerState::Text(
+                            super::AContentContent::Text(x) => {
+                                *self.state = AContentContentSerializerState::Text(
                                     WithSerializer::serializer(x, Some("text"), self.is_root)?,
                                 )
                             }
                         },
-                        AContent25SerializerState::Special(x) => {
+                        AContentContentSerializerState::Special(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = AContent25SerializerState::Done__,
+                                None => *self.state = AContentContentSerializerState::Done__,
                             }
                         }
-                        AContent25SerializerState::Fontstyle(x) => {
+                        AContentContentSerializerState::Fontstyle(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = AContent25SerializerState::Done__,
+                                None => *self.state = AContentContentSerializerState::Done__,
                             }
                         }
-                        AContent25SerializerState::Phrase(x) => {
+                        AContentContentSerializerState::Phrase(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = AContent25SerializerState::Done__,
+                                None => *self.state = AContentContentSerializerState::Done__,
                             }
                         }
-                        AContent25SerializerState::Gloss(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = AContent25SerializerState::Done__,
-                        },
-                        AContent25SerializerState::Text(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = AContent25SerializerState::Done__,
-                        },
-                        AContent25SerializerState::Done__ => return Ok(None),
-                        AContent25SerializerState::Phantom__(_) => unreachable!(),
+                        AContentContentSerializerState::Gloss(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = AContentContentSerializerState::Done__,
+                            }
+                        }
+                        AContentContentSerializerState::Text(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = AContentContentSerializerState::Done__,
+                            }
+                        }
+                        AContentContentSerializerState::Done__ => return Ok(None),
+                        AContentContentSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for AContent25Serializer<'ser> {
+        impl<'ser> Serializer<'ser> for AContentContentSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = AContent25SerializerState::Done__;
+                        *self.state = AContentContentSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -333832,9 +333718,7 @@ pub mod onix {
         pub(super) enum NameAsSubjectContent207SerializerState<'ser> {
             Init__,
             Content208(<super::NameAsSubjectContent208 as WithSerializer>::Serializer<'ser>),
-            GpStructuredName(
-                <super::AlternativeNameGpStructuredName as WithSerializer>::Serializer<'ser>,
-            ),
+            GpStructuredName(<super::GpStructuredName as WithSerializer>::Serializer<'ser>),
             GpCorporateName(
                 <super::NameAsSubjectGpCorporateName as WithSerializer>::Serializer<'ser>,
             ),
@@ -335048,8 +334932,8 @@ pub mod onix {
             GpStructuredName(
                 IterSerializer<
                     'ser,
-                    Option<&'ser super::AlternativeNameGpStructuredName>,
-                    super::AlternativeNameGpStructuredName,
+                    Option<&'ser super::GpStructuredName>,
+                    super::GpStructuredName,
                 >,
             ),
             Done__,
@@ -341399,9 +341283,7 @@ pub mod onix {
         pub(super) enum ContributorContent127SerializerState<'ser> {
             Init__,
             Content128(<super::ContributorContent128 as WithSerializer>::Serializer<'ser>),
-            GpStructuredName(
-                <super::AlternativeNameGpStructuredName as WithSerializer>::Serializer<'ser>,
-            ),
+            GpStructuredName(<super::GpStructuredName as WithSerializer>::Serializer<'ser>),
             GpCorporateName(
                 <super::ContributorGpCorporateName as WithSerializer>::Serializer<'ser>,
             ),
@@ -341837,7 +341719,9 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum RbElementTypeSerializerState<'ser> {
             Init__,
-            Content__(IterSerializer<'ser, &'ser [super::RbContent65], super::RbContent65>),
+            Content__(
+                IterSerializer<'ser, &'ser [super::RubyContentContent], super::RubyContentContent>,
+            ),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -342263,9 +342147,7 @@ pub mod onix {
         pub(super) enum AlternativeNameContent78SerializerState<'ser> {
             Init__,
             Content79(<super::AlternativeNameContent79 as WithSerializer>::Serializer<'ser>),
-            GpStructuredName(
-                <super::AlternativeNameGpStructuredName as WithSerializer>::Serializer<'ser>,
-            ),
+            GpStructuredName(<super::GpStructuredName as WithSerializer>::Serializer<'ser>),
             GpCorporateName(
                 <super::AlternativeNameGpCorporateName as WithSerializer>::Serializer<'ser>,
             ),
@@ -345143,13 +345025,7 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum TdElementTypeSerializerState<'ser> {
             Init__,
-            Content__(
-                IterSerializer<
-                    'ser,
-                    &'ser [super::AncillaryContentDescriptionContent85],
-                    super::AncillaryContentDescriptionContent85,
-                >,
-            ),
+            Content__(IterSerializer<'ser, &'ser [super::FlowContent], super::FlowContent>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -345218,13 +345094,13 @@ pub mod onix {
             }
         }
         #[derive(Debug)]
-        pub struct RbContent65Serializer<'ser> {
-            pub(super) value: &'ser super::RbContent65,
-            pub(super) state: Box<RbContent65SerializerState<'ser>>,
+        pub struct RubyContentContentSerializer<'ser> {
+            pub(super) value: &'ser super::RubyContentContent,
+            pub(super) state: Box<RubyContentContentSerializerState<'ser>>,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
-        pub(super) enum RbContent65SerializerState<'ser> {
+        pub(super) enum RubyContentContentSerializerState<'ser> {
             Init__,
             A(<super::AElementType as WithSerializer>::Serializer<'ser>),
             Special(<super::SpecialElement as WithSerializer>::Serializer<'ser>),
@@ -345234,79 +345110,83 @@ pub mod onix {
             Done__,
             Phantom__(&'ser ()),
         }
-        impl<'ser> RbContent65Serializer<'ser> {
+        impl<'ser> RubyContentContentSerializer<'ser> {
             fn next_event(
                 &mut self,
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
                     match &mut *self.state {
-                        RbContent65SerializerState::Init__ => match self.value {
-                            super::RbContent65::A(x) => {
-                                *self.state = RbContent65SerializerState::A(
+                        RubyContentContentSerializerState::Init__ => match self.value {
+                            super::RubyContentContent::A(x) => {
+                                *self.state = RubyContentContentSerializerState::A(
                                     WithSerializer::serializer(x, Some("a"), self.is_root)?,
                                 )
                             }
-                            super::RbContent65::Special(x) => {
-                                *self.state = RbContent65SerializerState::Special(
+                            super::RubyContentContent::Special(x) => {
+                                *self.state = RubyContentContentSerializerState::Special(
                                     WithSerializer::serializer(x, Some("special"), self.is_root)?,
                                 )
                             }
-                            super::RbContent65::Fontstyle(x) => {
-                                *self.state = RbContent65SerializerState::Fontstyle(
+                            super::RubyContentContent::Fontstyle(x) => {
+                                *self.state = RubyContentContentSerializerState::Fontstyle(
                                     WithSerializer::serializer(x, Some("fontstyle"), self.is_root)?,
                                 )
                             }
-                            super::RbContent65::Phrase(x) => {
-                                *self.state = RbContent65SerializerState::Phrase(
+                            super::RubyContentContent::Phrase(x) => {
+                                *self.state = RubyContentContentSerializerState::Phrase(
                                     WithSerializer::serializer(x, Some("phrase"), self.is_root)?,
                                 )
                             }
-                            super::RbContent65::Text(x) => {
-                                *self.state = RbContent65SerializerState::Text(
+                            super::RubyContentContent::Text(x) => {
+                                *self.state = RubyContentContentSerializerState::Text(
                                     WithSerializer::serializer(x, Some("text"), self.is_root)?,
                                 )
                             }
                         },
-                        RbContent65SerializerState::A(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RbContent65SerializerState::Done__,
-                        },
-                        RbContent65SerializerState::Special(x) => {
+                        RubyContentContentSerializerState::A(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = RbContent65SerializerState::Done__,
+                                None => *self.state = RubyContentContentSerializerState::Done__,
                             }
                         }
-                        RbContent65SerializerState::Fontstyle(x) => {
+                        RubyContentContentSerializerState::Special(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = RbContent65SerializerState::Done__,
+                                None => *self.state = RubyContentContentSerializerState::Done__,
                             }
                         }
-                        RbContent65SerializerState::Phrase(x) => {
+                        RubyContentContentSerializerState::Fontstyle(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
-                                None => *self.state = RbContent65SerializerState::Done__,
+                                None => *self.state = RubyContentContentSerializerState::Done__,
                             }
                         }
-                        RbContent65SerializerState::Text(x) => match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RbContent65SerializerState::Done__,
-                        },
-                        RbContent65SerializerState::Done__ => return Ok(None),
-                        RbContent65SerializerState::Phantom__(_) => unreachable!(),
+                        RubyContentContentSerializerState::Phrase(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RubyContentContentSerializerState::Done__,
+                            }
+                        }
+                        RubyContentContentSerializerState::Text(x) => {
+                            match x.next(helper).transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = RubyContentContentSerializerState::Done__,
+                            }
+                        }
+                        RubyContentContentSerializerState::Done__ => return Ok(None),
+                        RubyContentContentSerializerState::Phantom__(_) => unreachable!(),
                     }
                 }
             }
         }
-        impl<'ser> Serializer<'ser> for RbContent65Serializer<'ser> {
+        impl<'ser> Serializer<'ser> for RubyContentContentSerializer<'ser> {
             fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
                 match self.next_event(helper) {
                     Ok(Some(event)) => Some(Ok(event)),
                     Ok(None) => None,
                     Err(error) => {
-                        *self.state = RbContent65SerializerState::Done__;
+                        *self.state = RubyContentContentSerializerState::Done__;
                         Some(Err(error))
                     }
                 }
@@ -345322,7 +345202,9 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum RtElementTypeSerializerState<'ser> {
             Init__,
-            Content__(IterSerializer<'ser, &'ser [super::RbContent65], super::RbContent65>),
+            Content__(
+                IterSerializer<'ser, &'ser [super::RubyContentContent], super::RubyContentContent>,
+            ),
             End__,
             Done__,
             Phantom__(&'ser ()),
