@@ -787,9 +787,8 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                 let type_ = self.owner.resolve_type_ident(ref_, IdentType::Element)?;
                 let name = self.owner.name_builder().or(name).or(&type_.name).finish();
                 let ident = ElementIdent::new(name).with_ns(type_.ns);
-                let form = ty
-                    .form
-                    .unwrap_or_else(|| self.owner.current_schema().element_form_default);
+                // A ref names a global declaration, and those are always namespace-qualified.
+                let form = FormChoiceType::Qualified;
 
                 let ci = get_or_init_type!(self, Sequence);
                 let element = ci.elements.find_or_insert(ident, |ident| {
@@ -879,9 +878,8 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                 let type_ = self.owner.resolve_type_ident(ref_, IdentType::Attribute)?;
                 let name = self.owner.name_builder().or(name).or(&type_.name).finish();
                 let ident = AttributeIdent::new(name).with_ns(type_.ns);
-                let form = ty
-                    .form
-                    .unwrap_or_else(|| self.owner.current_schema().attribute_form_default);
+                // A ref names a global declaration, and those are always namespace-qualified.
+                let form = FormChoiceType::Qualified;
 
                 get_or_init_any!(self, ComplexType)
                     .attributes

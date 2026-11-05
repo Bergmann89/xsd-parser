@@ -1207,7 +1207,7 @@ pub mod quick_xml_serialize {
                     ListTypeSerializerState::Init__ => {
                         *self.state = ListTypeSerializerState::Animal(IterSerializer::new(
                             &self.value.animal[..],
-                            Some("animal"),
+                            Some("tns:animal"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
@@ -1218,6 +1218,11 @@ pub mod quick_xml_serialize {
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
                                 &super::NS_XSI,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
                             );
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -1274,12 +1279,12 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::Animal::Cat(x) => {
                                 *self.state = AnimalSerializerState::Cat(
-                                    WithSerializer::serializer(x, Some("cat"), self.is_root)?,
+                                    WithSerializer::serializer(x, Some("tns:cat"), self.is_root)?,
                                 )
                             }
                             super::Animal::Dog(x) => {
                                 *self.state = AnimalSerializerState::Dog(
-                                    WithSerializer::serializer(x, Some("dog"), self.is_root)?,
+                                    WithSerializer::serializer(x, Some("tns:dog"), self.is_root)?,
                                 )
                             }
                         }

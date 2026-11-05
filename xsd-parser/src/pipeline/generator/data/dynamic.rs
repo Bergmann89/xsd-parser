@@ -6,7 +6,8 @@ use quote::format_ident;
 use crate::models::{
     data::{DerivedType, DynamicData, TagName},
     meta::{DerivedTypeMeta, DynamicMeta},
-    TypeIdent,
+    schema::xs::FormChoiceType,
+    IdentType, TypeIdent,
 };
 
 use super::super::{Context, Error};
@@ -52,7 +53,12 @@ fn make_derived_type_data<'types>(
 ) -> Result<DerivedType<'types>, Error> {
     let s_name = key.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());
-    let form = ctx.types.get_form(key);
+    // Substitution group members are global elements, and those are always namespace-qualified.
+    let form = if key.type_ == IdentType::Element {
+        FormChoiceType::Qualified
+    } else {
+        ctx.types.get_form(key)
+    };
     let tag_name = TagName::new(ctx.types, key.ns, &key.name, form);
 
     let key = key.clone();

@@ -56,7 +56,7 @@ impl WithSerializer for Head {
         if (*self.0).as_any().is::<HeadType>() {
             return self.0.serializer(Some("tns:B"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for Head {

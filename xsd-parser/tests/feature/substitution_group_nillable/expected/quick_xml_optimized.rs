@@ -955,7 +955,7 @@ pub mod quick_xml_serialize {
                     ListTypeSerializerState::Init__ => {
                         *self.state = ListTypeSerializerState::Animal(IterSerializer::new(
                             &self.value.animal[..],
-                            Some("animal"),
+                            Some("tns:animal"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
@@ -966,6 +966,11 @@ pub mod quick_xml_serialize {
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
                                 &super::NS_XSI,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
                             );
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -1019,25 +1024,27 @@ pub mod quick_xml_serialize {
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    AnimalSerializerState::Init__ => {
-                        match self.value {
-                            super::Animal::Animal(x) => {
-                                *self.state = AnimalSerializerState::Animal(
-                                    WithSerializer::serializer(x, Some("animal"), self.is_root)?,
-                                )
-                            }
-                            super::Animal::Dog(x) => {
-                                *self.state = AnimalSerializerState::Dog(
-                                    WithSerializer::serializer(x, Some("dog"), self.is_root)?,
-                                )
-                            }
-                            super::Animal::Labrador(x) => {
-                                *self.state = AnimalSerializerState::Labrador(
-                                    WithSerializer::serializer(x, Some("labrador"), self.is_root)?,
-                                )
-                            }
+                    AnimalSerializerState::Init__ => match self.value {
+                        super::Animal::Animal(x) => {
+                            *self.state = AnimalSerializerState::Animal(WithSerializer::serializer(
+                                x,
+                                Some("tns:animal"),
+                                self.is_root,
+                            )?)
                         }
-                    }
+                        super::Animal::Dog(x) => {
+                            *self.state = AnimalSerializerState::Dog(WithSerializer::serializer(
+                                x,
+                                Some("tns:dog"),
+                                self.is_root,
+                            )?)
+                        }
+                        super::Animal::Labrador(x) => {
+                            *self.state = AnimalSerializerState::Labrador(
+                                WithSerializer::serializer(x, Some("tns:labrador"), self.is_root)?,
+                            )
+                        }
+                    },
                     AnimalSerializerState::Animal(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = AnimalSerializerState::Done__,

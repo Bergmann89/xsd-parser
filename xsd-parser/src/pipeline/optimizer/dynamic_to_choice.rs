@@ -109,6 +109,12 @@ impl Optimizer {
 
 fn add_elements(group: &mut GroupMeta, form: FormChoiceType, meta: &DynamicMeta) {
     for (key, meta) in &meta.derived_types {
+        // Substitution group members are global elements, and those are always namespace-qualified.
+        let form = if key.type_ == IdentType::Element {
+            FormChoiceType::Qualified
+        } else {
+            form
+        };
         let el = group
             .elements
             .find_or_insert(key.to_property_ident(), |ident| {

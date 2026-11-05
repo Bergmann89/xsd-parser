@@ -265,7 +265,7 @@ impl WithSerializer for Shape {
         if (*self.0).as_any().is::<ShapeType>() {
             return self.0.serializer(Some("tns:Square"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for Shape {

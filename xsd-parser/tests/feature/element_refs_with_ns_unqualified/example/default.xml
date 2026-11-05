@@ -1,0 +1,5 @@
+<foo:Outer xmlns:foo="Foo" xmlns:bar="Bar" xmlns:baz="Baz">
+    <bar:Inner><bar:A>Text in A</bar:A></bar:Inner>
+    <baz:Note>Text in Note</baz:Note>
+    <Plain>Text in Plain</Plain>
+</foo:Outer>

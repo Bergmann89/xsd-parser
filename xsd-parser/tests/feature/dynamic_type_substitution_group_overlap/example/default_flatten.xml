@@ -1,7 +1,7 @@
-<list xmlns="http://example.com">
-    <animal id="1" />
-    <dog id="2" name="Max" />
-    <labrador id="3" name="Charlie" color="yellow" />
-    <dog id="4" name="Rex" />
-    <labrador id="5" name="Buddy" color="black" />
+<list xmlns="http://example.com" xmlns:tns="http://example.com">
+    <tns:animal id="1" />
+    <tns:dog id="2" name="Max" />
+    <tns:labrador id="3" name="Charlie" color="yellow" />
+    <tns:dog id="4" name="Rex" />
+    <tns:labrador id="5" name="Buddy" color="black" />
 </list>
