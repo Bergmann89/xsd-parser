@@ -156,6 +156,9 @@ Below you can find a short list of the most important changes for each released 
 - **Stable Names for Merged Content Types**
   Since 1.6.0 complex types share the content types that `OptimizerFlags::REMOVE_DUPLICATES` merged. The shared type got the name of the first owner and an internal counter (e.g. `AncillaryContentDescriptionContent85`) and was defined in the module of that owner. The name is now derived from the schema: copies of the same `xs:group` are merged into a type named like the group (`<Group>Content` if the name is already used), defined in the module of the group, and the content of a base type is shared with its derived types as `<Base>Content`, defined in the module of the base type. Content types of unrelated complex types are not merged anymore.
 
+- **Separate Flags for Types and Content Types**
+  `REMOVE_DUPLICATES` is now the combination of the new flags `REMOVE_DUPLICATE_TYPES` and `REMOVE_DUPLICATE_CONTENTS`. Use `OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATE_CONTENTS` to keep one content type per complex type, like in version 1.5.
+
 - **Breaking Changes**
   - The generated code changes for schemas with merged content types, see above.
   - `GroupMeta` has the new field `group`.

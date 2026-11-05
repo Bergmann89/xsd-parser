@@ -42,9 +42,30 @@ impl Optimizer {
     #[doc = include_str!("../../../tests/optimizer/expected1/remove_duplicates.rs")]
     /// ```
     ///
-    /// Content types of complex types and copies of groups (`xs:group`) get a
-    /// name that is derived from the schema, so it does not depend on the order
-    /// of the types:
+    /// This is the combination of [`remove_duplicate_types`](Self::remove_duplicate_types)
+    /// and [`remove_duplicate_contents`](Self::remove_duplicate_contents).
+    pub fn remove_duplicates(self) -> Self {
+        self.remove_duplicates_impl(true, true)
+    }
+
+    /// Like [`remove_duplicates`](Self::remove_duplicates), but only for types
+    /// that are neither the content of a complex type nor a copy of a group
+    /// (`xs:group`).
+    ///
+    /// The first of the identical types is generated, all others become a type
+    /// definition for it. Content types are not merged, so each complex type
+    /// keeps its own content type. Together with
+    /// [`remove_duplicate_contents`](Self::remove_duplicate_contents) this is
+    /// [`remove_duplicates`](Self::remove_duplicates).
+    pub fn remove_duplicate_types(self) -> Self {
+        self.remove_duplicates_impl(true, false)
+    }
+
+    /// Like [`remove_duplicates`](Self::remove_duplicates), but only for content
+    /// types of complex types and copies of groups (`xs:group`).
+    ///
+    /// The merged type gets a name that is derived from the schema, so it does
+    /// not depend on the order of the types:
     /// - Identical copies of the same group are merged into a type named like
     ///   the group (`<Group>Content` if this name is already used by another
     ///   type), defined in the schema of the group. Copies of different groups
@@ -57,7 +78,11 @@ impl Optimizer {
     ///
     /// In all other cases the content types are not merged, because the types
     /// are not logically related to each other.
-    pub fn remove_duplicates(mut self) -> Self {
+    pub fn remove_duplicate_contents(self) -> Self {
+        self.remove_duplicates_impl(false, true)
+    }
+
+    fn remove_duplicates_impl(mut self, types: bool, contents: bool) -> Self {
         struct Value<'a> {
             type_: &'a MetaType,
             types: &'a MetaTypes,
@@ -111,12 +136,20 @@ impl Optimizer {
             let mut merge = Merge::default();
 
             for bucket in buckets.into_iter().filter(|bucket| bucket.len() > 1) {
-                let (structural, plain): (Vec<_>, Vec<_>) = bucket.into_iter().partition(|ident| {
-                    owners.contains_key(*ident) || group_of(meta, ident).is_some()
-                });
+                let (structural, plain): (Vec<_>, Vec<_>) = bucket
+                    .into_iter()
+                    .filter(|ident| contents || !owners.contains_key(*ident))
+                    .partition(|ident| {
+                        contents && (owners.contains_key(*ident) || group_of(meta, ident).is_some())
+                    });
 
-                merge.first(meta, &plain);
-                merge.structural(meta, &owners, structural);
+                if types {
+                    merge.first(meta, &plain);
+                }
+
+                if contents {
+                    merge.structural(meta, &owners, structural);
+                }
             }
 
             if !merge.references.is_empty() {
@@ -168,7 +201,7 @@ impl Merge {
     }
 
     /// Merges the content types and group copies in `idents` following the
-    /// rules described in [`remove_duplicates`](Optimizer::remove_duplicates).
+    /// rules described in [`remove_duplicate_contents`](Optimizer::remove_duplicate_contents).
     fn structural(
         &mut self,
         types: &MetaTypes,
