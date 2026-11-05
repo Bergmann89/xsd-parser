@@ -154,7 +154,7 @@ Below you can find a short list of the most important changes for each released 
 ## xsd-parser-types 0.3.1
 
 - **Reading and Writing Other Encodings**
-  `xsd-parser-types` 0.3.1 adds the `DecodingIoReader`, which decodes the input based on the BOM or the XML declaration (e.g. `Windows-1251` or `UTF-16`), and the `EncodingWriter`, which encodes the serialized output (`write_document` writes a complete document including the matching XML declaration). Since the upgrade to `quick-xml` 0.42 the `IoReader` only accepts UTF-8.
+  `xsd-parser-types` 0.3.1 adds the `DecodingIoReader`, which decodes the input based on the BOM or the XML declaration (e.g. `Windows-1251` or `UTF-16`), and the `EncodingWriter`, which encodes the serialized output (`write_document` writes a complete document including the matching XML declaration). Characters that can not be represented in the target encoding are written as numeric character references in text and attribute values. Since the upgrade to `quick-xml` 0.42 the `IoReader` only accepts UTF-8.
 
 ## Version 1.6.0
 
