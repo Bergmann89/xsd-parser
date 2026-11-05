@@ -32,3 +32,17 @@ fn generate_default() {
         config(),
     );
 }
+
+/* types only */
+
+// Without `REMOVE_DUPLICATE_CONTENTS` each complex type keeps its own content
+// type, like in version 1.5.
+#[test]
+fn generate_types_only() {
+    generate_test(
+        "tests/feature/content_type_names/schema.xsd",
+        "tests/feature/content_type_names/expected/types_only.rs",
+        config()
+            .set_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATE_CONTENTS),
+    );
+}

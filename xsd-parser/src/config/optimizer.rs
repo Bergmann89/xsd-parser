@@ -97,8 +97,21 @@ bitflags! {
 
         /// Whether to remove duplicate types or not.
         ///
+        /// This is the combination of [`REMOVE_DUPLICATE_TYPES`](Self::REMOVE_DUPLICATE_TYPES)
+        /// and [`REMOVE_DUPLICATE_CONTENTS`](Self::REMOVE_DUPLICATE_CONTENTS).
+        ///
         /// See [`remove_duplicates`](crate::Optimizer::remove_duplicates) for details.
-        const REMOVE_DUPLICATES = 1 << 13;
+        const REMOVE_DUPLICATES = Self::REMOVE_DUPLICATE_TYPES.bits()
+            | Self::REMOVE_DUPLICATE_CONTENTS.bits();
+
+        /// Whether to remove duplicate types that are neither content types nor
+        /// copies of groups or not.
+        ///
+        /// Without [`REMOVE_DUPLICATE_CONTENTS`](Self::REMOVE_DUPLICATE_CONTENTS)
+        /// each complex type keeps its own content type, like in version 1.5.
+        ///
+        /// See [`remove_duplicate_types`](crate::Optimizer::remove_duplicate_types) for details.
+        const REMOVE_DUPLICATE_TYPES = 1 << 13;
 
         /// Group that contains all necessary optimization that should be applied
         /// if code with [`serde`] support should be rendered.
@@ -125,5 +138,10 @@ bitflags! {
         ///
         /// See [`merge_dynamic_types`](crate::Optimizer::merge_dynamic_types) for details.
         const MERGE_DYNAMIC_TYPES = 1 << 17;
+
+        /// Whether to remove duplicate content types and copies of groups or not.
+        ///
+        /// See [`remove_duplicate_contents`](crate::Optimizer::remove_duplicate_contents) for details.
+        const REMOVE_DUPLICATE_CONTENTS = 1 << 18;
     }
 }

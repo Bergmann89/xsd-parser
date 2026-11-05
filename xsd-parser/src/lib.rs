@@ -303,7 +303,19 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
         remove_duplicate_union_variants
     );
     exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
-    exec!(REMOVE_DUPLICATES, remove_duplicates);
+    match (
+        config
+            .flags
+            .contains(OptimizerFlags::REMOVE_DUPLICATE_TYPES),
+        config
+            .flags
+            .contains(OptimizerFlags::REMOVE_DUPLICATE_CONTENTS),
+    ) {
+        (true, true) => optimizer = optimizer.remove_duplicates(),
+        (true, false) => optimizer = optimizer.remove_duplicate_types(),
+        (false, true) => optimizer = optimizer.remove_duplicate_contents(),
+        (false, false) => (),
+    }
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
     exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
     exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
