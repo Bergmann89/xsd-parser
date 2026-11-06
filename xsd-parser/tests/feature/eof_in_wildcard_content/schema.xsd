@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <xs:element name="Root" type="tns:RootType" />
+
+    <xs:complexType name="RootType">
+        <xs:sequence>
+            <xs:element name="Info" type="tns:InfoType" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="InfoType" mixed="true">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="Name" type="xs:string" />
+            <xs:any processContents="lax" namespace="##other" />
+        </xs:choice>
+    </xs:complexType>
+</xs:schema>
