@@ -1360,7 +1360,7 @@ where
                 | Event::GeneralRef(_)
                 | Event::PI(_),
             ) => (),
-            Some(event) if allow_any => {
+            Some(event) if allow_any && !matches!(event, Event::Eof) => {
                 if matches!(event, Event::Start(_)) {
                     self.skip_depth = Some(1);
                 }

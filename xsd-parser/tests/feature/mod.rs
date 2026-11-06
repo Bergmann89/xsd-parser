@@ -36,6 +36,7 @@ mod empty_string;
 mod encoding;
 mod enumeration;
 mod enumeration_with_annotation;
+mod eof_in_wildcard_content;
 mod extension_base;
 mod extension_base_as_element_type;
 mod extension_base_multilayer;
