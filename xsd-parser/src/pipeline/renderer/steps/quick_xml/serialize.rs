@@ -242,7 +242,7 @@ impl DynamicData<'_> {
                     #dynamic_type_serializer
                     #( #dynamic_element_serializer )*
 
-                    self.0.serializer(None, is_root)
+                    self.0.serializer(name, is_root)
                 }
             }
         };
@@ -1688,6 +1688,10 @@ impl NamespaceCollector {
                             self.merge(&mut state, types, type_, default_ns);
                         }
 
+                        if el.form == FormChoiceType::Qualified {
+                            Self::add_element_ns(&mut state, types, el.ident.ns, default_ns);
+                        }
+
                         if self.nillable_type_support && el.is_nillable() {
                             if let Some(id) = self.xsi_namespace {
                                 Self::add_ns(&mut state, types, NamespaceKey::Normal(id));
@@ -1738,18 +1742,7 @@ impl NamespaceCollector {
             }
 
             if ty.form() == FormChoiceType::Qualified {
-                let ns = types
-                    .modules
-                    .get(&ident.ns)
-                    .and_then(|module| module.namespace.as_ref());
-
-                let key = if matches!((ns, default_ns), (Some(a), Some(b)) if a == b) {
-                    NamespaceKey::Default(ident.ns)
-                } else {
-                    NamespaceKey::Normal(ident.ns)
-                };
-
-                Self::add_ns(&mut state, types, key);
+                Self::add_element_ns(&mut state, types, ident.ns, default_ns);
             }
 
             let value = match state {
@@ -1806,6 +1799,27 @@ impl NamespaceCollector {
                 }
             }
         }
+    }
+
+    /// Adds the namespace of a qualified element, unprefixed if it equals `default_ns`.
+    fn add_element_ns(
+        state: &mut GetNamespaceState,
+        types: &MetaTypes,
+        ns: NamespaceId,
+        default_ns: Option<&Namespace>,
+    ) {
+        let module_ns = types
+            .modules
+            .get(&ns)
+            .and_then(|module| module.namespace.as_ref());
+
+        let key = if matches!((module_ns, default_ns), (Some(a), Some(b)) if a == b) {
+            NamespaceKey::Default(ns)
+        } else {
+            NamespaceKey::Normal(ns)
+        };
+
+        Self::add_ns(state, types, key);
     }
 
     fn add_ns(state: &mut GetNamespaceState, types: &MetaTypes, key: NamespaceKey) {

@@ -26,7 +26,9 @@ impl WithDeserializer for FooType {
 }
 impl CollectNamespaces for FooType {
     fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        helper.write_xmlns(bytes, Some(&PREFIX_BAR), &NS_BAR);
         self.inner_1.collect_namespaces(helper, bytes);
+        helper.write_xmlns(bytes, Some(&PREFIX_BAZ), &NS_BAZ);
         self.inner_2.collect_namespaces(helper, bytes);
     }
 }

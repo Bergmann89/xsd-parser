@@ -54,12 +54,12 @@ impl WithSerializer for Animal {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         if (*self.0).as_any().is::<CatType>() {
-            return self.0.serializer(Some("cat"), is_root);
+            return self.0.serializer(Some("tns:cat"), is_root);
         }
         if (*self.0).as_any().is::<DogType>() {
-            return self.0.serializer(Some("dog"), is_root);
+            return self.0.serializer(Some("tns:dog"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for Animal {
@@ -112,7 +112,7 @@ impl WithSerializer for DogType {
                 is_root,
             )));
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for DogType {
@@ -832,7 +832,7 @@ pub mod quick_xml_serialize {
                     ListTypeSerializerState::Init__ => {
                         *self.state = ListTypeSerializerState::Animal(IterSerializer::new(
                             &self.value.animal[..],
-                            Some("animal"),
+                            Some("tns:animal"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
@@ -843,6 +843,11 @@ pub mod quick_xml_serialize {
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
                                 &super::NS_XSI,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
                             );
                         }
                         return Ok(Some(Event::Start(bytes)));

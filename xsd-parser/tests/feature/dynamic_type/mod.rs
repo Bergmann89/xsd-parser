@@ -194,7 +194,7 @@ fn write_quick_xml_optimized() {
     crate::utils::quick_xml_write_test(
         &obj,
         "list",
-        "tests/feature/dynamic_type/example/default.xml",
+        "tests/feature/dynamic_type/example/default_optimized.xml",
     );
 }
 

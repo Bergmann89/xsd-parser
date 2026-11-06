@@ -145,7 +145,7 @@ impl WithSerializer for AnimalType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for AnimalType {

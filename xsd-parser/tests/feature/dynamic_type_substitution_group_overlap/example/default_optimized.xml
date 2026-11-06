@@ -1,4 +1,4 @@
-<list xmlns="http://example.com">
+<list xmlns="http://example.com" xmlns:tns="http://example.com">
     <animal id="1" />
     <dog id="2" name="Max" />
     <labrador id="3" name="Charlie" color="yellow" />

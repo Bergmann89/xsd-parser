@@ -31,6 +31,7 @@ mod dynamic_type_substitution_group;
 mod dynamic_type_substitution_group_overlap;
 mod element_default_with_simple_content;
 mod element_refs_with_ns;
+mod element_refs_with_ns_unqualified;
 mod element_without_type;
 mod empty_string;
 mod encoding;

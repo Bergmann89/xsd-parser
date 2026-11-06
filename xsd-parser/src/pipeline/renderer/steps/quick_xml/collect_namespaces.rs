@@ -174,10 +174,11 @@ impl ComplexDataEnum<'_> {
 
         let own_ns = self.render_collect_own_namespace(ctx);
 
+        let own_tag = self.tag_name.as_ref();
         let variants = self
             .elements
             .iter()
-            .map(ComplexDataElement::render_collect_namespaces_match_arm);
+            .map(|el| el.render_collect_namespaces_match_arm(ctx, own_tag));
 
         let bytes_start = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
         let collect_namespaces =
@@ -207,6 +208,7 @@ impl ComplexDataStruct<'_> {
         let own_ns = self.render_collect_own_namespace(ctx);
         let attrib_ns = self.render_collect_attribute_namespaces(ctx);
 
+        let own_tag = self.tag_name.as_ref();
         let field_calls: Vec<_> = match &self.mode {
             StructMode::Empty { .. } => Vec::new(),
             StructMode::Content { content } => {
@@ -218,7 +220,7 @@ impl ComplexDataStruct<'_> {
             }
             StructMode::All { elements, .. } | StructMode::Sequence { elements, .. } => elements
                 .iter()
-                .map(ComplexDataElement::render_collect_namespaces_field_call)
+                .map(|el| el.render_collect_namespaces_field_call(ctx, own_tag))
                 .collect(),
         };
 
@@ -264,49 +266,93 @@ impl ComplexDataAttribute<'_> {
 }
 
 impl ComplexDataElement<'_> {
-    fn render_collect_namespaces_field_call(&self) -> TokenStream {
-        let field_ident = &self.field_ident;
+    /// Renders this element's namespace declaration unless `own_tag` already declares it.
+    fn render_collect_element_namespace(
+        &self,
+        ctx: &Context<'_, '_>,
+        own_tag: Option<&TagName<'_>>,
+    ) -> Option<TokenStream> {
+        let namespace_id = |tag: &TagName<'_>| tag.module.map(|module| module.namespace_id);
+        let covered = own_tag.is_some_and(|own| {
+            own.form == FormChoiceType::Qualified
+                && namespace_id(own) == namespace_id(&self.tag_name)
+        });
 
-        match self.occurs {
-            Occurs::None => unreachable!(),
-            Occurs::Single => quote! {
-                self.#field_ident.collect_namespaces(helper, bytes);
-            },
-            Occurs::Optional => quote! {
-                if let Some(inner) = &self.#field_ident {
-                    inner.collect_namespaces(helper, bytes);
-                }
-            },
-            Occurs::DynamicList | Occurs::StaticList(_) => quote! {
-                for item in &self.#field_ident {
-                    item.collect_namespaces(helper, bytes);
-                }
-            },
+        if covered {
+            None
+        } else {
+            self.tag_name.render_collect_namespace(ctx)
         }
     }
 
-    fn render_collect_namespaces_match_arm(&self) -> TokenStream {
+    fn render_collect_namespaces_field_call(
+        &self,
+        ctx: &Context<'_, '_>,
+        own_tag: Option<&TagName<'_>>,
+    ) -> TokenStream {
+        let field_ident = &self.field_ident;
+
+        self.render_collect_namespaces_value(
+            ctx,
+            own_tag,
+            &quote!(self.#field_ident),
+            &quote!(&self.#field_ident),
+        )
+    }
+
+    fn render_collect_namespaces_match_arm(
+        &self,
+        ctx: &Context<'_, '_>,
+        own_tag: Option<&TagName<'_>>,
+    ) -> TokenStream {
         let variant_ident = &self.variant_ident;
+        let body = self.render_collect_namespaces_value(ctx, own_tag, &quote!(x), &quote!(x));
+
+        quote! {
+            Self::#variant_ident(x) => {
+                #body
+            }
+        }
+    }
+
+    /// Renders the namespace collection for this element's value, read through `place` or `ref_`.
+    fn render_collect_namespaces_value(
+        &self,
+        ctx: &Context<'_, '_>,
+        own_tag: Option<&TagName<'_>>,
+        place: &TokenStream,
+        ref_: &TokenStream,
+    ) -> TokenStream {
+        let element_ns = self.render_collect_element_namespace(ctx, own_tag);
 
         match self.occurs {
             Occurs::None => unreachable!(),
             Occurs::Single => quote! {
-                Self::#variant_ident(x) => x.collect_namespaces(helper, bytes),
+                #element_ns
+                #place.collect_namespaces(helper, bytes);
             },
             Occurs::Optional => quote! {
-                Self::#variant_ident(x) => {
-                    if let Some(inner) = x {
-                        inner.collect_namespaces(helper, bytes);
-                    }
+                if let Some(inner) = #ref_ {
+                    #element_ns
+                    inner.collect_namespaces(helper, bytes);
                 }
             },
-            Occurs::DynamicList | Occurs::StaticList(_) => quote! {
-                Self::#variant_ident(x) => {
-                    for item in x.iter() {
+            Occurs::DynamicList | Occurs::StaticList(_) => {
+                let element_ns = element_ns.map(|element_ns| {
+                    quote! {
+                        if !#place.is_empty() {
+                            #element_ns
+                        }
+                    }
+                });
+
+                quote! {
+                    #element_ns
+                    for item in #ref_ {
                         item.collect_namespaces(helper, bytes);
                     }
                 }
-            },
+            }
         }
     }
 }

@@ -145,7 +145,7 @@ pub mod quick_xml_serialize {
                                 &super::NS_TNS,
                             );
                         }
-                        helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                        helper.write_attrib_opt(&mut bytes, "tns:id", &self.value.id)?;
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }

@@ -127803,6 +127803,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -127853,8 +127861,8 @@ pub mod quick_xml_serialize {
                             "line-height",
                             &self.value.line_height,
                         )?;
-                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                        helper.write_attrib_opt(&mut bytes, "space", &self.value.space)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:space", &self.value.space)?;
                         helper.write_attrib_opt(&mut bytes, "dir", &self.value.dir)?;
                         helper.write_attrib_opt(&mut bytes, "enclosure", &self.value.enclosure)?;
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
@@ -127868,6 +127876,7 @@ pub mod quick_xml_serialize {
                     }
                     AccidentalTextSerializerState::End__ => {
                         *self.state = AccidentalTextSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -129299,7 +129308,15 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     AttributesSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -129308,6 +129325,7 @@ pub mod quick_xml_serialize {
                     },
                     AttributesSerializerState::End__ => {
                         *self.state = AttributesSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -129631,7 +129649,15 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     BackupSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -129640,6 +129666,7 @@ pub mod quick_xml_serialize {
                     },
                     BackupSerializerState::End__ => {
                         *self.state = BackupSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -129892,6 +129919,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "location", &self.value.location)?;
                         helper.write_attrib_opt(&mut bytes, "segno", &self.value.segno_attr)?;
                         helper.write_attrib_opt(&mut bytes, "coda", &self.value.coda_attr)?;
@@ -129905,6 +129940,7 @@ pub mod quick_xml_serialize {
                     },
                     BarlineSerializerState::End__ => {
                         *self.state = BarlineSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -132015,6 +132051,19 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "page", &self.value.page)?;
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -132025,6 +132074,7 @@ pub mod quick_xml_serialize {
                     },
                     CreditSerializerState::End__ => {
                         *self.state = CreditSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -132306,7 +132356,15 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     DefaultsSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -132315,6 +132373,7 @@ pub mod quick_xml_serialize {
                     },
                     DefaultsSerializerState::End__ => {
                         *self.state = DefaultsSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -133135,6 +133194,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "placement", &self.value.placement)?;
                         helper.write_attrib_opt(&mut bytes, "directive", &self.value.directive)?;
                         helper.write_attrib_opt(&mut bytes, "system", &self.value.system)?;
@@ -133147,6 +133214,7 @@ pub mod quick_xml_serialize {
                     },
                     DirectionSerializerState::End__ => {
                         *self.state = DirectionSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -133433,6 +133501,14 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -133444,6 +133520,7 @@ pub mod quick_xml_serialize {
                     }
                     DirectionTypeSerializerState::End__ => {
                         *self.state = DirectionTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -136232,7 +136309,15 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     FigureSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -136241,6 +136326,7 @@ pub mod quick_xml_serialize {
                     },
                     FigureSerializerState::End__ => {
                         *self.state = FigureSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -136466,6 +136552,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -136528,6 +136622,7 @@ pub mod quick_xml_serialize {
                     },
                     FiguredBassSerializerState::End__ => {
                         *self.state = FiguredBassSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -137336,6 +137431,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -137386,8 +137489,8 @@ pub mod quick_xml_serialize {
                             "line-height",
                             &self.value.line_height,
                         )?;
-                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                        helper.write_attrib_opt(&mut bytes, "space", &self.value.space)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:space", &self.value.space)?;
                         helper.write_attrib_opt(&mut bytes, "dir", &self.value.dir)?;
                         helper.write_attrib_opt(&mut bytes, "enclosure", &self.value.enclosure)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -137400,6 +137503,7 @@ pub mod quick_xml_serialize {
                     }
                     FormattedTextSerializerState::End__ => {
                         *self.state = FormattedTextSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -137468,6 +137572,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -137518,8 +137630,8 @@ pub mod quick_xml_serialize {
                             "line-height",
                             &self.value.line_height,
                         )?;
-                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                        helper.write_attrib_opt(&mut bytes, "space", &self.value.space)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:space", &self.value.space)?;
                         helper.write_attrib_opt(&mut bytes, "dir", &self.value.dir)?;
                         helper.write_attrib_opt(&mut bytes, "enclosure", &self.value.enclosure)?;
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -137533,6 +137645,7 @@ pub mod quick_xml_serialize {
                     }
                     FormattedTextIdSerializerState::End__ => {
                         *self.state = FormattedTextIdSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -137600,7 +137713,15 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     ForwardSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -137609,6 +137730,7 @@ pub mod quick_xml_serialize {
                     },
                     ForwardSerializerState::End__ => {
                         *self.state = ForwardSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -139756,6 +139878,14 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -139812,6 +139942,7 @@ pub mod quick_xml_serialize {
                     },
                     HarmonySerializerState::End__ => {
                         *self.state = HarmonySerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -142545,12 +142676,20 @@ pub mod quick_xml_serialize {
                     LinkSerializerState::Init__ => {
                         *self.state = LinkSerializerState::Done__;
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
-                        helper.write_attrib(&mut bytes, "href", &self.value.href)?;
-                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
-                        helper.write_attrib_opt(&mut bytes, "role", &self.value.role)?;
-                        helper.write_attrib_opt(&mut bytes, "title", &self.value.title)?;
-                        helper.write_attrib(&mut bytes, "show", &self.value.show)?;
-                        helper.write_attrib(&mut bytes, "actuate", &self.value.actuate)?;
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
+                        helper.write_attrib(&mut bytes, "xlink:href", &self.value.href)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:type", &self.value.type_)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:role", &self.value.role)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:title", &self.value.title)?;
+                        helper.write_attrib(&mut bytes, "xlink:show", &self.value.show)?;
+                        helper.write_attrib(&mut bytes, "xlink:actuate", &self.value.actuate)?;
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib_opt(&mut bytes, "element", &self.value.element)?;
                         helper.write_attrib_opt(&mut bytes, "position", &self.value.position)?;
@@ -142566,6 +142705,7 @@ pub mod quick_xml_serialize {
                             "relative-y",
                             &self.value.relative_y,
                         )?;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
                     }
                     LinkSerializerState::Done__ => return Ok(None),
@@ -142988,6 +143128,14 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
@@ -143020,6 +143168,7 @@ pub mod quick_xml_serialize {
                     },
                     LyricSerializerState::End__ => {
                         *self.state = LyricSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -143359,9 +143508,18 @@ pub mod quick_xml_serialize {
                     LyricLanguageSerializerState::Init__ => {
                         *self.state = LyricLanguageSerializerState::Done__;
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
-                        helper.write_attrib(&mut bytes, "lang", &self.value.lang)?;
+                        helper.write_attrib(&mut bytes, "xml:lang", &self.value.lang)?;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
                     }
                     LyricLanguageSerializerState::Done__ => return Ok(None),
@@ -145741,6 +145899,14 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -145754,6 +145920,7 @@ pub mod quick_xml_serialize {
                     },
                     NameDisplaySerializerState::End__ => {
                         *self.state = NameDisplaySerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -145984,6 +146151,14 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -145998,6 +146173,7 @@ pub mod quick_xml_serialize {
                     },
                     NotationsSerializerState::End__ => {
                         *self.state = NotationsSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -146405,6 +146581,14 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -146474,6 +146658,7 @@ pub mod quick_xml_serialize {
                     },
                     NoteSerializerState::End__ => {
                         *self.state = NoteSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -147180,7 +147365,15 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     NoteheadTextSerializerState::Content__(x) => {
@@ -147191,6 +147384,7 @@ pub mod quick_xml_serialize {
                     }
                     NoteheadTextSerializerState::End__ => {
                         *self.state = NoteheadTextSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -147944,12 +148138,21 @@ pub mod quick_xml_serialize {
                     OpusSerializerState::Init__ => {
                         *self.state = OpusSerializerState::Done__;
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
-                        helper.write_attrib(&mut bytes, "href", &self.value.href)?;
-                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
-                        helper.write_attrib_opt(&mut bytes, "role", &self.value.role)?;
-                        helper.write_attrib_opt(&mut bytes, "title", &self.value.title)?;
-                        helper.write_attrib(&mut bytes, "show", &self.value.show)?;
-                        helper.write_attrib(&mut bytes, "actuate", &self.value.actuate)?;
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
+                        helper.write_attrib(&mut bytes, "xlink:href", &self.value.href)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:type", &self.value.type_)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:role", &self.value.role)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:title", &self.value.title)?;
+                        helper.write_attrib(&mut bytes, "xlink:show", &self.value.show)?;
+                        helper.write_attrib(&mut bytes, "xlink:actuate", &self.value.actuate)?;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
                     }
                     OpusSerializerState::Done__ => return Ok(None),
@@ -149584,6 +149787,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -149594,6 +149805,7 @@ pub mod quick_xml_serialize {
                     },
                     PartGroupSerializerState::End__ => {
                         *self.state = PartGroupSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -149900,12 +150112,20 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
-                        helper.write_attrib(&mut bytes, "href", &self.value.href)?;
-                        helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
-                        helper.write_attrib_opt(&mut bytes, "role", &self.value.role)?;
-                        helper.write_attrib_opt(&mut bytes, "title", &self.value.title)?;
-                        helper.write_attrib(&mut bytes, "show", &self.value.show)?;
-                        helper.write_attrib(&mut bytes, "actuate", &self.value.actuate)?;
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
+                        helper.write_attrib(&mut bytes, "xlink:href", &self.value.href)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:type", &self.value.type_)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:role", &self.value.role)?;
+                        helper.write_attrib_opt(&mut bytes, "xlink:title", &self.value.title)?;
+                        helper.write_attrib(&mut bytes, "xlink:show", &self.value.show)?;
+                        helper.write_attrib(&mut bytes, "xlink:actuate", &self.value.actuate)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     PartLinkSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -149914,6 +150134,7 @@ pub mod quick_xml_serialize {
                     },
                     PartLinkSerializerState::End__ => {
                         *self.state = PartLinkSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -150073,7 +150294,20 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     PartListSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -150082,6 +150316,7 @@ pub mod quick_xml_serialize {
                     },
                     PartListSerializerState::End__ => {
                         *self.state = PartListSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -152121,6 +152356,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "staff-spacing",
@@ -152151,6 +152394,7 @@ pub mod quick_xml_serialize {
                     },
                     PrintSerializerState::End__ => {
                         *self.state = PrintSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -153473,6 +153717,19 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -153482,6 +153739,7 @@ pub mod quick_xml_serialize {
                     },
                     ScorePartSerializerState::End__ => {
                         *self.state = ScorePartSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -153794,6 +154052,19 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "version", &self.value.version)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -153805,6 +154076,7 @@ pub mod quick_xml_serialize {
                     }
                     ScorePartwiseElementTypeSerializerState::End__ => {
                         *self.state = ScorePartwiseElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -154087,6 +154359,19 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "version", &self.value.version)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -154098,6 +154383,7 @@ pub mod quick_xml_serialize {
                     }
                     ScoreTimewiseElementTypeSerializerState::End__ => {
                         *self.state = ScoreTimewiseElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -158025,6 +158311,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -158055,7 +158349,7 @@ pub mod quick_xml_serialize {
                             "letter-spacing",
                             &self.value.letter_spacing,
                         )?;
-                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                         helper.write_attrib_opt(&mut bytes, "dir", &self.value.dir)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -158067,6 +158361,7 @@ pub mod quick_xml_serialize {
                     }
                     TextElementDataSerializerState::End__ => {
                         *self.state = TextElementDataSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -160441,7 +160736,15 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
-                        let bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     WorkSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -160450,6 +160753,7 @@ pub mod quick_xml_serialize {
                     },
                     WorkSerializerState::End__ => {
                         *self.state = WorkSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -160625,6 +160929,14 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -160654,7 +160966,7 @@ pub mod quick_xml_serialize {
                             &self.value.font_weight,
                         )?;
                         helper.write_attrib_opt(&mut bytes, "color", &self.value.color)?;
-                        helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                        helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     AttributesDirectiveElementTypeSerializerState::Content__(x) => match x
@@ -160666,6 +160978,7 @@ pub mod quick_xml_serialize {
                     },
                     AttributesDirectiveElementTypeSerializerState::End__ => {
                         *self.state = AttributesDirectiveElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -160727,6 +161040,19 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -160739,6 +161065,7 @@ pub mod quick_xml_serialize {
                     },
                     ScorePartwisePartElementTypeSerializerState::End__ => {
                         *self.state = ScorePartwisePartElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -160877,6 +161204,19 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "implicit", &self.value.implicit)?;
@@ -160898,6 +161238,7 @@ pub mod quick_xml_serialize {
                     },
                     ScoreTimewiseMeasureElementTypeSerializerState::End__ => {
                         *self.state = ScoreTimewiseMeasureElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -161050,6 +161391,19 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "implicit", &self.value.implicit)?;
@@ -161073,6 +161427,7 @@ pub mod quick_xml_serialize {
                     }
                     ScorePartwisePartMeasureElementTypeSerializerState::End__ => {
                         *self.state = ScorePartwisePartMeasureElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
@@ -161227,6 +161582,19 @@ pub mod quick_xml_serialize {
                             ),
                         );
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XML),
+                                &super::NS_XML,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XLINK),
+                                &super::NS_XLINK,
+                            );
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -161241,6 +161609,7 @@ pub mod quick_xml_serialize {
                     }
                     ScoreTimewiseMeasurePartElementTypeSerializerState::End__ => {
                         *self.state = ScoreTimewiseMeasurePartElementTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
                             ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
                         )));
