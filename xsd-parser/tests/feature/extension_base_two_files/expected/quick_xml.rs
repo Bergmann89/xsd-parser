@@ -275,6 +275,7 @@ pub mod other {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -644,6 +645,7 @@ pub mod tns {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }

@@ -411,6 +411,7 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            let event = event.into_break();
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
             }
@@ -814,6 +815,7 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            let event = event.into_break();
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
             }
@@ -1216,6 +1218,7 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            let event = event.into_break();
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
             }
