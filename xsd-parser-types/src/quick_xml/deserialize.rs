@@ -887,12 +887,14 @@ impl DeserializeHelper {
 
     /// Decides about a start or empty tag that the deserializer of `T` did not consume.
     ///
-    /// A tag that is part of the content model of `T` is an error, an unknown tag
-    /// is handed back with `allow_any` set, so the driver skips the whole element.
+    /// The tag is handed back with `allow_any` set, so the driver skips the whole
+    /// element. A tag that is part of the content model of `T` is an error, unless
+    /// `allow_any` was already set.
     ///
     /// # Errors
     ///
-    /// Returns [`ErrorKind::UnexpectedEvent`] if the tag is known to `T`.
+    /// Returns [`ErrorKind::UnexpectedEvent`] if the tag is known to `T` and
+    /// `allow_any` is not set.
     pub fn decide_unknown_element<'de, T>(
         &self,
         event: DeserializerEvent<'de>,
@@ -902,21 +904,18 @@ impl DeserializeHelper {
         T: WithDeserializer,
         T::Deserializer: Deserializer<'de, T>,
     {
-        match (allow_any, event) {
-            (
-                false,
-                DeserializerEvent::Continue(ev @ (Event::Start(_) | Event::Empty(_)))
-                | DeserializerEvent::Break(ev @ (Event::Start(_) | Event::Empty(_))),
-            ) => {
+        match event {
+            DeserializerEvent::Continue(ev @ (Event::Start(_) | Event::Empty(_)))
+            | DeserializerEvent::Break(ev @ (Event::Start(_) | Event::Empty(_))) => {
                 if let Event::Start(x) | Event::Empty(x) = &ev {
-                    if T::Deserializer::is_known_start_tag(self, x) {
+                    if !allow_any && T::Deserializer::is_known_start_tag(self, x) {
                         return Err(ErrorKind::UnexpectedEvent(ev.into_owned()).into());
                     }
                 }
 
                 Ok((DeserializerEvent::Break(ev), true))
             }
-            (allow_any, event) => Ok((event, allow_any)),
+            event => Ok((event, allow_any)),
         }
     }
 
@@ -1495,6 +1494,19 @@ mod tests {
             let err = decide(event, false).unwrap_err();
 
             assert!(matches!(err.kind, ErrorKind::UnexpectedEvent(_)), "{err:?}");
+        }
+    }
+
+    #[test]
+    fn decide_unknown_element_breaks_any_tag_if_any_is_allowed() {
+        for event in [
+            DeserializerEvent::Continue(Event::Start(BytesStart::new("known"))),
+            DeserializerEvent::Continue(Event::Empty(BytesStart::new("other"))),
+        ] {
+            let (event, allow_any) = decide(event, true).unwrap();
+
+            assert!(matches!(event, DeserializerEvent::Break(_)));
+            assert!(allow_any);
         }
     }
 

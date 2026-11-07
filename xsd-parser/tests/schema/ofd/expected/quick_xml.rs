@@ -220,6 +220,7 @@ pub mod annotations {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -414,6 +415,7 @@ pub mod annotations {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -942,6 +944,7 @@ pub mod annotion {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -1384,6 +1387,7 @@ pub mod annotion {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -1588,6 +1592,7 @@ pub mod annotion {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -1754,6 +1759,7 @@ pub mod annotion {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -2591,6 +2597,7 @@ pub mod attachments {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -2841,6 +2848,7 @@ pub mod attachments {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -3247,6 +3255,7 @@ pub mod custom_tags {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -3521,6 +3530,7 @@ pub mod custom_tags {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -4419,6 +4429,7 @@ pub mod definition {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -5648,6 +5659,7 @@ pub mod definition {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -5835,6 +5847,7 @@ pub mod definition {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -6135,6 +6148,7 @@ pub mod definition {
                         }
                     }
                 };
+                let event = event.into_break();
                 let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(helper)?)
                 } else {
@@ -6688,6 +6702,7 @@ pub mod definition {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -9846,6 +9861,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -10129,6 +10145,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -10858,6 +10875,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -11020,6 +11038,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -12862,6 +12881,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -13613,6 +13633,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -13807,6 +13828,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -13998,6 +14020,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -14186,6 +14209,7 @@ pub mod document {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -16134,6 +16158,7 @@ pub mod extensions {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -16713,6 +16738,7 @@ pub mod extensions {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -18512,6 +18538,7 @@ pub mod ofd {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -18733,6 +18760,7 @@ pub mod ofd {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -18923,6 +18951,7 @@ pub mod ofd {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -19113,6 +19142,7 @@ pub mod ofd {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -19537,6 +19567,7 @@ pub mod ofd {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -19727,6 +19758,7 @@ pub mod ofd {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -22736,6 +22768,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -22950,6 +22983,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -23137,6 +23171,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -23316,6 +23351,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -24277,6 +24313,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -24567,6 +24604,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -25803,6 +25841,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -26289,6 +26328,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -26594,6 +26634,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -26765,6 +26806,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -26915,6 +26957,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -27543,6 +27586,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -27809,6 +27853,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -28086,6 +28131,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -28416,6 +28462,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -28927,6 +28974,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -29127,6 +29175,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -29298,6 +29347,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -29787,6 +29837,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -29973,6 +30024,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -30185,6 +30237,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -30535,6 +30588,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -31205,6 +31259,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -31716,6 +31771,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -32136,6 +32192,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -32389,6 +32446,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -32598,6 +32656,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -32764,6 +32823,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -33504,6 +33564,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -34637,6 +34698,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -34817,6 +34879,7 @@ pub mod page {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -39566,6 +39629,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -39895,6 +39959,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -40143,6 +40208,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -40349,6 +40415,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -40712,6 +40779,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -40873,6 +40941,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -41666,6 +41735,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -41861,6 +41931,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -42056,6 +42127,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -42240,6 +42312,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -42435,6 +42508,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -42639,6 +42713,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -42872,6 +42947,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -43216,6 +43292,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -43476,6 +43553,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -43698,6 +43776,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -44076,6 +44155,7 @@ pub mod res {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -46027,6 +46107,7 @@ pub mod signature {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -46600,6 +46681,7 @@ pub mod signature {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -46917,6 +46999,7 @@ pub mod signature {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -47219,6 +47302,7 @@ pub mod signature {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -47422,6 +47506,7 @@ pub mod signature {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -48265,6 +48350,7 @@ pub mod signatures {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -48904,6 +48990,7 @@ pub mod version {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }
@@ -49102,6 +49189,7 @@ pub mod version {
                         }
                     }
                 };
+                let event = event.into_break();
                 if let Some(fallback) = fallback {
                     *self.state__ = fallback;
                 }

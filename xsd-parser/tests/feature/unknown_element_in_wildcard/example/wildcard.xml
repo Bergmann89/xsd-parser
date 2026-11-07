@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Reference xmlns:tns="http://example.com" xmlns:other="http://example.com/other">
+    <tns:Transforms>
+        <tns:Transform Algorithm="http://www.w3.org/2002/06/xmldsig-filter2">
+            <other:XPath Filter="intersect">
+                <other:Step>/descendant::tns:Signature</other:Step>
+            </other:XPath>
+        </tns:Transform>
+    </tns:Transforms>
+    <tns:DigestMethod>sha256</tns:DigestMethod>
+    <tns:DigestValue>abc</tns:DigestValue>
+</tns:Reference>

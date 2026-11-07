@@ -1123,6 +1123,18 @@ impl ComplexBase<'_> {
         })
     }
 
+    /// Render the handling of an event the loop of `next` did not consume, which
+    /// belongs to the still open element and is handed back to the root instead of the parent.
+    fn render_deserializer_unconsumed_event(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        self.render_deserializer_unknown_element(ctx).or_else(|| {
+            self.represents_element().then(|| {
+                quote! {
+                    let event = event.into_break();
+                }
+            })
+        })
+    }
+
     fn render_deserializer_impl(
         &self,
         ctx: &mut Context<'_, '_>,
@@ -1640,7 +1652,7 @@ impl ComplexDataEnum<'_> {
                 }
             }
         });
-        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
+        let unconsumed_event = self.base.render_deserializer_unconsumed_event(ctx);
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1677,7 +1689,7 @@ impl ComplexDataEnum<'_> {
                 }
             };
 
-            #unknown_element
+            #unconsumed_event
 
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 #deserializer_artifact::Data(self.finish(helper)?)
@@ -2530,7 +2542,7 @@ impl ComplexDataStruct<'_> {
         ctx.add_quick_xml_deserialize_usings(true, ["::xsd_parser_types::quick_xml::Deserializer"]);
 
         let has_done_state = content.need_done_state(self.represents_element());
-        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
+        let unconsumed_event = self.base.render_deserializer_unconsumed_event(ctx);
         let done_handler = has_done_state.then(|| {
             quote! {
                 (S::Done__, event) => {
@@ -2590,7 +2602,7 @@ impl ComplexDataStruct<'_> {
                 }
             };
 
-            #unknown_element
+            #unconsumed_event
 
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
@@ -2619,7 +2631,7 @@ impl ComplexDataStruct<'_> {
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
-        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
+        let unconsumed_event = self.base.render_deserializer_unconsumed_event(ctx);
         let handlers = self
             .elements()
             .iter()
@@ -2654,7 +2666,7 @@ impl ComplexDataStruct<'_> {
                 }
             };
 
-            #unknown_element
+            #unconsumed_event
 
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;
@@ -2706,7 +2718,7 @@ impl ComplexDataStruct<'_> {
             }
         });
 
-        let unknown_element = self.base.render_deserializer_unknown_element(ctx);
+        let unconsumed_event = self.base.render_deserializer_unconsumed_event(ctx);
 
         let init_set_any = allow_any.then(|| {
             quote! {
@@ -2800,7 +2812,7 @@ impl ComplexDataStruct<'_> {
                 }
             };
 
-            #unknown_element
+            #unconsumed_event
 
             if let Some(fallback) = fallback {
                 *self.state__ = fallback;

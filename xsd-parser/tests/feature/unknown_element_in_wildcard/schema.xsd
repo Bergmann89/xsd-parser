@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <!-- Reduced from the `Reference` of XML Signature. The wildcard of
+         `TransformType` sits two levels below the elements that follow it. -->
+    <xs:element name="Reference">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Transforms" type="tns:TransformsType" minOccurs="0"/>
+                <xs:element name="DigestMethod" type="xs:string"/>
+                <xs:element name="DigestValue" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="TransformsType">
+        <xs:sequence>
+            <xs:element name="Transform" type="tns:TransformType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="TransformType" mixed="true">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:any namespace="##other" processContents="lax"/>
+            <xs:element name="XPath" type="xs:string"/>
+        </xs:choice>
+        <xs:attribute name="Algorithm" type="xs:anyURI" use="required"/>
+    </xs:complexType>
+
+    <!-- Child element without a wildcard, followed by an element of the parent. -->
+    <xs:element name="Signature">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="SignedInfo" type="tns:SignedInfoType" maxOccurs="unbounded"/>
+                <xs:element name="SignatureValue" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="SignedInfoType">
+        <xs:sequence>
+            <xs:element name="CanonicalizationMethod" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

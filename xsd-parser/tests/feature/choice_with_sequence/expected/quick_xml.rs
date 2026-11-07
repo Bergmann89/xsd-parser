@@ -376,6 +376,7 @@ pub mod quick_xml_deserialize {
                     }
                 }
             };
+            let event = event.into_break();
             let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 DeserializerArtifact::Data(self.finish(helper)?)
             } else {

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Signature xmlns:tns="http://example.com">
+    <tns:SignedInfo>
+        <tns:CanonicalizationMethod>c14n</tns:CanonicalizationMethod>
+        <tns:SignatureValue>inner</tns:SignatureValue>
+    </tns:SignedInfo>
+    <tns:SignatureValue>outer</tns:SignatureValue>
+</tns:Signature>
