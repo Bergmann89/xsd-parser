@@ -19,10 +19,7 @@ use crate::quick_xml::{
     WithSerializer,
 };
 
-use super::{
-    attributes::{Key as AttribKey, Value as AttribValue},
-    Attributes, NamespacesShared, Value,
-};
+use super::{Attributes, NamespacesShared, Value};
 
 /// Represents a unstructured XML element.
 #[derive(Default, Clone, Eq, PartialEq)]
@@ -34,6 +31,9 @@ pub struct Element<'a> {
     pub values: Vec<Value<'a>>,
 
     /// Attributes of this element.
+    ///
+    /// The deserializer stores `xmlns` declarations in
+    /// [`namespaces`](Self::namespaces) instead, except `xmlns=""`.
     pub attributes: Attributes<'a>,
 
     /// List of valid namespaces for this element.
@@ -217,10 +217,9 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                         helper.write_xmlns(&mut start, prefix.as_ref(), &ns);
                     }
 
-                    // The deserializer stores xmlns declarations in both
-                    // `element.namespaces` and `element.attributes`. Skip xmlns
-                    // attributes that already have a corresponding namespaces entry
-                    // (emitted above via write_xmlns) to avoid duplicates.
+                    // Skip xmlns attributes that already have a corresponding
+                    // namespaces entry (emitted above via write_xmlns) to avoid
+                    // duplicates.
                     let attributes = element
                         .attributes
                         .iter()
@@ -371,18 +370,14 @@ impl ElementDeserializer {
         namespaces: NamespacesShared<'static>,
     ) -> Result<Element<'static>, Error> {
         let name = Cow::Owned(start.name().0.as_bytes().to_owned());
-        let attributes = start
-            .attributes()
-            .map(|item| match item {
-                Ok(Attribute { key, value }) => {
-                    let key = Cow::Owned(key.0.as_bytes().to_owned());
-                    let value = Cow::Owned(value.into_owned().into_bytes());
-
-                    Ok((AttribKey(key), AttribValue(value)))
-                }
-                Err(error) => Err(error),
-            })
-            .collect::<Result<Attributes<'static>, _>>()?;
+        let mut attributes = Attributes::default();
+        for attrib in start.attributes() {
+            let attrib = attrib?;
+            // `namespaces` has no entry for `xmlns=""`
+            if attrib.key.as_namespace_binding().is_none() || attrib.value.is_empty() {
+                attributes.push(attrib)?;
+            }
+        }
 
         Ok(Element {
             name,
@@ -615,8 +610,7 @@ mod tests {
         let element = assert_element!(value);
         assert_eq!(element.name.as_ref(), b"name");
         assert!(element.values.is_empty());
-        assert_eq!(element.attributes.len(), 3);
-        assert_entry!(element.attributes, b"xmlns:ns", b"test");
+        assert_eq!(element.attributes.len(), 2);
         assert_entry!(element.attributes, b"ns:first", b"bob");
         assert_entry!(element.attributes, b"last", b"jones");
         assert_eq!(element.namespaces.len(), 1);
@@ -873,5 +867,37 @@ mod tests {
         let el = Element::new().name(b"\xFF".as_ref());
 
         assert!(el.qname().is_err());
+    }
+
+    const NESTED: &str = r#"<r xmlns:a="urn:a" xmlns:b="urn:b"><b:blob><b:inner/></b:blob></r>"#;
+
+    /// Serializes the child of [`NESTED`] alone, so its inherited namespaces
+    /// are not declared by a parent.
+    fn write_nested_child() -> (Element<'static>, String) {
+        let root = Element::deserialize(&mut SliceReader::new(NESTED)).unwrap();
+        let child = assert_element!(root.values.into_iter().next().unwrap());
+
+        let mut buffer = Vec::new();
+        child
+            .serialize("b:blob", &mut Writer::new(&mut buffer))
+            .unwrap();
+
+        (child, String::from_utf8(buffer).unwrap())
+    }
+
+    #[test]
+    fn roundtrip_nested_element_with_inherited_namespaces() {
+        let (child, output) = write_nested_child();
+        let reread = Element::deserialize(&mut SliceReader::new(&output)).unwrap();
+
+        assert_eq!(child, reread, "written: {output}");
+    }
+
+    #[test]
+    fn nested_element_declares_inherited_namespaces() {
+        let (_, output) = write_nested_child();
+
+        assert!(output.contains(r#"xmlns:a="urn:a""#), "got: {output}");
+        assert!(output.contains(r#"xmlns:b="urn:b""#), "got: {output}");
     }
 }
