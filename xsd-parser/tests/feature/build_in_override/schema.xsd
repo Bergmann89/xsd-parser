@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:example:minimal"
+    xmlns="urn:example:minimal"
+    elementFormDefault="qualified">
+
+    <xs:simpleType name="FiveDigits">
+        <xs:restriction base="xs:integer">
+            <xs:totalDigits value="5" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PlainInteger">
+        <xs:restriction base="xs:integer" />
+    </xs:simpleType>
+
+    <xs:element name="Value" type="FiveDigits" />
+    <xs:element name="Plain" type="PlainInteger" />
+
+</xs:schema>

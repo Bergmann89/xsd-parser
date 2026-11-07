@@ -9,6 +9,7 @@ mod any_type;
 mod any_type_nested;
 mod attribute;
 mod build_in;
+mod build_in_override;
 mod choice;
 mod choice_flatten_content;
 mod choice_single_option_defaults;
