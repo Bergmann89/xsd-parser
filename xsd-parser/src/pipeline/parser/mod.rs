@@ -488,7 +488,7 @@ where
                         expected: current_ns,
                     });
                 }
-            } else {
+            } else if req.request_type == ResolveRequestType::IncludeRequest {
                 let inherited_ns = current_ns.to_string();
                 schema.target_namespace = Some(inherited_ns);
             }

@@ -23,6 +23,8 @@ macro_rules! check_obj {
 
         assert_eq!(obj.inner.a, "Text in A");
         assert_eq!(obj.note, "Text in Note");
+        assert_eq!(obj.plain, "Text in Plain");
+        assert_eq!(obj.typed, "Text in Typed");
     }};
 }
 
@@ -36,6 +38,8 @@ macro_rules! test_obj {
                 a: "Text in A".into(),
             },
             note: "Text in Note".into(),
+            plain: "Text in Plain".into(),
+            typed: "Text in Typed".into(),
         }
     }};
 }

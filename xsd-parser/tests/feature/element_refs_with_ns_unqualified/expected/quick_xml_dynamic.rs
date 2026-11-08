@@ -20,6 +20,8 @@ pub type Outer = OuterType;
 pub struct OuterType {
     pub inner: bar::InnerType,
     pub note: String,
+    pub plain: String,
+    pub typed: String,
 }
 impl CollectNamespaces for OuterType {
     fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
@@ -27,6 +29,8 @@ impl CollectNamespaces for OuterType {
         self.inner.collect_namespaces(helper, bytes);
         helper.write_xmlns(bytes, Some(&PREFIX_BAZ), &NS_BAZ);
         self.note.collect_namespaces(helper, bytes);
+        self.plain.collect_namespaces(helper, bytes);
+        self.typed.collect_namespaces(helper, bytes);
     }
 }
 impl WithSerializer for OuterType {
@@ -349,6 +353,8 @@ pub mod quick_xml_deserialize {
     pub struct OuterTypeDeserializer {
         inner: Option<super::bar::InnerType>,
         note: Option<String>,
+        plain: Option<String>,
+        typed: Option<String>,
         state__: Box<OuterTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -356,6 +362,8 @@ pub mod quick_xml_deserialize {
         Init__,
         Inner(Option<<super::bar::InnerType as WithDeserializer>::Deserializer>),
         Note(Option<<String as WithDeserializer>::Deserializer>),
+        Plain(Option<<String as WithDeserializer>::Deserializer>),
+        Typed(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -371,6 +379,8 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 inner: None,
                 note: None,
+                plain: None,
+                typed: None,
                 state__: Box::new(OuterTypeDeserializerState::Init__),
             })
         }
@@ -383,6 +393,8 @@ pub mod quick_xml_deserialize {
             match state {
                 S::Inner(Some(deserializer)) => self.store_inner(deserializer.finish(helper)?)?,
                 S::Note(Some(deserializer)) => self.store_note(deserializer.finish(helper)?)?,
+                S::Plain(Some(deserializer)) => self.store_plain(deserializer.finish(helper)?)?,
+                S::Typed(Some(deserializer)) => self.store_typed(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -401,6 +413,24 @@ pub mod quick_xml_deserialize {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Note")))?;
             }
             self.note = Some(value);
+            Ok(())
+        }
+        fn store_plain(&mut self, value: String) -> Result<(), Error> {
+            if self.plain.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"Plain",
+                )))?;
+            }
+            self.plain = Some(value);
+            Ok(())
+        }
+        fn store_typed(&mut self, value: String) -> Result<(), Error> {
+            if self.typed.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"Typed",
+                )))?;
+            }
+            self.typed = Some(value);
             Ok(())
         }
         fn handle_inner<'de>(
@@ -467,11 +497,85 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_note(data)?;
-                    *self.state__ = S::Done__;
+                    *self.state__ = S::Plain(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     fallback.get_or_insert(S::Note(Some(deserializer)));
+                    *self.state__ = S::Plain(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+            }
+        }
+        fn handle_plain<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<OuterTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OuterTypeDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(S::Plain(None));
+                if matches!(&fallback, Some(S::Init__)) {
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(helper, fallback)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_plain(data)?;
+                    *self.state__ = S::Typed(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    fallback.get_or_insert(S::Plain(Some(deserializer)));
+                    *self.state__ = S::Typed(None);
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+            }
+        }
+        fn handle_typed<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<OuterTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use OuterTypeDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(S::Typed(None));
+                if matches!(&fallback, Some(S::Init__)) {
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(helper, fallback)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_typed(data)?;
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    fallback.get_or_insert(S::Typed(Some(deserializer)));
                     *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
@@ -513,6 +617,30 @@ pub mod quick_xml_deserialize {
                     (S::Note(Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
                         match self.handle_note(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::Plain(Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_plain(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::Typed(Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_typed(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -571,6 +699,36 @@ pub mod quick_xml_deserialize {
                             }
                         }
                     }
+                    (S::Plain(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output =
+                            helper.init_start_tag_deserializer(event, None, b"Plain", false)?;
+                        match self.handle_plain(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::Typed(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_UNNAMED_5),
+                            b"Typed",
+                            false,
+                        )?;
+                        match self.handle_typed(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
                     (S::Done__, event) => {
                         *self.state__ = S::Done__;
                         break (DeserializerEvent::Continue(event), allow_any_element);
@@ -597,6 +755,8 @@ pub mod quick_xml_deserialize {
             Ok(super::OuterType {
                 inner: helper.finish_element("Inner", self.inner)?,
                 note: helper.finish_element("Note", self.note)?,
+                plain: helper.finish_element("Plain", self.plain)?,
+                typed: helper.finish_element("Typed", self.typed)?,
             })
         }
     }
@@ -618,6 +778,8 @@ pub mod quick_xml_serialize {
         Init__,
         Inner(<super::bar::InnerType as WithSerializer>::Serializer<'ser>),
         Note(<String as WithSerializer>::Serializer<'ser>),
+        Plain(<String as WithSerializer>::Serializer<'ser>),
+        Typed(<String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -655,6 +817,28 @@ pub mod quick_xml_serialize {
                         }
                     },
                     OuterTypeSerializerState::Note(x) => match x.next(helper).transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state =
+                                OuterTypeSerializerState::Plain(WithSerializer::serializer(
+                                    &self.value.plain,
+                                    Some("Plain"),
+                                    false,
+                                )?)
+                        }
+                    },
+                    OuterTypeSerializerState::Plain(x) => match x.next(helper).transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state =
+                                OuterTypeSerializerState::Typed(WithSerializer::serializer(
+                                    &self.value.typed,
+                                    Some("Typed"),
+                                    false,
+                                )?)
+                        }
+                    },
+                    OuterTypeSerializerState::Typed(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = OuterTypeSerializerState::End__,
                     },

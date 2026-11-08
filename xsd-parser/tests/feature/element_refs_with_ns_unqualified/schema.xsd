@@ -8,12 +8,15 @@
 
     <xs:import namespace="Bar" schemaLocation="bar.xsd" />
     <xs:import namespace="Baz" schemaLocation="baz.xsd" />
+    <xs:import schemaLocation="plain.xsd" />
 
     <xs:element name="Outer">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="bar:Inner" />
                 <xs:element ref="baz:Note" />
+                <xs:element ref="Plain" />
+                <xs:element name="Typed" type="PlainType" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
