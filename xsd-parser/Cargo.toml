@@ -1,6 +1,6 @@
 [package]
 name = "xsd-parser"
-version = "1.6.1"
+version = "1.7.0"
 description = "Rust code generator for XML schema files"
 
 license.workspace = true
