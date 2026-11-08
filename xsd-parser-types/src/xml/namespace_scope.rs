@@ -223,6 +223,17 @@ where
         Ok(Self::map_output(helper, output))
     }
 
+    fn init_with_name(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, NamespaceScope<T>> {
+        let output = T::Deserializer::init_with_name(helper, event, ns, name)?;
+
+        Ok(Self::map_output(helper, output))
+    }
+
     fn next(
         self,
         helper: &mut DeserializeHelper,

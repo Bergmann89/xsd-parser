@@ -39,15 +39,26 @@ fn config(mode: NamespaceSerialization) -> Config {
 
 #[cfg(not(feature = "update-expectations"))]
 macro_rules! check_foo {
-    ($foo:expr) => {{
+    ($foo:expr, $with_animal:expr, $with_pet:expr) => {{
         let foo = $foo;
 
         assert_eq!(foo.bar.content, "b");
         assert_eq!(foo.bar.a, 1);
         assert_eq!(foo.baz, "z");
         assert_eq!(foo.q.inner, "i");
-        // Dynamic elements with a name other than their type can not be read yet.
-        assert!(foo.animal.is_none());
+        let dog_name = |animal: &generated::tns::AnimalType| {
+            animal
+                .0
+                .as_any()
+                .downcast_ref::<generated::tns::DogType>()
+                .map(|dog| dog.name.clone())
+        };
+        let expected = |present: bool| present.then(|| "d".to_string());
+        assert_eq!(
+            foo.animal.as_ref().and_then(dog_name),
+            expected($with_animal)
+        );
+        assert_eq!(foo.q.pet.as_ref().and_then(dog_name), expected($with_pet));
     }};
 }
 
@@ -78,7 +89,7 @@ macro_rules! foo_obj {
 /// of `$read` back, and write the objects with the runtime default namespace
 /// of the given case and compare them to the XML files.
 macro_rules! case {
-    ($module:ident, $expected:literal, $mode:expr, [$($read:literal),+], [$($name:ident: $root:literal, $default:expr, $xml:literal, $animal:literal, $pet:literal;)+]) => {
+    ($module:ident, $expected:literal, $mode:expr, [$(($read:literal, $r_animal:expr, $r_pet:expr)),+], [$($name:ident: $root:literal, $default:expr, $xml:literal, $animal:literal, $pet:literal;)+]) => {
         mod $module {
             use super::*;
 
@@ -99,7 +110,7 @@ macro_rules! case {
                         concat!("tests/feature/default_namespace_runtime/example/", $read),
                     );
 
-                    check_foo!(obj);
+                    check_foo!(obj, $r_animal, $r_pet);
                 )+
             }
 
@@ -139,7 +150,10 @@ case!(
     dynamic,
     "quick_xml_dynamic.rs",
     NamespaceSerialization::Dynamic,
-    ["local.xml"],
+    [
+        ("local.xml", false, false),
+        ("runtime_dynamic.xml", true, false)
+    ],
     [
         write_prefixed_root: "tns:Foo", Some(NS_T), "runtime_dynamic.xml", true, false;
         write_unprefixed_root: "Foo", Some(NS_T), "runtime_dynamic.xml", true, false;
@@ -150,7 +164,7 @@ case!(
     global,
     "quick_xml_global.rs",
     NamespaceSerialization::Global,
-    ["local.xml"],
+    [("local.xml", false, false), ("runtime.xml", true, false)],
     [
         write_prefixed_root: "tns:Foo", Some(NS_T), "runtime.xml", true, false;
         write_unprefixed_root: "Foo", Some(NS_T), "runtime.xml", true, false;
@@ -161,7 +175,12 @@ case!(
     local,
     "quick_xml_local.rs",
     NamespaceSerialization::Local,
-    ["local.xml"],
+    [
+        ("local.xml", false, false),
+        ("local_animal.xml", true, false),
+        ("local_animal_prefixed.xml", true, false),
+        ("local_pet.xml", false, true)
+    ],
     [
         write_prefixed_root: "tns:Foo", Some(NS_T), "local.xml", false, false;
         write_animal: "tns:Foo", Some(NS_T), "local_animal.xml", true, false;
@@ -201,7 +220,20 @@ mod zoo {
     use super::*;
 
     macro_rules! zoo_test {
-        ($name:ident, $module:ident, $xml:literal) => {
+        ($name:ident, $read:ident, $module:ident, $xml:literal) => {
+            #[test]
+            fn $read() {
+                use super::$module::generated::tns::{DogType, ZooType};
+
+                let obj = crate::utils::quick_xml_read_test::<ZooType, _>(concat!(
+                    "tests/feature/default_namespace_runtime/example/",
+                    $xml
+                ));
+
+                let dog = obj.animal.0.as_any().downcast_ref::<DogType>().unwrap();
+                assert_eq!(dog.name, "d");
+            }
+
             #[test]
             fn $name() {
                 use super::$module::generated::tns::{AnimalType, DogType, ZooType};
@@ -220,6 +252,6 @@ mod zoo {
         };
     }
 
-    zoo_test!(write_global, global, "zoo.xml");
-    zoo_test!(write_dynamic, dynamic, "zoo_dynamic.xml");
+    zoo_test!(write_global, read_global, global, "zoo.xml");
+    zoo_test!(write_dynamic, read_dynamic, dynamic, "zoo_dynamic.xml");
 }

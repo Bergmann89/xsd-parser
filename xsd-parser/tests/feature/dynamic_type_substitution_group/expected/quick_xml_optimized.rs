@@ -335,7 +335,12 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Animal(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <super::Animal as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Animal as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_TNS),
+                            b"animal",
+                        )?;
                         match self.handle_animal(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -411,7 +416,12 @@ pub mod quick_xml_deserialize {
                     return self.handle_cat(helper, Default::default(), None, output);
                 }
                 event = {
-                    let output = <super::DogType as WithDeserializer>::init(helper, event)?;
+                    let output = <super::DogType as WithDeserializer>::init_with_name(
+                        helper,
+                        event,
+                        Some(&super::NS_TNS),
+                        b"dog",
+                    )?;
                     match self.handle_dog(helper, Default::default(), None, output)? {
                         ElementHandlerOutput::Continue { event, allow_any } => {
                             allow_any_element = allow_any_element || allow_any;
@@ -632,7 +642,12 @@ pub mod quick_xml_deserialize {
                         S::Dog(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = <super::DogType as WithDeserializer>::init(helper, event)?;
+                        let output = <super::DogType as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_TNS),
+                            b"dog",
+                        )?;
                         match self.handle_dog(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -773,12 +788,11 @@ pub mod quick_xml_deserialize {
             &mut self,
             helper: &mut DeserializeHelper,
             event: Event<'de>,
+            ns: Option<&[u8]>,
+            name: &[u8],
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
-                if matches!(
-                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
-                    Some(b"dog")
-                ) {
+                if helper.check_start_tag_name(&event, ns, name) {
                     if let Some(type_name) = helper.get_dynamic_type_from_attrib_bytes(x)? {
                         let type_name = type_name.into_owned();
                         if matches!(
@@ -802,6 +816,107 @@ pub mod quick_xml_deserialize {
             }
             *self.state__ = DogTypeDeserializerState::Init__;
             Ok(ElementHandlerOutput::return_to_parent(event, false))
+        }
+        fn next_with_name<'de>(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+            ns: Option<&[u8]>,
+            name: &[u8],
+        ) -> DeserializerResult<'de, super::DogType> {
+            use DogTypeDeserializerState as S;
+            let mut event = event;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state__, S::Unknown__);
+                event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
+                    (S::Labrador(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_labrador(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Beagle(values, fallback, Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_beagle(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (state, event @ Event::End(_)) => {
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(Self::finish_state(
+                                helper, state,
+                            )?),
+                            event: DeserializerEvent::Continue(event),
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => match self.find_suitable(helper, event, ns, name)? {
+                        ElementHandlerOutput::Break { event, allow_any } => {
+                            break (event, allow_any)
+                        }
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                    },
+                    (
+                        S::Labrador(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"labrador",
+                            false,
+                        )?;
+                        match self.handle_labrador(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (
+                        S::Beagle(values, fallback, None),
+                        event @ (Event::Start(_) | Event::Empty(_)),
+                    ) => {
+                        let output = helper.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"beagle",
+                            false,
+                        )?;
+                        match self.handle_beagle(helper, values, fallback, output)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (state @ S::Done__(_), event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Continue(event), false);
+                    }
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Continue(event), false);
+                    }
+                }
+            };
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
+                DeserializerArtifact::Data(self.finish(helper)?)
+            } else {
+                DeserializerArtifact::Deserializer(self)
+            };
+            Ok(DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            })
         }
         fn finish_state(
             helper: &mut DeserializeHelper,
@@ -930,10 +1045,18 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::DogType> {
+            Self::init_with_name(helper, event, Some(&super::NS_TNS), b"dog")
+        }
+        fn init_with_name(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+            ns: Option<&[u8]>,
+            name: &[u8],
+        ) -> DeserializerResult<'de, super::DogType> {
             let deserializer = Self {
                 state__: Box::new(DogTypeDeserializerState::Init__),
             };
-            let mut output = deserializer.next(helper, event)?;
+            let mut output = deserializer.next_with_name(helper, event, ns, name)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(&*x.state__, DogTypeDeserializerState::Init__) =>
@@ -949,99 +1072,7 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             event: Event<'de>,
         ) -> DeserializerResult<'de, super::DogType> {
-            use DogTypeDeserializerState as S;
-            let mut event = event;
-            let (event, allow_any) = loop {
-                let state = replace(&mut *self.state__, S::Unknown__);
-                event = match (state, event) {
-                    (S::Unknown__, _) => unreachable!(),
-                    (S::Labrador(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_labrador(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (S::Beagle(values, fallback, Some(deserializer)), event) => {
-                        let output = deserializer.next(helper, event)?;
-                        match self.handle_beagle(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (state, event @ Event::End(_)) => {
-                        return Ok(DeserializerOutput {
-                            artifact: DeserializerArtifact::Data(Self::finish_state(
-                                helper, state,
-                            )?),
-                            event: DeserializerEvent::Continue(event),
-                            allow_any: false,
-                        });
-                    }
-                    (S::Init__, event) => match self.find_suitable(helper, event)? {
-                        ElementHandlerOutput::Break { event, allow_any } => {
-                            break (event, allow_any)
-                        }
-                        ElementHandlerOutput::Continue { event, .. } => event,
-                    },
-                    (
-                        S::Labrador(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_TNS),
-                            b"labrador",
-                            false,
-                        )?;
-                        match self.handle_labrador(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (
-                        S::Beagle(values, fallback, None),
-                        event @ (Event::Start(_) | Event::Empty(_)),
-                    ) => {
-                        let output = helper.init_start_tag_deserializer(
-                            event,
-                            Some(&super::NS_TNS),
-                            b"beagle",
-                            false,
-                        )?;
-                        match self.handle_beagle(helper, values, fallback, output)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        }
-                    }
-                    (state @ S::Done__(_), event) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
-                    (state, event) => {
-                        *self.state__ = state;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
-                }
-            };
-            let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                DeserializerArtifact::Data(self.finish(helper)?)
-            } else {
-                DeserializerArtifact::Deserializer(self)
-            };
-            Ok(DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            })
+            self.next_with_name(helper, event, Some(&super::NS_TNS), b"dog")
         }
         fn finish(self, helper: &mut DeserializeHelper) -> Result<super::DogType, Error> {
             Self::finish_state(helper, *self.state__)

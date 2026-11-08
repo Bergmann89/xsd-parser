@@ -1,0 +1,1 @@
+<tns:list xmlns:tns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><tns:pet xsi:type="tns:puppy" id="3" name="Bo" age="1" /></tns:list>

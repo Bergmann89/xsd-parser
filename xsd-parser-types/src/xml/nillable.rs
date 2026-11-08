@@ -279,13 +279,16 @@ where
 }
 
 #[cfg(feature = "quick-xml")]
-impl<'de, T> Deserializer<'de, Nillable<T>> for NillableDeserializer<T>
+impl<T> NillableDeserializer<T>
 where
     T: WithDeserializer,
 {
-    fn init(
+    /// Does the same as `init`, but hands the name of the element the parent
+    /// expects (if any) to the inner deserializer.
+    fn init_with_name_opt<'de>(
         helper: &mut DeserializeHelper,
         event: Event<'de>,
+        name: Option<(Option<&[u8]>, &[u8])>,
     ) -> DeserializerResult<'de, Nillable<T>> {
         let (Event::Start(bytes) | Event::Empty(bytes)) = &event else {
             return Ok(DeserializerOutput {
@@ -294,6 +297,16 @@ where
                 allow_any: false,
             });
         };
+
+        if let Some((ns, name)) = name {
+            if !helper.check_start_tag_name(&event, ns, name) {
+                return Ok(DeserializerOutput {
+                    event: DeserializerEvent::Continue(event),
+                    artifact: DeserializerArtifact::None,
+                    allow_any: false,
+                });
+            }
+        }
 
         for attrib in bytes.attributes() {
             let attrib = attrib?;
@@ -322,7 +335,10 @@ where
             artifact,
             event,
             allow_any,
-        } = T::Deserializer::init(helper, event)?;
+        } = match name {
+            Some((ns, name)) => T::Deserializer::init_with_name(helper, event, ns, name)?,
+            None => T::Deserializer::init(helper, event)?,
+        };
 
         let artifact = match artifact {
             DeserializerArtifact::Deserializer(inner) => {
@@ -337,6 +353,28 @@ where
             event,
             allow_any,
         })
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl<'de, T> Deserializer<'de, Nillable<T>> for NillableDeserializer<T>
+where
+    T: WithDeserializer,
+{
+    fn init(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Nillable<T>> {
+        Self::init_with_name_opt(helper, event, None)
+    }
+
+    fn init_with_name(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, Nillable<T>> {
+        Self::init_with_name_opt(helper, event, Some((ns, name)))
     }
 
     fn next(

@@ -26,6 +26,25 @@ fn generate_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml() {
+    use quick_xml::{AnimalDyn, DogType, List};
+
+    let obj = crate::utils::quick_xml_read_test::<List, _>(
+        "tests/feature/dynamic_type_element_name/example/default.xml",
+    );
+
+    assert_eq!(obj.pet.len(), 2);
+
+    let item = obj.pet[0].0.as_any().downcast_ref::<AnimalDyn>().unwrap();
+    assert_eq!(item.id, 1);
+
+    let item = obj.pet[1].0.as_any().downcast_ref::<DogType>().unwrap();
+    assert_eq!(item.id, 2);
+    assert_eq!(item.name, "Rex");
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
     use quick_xml::{AnimalDyn, AnimalType, DogType, List};
 
@@ -64,6 +83,23 @@ fn generate_quick_xml_optimized() {
             .with_quick_xml()
             .with_optimizer_flags(OptimizerFlags::all()),
     );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_quick_xml_optimized() {
+    use quick_xml_optimized::{AnimalType, List};
+
+    let obj = crate::utils::quick_xml_read_test::<List, _>(
+        "tests/feature/dynamic_type_element_name/example/default.xml",
+    );
+
+    let [AnimalType::Animal(animal), AnimalType::Dog(dog)] = obj.pet.as_slice() else {
+        panic!("unexpected items: {:?}", obj.pet);
+    };
+    assert_eq!(animal.id, 1);
+    assert_eq!(dog.id, 2);
+    assert_eq!(dog.name, "Rex");
 }
 
 #[test]

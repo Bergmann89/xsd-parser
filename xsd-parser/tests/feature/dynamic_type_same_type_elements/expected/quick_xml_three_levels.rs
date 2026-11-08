@@ -1,0 +1,1037 @@
+use core::fmt::Debug;
+use xsd_parser_types::{
+    misc::{Namespace, NamespacePrefix},
+    quick_xml::{
+        BoxedSerializer, ElementNamespace, Error, WithBoxedSerializer, WithDeserializer,
+        WithSerializer, XsiTypeSerializer,
+    },
+    AsAny,
+};
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_XSI: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema-instance");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
+pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
+pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
+pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
+pub type List = ListType;
+#[derive(Debug)]
+pub struct ListType {
+    pub pet: AnimalType,
+}
+impl WithSerializer for ListType {
+    type Serializer<'x> = quick_xml_serialize::ListTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::ListTypeSerializer {
+            value: self,
+            state: Box::new(quick_xml_serialize::ListTypeSerializerState::Init__),
+            name: name.unwrap_or("tns:list"),
+            namespace,
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for ListType {
+    type Deserializer = quick_xml_deserialize::ListTypeDeserializer;
+}
+#[derive(Debug)]
+pub struct AnimalType(pub Box<dyn AnimalTypeTrait>);
+pub trait AnimalTypeTrait: Debug + AsAny + WithBoxedSerializer {}
+impl AnimalType {
+    pub fn new<T: AnimalTypeTrait + 'static>(value: T) -> Self {
+        Self(Box::new(value))
+    }
+}
+impl WithSerializer for AnimalType {
+    type Serializer<'x> = BoxedSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        if (*self.0).as_any().is::<DogDyn>() {
+            return Ok(Box::new(
+                XsiTypeSerializer::new(
+                    self.0.serializer(Some("tns:dog"), is_root)?,
+                    name.unwrap_or("animal"),
+                    is_root,
+                )
+                .with_namespace(namespace)
+                .with_type_namespace(NS_TNS),
+            ));
+        }
+        if (*self.0).as_any().is::<PuppyType>() {
+            return Ok(Box::new(
+                XsiTypeSerializer::new(
+                    self.0.serializer(Some("tns:puppy"), is_root)?,
+                    name.unwrap_or("animal"),
+                    is_root,
+                )
+                .with_namespace(namespace)
+                .with_type_namespace(NS_TNS),
+            ));
+        }
+        self.0.serializer_with_namespace(name, namespace, is_root)
+    }
+}
+impl WithDeserializer for AnimalType {
+    type Deserializer = quick_xml_deserialize::AnimalTypeDeserializer;
+}
+#[derive(Debug)]
+pub struct AnimalDyn {
+    pub id: i32,
+}
+impl AnimalTypeTrait for AnimalDyn {}
+impl WithSerializer for AnimalDyn {
+    type Serializer<'x> = quick_xml_serialize::AnimalDynSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::AnimalDynSerializer {
+            value: self,
+            state: Box::new(quick_xml_serialize::AnimalDynSerializerState::Init__),
+            name: name.unwrap_or("animal"),
+            namespace,
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for AnimalDyn {
+    type Deserializer = quick_xml_deserialize::AnimalDynDeserializer;
+}
+#[derive(Debug)]
+pub struct DogDyn {
+    pub id: i32,
+    pub name: String,
+}
+impl AnimalTypeTrait for DogDyn {}
+impl WithSerializer for DogDyn {
+    type Serializer<'x> = quick_xml_serialize::DogDynSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::DogDynSerializer {
+            value: self,
+            state: Box::new(quick_xml_serialize::DogDynSerializerState::Init__),
+            name: name.unwrap_or("dog"),
+            namespace,
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for DogDyn {
+    type Deserializer = quick_xml_deserialize::DogDynDeserializer;
+}
+#[derive(Debug)]
+pub struct PuppyType {
+    pub id: i32,
+    pub name: String,
+    pub age: i32,
+}
+impl AnimalTypeTrait for PuppyType {}
+impl WithSerializer for PuppyType {
+    type Serializer<'x> = quick_xml_serialize::PuppyTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::PuppyTypeSerializer {
+            value: self,
+            state: Box::new(quick_xml_serialize::PuppyTypeSerializerState::Init__),
+            name: name.unwrap_or("puppy"),
+            namespace,
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for PuppyType {
+    type Deserializer = quick_xml_deserialize::PuppyTypeDeserializer;
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use std::borrow::Cow;
+    use xsd_parser_types::quick_xml::{
+        BytesStart, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
+        QName, RawByteStr, WithDeserializer,
+    };
+    #[derive(Debug)]
+    pub struct ListTypeDeserializer {
+        pet: Option<super::AnimalType>,
+        state__: Box<ListTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum ListTypeDeserializerState {
+        Init__,
+        Pet(Option<<super::AnimalType as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl ListTypeDeserializer {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                helper.raise_unexpected_attrib_checked(&attrib)?;
+            }
+            Ok(Self {
+                pet: None,
+                state__: Box::new(ListTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            state: ListTypeDeserializerState,
+        ) -> Result<(), Error> {
+            use ListTypeDeserializerState as S;
+            match state {
+                S::Pet(Some(deserializer)) => self.store_pet(deserializer.finish(helper)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_pet(&mut self, value: super::AnimalType) -> Result<(), Error> {
+            if self.pet.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"pet")))?;
+            }
+            self.pet = Some(value);
+            Ok(())
+        }
+        fn handle_pet<'de>(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            output: DeserializerOutput<'de, super::AnimalType>,
+            fallback: &mut Option<ListTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error> {
+            use ListTypeDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(S::Pet(None));
+                if matches!(&fallback, Some(S::Init__)) {
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
+                }
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(helper, fallback)?;
+            }
+            match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_pet(data)?;
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    fallback.get_or_insert(S::Pet(Some(deserializer)));
+                    *self.state__ = S::Done__;
+                    Ok(ElementHandlerOutput::from_event(event, allow_any))
+                }
+            }
+        }
+    }
+    impl<'de> Deserializer<'de, super::ListType> for ListTypeDeserializer {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ListType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ListType> {
+            use ListTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state__, S::Unknown__);
+                event = match (state, event) {
+                    (S::Unknown__, _) => unreachable!(),
+                    (S::Pet(Some(deserializer)), event) => {
+                        let output = deserializer.next(helper, event)?;
+                        match self.handle_pet(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(helper, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(helper)?),
+                            event: DeserializerEvent::None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state__ = S::Pet(None);
+                        event
+                    }
+                    (S::Pet(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output = <super::AnimalType as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_TNS),
+                            b"pet",
+                        )?;
+                        match self.handle_pet(helper, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (S::Done__, event) => {
+                        *self.state__ = S::Done__;
+                        break (DeserializerEvent::Continue(event), allow_any_element);
+                    }
+                    (state, event) => {
+                        *self.state__ = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
+                }
+            };
+            let event = event.into_break();
+            if let Some(fallback) = fallback {
+                *self.state__ = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::ListType, Error> {
+            let state = replace(&mut *self.state__, ListTypeDeserializerState::Unknown__);
+            self.finish_state(helper, state)?;
+            Ok(super::ListType {
+                pet: helper.finish_element("pet", self.pet)?,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub enum AnimalTypeDeserializer {
+        Animal(<super::AnimalDyn as WithDeserializer>::Deserializer),
+        Dog(<super::DogDyn as WithDeserializer>::Deserializer),
+        Puppy(<super::PuppyType as WithDeserializer>::Deserializer),
+    }
+    impl<'de> Deserializer<'de, super::AnimalType> for AnimalTypeDeserializer {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AnimalType> {
+            Self::init_with_name(helper, event, Some(&super::NS_TNS), b"animal")
+        }
+        fn init_with_name(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+            ns: Option<&[u8]>,
+            name: &[u8],
+        ) -> DeserializerResult<'de, super::AnimalType> {
+            let Some(type_name) = helper.get_dynamic_type_from_tag(&event) else {
+                return Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::None,
+                    event: DeserializerEvent::None,
+                    allow_any: false,
+                });
+            };
+            let type_name = type_name.into_owned();
+            if helper.check_start_tag_name(&event, ns, name) {
+                let type_name = helper
+                    .get_dynamic_type_from_attrib(&event)?
+                    .unwrap_or(Cow::Borrowed("animal"))
+                    .into_owned();
+                if matches!(
+                    helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
+                    Some(b"animal")
+                ) {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = <super::AnimalDyn as WithDeserializer>::init(helper, event)?;
+                    return Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::AnimalType(Box::new(x)), |x| Self::Animal(x)),
+                        event,
+                        allow_any,
+                    });
+                }
+                if matches!(
+                    helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
+                    Some(b"dog")
+                ) {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = <super::DogDyn as WithDeserializer>::init(helper, event)?;
+                    return Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::AnimalType(Box::new(x)), |x| Self::Dog(x)),
+                        event,
+                        allow_any,
+                    });
+                }
+                if matches!(
+                    helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
+                    Some(b"puppy")
+                ) {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = <super::PuppyType as WithDeserializer>::init(helper, event)?;
+                    return Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::AnimalType(Box::new(x)), |x| Self::Puppy(x)),
+                        event,
+                        allow_any,
+                    });
+                }
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::None,
+                event: DeserializerEvent::Continue(event),
+                allow_any: false,
+            })
+        }
+        fn next(
+            self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AnimalType> {
+            match self {
+                Self::Animal(x) => {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = x.next(helper, event)?;
+                    Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::AnimalType(Box::new(x)), |x| Self::Animal(x)),
+                        event,
+                        allow_any,
+                    })
+                }
+                Self::Dog(x) => {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = x.next(helper, event)?;
+                    Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::AnimalType(Box::new(x)), |x| Self::Dog(x)),
+                        event,
+                        allow_any,
+                    })
+                }
+                Self::Puppy(x) => {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = x.next(helper, event)?;
+                    Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::AnimalType(Box::new(x)), |x| Self::Puppy(x)),
+                        event,
+                        allow_any,
+                    })
+                }
+            }
+        }
+        fn finish(self, helper: &mut DeserializeHelper) -> Result<super::AnimalType, Error> {
+            match self {
+                Self::Animal(x) => Ok(super::AnimalType(Box::new(x.finish(helper)?))),
+                Self::Dog(x) => Ok(super::AnimalType(Box::new(x.finish(helper)?))),
+                Self::Puppy(x) => Ok(super::AnimalType(Box::new(x.finish(helper)?))),
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct AnimalDynDeserializer {
+        id: i32,
+        state__: Box<AnimalDynDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum AnimalDynDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl AnimalDynDeserializer {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            let mut id: Option<i32> = None;
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"id")
+                ) {
+                    helper.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else {
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
+                }
+            }
+            Ok(Self {
+                id: id.ok_or_else(|| ErrorKind::MissingAttribute("id".into()))?,
+                state__: Box::new(AnimalDynDeserializerState::Init__),
+            })
+        }
+        fn finish_state(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            state: AnimalDynDeserializerState,
+        ) -> Result<(), Error> {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::AnimalDyn> for AnimalDynDeserializer {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AnimalDyn> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AnimalDyn> {
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(helper)?),
+                    event: DeserializerEvent::None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: DeserializerEvent::Break(event),
+                    allow_any: false,
+                })
+            }
+        }
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::AnimalDyn, Error> {
+            let state = replace(&mut *self.state__, AnimalDynDeserializerState::Unknown__);
+            self.finish_state(helper, state)?;
+            Ok(super::AnimalDyn { id: self.id })
+        }
+    }
+    #[derive(Debug)]
+    pub struct DogDynDeserializer {
+        id: i32,
+        name: String,
+        state__: Box<DogDynDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum DogDynDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl DogDynDeserializer {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            let mut id: Option<i32> = None;
+            let mut name: Option<String> = None;
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"id")
+                ) {
+                    helper.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else if matches!(
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"name")
+                ) {
+                    helper.read_attrib(&mut name, b"name", &attrib.value)?;
+                } else {
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
+                }
+            }
+            Ok(Self {
+                id: id.ok_or_else(|| ErrorKind::MissingAttribute("id".into()))?,
+                name: name.ok_or_else(|| ErrorKind::MissingAttribute("name".into()))?,
+                state__: Box::new(DogDynDeserializerState::Init__),
+            })
+        }
+        fn finish_state(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            state: DogDynDeserializerState,
+        ) -> Result<(), Error> {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::DogDyn> for DogDynDeserializer {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::DogDyn> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::DogDyn> {
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(helper)?),
+                    event: DeserializerEvent::None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: DeserializerEvent::Break(event),
+                    allow_any: false,
+                })
+            }
+        }
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::DogDyn, Error> {
+            let state = replace(&mut *self.state__, DogDynDeserializerState::Unknown__);
+            self.finish_state(helper, state)?;
+            Ok(super::DogDyn {
+                id: self.id,
+                name: self.name,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub struct PuppyTypeDeserializer {
+        id: i32,
+        name: String,
+        age: i32,
+        state__: Box<PuppyTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum PuppyTypeDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl PuppyTypeDeserializer {
+        fn from_bytes_start(
+            helper: &mut DeserializeHelper,
+            bytes_start: &BytesStart<'_>,
+        ) -> Result<Self, Error> {
+            let mut id: Option<i32> = None;
+            let mut name: Option<String> = None;
+            let mut age: Option<i32> = None;
+            for attrib in helper.filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"id")
+                ) {
+                    helper.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else if matches!(
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"name")
+                ) {
+                    helper.read_attrib(&mut name, b"name", &attrib.value)?;
+                } else if matches!(
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"age")
+                ) {
+                    helper.read_attrib(&mut age, b"age", &attrib.value)?;
+                } else {
+                    helper.raise_unexpected_attrib_checked(&attrib)?;
+                }
+            }
+            Ok(Self {
+                id: id.ok_or_else(|| ErrorKind::MissingAttribute("id".into()))?,
+                name: name.ok_or_else(|| ErrorKind::MissingAttribute("name".into()))?,
+                age: age.ok_or_else(|| ErrorKind::MissingAttribute("age".into()))?,
+                state__: Box::new(PuppyTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state(
+            &mut self,
+            helper: &mut DeserializeHelper,
+            state: PuppyTypeDeserializerState,
+        ) -> Result<(), Error> {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::PuppyType> for PuppyTypeDeserializer {
+        fn init(
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::PuppyType> {
+            helper.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next(
+            mut self,
+            helper: &mut DeserializeHelper,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::PuppyType> {
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(helper)?),
+                    event: DeserializerEvent::None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: DeserializerEvent::Break(event),
+                    allow_any: false,
+                })
+            }
+        }
+        fn finish(mut self, helper: &mut DeserializeHelper) -> Result<super::PuppyType, Error> {
+            let state = replace(&mut *self.state__, PuppyTypeDeserializerState::Unknown__);
+            self.finish_state(helper, state)?;
+            Ok(super::PuppyType {
+                id: self.id,
+                name: self.name,
+                age: self.age,
+            })
+        }
+    }
+}
+pub mod quick_xml_serialize {
+    use xsd_parser_types::quick_xml::{
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
+    };
+    #[derive(Debug)]
+    pub struct ListTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ListType,
+        pub(super) state: Box<ListTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ListTypeSerializerState<'ser> {
+        Init__,
+        Pet(<super::AnimalType as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ListTypeSerializer<'ser> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    ListTypeSerializerState::Init__ => {
+                        *self.state = ListTypeSerializerState::Pet(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.pet,
+                                Some("tns:pet"),
+                                ElementNamespace::Namespace(super::NS_TNS),
+                                false,
+                            )?,
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_XSI),
+                                &super::NS_XSI,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
+                            );
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    ListTypeSerializerState::Pet(x) => match x.next(helper).transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = ListTypeSerializerState::End__,
+                    },
+                    ListTypeSerializerState::End__ => {
+                        *self.state = ListTypeSerializerState::Done__;
+                        helper.end_ns_scope();
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    ListTypeSerializerState::Done__ => return Ok(None),
+                    ListTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Serializer<'ser> for ListTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = ListTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct AnimalDynSerializer<'ser> {
+        pub(super) value: &'ser super::AnimalDyn,
+        pub(super) state: Box<AnimalDynSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum AnimalDynSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> AnimalDynSerializer<'ser> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    AnimalDynSerializerState::Init__ => {
+                        *self.state = AnimalDynSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                        helper.end_ns_scope();
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    AnimalDynSerializerState::Done__ => return Ok(None),
+                    AnimalDynSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Serializer<'ser> for AnimalDynSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = AnimalDynSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct DogDynSerializer<'ser> {
+        pub(super) value: &'ser super::DogDyn,
+        pub(super) state: Box<DogDynSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum DogDynSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> DogDynSerializer<'ser> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    DogDynSerializerState::Init__ => {
+                        *self.state = DogDynSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                        helper.write_attrib(&mut bytes, "name", &self.value.name)?;
+                        helper.end_ns_scope();
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    DogDynSerializerState::Done__ => return Ok(None),
+                    DogDynSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Serializer<'ser> for DogDynSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = DogDynSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct PuppyTypeSerializer<'ser> {
+        pub(super) value: &'ser super::PuppyType,
+        pub(super) state: Box<PuppyTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum PuppyTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> PuppyTypeSerializer<'ser> {
+        fn next_event(
+            &mut self,
+            helper: &mut SerializeHelper,
+        ) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    PuppyTypeSerializerState::Init__ => {
+                        *self.state = PuppyTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        helper.write_attrib(&mut bytes, "id", &self.value.id)?;
+                        helper.write_attrib(&mut bytes, "name", &self.value.name)?;
+                        helper.write_attrib(&mut bytes, "age", &self.value.age)?;
+                        helper.end_ns_scope();
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    PuppyTypeSerializerState::Done__ => return Ok(None),
+                    PuppyTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Serializer<'ser> for PuppyTypeSerializer<'ser> {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            match self.next_event(helper) {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = PuppyTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+}

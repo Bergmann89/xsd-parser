@@ -165045,8 +165045,12 @@ pub mod onix {
                 let mut allow_any_element = false;
                 if let Event::Start(_) | Event::Empty(_) = &event {
                     event = {
-                        let output =
-                            <super::BlockElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::BlockElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"block",
+                        )?;
                         match self.handle_block(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -165058,8 +165062,12 @@ pub mod onix {
                         }
                     };
                     event = {
-                        let output =
-                            <super::InlineElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::InlineElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"inline",
+                        )?;
                         match self.handle_inline(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -165349,8 +165357,12 @@ pub mod onix {
                             S::Block(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output =
-                                <super::BlockElement as WithDeserializer>::init(helper, event)?;
+                            let output = <super::BlockElement as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_ONIX),
+                                b"block",
+                            )?;
                             match self.handle_block(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -165363,7 +165375,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::InlineElement as WithDeserializer>::init(helper, event)?;
+                                <super::InlineElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"inline",
+                                )?;
                             match self.handle_inline(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -207418,9 +207435,13 @@ pub mod onix {
                             }
                         }
                         (S::Inline(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = <Mixed<super::InlineElement> as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <Mixed<super::InlineElement> as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"inline",
+                                )?;
                             match self.handle_inline(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -208983,8 +209004,12 @@ pub mod onix {
                             event
                         }
                         (S::Block(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <super::BlockElement as WithDeserializer>::init(helper, event)?;
+                            let output = <super::BlockElement as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_ONIX),
+                                b"block",
+                            )?;
                             match self.handle_block(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -210209,9 +210234,13 @@ pub mod onix {
                             }
                         }
                         (S::Inline(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = <Mixed<super::InlineElement> as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <Mixed<super::InlineElement> as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"inline",
+                                )?;
                             match self.handle_inline(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -210630,9 +210659,13 @@ pub mod onix {
                             }
                         }
                         (S::Inline(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output = <Mixed<super::InlineElement> as WithDeserializer>::init(
-                                helper, event,
-                            )?;
+                            let output =
+                                <Mixed<super::InlineElement> as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"inline",
+                                )?;
                             match self.handle_inline(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -211125,8 +211158,12 @@ pub mod onix {
                         return self.handle_area(helper, Default::default(), None, output);
                     }
                     event = {
-                        let output =
-                            <super::BlockElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::BlockElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"block",
+                        )?;
                         match self.handle_block(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -211339,8 +211376,12 @@ pub mod onix {
                             S::Block(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output =
-                                <super::BlockElement as WithDeserializer>::init(helper, event)?;
+                            let output = <super::BlockElement as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_ONIX),
+                                b"block",
+                            )?;
                             match self.handle_block(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -246397,8 +246438,12 @@ pub mod onix {
                         return self.handle_b(helper, Default::default(), None, output);
                     }
                     event = {
-                        let output =
-                            <super::PhraseElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::PhraseElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"phrase",
+                        )?;
                         match self.handle_phrase(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -246410,8 +246455,12 @@ pub mod onix {
                         }
                     };
                     event = {
-                        let output =
-                            <super::GlossElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::GlossElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"gloss",
+                        )?;
                         match self.handle_gloss(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -247334,7 +247383,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::PhraseElement as WithDeserializer>::init(helper, event)?;
+                                <super::PhraseElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"phrase",
+                                )?;
                             match self.handle_phrase(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -247346,8 +247400,12 @@ pub mod onix {
                             S::Gloss(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output =
-                                <super::GlossElement as WithDeserializer>::init(helper, event)?;
+                            let output = <super::GlossElement as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_ONIX),
+                                b"gloss",
+                            )?;
                             match self.handle_gloss(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -249461,8 +249519,12 @@ pub mod onix {
                 let mut allow_any_element = false;
                 if let Event::Start(_) | Event::Empty(_) = &event {
                     event = {
-                        let output =
-                            <super::SpecialElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::SpecialElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"special",
+                        )?;
                         match self.handle_special(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -249474,8 +249536,12 @@ pub mod onix {
                         }
                     };
                     event = {
-                        let output =
-                            <super::FontstyleElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::FontstyleElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"fontstyle",
+                        )?;
                         match self.handle_fontstyle(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -249487,8 +249553,12 @@ pub mod onix {
                         }
                     };
                     event = {
-                        let output =
-                            <super::PhraseElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::PhraseElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"phrase",
+                        )?;
                         match self.handle_phrase(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -249500,8 +249570,12 @@ pub mod onix {
                         }
                     };
                     event = {
-                        let output =
-                            <super::GlossElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::GlossElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"gloss",
+                        )?;
                         match self.handle_gloss(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -249930,7 +250004,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::SpecialElement as WithDeserializer>::init(helper, event)?;
+                                <super::SpecialElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"special",
+                                )?;
                             match self.handle_special(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -249943,7 +250022,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::FontstyleElement as WithDeserializer>::init(helper, event)?;
+                                <super::FontstyleElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"fontstyle",
+                                )?;
                             match self.handle_fontstyle(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -249956,7 +250040,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::PhraseElement as WithDeserializer>::init(helper, event)?;
+                                <super::PhraseElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"phrase",
+                                )?;
                             match self.handle_phrase(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -249968,8 +250057,12 @@ pub mod onix {
                             S::Gloss(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
-                            let output =
-                                <super::GlossElement as WithDeserializer>::init(helper, event)?;
+                            let output = <super::GlossElement as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_ONIX),
+                                b"gloss",
+                            )?;
                             match self.handle_gloss(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -283075,8 +283168,12 @@ pub mod onix {
                         return self.handle_a(helper, Default::default(), None, output);
                     }
                     event = {
-                        let output =
-                            <super::SpecialElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::SpecialElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"special",
+                        )?;
                         match self.handle_special(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -283088,8 +283185,12 @@ pub mod onix {
                         }
                     };
                     event = {
-                        let output =
-                            <super::FontstyleElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::FontstyleElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"fontstyle",
+                        )?;
                         match self.handle_fontstyle(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -283101,8 +283202,12 @@ pub mod onix {
                         }
                     };
                     event = {
-                        let output =
-                            <super::PhraseElement as WithDeserializer>::init(helper, event)?;
+                        let output = <super::PhraseElement as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::super::NS_ONIX),
+                            b"phrase",
+                        )?;
                         match self.handle_phrase(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -283541,7 +283646,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::SpecialElement as WithDeserializer>::init(helper, event)?;
+                                <super::SpecialElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"special",
+                                )?;
                             match self.handle_special(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -283554,7 +283664,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::FontstyleElement as WithDeserializer>::init(helper, event)?;
+                                <super::FontstyleElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"fontstyle",
+                                )?;
                             match self.handle_fontstyle(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -283567,7 +283682,12 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output =
-                                <super::PhraseElement as WithDeserializer>::init(helper, event)?;
+                                <super::PhraseElement as WithDeserializer>::init_with_name(
+                                    helper,
+                                    event,
+                                    Some(&super::super::NS_ONIX),
+                                    b"phrase",
+                                )?;
                             match self.handle_phrase(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)

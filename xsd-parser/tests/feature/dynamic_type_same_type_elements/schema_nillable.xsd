@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <xs:element name="bag">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="tns:pet" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="pet" type="tns:animal" nillable="true" />
+
+    <xs:complexType name="animal">
+        <xs:attribute name="id" type="xs:int" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="dog">
+        <xs:complexContent>
+            <xs:extension base="tns:animal">
+                <xs:attribute name="name" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

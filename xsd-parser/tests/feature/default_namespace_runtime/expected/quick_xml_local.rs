@@ -922,8 +922,12 @@ pub mod tns {
                             }
                         }
                         (S::Animal(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <super::AnimalType as WithDeserializer>::init(helper, event)?;
+                            let output = <super::AnimalType as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_TNS),
+                                b"animal",
+                            )?;
                             match self.handle_animal(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -1303,8 +1307,12 @@ pub mod tns {
                             }
                         }
                         (S::Pet(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <super::AnimalType as WithDeserializer>::init(helper, event)?;
+                            let output = <super::AnimalType as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_TNS),
+                                b"pet",
+                            )?;
                             match self.handle_pet(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -1353,6 +1361,14 @@ pub mod tns {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::AnimalType> {
+                Self::init_with_name(helper, event, Some(&super::super::NS_TNS), b"Animal")
+            }
+            fn init_with_name(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+                ns: Option<&[u8]>,
+                name: &[u8],
+            ) -> DeserializerResult<'de, super::AnimalType> {
                 let Some(type_name) = helper.get_dynamic_type_from_tag(&event) else {
                     return Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::None,
@@ -1361,10 +1377,7 @@ pub mod tns {
                     });
                 };
                 let type_name = type_name.into_owned();
-                if matches!(
-                    helper.resolve_element_local_name(QName(&type_name), &super::super::NS_TNS),
-                    Some(b"Animal")
-                ) {
+                if helper.check_start_tag_name(&event, ns, name) {
                     if let Some(type_name) = helper.get_dynamic_type_from_attrib(&event)? {
                         let type_name = type_name.into_owned();
                         if matches!(
@@ -1390,7 +1403,7 @@ pub mod tns {
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: DeserializerEvent::Break(event),
+                    event: DeserializerEvent::Continue(event),
                     allow_any: false,
                 })
             }
@@ -1731,8 +1744,12 @@ pub mod tns {
                             event
                         }
                         (S::Animal(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            let output =
-                                <super::AnimalType as WithDeserializer>::init(helper, event)?;
+                            let output = <super::AnimalType as WithDeserializer>::init_with_name(
+                                helper,
+                                event,
+                                Some(&super::super::NS_TNS),
+                                b"animal",
+                            )?;
                             match self.handle_animal(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;

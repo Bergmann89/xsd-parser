@@ -302,7 +302,12 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Animal(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <super::Animal as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Animal as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_TNS),
+                            b"animal",
+                        )?;
                         match self.handle_animal(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;

@@ -11380,7 +11380,12 @@ pub mod quick_xml_deserialize {
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 event = {
-                    let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                    let output = <super::Facet as WithDeserializer>::init_with_name(
+                        helper,
+                        event,
+                        Some(&super::NS_XS),
+                        b"facet",
+                    )?;
                     match self.handle_facet(helper, Default::default(), None, output)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -11693,7 +11698,12 @@ pub mod quick_xml_deserialize {
                         S::Facet(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Facet as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_XS),
+                            b"facet",
+                        )?;
                         match self.handle_facet(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -17014,7 +17024,12 @@ pub mod quick_xml_deserialize {
                     return self.handle_assert(helper, Default::default(), None, output);
                 }
                 event = {
-                    let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                    let output = <super::Facet as WithDeserializer>::init_with_name(
+                        helper,
+                        event,
+                        Some(&super::NS_XS),
+                        b"facet",
+                    )?;
                     match self.handle_facet(helper, Default::default(), None, output)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -18021,7 +18036,12 @@ pub mod quick_xml_deserialize {
                         S::Facet(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Facet as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_XS),
+                            b"facet",
+                        )?;
                         match self.handle_facet(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

@@ -2772,7 +2772,12 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Shape(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <super::Shape as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Shape as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Shape",
+                        )?;
                         match self.handle_shape(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -2872,7 +2877,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: DeserializerEvent::Break(event),
+                event: DeserializerEvent::Continue(event),
                 allow_any: false,
             })
         }

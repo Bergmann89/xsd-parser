@@ -42,6 +42,23 @@ pub trait WithDeserializer: Sized {
         Self::Deserializer::init(helper, event)
     }
 
+    /// Initializes a new deserializer for the given `event`, the parent
+    /// expects an element with the passed name.
+    ///
+    /// This is a shortcut for `Self::Deserializer::init_with_name()`.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors from `Self::Deserializer::init_with_name()`;
+    fn init_with_name<'de>(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, Self> {
+        Self::Deserializer::init_with_name(helper, event, ns, name)
+    }
+
     /// Create a new default deserializer.
     ///
     /// If a type does not represent a element (for example a group type), it
@@ -83,6 +100,29 @@ where
     ///
     /// Returns an [`struct@Error`] if the initialization of the deserializer failed.
     fn init(helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, T>;
+
+    /// Initializes a new deserializer like [`init`](Self::init), but the
+    /// parent tells the name of the element it expects.
+    ///
+    /// `ns` and `name` are the expected element name in the form of
+    /// [`DeserializeHelper::check_start_tag_name`] (`ns = None` compares the
+    /// local name only). Only the deserializers of dynamic types use the name
+    /// to decide if they take the element, wrapper deserializers forward it
+    /// to the deserializer they wrap, all others ignore it.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`struct@Error`] if the initialization of the deserializer failed.
+    fn init_with_name(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, T> {
+        let _ = (ns, name);
+
+        Self::init(helper, event)
+    }
 
     /// Processes the next XML [`Event`].
     ///
@@ -1577,6 +1617,38 @@ mod tests {
 
             assert!(matches!(err.kind, ErrorKind::UnexpectedEvent(_)), "{err:?}");
         }
+    }
+
+    #[test]
+    fn init_with_name_ignores_the_name_of_a_plain_deserializer() {
+        let mut helper = DeserializeHelper::default();
+
+        // Success: a start tag is taken whatever name is expected.
+        for (ns, name) in [(None, &b"other"[..]), (Some(&b"T"[..]), &b"outer"[..])] {
+            let named = ContentDeserializer::<String>::init_with_name(
+                &mut helper,
+                Event::Start(BytesStart::new("outer")),
+                ns,
+                name,
+            )
+            .unwrap();
+
+            assert!(matches!(
+                named.artifact,
+                DeserializerArtifact::Deserializer(_)
+            ));
+            assert!(matches!(named.event, DeserializerEvent::None));
+        }
+
+        // Failure: the error of `init` is returned unchanged.
+        let err = <Marker as WithDeserializer>::init_with_name(
+            &mut helper,
+            Event::Start(BytesStart::new("known")),
+            Some(b"T"),
+            b"known",
+        )
+        .unwrap_err();
+        assert!(matches!(err.kind, ErrorKind::UnexpectedEvent(_)), "{err:?}");
     }
 
     /// Builds a helper that has seen the given start tags (`"name attrs"`).

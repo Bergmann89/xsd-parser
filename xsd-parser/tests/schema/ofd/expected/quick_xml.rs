@@ -26507,12 +26507,11 @@ pub mod page {
                 &mut self,
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
+                ns: Option<&[u8]>,
+                name: &[u8],
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
-                        Some(b"CT_GraphicUnit")
-                    ) {
+                    if helper.check_start_tag_name(&event, ns, name) {
                         if let Some(type_name) = helper.get_dynamic_type_from_attrib_bytes(x)? {
                             let type_name = type_name.into_owned();
                             if matches!(
@@ -26585,6 +26584,285 @@ pub mod page {
                 }
                 *self.state__ = CtGraphicUnitXTypeDeserializerState::Init__;
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
+            }
+            fn next_with_name<'de>(
+                mut self,
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+                ns: Option<&[u8]>,
+                name: &[u8],
+            ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
+                use CtGraphicUnitXTypeDeserializerState as S;
+                let mut event = event;
+                let (event, allow_any) = loop {
+                    let state = replace(&mut *self.state__, S::Unknown__);
+                    event = match (state, event) {
+                        (S::Unknown__, _) => unreachable!(),
+                        (S::CtText(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_text(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtPageBlockTextObject(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_text_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtPath(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_path(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtPageBlockPathObject(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_path_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtImage(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_image(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockImageObject(values, fallback, Some(deserializer)),
+                            event,
+                        ) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_image_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::CtComposite(values, fallback, Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_composite(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockCompositeObject(values, fallback, Some(deserializer)),
+                            event,
+                        ) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_ct_page_block_composite_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state, event @ Event::End(_)) => {
+                            return Ok(DeserializerOutput {
+                                artifact: DeserializerArtifact::Data(Self::finish_state(
+                                    helper, state,
+                                )?),
+                                event: DeserializerEvent::Continue(event),
+                                allow_any: false,
+                            });
+                        }
+                        (S::Init__, event) => match self.find_suitable(helper, event, ns, name)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        },
+                        (
+                            S::CtText(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Text",
+                                true,
+                            )?;
+                            match self.handle_ct_text(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockTextObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockTextObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_text_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPath(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Path",
+                                true,
+                            )?;
+                            match self.handle_ct_path(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockPathObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockPathObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_path_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtImage(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Image",
+                                true,
+                            )?;
+                            match self.handle_ct_image(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockImageObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockImageObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_image_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtComposite(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CT_Composite",
+                                true,
+                            )?;
+                            match self.handle_ct_composite(helper, values, fallback, output)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (
+                            S::CtPageBlockCompositeObject(values, fallback, None),
+                            event @ (Event::Start(_) | Event::Empty(_)),
+                        ) => {
+                            let output = helper.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_UNNAMED_5),
+                                b"CtPageBlockCompositeObject",
+                                true,
+                            )?;
+                            match self.handle_ct_page_block_composite_object(
+                                helper, values, fallback, output,
+                            )? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (state @ S::Done__(_), event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                        (state, event) => {
+                            *self.state__ = state;
+                            break (DeserializerEvent::Continue(event), false);
+                        }
+                    }
+                };
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
+                    DeserializerArtifact::Data(self.finish(helper)?)
+                } else {
+                    DeserializerArtifact::Deserializer(self)
+                };
+                Ok(DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                })
             }
             fn finish_state(
                 helper: &mut DeserializeHelper,
@@ -27062,10 +27340,23 @@ pub mod page {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
+                Self::init_with_name(
+                    helper,
+                    event,
+                    Some(&super::super::NS_UNNAMED_5),
+                    b"CT_GraphicUnit",
+                )
+            }
+            fn init_with_name(
+                helper: &mut DeserializeHelper,
+                event: Event<'de>,
+                ns: Option<&[u8]>,
+                name: &[u8],
+            ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
                 let deserializer = Self {
                     state__: Box::new(CtGraphicUnitXTypeDeserializerState::Init__),
                 };
-                let mut output = deserializer.next(helper, event)?;
+                let mut output = deserializer.next_with_name(helper, event, ns, name)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(&*x.state__, CtGraphicUnitXTypeDeserializerState::Init__) =>
@@ -27081,277 +27372,12 @@ pub mod page {
                 helper: &mut DeserializeHelper,
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::CtGraphicUnitXType> {
-                use CtGraphicUnitXTypeDeserializerState as S;
-                let mut event = event;
-                let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state__, S::Unknown__);
-                    event = match (state, event) {
-                        (S::Unknown__, _) => unreachable!(),
-                        (S::CtText(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::CtPageBlockTextObject(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_page_block_text_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::CtPath(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_path(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::CtPageBlockPathObject(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_page_block_path_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::CtImage(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_image(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtPageBlockImageObject(values, fallback, Some(deserializer)),
-                            event,
-                        ) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_page_block_image_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::CtComposite(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_composite(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtPageBlockCompositeObject(values, fallback, Some(deserializer)),
-                            event,
-                        ) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_ct_page_block_composite_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state, event @ Event::End(_)) => {
-                            return Ok(DeserializerOutput {
-                                artifact: DeserializerArtifact::Data(Self::finish_state(
-                                    helper, state,
-                                )?),
-                                event: DeserializerEvent::Continue(event),
-                                allow_any: false,
-                            });
-                        }
-                        (S::Init__, event) => match self.find_suitable(helper, event)? {
-                            ElementHandlerOutput::Break { event, allow_any } => {
-                                break (event, allow_any)
-                            }
-                            ElementHandlerOutput::Continue { event, .. } => event,
-                        },
-                        (
-                            S::CtText(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CT_Text",
-                                true,
-                            )?;
-                            match self.handle_ct_text(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtPageBlockTextObject(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CtPageBlockTextObject",
-                                true,
-                            )?;
-                            match self.handle_ct_page_block_text_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtPath(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CT_Path",
-                                true,
-                            )?;
-                            match self.handle_ct_path(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtPageBlockPathObject(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CtPageBlockPathObject",
-                                true,
-                            )?;
-                            match self.handle_ct_page_block_path_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtImage(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CT_Image",
-                                true,
-                            )?;
-                            match self.handle_ct_image(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtPageBlockImageObject(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CtPageBlockImageObject",
-                                true,
-                            )?;
-                            match self.handle_ct_page_block_image_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtComposite(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CT_Composite",
-                                true,
-                            )?;
-                            match self.handle_ct_composite(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::CtPageBlockCompositeObject(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_UNNAMED_5),
-                                b"CtPageBlockCompositeObject",
-                                true,
-                            )?;
-                            match self.handle_ct_page_block_composite_object(
-                                helper, values, fallback, output,
-                            )? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (state @ S::Done__(_), event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                        (state, event) => {
-                            *self.state__ = state;
-                            break (DeserializerEvent::Continue(event), false);
-                        }
-                    }
-                };
-                let artifact = if matches!(&*self.state__, S::Done__(_)) {
-                    DeserializerArtifact::Data(self.finish(helper)?)
-                } else {
-                    DeserializerArtifact::Deserializer(self)
-                };
-                Ok(DeserializerOutput {
-                    artifact,
+                self.next_with_name(
+                    helper,
                     event,
-                    allow_any,
-                })
+                    Some(&super::super::NS_UNNAMED_5),
+                    b"CT_GraphicUnit",
+                )
             }
             fn finish(
                 self,
