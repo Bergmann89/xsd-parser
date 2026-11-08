@@ -62,10 +62,10 @@ The usual setup generates the code in the build script of your crate. Add `xsd-p
 
 ```toml
 [dependencies]
-xsd-parser-types = { version = "0.3", features = ["quick-xml"] }
+xsd-parser-types = { version = "0.4", features = ["quick-xml"] }
 
 [build-dependencies]
-xsd-parser = "1.6"
+xsd-parser = "1.7"
 ```
 
 Then generate the code in `build.rs` and include it from your crate:
@@ -151,7 +151,7 @@ The benchmarks were created on the following system:
 
 Below you can find a short list of the most important changes for each released version.
 
-## Version 1.6.1
+## Version 1.7.0
 
 - **Stable Names for Merged Content Types**
   Since 1.6.0 complex types share the content types that `OptimizerFlags::REMOVE_DUPLICATES` merged. The shared type got the name of the first owner and an internal counter (e.g. `AncillaryContentDescriptionContent85`) and was defined in the module of that owner. The name is now derived from the schema: copies of the same `xs:group` are merged into a type named like the group (`<Group>Content` if the name is already used), defined in the module of the group, and the content of a base type is shared with its derived types as `<Base>Content`, defined in the module of the base type. Content types of unrelated complex types are not merged anymore.
@@ -159,53 +159,25 @@ Below you can find a short list of the most important changes for each released 
 - **Separate Flags for Types and Content Types**
   `REMOVE_DUPLICATES` is now the combination of the new flags `REMOVE_DUPLICATE_TYPES` and `REMOVE_DUPLICATE_CONTENTS`. Use `OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATE_CONTENTS` to keep one content type per complex type, like in version 1.5.
 
-- **Namespaces of Referenced Elements and Attributes**
-  `xs:element ref` and `xs:attribute ref` took their form from the `elementFormDefault` or `attributeFormDefault` of the referencing schema. A reference always names a global declaration, and those are always namespace-qualified, so a reference to `ds:Signature` from an unqualified schema was written as `<Signature>` and `xml:lang` as `lang`. References, substitution group members and global elements (also the default root name) are now always qualified, and the serializers declare the namespaces of referenced elements. The root element declares its namespace according to the passed name (`xmlns="..."` for a name without prefix), and the `xml` prefix is never declared. `xsi:type` values are written as qualified names (`tns:dog`). Dynamic types converted to choices (`OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE`) now use the name of the referencing element for variants identified by `xsi:type`, instead of the name of the dynamic type. New types of global elements (`TypedefMode::NewType`) use the tag of the element as default name. Type aliases still use the tag of the type, so pass the root name for them.
-
-- **Imports without Namespace**
-  A schema without `targetNamespace` that was imported by `xs:import` without `namespace` got the namespace of the importing schema. Only `xs:include`, `xs:redefine` and `xs:override` do that (chameleon schemas). The components of such an import are now in no namespace. Unprefixed references that cannot be resolved in the namespace of the referencing schema are resolved in no namespace.
-
-- **Element Namespaces from the Parent**
-  The namespace of an element was derived from its type, but the type is shared by all elements that use it, and a name without prefix can mean the default namespace or no namespace. Unqualified elements below an active default namespace (e.g. a root name without prefix like `Foo`, which declares `xmlns="..."`) therefore ended up in that namespace. The parent now passes the namespace of each element to the serializer of the child (`WithSerializer::serializer_with_namespace`), which writes `xmlns=""` for elements in no namespace below a default namespace and declares the namespace of the element instead of the namespace of its type in `NamespaceSerialization::Local` mode.
+- **Element Namespaces**
+  Referenced elements and attributes, substitution group members, global elements and `xsi:type` values are always namespace-qualified. The namespace of an element is defined by its parent instead of its type, so unqualified elements below a default namespace are written with `xmlns=""`. The components of an `xs:import` without `namespace` are in no namespace.
 
 - **Default Namespace at Runtime**
-  The default namespace of the serializer can be set at runtime with `SerializeHelper::with_default_namespace` and passed to `SerializeSync::serialize_with`, `SerializeAsync::serialize_async_with`, `EncodingWriter::write_document_with` or `Serializer::into_iter_with`. The root element declares it as `xmlns="..."`. Elements are written without prefix while their namespace is the active default namespace, also below a root name without prefix (`xmlns="T"`), and keep their prefix where another default is active (e.g. below an unqualified element with `xmlns=""`). The root does not declare the prefix of the active default namespace if only element names use it; elements that need it further down declare it themselves. This removes the redundant `xmlns="T" xmlns:tns="T"` and `tns:` prefixes below a root name without prefix. The serializers of dynamic types now always declare `xmlns:xsi` for their `xsi:type` value, not only on the root.
+  `SerializeHelper::with_default_namespace` sets a default namespace for the serializer (`SerializeSync::serialize_with` and friends). Elements in that namespace are written without prefix.
 
-- **Dynamic Elements Named Differently from their Type**
-  The generated deserializers of dynamic types only accepted an element that was named like the dynamic type (`<animal xsi:type="tns:dog">` for the type `animal`), so an element `pet` of type `animal` was not read. The parent now passes the element name to the deserializer of a dynamic type, which also tells apart two fields of the same dynamic type in one parent.
+- **Reading Namespaces**
+  The deserializers resolve unprefixed element names and `xsi:type` values in the default namespace, and dynamic types accept elements that are named differently from the type (`<pet xsi:type="tns:dog">`).
+
+- **Reading and Writing Other Encodings**
+  `xsd-parser-types` 0.4.0 adds the `DecodingIoReader`, which decodes the input based on the BOM or the XML declaration (e.g. `Windows-1251` or `UTF-16`), and the `EncodingWriter`, which encodes the serialized output (`write_document` writes a complete document including the matching XML declaration). Characters that can not be represented in the target encoding are written as numeric character references in text and attribute values. Since the upgrade to `quick-xml` 0.42 the `IoReader` only accepts UTF-8.
 
 - **Breaking Changes**
   - The generated code changes for schemas with merged content types, see above.
   - `GroupMeta` has the new field `group`.
-  - The generated serializers write referenced elements and attributes with their namespace prefix (e.g. `tns:id` instead of `id`), also if they are in the namespace of the referencing schema.
-  - For schemas with `elementFormDefault="unqualified"` the default root name of a global element is qualified (`tns:list` instead of `list`), and `xsi:type` values get the prefix of the type (`tns:dog` instead of `dog`). Reading documents in the old form still works.
-  - The generated code of elements and types of an `xs:import` without `namespace` moves from the namespace of the importing schema to no namespace.
-  - Below a root name without prefix the serializers omit the prefixes of elements in the default namespace and the redundant prefix declaration on the root.
-  - The generated serializers implement `WithSerializer::serializer_with_namespace` and pass the namespace of each element. Hand-written `WithSerializer` implementations that write elements should override `serializer_with_namespace` and forward the namespace, otherwise their elements keep the old behavior.
-  - The generated deserializers resolve unprefixed element names in the default namespace. An unprefixed element below a foreign default namespace (`xmlns="..."`) is rejected now, like a wrongly prefixed name. Unprefixed dynamic type names (`xsi:type` values) are resolved the same way.
-
-## xsd-parser-types 0.3.1
-
-- **Reading and Writing Other Encodings**
-  `xsd-parser-types` 0.3.1 adds the `DecodingIoReader`, which decodes the input based on the BOM or the XML declaration (e.g. `Windows-1251` or `UTF-16`), and the `EncodingWriter`, which encodes the serialized output (`write_document` writes a complete document including the matching XML declaration). Characters that can not be represented in the target encoding are written as numeric character references in text and attribute values. Since the upgrade to `quick-xml` 0.42 the `IoReader` only accepts UTF-8.
-
-- **Element and Attribute Name Resolution**
-  `DeserializeHelper` has the new methods `resolve_element_local_name`, which resolves an unprefixed name in the default namespace, and `resolve_attrib_local_name`, which keeps the old behavior of `resolve_local_name` for attributes. `resolve_local_name` is deprecated in favor of them.
-
-- **Balanced Namespace Scopes**
-  The `SerializeHelper` lost track of the declared namespaces in some cases: `AnySimpleType` never closed its namespace scope, the `XsiTypeSerializer` left its scope open for empty elements and dropped the `xmlns:xsi` declared by the wrapped serializer, and a nil `Nillable` declared `xmlns:xsi` without a scope of its own. A following element then omitted declarations it needed. The helper now also checks the binding of a prefix instead of only the namespace, so a re-bound prefix is not used for the old namespace anymore, and it never declares the same prefix twice on one element. A prefix of a QName value (e.g. `xsi:type`) that is bound to a different namespace is replaced by a generated prefix (`ns0`, `ns1`, ...).
-
-- **Element Namespaces**
-  `WithSerializer` and `WithBoxedSerializer` have the new provided method `serializer_with_namespace`, which also takes the `ElementNamespace` of the element. Its default calls `serializer`. `SerializeHelper::write_xmlns_for_element` writes the declaration the element needs (`xmlns=""` for an element in no namespace below a default namespace), `ContentSerializer`, `IterSerializer` and `XsiTypeSerializer` have a `with_namespace` builder, and `Element` and `AnySimpleType` implement `CollectNamespaces`. Breaking: the public variants of `ContentSerializer`, `AnySimpleTypeSerializer` and `NillableSerializer` have a new `namespace` field.
-
-- **Default Namespace at Runtime**
-  `SerializeHelper::with_default_namespace` / `set_default_namespace` set the default namespace of the root element (`write_default_namespace`), `SerializeHelper::element_name` omits the prefix of an element whose namespace is the active default namespace and `write_xmlns_unless_default` skips a declaration of the active default namespace. `SerializeSync::serialize_with`, `SerializeAsync::serialize_async_with` and `EncodingWriter::write_document_with` take a prepared helper (custom implementations of the traits must override the new methods to honor it). The `XsiTypeSerializer` declares `xmlns:xsi` on the rewritten element if it is not bound yet.
-
-- **Element Name for Dynamic Types**
-  `Deserializer` and `WithDeserializer` have the new provided method `init_with_name`, which also takes the name of the expected element. Its default calls `init`; the deserializers of dynamic types use the name to decide if they take the element. Hand-written wrappers that call `Deserializer::init` of a dynamic type do not pass a name and keep the old behavior (the element must be named like the type).
-
-- **Namespace of `xsi:type` Values**
-  `XsiTypeSerializer::with_type_namespace` sets the namespace of the inner element name. The serializer then declares a prefix for the value (its own, or a generated one if that is taken) on the rewritten element if it is not bound to that namespace yet, or omits the prefix if the default namespace fits.
+  - The serializers write referenced elements and attributes with their prefix, qualify the default root name of global elements and `xsi:type` values, and write `xmlns=""` for unqualified elements below a default namespace. Documents in the old form are still read, except unprefixed elements below a foreign default namespace.
+  - The components of an `xs:import` without `namespace` move to no namespace.
+  - Hand-written `WithSerializer` implementations should forward the namespace in `serializer_with_namespace`, hand-written wrappers of dynamic types the name in `Deserializer::init_with_name`.
+  - The public variants of `ContentSerializer`, `AnySimpleTypeSerializer` and `NillableSerializer` have a new `namespace` field, and `DeserializeHelper::resolve_local_name` is deprecated in favor of `resolve_element_local_name` and `resolve_attrib_local_name`.
 
 ## Version 1.6.0
 
