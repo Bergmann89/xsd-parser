@@ -56,7 +56,7 @@ pub mod bar {
             Ok(quick_xml_serialize::InnerTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::InnerTypeSerializerState::Init__),
-                name: name.unwrap_or("Inner"),
+                name: name.unwrap_or("bar:Inner"),
                 is_root,
             })
         }
@@ -287,6 +287,11 @@ pub mod bar {
                                     self.name,
                                     &super::super::NS_BAR,
                                 );
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_BAR),
+                                    &super::super::NS_BAR,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -335,7 +340,7 @@ pub mod baz {
             Ok(quick_xml_serialize::InnerTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::InnerTypeSerializerState::Init__),
-                name: name.unwrap_or("Inner"),
+                name: name.unwrap_or("baz:Inner"),
                 is_root,
             })
         }
@@ -566,6 +571,11 @@ pub mod baz {
                                     self.name,
                                     &super::super::NS_BAZ,
                                 );
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_BAZ),
+                                    &super::super::NS_BAZ,
+                                );
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -614,7 +624,7 @@ pub mod biz {
             Ok(quick_xml_serialize::InnerTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::InnerTypeSerializerState::Init__),
-                name: name.unwrap_or("Inner"),
+                name: name.unwrap_or("biz:Inner"),
                 is_root,
             })
         }
@@ -843,6 +853,11 @@ pub mod biz {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
                                     self.name,
+                                    &super::super::NS_BIZ,
+                                );
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_BIZ),
                                     &super::super::NS_BIZ,
                                 );
                             }
@@ -1260,13 +1275,28 @@ pub mod quick_xml_serialize {
                         *self.state =
                             OuterTypeSerializerState::BarInner(WithSerializer::serializer(
                                 &self.value.bar_inner,
-                                Some("Inner"),
+                                Some("bar:Inner"),
                                 false,
                             )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_BAR),
+                                &super::NS_BAR,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_BAZ),
+                                &super::NS_BAZ,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_BIZ),
+                                &super::NS_BIZ,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -1276,7 +1306,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 OuterTypeSerializerState::BazInner(WithSerializer::serializer(
                                     &self.value.baz_inner,
-                                    Some("Inner"),
+                                    Some("baz:Inner"),
                                     false,
                                 )?)
                         }
@@ -1287,7 +1317,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 OuterTypeSerializerState::BizInner(WithSerializer::serializer(
                                     &self.value.biz_inner,
-                                    Some("Inner"),
+                                    Some("biz:Inner"),
                                     false,
                                 )?)
                         }

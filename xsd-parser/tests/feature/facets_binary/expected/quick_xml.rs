@@ -41,7 +41,7 @@ impl WithSerializer for RootType {
         Ok(quick_xml_serialize::RootTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::RootTypeSerializerState::Init__),
-            name: name.unwrap_or("Root"),
+            name: name.unwrap_or("tns:Root"),
             is_root,
         })
     }
@@ -1109,6 +1109,11 @@ pub mod quick_xml_serialize {
                         helper.begin_ns_scope();
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }

@@ -30,7 +30,7 @@ impl WithSerializer for ListType {
         Ok(quick_xml_serialize::ListTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ListTypeSerializerState::Init__),
-            name: name.unwrap_or("list"),
+            name: name.unwrap_or("tns:list"),
             is_root,
         })
     }
@@ -54,12 +54,12 @@ impl WithSerializer for Animal {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         if (*self.0).as_any().is::<CatType>() {
-            return self.0.serializer(Some("cat"), is_root);
+            return self.0.serializer(Some("tns:cat"), is_root);
         }
         if (*self.0).as_any().is::<DogType>() {
-            return self.0.serializer(Some("dog"), is_root);
+            return self.0.serializer(Some("tns:dog"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for Animal {
@@ -105,14 +105,21 @@ impl WithSerializer for DogType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        if (*self.0).as_any().is::<LabradorType>() || (*self.0).as_any().is::<BeagleType>() {
+        if (*self.0).as_any().is::<LabradorType>() {
             return Ok(Box::new(XsiTypeSerializer::new(
-                self.0.serializer(None, is_root)?,
+                self.0.serializer(Some("tns:labrador"), is_root)?,
                 name.unwrap_or("dog"),
                 is_root,
             )));
         }
-        self.0.serializer(None, is_root)
+        if (*self.0).as_any().is::<BeagleType>() {
+            return Ok(Box::new(XsiTypeSerializer::new(
+                self.0.serializer(Some("tns:beagle"), is_root)?,
+                name.unwrap_or("dog"),
+                is_root,
+            )));
+        }
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for DogType {
@@ -833,7 +840,7 @@ pub mod quick_xml_serialize {
                     ListTypeSerializerState::Init__ => {
                         *self.state = ListTypeSerializerState::Animal(IterSerializer::new(
                             &self.value.animal[..],
-                            Some("animal"),
+                            Some("tns:animal"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
@@ -844,6 +851,11 @@ pub mod quick_xml_serialize {
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
                                 &super::NS_XSI,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
                             );
                         }
                         return Ok(Some(Event::Start(bytes)));

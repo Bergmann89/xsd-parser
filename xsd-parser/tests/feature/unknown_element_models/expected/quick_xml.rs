@@ -198,12 +198,12 @@ impl WithSerializer for AnimalType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         if (*self.0).as_any().is::<DogType>() {
             return Ok(Box::new(XsiTypeSerializer::new(
-                self.0.serializer(None, is_root)?,
+                self.0.serializer(Some("tns:dog"), is_root)?,
                 name.unwrap_or("tns:animal"),
                 is_root,
             )));
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for AnimalType {
@@ -462,7 +462,7 @@ impl WithSerializer for Shape {
         if (*self.0).as_any().is::<ShapeType>() {
             return self.0.serializer(Some("tns:Circle"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for Shape {
@@ -4830,6 +4830,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -4905,6 +4906,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -4979,6 +4981,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5047,6 +5050,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5125,6 +5129,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5201,6 +5206,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5268,6 +5274,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
@@ -5343,6 +5350,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5396,6 +5404,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5456,6 +5465,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5588,6 +5598,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5724,6 +5735,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
@@ -5807,6 +5819,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -5952,6 +5965,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
@@ -6016,6 +6030,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),

@@ -764,7 +764,7 @@ pub mod tns {
                                 *self.state = PersonsTypeSerializerState::Person(
                                     ::xsd_parser_types::quick_xml::IterSerializer::new(
                                         &self.value.person[..],
-                                        Some("Person"),
+                                        Some("tns:Person"),
                                         false,
                                     ),
                                 );
@@ -775,6 +775,11 @@ pub mod tns {
                                     helper.write_xmlns_for_tag(
                                         &mut bytes,
                                         self.name,
+                                        &super::super::super::NS_TNS,
+                                    );
+                                    helper.write_xmlns(
+                                        &mut bytes,
+                                        Some(&super::super::super::PREFIX_TNS),
                                         &super::super::super::NS_TNS,
                                     );
                                 }
@@ -1638,7 +1643,7 @@ pub mod tns {
                                 *self.state = AdvancedPersonsTypeSerializerState::Person(
                                     ::xsd_parser_types::quick_xml::IterSerializer::new(
                                         &self.value.person[..],
-                                        Some("Person"),
+                                        Some("tns:Person"),
                                         false,
                                     ),
                                 );
@@ -1649,6 +1654,11 @@ pub mod tns {
                                     helper.write_xmlns_for_tag(
                                         &mut bytes,
                                         self.name,
+                                        &super::super::super::NS_TNS,
+                                    );
+                                    helper.write_xmlns(
+                                        &mut bytes,
+                                        Some(&super::super::super::PREFIX_TNS),
                                         &super::super::super::NS_TNS,
                                     );
                                 }

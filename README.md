@@ -159,9 +159,14 @@ Below you can find a short list of the most important changes for each released 
 - **Separate Flags for Types and Content Types**
   `REMOVE_DUPLICATES` is now the combination of the new flags `REMOVE_DUPLICATE_TYPES` and `REMOVE_DUPLICATE_CONTENTS`. Use `OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATE_CONTENTS` to keep one content type per complex type, like in version 1.5.
 
+- **Namespaces of Referenced Elements and Attributes**
+  `xs:element ref` and `xs:attribute ref` took their form from the `elementFormDefault` or `attributeFormDefault` of the referencing schema. A reference always names a global declaration, and those are always namespace-qualified, so a reference to `ds:Signature` from an unqualified schema was written as `<Signature>` and `xml:lang` as `lang`. References, substitution group members and global elements (also the default root name) are now always qualified, and the serializers declare the namespaces of referenced elements. The root element declares its namespace according to the passed name (`xmlns="..."` for a name without prefix), and the `xml` prefix is never declared. `xsi:type` values are written as qualified names (`tns:dog`). Dynamic types converted to choices (`OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE`) now use the name of the referencing element for variants identified by `xsi:type`, instead of the name of the dynamic type.
+
 - **Breaking Changes**
   - The generated code changes for schemas with merged content types, see above.
   - `GroupMeta` has the new field `group`.
+  - The generated serializers write referenced elements and attributes with their namespace prefix (e.g. `tns:id` instead of `id`), also if they are in the namespace of the referencing schema.
+  - For schemas with `elementFormDefault="unqualified"` the default root name of a global element is qualified (`tns:list` instead of `list`), and `xsi:type` values get the prefix of the type (`tns:dog` instead of `dog`). Reading documents in the old form still works.
 
 ## xsd-parser-types 0.3.1
 

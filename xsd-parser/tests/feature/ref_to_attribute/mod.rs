@@ -58,7 +58,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "Foo",
+        "tns:Foo",
         "tests/feature/ref_to_attribute/example/default.xml",
     );
 }

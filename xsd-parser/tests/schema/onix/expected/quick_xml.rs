@@ -280073,6 +280073,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -280224,6 +280229,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -280515,6 +280525,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -280665,6 +280680,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -280791,6 +280811,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -280875,6 +280900,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -280959,6 +280989,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281042,6 +281077,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281131,6 +281171,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281219,6 +281264,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281303,6 +281353,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281387,6 +281442,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281521,6 +281581,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281806,6 +281871,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281889,6 +281959,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -281973,6 +282048,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -282382,6 +282462,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -282597,7 +282682,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CollateralDetailElementTypeSerializerState :: Init__ => { * self . state = CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: GpPrizes (WithSerializer :: serializer (& self . value . gp_prizes , Some ("gp.prizes") , false) ?) , } CollateralDetailElementTypeSerializerState :: GpPrizes (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: End__ , } CollateralDetailElementTypeSerializerState :: End__ => { * self . state = CollateralDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollateralDetailElementTypeSerializerState :: Done__ => return Ok (None) , CollateralDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CollateralDetailElementTypeSerializerState :: Init__ => { * self . state = CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: GpPrizes (WithSerializer :: serializer (& self . value . gp_prizes , Some ("gp.prizes") , false) ?) , } CollateralDetailElementTypeSerializerState :: GpPrizes (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: End__ , } CollateralDetailElementTypeSerializerState :: End__ => { * self . state = CollateralDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollateralDetailElementTypeSerializerState :: Done__ => return Ok (None) , CollateralDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -282653,6 +282738,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -282747,6 +282837,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -282818,7 +282913,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { PublishingDetailElementTypeSerializerState :: Init__ => { * self . state = PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (WithSerializer :: serializer (& self . value . gp_imprints_and_publishers , Some ("gp.imprints_and_publishers") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (WithSerializer :: serializer (& self . value . gp_publishing_status_dates_and_copyright , Some ("gp.publishing_status_dates_and_copyright") , false) ?) , } PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (WithSerializer :: serializer (& self . value . gp_sales_rights_and_restrictions , Some ("gp.sales_rights_and_restrictions") , false) ?) , } PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: End__ , } PublishingDetailElementTypeSerializerState :: End__ => { * self . state = PublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , PublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { PublishingDetailElementTypeSerializerState :: Init__ => { * self . state = PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (WithSerializer :: serializer (& self . value . gp_imprints_and_publishers , Some ("gp.imprints_and_publishers") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (WithSerializer :: serializer (& self . value . gp_publishing_status_dates_and_copyright , Some ("gp.publishing_status_dates_and_copyright") , false) ?) , } PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (WithSerializer :: serializer (& self . value . gp_sales_rights_and_restrictions , Some ("gp.sales_rights_and_restrictions") , false) ?) , } PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: End__ , } PublishingDetailElementTypeSerializerState :: End__ => { * self . state = PublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , PublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -282880,6 +282975,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -282990,6 +283090,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283102,6 +283207,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283307,6 +283417,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283469,6 +283584,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283553,6 +283673,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283637,6 +283762,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283721,6 +283851,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283809,6 +283944,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -283901,6 +284041,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -284021,6 +284166,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -284118,6 +284268,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -284244,6 +284399,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -285420,6 +285580,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -285693,7 +285858,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ContentItemElementTypeSerializerState :: Init__ => { * self . state = ContentItemElementTypeSerializerState :: LevelSequenceNumber (IterSerializer :: new (self . value . level_sequence_number . as_ref () , Some ("LevelSequenceNumber") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ContentItemElementTypeSerializerState :: LevelSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content118 (WithSerializer :: serializer (& self . value . content_118 , Some ("Content118") , false) ?) , } ContentItemElementTypeSerializerState :: Content118 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubUsageConstraint (IterSerializer :: new (& self . value . epub_usage_constraint [..] , Some ("EpubUsageConstraint") , false)) , } ContentItemElementTypeSerializerState :: EpubUsageConstraint (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubLicense (IterSerializer :: new (& self . value . epub_license [..] , Some ("EpubLicense") , false)) , } ContentItemElementTypeSerializerState :: EpubLicense (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content119 (WithSerializer :: serializer (& self . value . content_119 , Some ("Content119") , false) ?) , } ContentItemElementTypeSerializerState :: Content119 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpAuthorship (IterSerializer :: new (self . value . gp_authorship . as_ref () , Some ("gp.authorship") , false)) , } ContentItemElementTypeSerializerState :: GpAuthorship (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpLanguages (WithSerializer :: serializer (& self . value . gp_languages , Some ("gp.languages") , false) ?) , } ContentItemElementTypeSerializerState :: GpLanguages (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpSubjects (WithSerializer :: serializer (& self . value . gp_subjects , Some ("gp.subjects") , false) ?) , } ContentItemElementTypeSerializerState :: GpSubjects (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , false) ?) , } ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Publisher (IterSerializer :: new (& self . value . publisher [..] , Some ("Publisher") , false)) , } ContentItemElementTypeSerializerState :: Publisher (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content123 (IterSerializer :: new (self . value . content_123 . as_ref () , Some ("Content123") , false)) , } ContentItemElementTypeSerializerState :: Content123 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpRelatedMaterials (WithSerializer :: serializer (& self . value . gp_related_materials , Some ("gp.related_materials") , false) ?) , } ContentItemElementTypeSerializerState :: GpRelatedMaterials (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: End__ , } ContentItemElementTypeSerializerState :: End__ => { * self . state = ContentItemElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ContentItemElementTypeSerializerState :: Done__ => return Ok (None) , ContentItemElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ContentItemElementTypeSerializerState :: Init__ => { * self . state = ContentItemElementTypeSerializerState :: LevelSequenceNumber (IterSerializer :: new (self . value . level_sequence_number . as_ref () , Some ("LevelSequenceNumber") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ContentItemElementTypeSerializerState :: LevelSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content118 (WithSerializer :: serializer (& self . value . content_118 , Some ("Content118") , false) ?) , } ContentItemElementTypeSerializerState :: Content118 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubUsageConstraint (IterSerializer :: new (& self . value . epub_usage_constraint [..] , Some ("EpubUsageConstraint") , false)) , } ContentItemElementTypeSerializerState :: EpubUsageConstraint (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubLicense (IterSerializer :: new (& self . value . epub_license [..] , Some ("EpubLicense") , false)) , } ContentItemElementTypeSerializerState :: EpubLicense (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content119 (WithSerializer :: serializer (& self . value . content_119 , Some ("Content119") , false) ?) , } ContentItemElementTypeSerializerState :: Content119 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpAuthorship (IterSerializer :: new (self . value . gp_authorship . as_ref () , Some ("gp.authorship") , false)) , } ContentItemElementTypeSerializerState :: GpAuthorship (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpLanguages (WithSerializer :: serializer (& self . value . gp_languages , Some ("gp.languages") , false) ?) , } ContentItemElementTypeSerializerState :: GpLanguages (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpSubjects (WithSerializer :: serializer (& self . value . gp_subjects , Some ("gp.subjects") , false) ?) , } ContentItemElementTypeSerializerState :: GpSubjects (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , false) ?) , } ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Publisher (IterSerializer :: new (& self . value . publisher [..] , Some ("Publisher") , false)) , } ContentItemElementTypeSerializerState :: Publisher (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content123 (IterSerializer :: new (self . value . content_123 . as_ref () , Some ("Content123") , false)) , } ContentItemElementTypeSerializerState :: Content123 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpRelatedMaterials (WithSerializer :: serializer (& self . value . gp_related_materials , Some ("gp.related_materials") , false) ?) , } ContentItemElementTypeSerializerState :: GpRelatedMaterials (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: End__ , } ContentItemElementTypeSerializerState :: End__ => { * self . state = ContentItemElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ContentItemElementTypeSerializerState :: Done__ => return Ok (None) , ContentItemElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -285930,6 +286095,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -286053,6 +286223,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -286200,6 +286375,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -286349,6 +286529,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -286444,6 +286629,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -286598,7 +286788,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { MarketPublishingDetailElementTypeSerializerState :: Init__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (IterSerializer :: new (& self . value . publisher_representative [..] , Some ("PublisherRepresentative") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ProductContact (IterSerializer :: new (& self . value . product_contact [..] , Some ("ProductContact") , false)) , } MarketPublishingDetailElementTypeSerializerState :: ProductContact (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (WithSerializer :: serializer (& self . value . market_publishing_status , Some ("MarketPublishingStatus") , false) ?) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (IterSerializer :: new (& self . value . market_publishing_status_note [..] , Some ("MarketPublishingStatusNote") , false)) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketDate (IterSerializer :: new (& self . value . market_date [..] , Some ("MarketDate") , false)) , } MarketPublishingDetailElementTypeSerializerState :: MarketDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (IterSerializer :: new (& self . value . promotion_campaign [..] , Some ("PromotionCampaign") , false)) , } MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (IterSerializer :: new (& self . value . initial_print_run [..] , Some ("InitialPrintRun") , false)) , } MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (IterSerializer :: new (& self . value . reprint_detail [..] , Some ("ReprintDetail") , false)) , } MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: CopiesSold (IterSerializer :: new (& self . value . copies_sold [..] , Some ("CopiesSold") , false)) , } MarketPublishingDetailElementTypeSerializerState :: CopiesSold (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (IterSerializer :: new (& self . value . book_club_adoption [..] , Some ("BookClubAdoption") , false)) , } MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: End__ , } MarketPublishingDetailElementTypeSerializerState :: End__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } MarketPublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , MarketPublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { MarketPublishingDetailElementTypeSerializerState :: Init__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (IterSerializer :: new (& self . value . publisher_representative [..] , Some ("PublisherRepresentative") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ProductContact (IterSerializer :: new (& self . value . product_contact [..] , Some ("ProductContact") , false)) , } MarketPublishingDetailElementTypeSerializerState :: ProductContact (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (WithSerializer :: serializer (& self . value . market_publishing_status , Some ("MarketPublishingStatus") , false) ?) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (IterSerializer :: new (& self . value . market_publishing_status_note [..] , Some ("MarketPublishingStatusNote") , false)) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketDate (IterSerializer :: new (& self . value . market_date [..] , Some ("MarketDate") , false)) , } MarketPublishingDetailElementTypeSerializerState :: MarketDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (IterSerializer :: new (& self . value . promotion_campaign [..] , Some ("PromotionCampaign") , false)) , } MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (IterSerializer :: new (& self . value . initial_print_run [..] , Some ("InitialPrintRun") , false)) , } MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (IterSerializer :: new (& self . value . reprint_detail [..] , Some ("ReprintDetail") , false)) , } MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: CopiesSold (IterSerializer :: new (& self . value . copies_sold [..] , Some ("CopiesSold") , false)) , } MarketPublishingDetailElementTypeSerializerState :: CopiesSold (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (IterSerializer :: new (& self . value . book_club_adoption [..] , Some ("BookClubAdoption") , false)) , } MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: End__ , } MarketPublishingDetailElementTypeSerializerState :: End__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } MarketPublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , MarketPublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -286715,6 +286905,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -286985,6 +287180,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287114,6 +287314,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287232,6 +287437,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287320,6 +287530,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287408,6 +287623,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287491,6 +287711,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287575,6 +287800,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287658,6 +287888,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287743,6 +287978,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287831,6 +288071,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -287914,6 +288159,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288007,7 +288257,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ProductFormFeatureElementTypeSerializerState :: Init__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (WithSerializer :: serializer (& self . value . product_form_feature_type , Some ("ProductFormFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (IterSerializer :: new (self . value . product_form_feature_value . as_ref () , Some ("ProductFormFeatureValue") , false)) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (IterSerializer :: new (& self . value . product_form_feature_description [..] , Some ("ProductFormFeatureDescription") , false)) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: End__ , } ProductFormFeatureElementTypeSerializerState :: End__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductFormFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ProductFormFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ProductFormFeatureElementTypeSerializerState :: Init__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (WithSerializer :: serializer (& self . value . product_form_feature_type , Some ("ProductFormFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (IterSerializer :: new (self . value . product_form_feature_value . as_ref () , Some ("ProductFormFeatureValue") , false)) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (IterSerializer :: new (& self . value . product_form_feature_description [..] , Some ("ProductFormFeatureDescription") , false)) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: End__ , } ProductFormFeatureElementTypeSerializerState :: End__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductFormFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ProductFormFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -288052,6 +288302,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288137,6 +288392,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288232,6 +288492,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288316,6 +288581,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288404,6 +288674,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288500,6 +288775,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288611,6 +288891,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288700,6 +288985,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288805,6 +289095,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -288943,6 +289238,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -289054,6 +289354,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -289148,7 +289453,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ProductClassificationElementTypeSerializerState :: Init__ => { * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationType (WithSerializer :: serializer (& self . value . product_classification_type , Some ("ProductClassificationType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductClassificationElementTypeSerializerState :: ProductClassificationType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (IterSerializer :: new (self . value . product_classification_type_name . as_ref () , Some ("ProductClassificationTypeName") , false)) , } ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationCode (WithSerializer :: serializer (& self . value . product_classification_code , Some ("ProductClassificationCode") , false) ?) , } ProductClassificationElementTypeSerializerState :: ProductClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: Percent (IterSerializer :: new (self . value . percent . as_ref () , Some ("Percent") , false)) , } ProductClassificationElementTypeSerializerState :: Percent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: End__ , } ProductClassificationElementTypeSerializerState :: End__ => { * self . state = ProductClassificationElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductClassificationElementTypeSerializerState :: Done__ => return Ok (None) , ProductClassificationElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ProductClassificationElementTypeSerializerState :: Init__ => { * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationType (WithSerializer :: serializer (& self . value . product_classification_type , Some ("ProductClassificationType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductClassificationElementTypeSerializerState :: ProductClassificationType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (IterSerializer :: new (self . value . product_classification_type_name . as_ref () , Some ("ProductClassificationTypeName") , false)) , } ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationCode (WithSerializer :: serializer (& self . value . product_classification_code , Some ("ProductClassificationCode") , false) ?) , } ProductClassificationElementTypeSerializerState :: ProductClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: Percent (IterSerializer :: new (self . value . percent . as_ref () , Some ("Percent") , false)) , } ProductClassificationElementTypeSerializerState :: Percent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: End__ , } ProductClassificationElementTypeSerializerState :: End__ => { * self . state = ProductClassificationElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductClassificationElementTypeSerializerState :: Done__ => return Ok (None) , ProductClassificationElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -289257,6 +289562,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -289581,6 +289891,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -289866,6 +290181,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -289995,6 +290315,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290271,6 +290596,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290459,6 +290789,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290604,6 +290939,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290715,6 +291055,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290799,6 +291144,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290887,6 +291237,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290990,7 +291345,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { AncillaryContentElementTypeSerializerState :: Init__ => { * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentType (WithSerializer :: serializer (& self . value . ancillary_content_type , Some ("AncillaryContentType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } AncillaryContentElementTypeSerializerState :: AncillaryContentType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (IterSerializer :: new (& self . value . ancillary_content_description [..] , Some ("AncillaryContentDescription") , false)) , } AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: Number (IterSerializer :: new (self . value . number . as_ref () , Some ("Number") , false)) , } AncillaryContentElementTypeSerializerState :: Number (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: End__ , } AncillaryContentElementTypeSerializerState :: End__ => { * self . state = AncillaryContentElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } AncillaryContentElementTypeSerializerState :: Done__ => return Ok (None) , AncillaryContentElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { AncillaryContentElementTypeSerializerState :: Init__ => { * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentType (WithSerializer :: serializer (& self . value . ancillary_content_type , Some ("AncillaryContentType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } AncillaryContentElementTypeSerializerState :: AncillaryContentType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (IterSerializer :: new (& self . value . ancillary_content_description [..] , Some ("AncillaryContentDescription") , false)) , } AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: Number (IterSerializer :: new (self . value . number . as_ref () , Some ("Number") , false)) , } AncillaryContentElementTypeSerializerState :: Number (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: End__ , } AncillaryContentElementTypeSerializerState :: End__ => { * self . state = AncillaryContentElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } AncillaryContentElementTypeSerializerState :: Done__ => return Ok (None) , AncillaryContentElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -291063,6 +291418,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291237,6 +291597,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291404,6 +291769,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291551,6 +291921,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291677,6 +292052,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291783,6 +292163,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291970,6 +292355,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -292294,6 +292684,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -292537,6 +292932,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -292781,6 +293181,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293002,6 +293407,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293115,6 +293525,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293198,6 +293613,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293281,6 +293701,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293365,6 +293790,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293529,6 +293959,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293673,6 +294108,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293859,6 +294299,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294058,6 +294503,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294170,6 +294620,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294484,6 +294939,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294845,6 +295305,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294935,6 +295400,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295066,6 +295536,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295325,6 +295800,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295423,6 +295903,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295590,6 +296075,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295686,6 +296176,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295799,6 +296294,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295976,6 +296476,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296089,6 +296594,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296202,6 +296712,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296335,6 +296850,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296453,6 +296973,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296637,6 +297162,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296814,6 +297344,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296975,6 +297510,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297066,6 +297606,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297172,6 +297717,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297269,6 +297819,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297364,6 +297919,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297458,6 +298018,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297552,6 +298117,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297645,6 +298215,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297768,6 +298343,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297965,6 +298545,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298155,6 +298740,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298289,6 +298879,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298420,6 +299015,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298513,6 +299113,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298610,6 +299215,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298721,6 +299331,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298894,6 +299509,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299033,6 +299653,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299116,6 +299741,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299351,6 +299981,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299434,6 +300069,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299519,6 +300159,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299610,6 +300255,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299701,6 +300351,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299796,6 +300451,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299879,6 +300539,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299962,6 +300627,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300046,6 +300716,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300130,6 +300805,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300219,6 +300899,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300318,6 +301003,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300411,7 +301101,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { EpubLicenseExpressionElementTypeSerializerState :: Init__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (WithSerializer :: serializer (& self . value . epub_license_expression_type , Some ("EpubLicenseExpressionType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (IterSerializer :: new (self . value . epub_license_expression_type_name . as_ref () , Some ("EpubLicenseExpressionTypeName") , false)) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (WithSerializer :: serializer (& self . value . epub_license_expression_link , Some ("EpubLicenseExpressionLink") , false) ?) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: End__ , } EpubLicenseExpressionElementTypeSerializerState :: End__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } EpubLicenseExpressionElementTypeSerializerState :: Done__ => return Ok (None) , EpubLicenseExpressionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { EpubLicenseExpressionElementTypeSerializerState :: Init__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (WithSerializer :: serializer (& self . value . epub_license_expression_type , Some ("EpubLicenseExpressionType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (IterSerializer :: new (self . value . epub_license_expression_type_name . as_ref () , Some ("EpubLicenseExpressionTypeName") , false)) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (WithSerializer :: serializer (& self . value . epub_license_expression_link , Some ("EpubLicenseExpressionLink") , false) ?) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: End__ , } EpubLicenseExpressionElementTypeSerializerState :: End__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } EpubLicenseExpressionElementTypeSerializerState :: Done__ => return Ok (None) , EpubLicenseExpressionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -300464,6 +301154,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300563,6 +301258,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300655,6 +301355,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300751,6 +301456,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300842,6 +301552,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300921,6 +301636,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301111,6 +301831,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301277,6 +302002,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301350,6 +302080,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301454,6 +302189,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301580,6 +302320,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301674,6 +302419,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301757,6 +302507,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301847,6 +302602,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302020,6 +302780,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302289,6 +303054,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302387,6 +303157,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302470,6 +303245,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302558,6 +303338,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302641,6 +303426,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302729,6 +303519,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302817,6 +303612,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303005,6 +303805,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303130,6 +303935,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303377,6 +304187,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303460,6 +304275,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303543,6 +304363,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303626,6 +304451,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303709,6 +304539,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303792,6 +304627,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303948,6 +304788,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304722,6 +305567,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304811,6 +305661,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304912,6 +305767,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304991,6 +305851,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305065,6 +305930,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305155,6 +306025,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305245,6 +306120,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305410,6 +306290,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305613,6 +306498,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305719,6 +306609,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305821,6 +306716,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305948,6 +306848,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306021,6 +306926,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306105,6 +307015,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306272,6 +307187,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306363,6 +307283,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306453,6 +307378,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306615,6 +307545,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306706,6 +307641,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306790,6 +307730,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306874,6 +307819,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306957,6 +307907,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307068,6 +308023,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307181,6 +308141,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307269,6 +308234,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307363,6 +308333,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307461,6 +308436,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307549,6 +308529,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307645,6 +308630,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307742,6 +308732,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307826,6 +308821,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307996,6 +308996,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308089,6 +309094,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308177,6 +309187,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308265,6 +309280,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308369,6 +309389,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308522,6 +309547,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308690,6 +309720,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308803,6 +309838,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308891,6 +309931,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308974,6 +310019,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309067,6 +310117,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309150,6 +310205,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309233,6 +310293,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309316,6 +310381,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309410,6 +310480,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309503,6 +310578,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309668,6 +310748,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309981,6 +311066,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310079,6 +311169,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310178,6 +311273,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310261,6 +311361,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310359,6 +311464,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310468,6 +311578,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310615,6 +311730,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310916,6 +312036,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311087,6 +312212,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311182,6 +312312,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311286,6 +312421,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311463,6 +312603,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311629,6 +312774,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311841,6 +312991,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311925,6 +313080,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312023,6 +313183,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312111,6 +313276,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312227,6 +313397,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312369,6 +313544,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312457,6 +313637,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312681,6 +313866,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312808,6 +313998,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312913,6 +314108,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313029,6 +314229,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313147,6 +314352,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313505,6 +314715,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313593,6 +314808,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313691,6 +314911,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313779,6 +315004,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313867,6 +315097,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314037,6 +315272,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314121,6 +315361,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314275,6 +315520,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314438,6 +315688,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314522,6 +315777,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314615,6 +315875,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314700,6 +315965,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314784,6 +316054,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314877,6 +316152,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314960,6 +316240,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315048,6 +316333,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315216,6 +316506,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315334,6 +316629,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315511,6 +316811,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315636,6 +316941,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315747,6 +317057,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315836,6 +317151,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315924,6 +317244,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316137,6 +317462,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316490,6 +317820,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316573,6 +317908,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316658,6 +317998,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316750,6 +318095,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316846,6 +318196,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316937,6 +318292,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317102,6 +318462,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317186,6 +318551,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317270,6 +318640,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317358,6 +318733,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317456,6 +318836,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317593,7 +318978,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CollectionSequenceElementTypeSerializerState :: Init__ => { * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (WithSerializer :: serializer (& self . value . collection_sequence_type , Some ("CollectionSequenceType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (IterSerializer :: new (self . value . collection_sequence_type_name . as_ref () , Some ("CollectionSequenceTypeName") , false)) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (WithSerializer :: serializer (& self . value . collection_sequence_number , Some ("CollectionSequenceNumber") , false) ?) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: End__ , } CollectionSequenceElementTypeSerializerState :: End__ => { * self . state = CollectionSequenceElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollectionSequenceElementTypeSerializerState :: Done__ => return Ok (None) , CollectionSequenceElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CollectionSequenceElementTypeSerializerState :: Init__ => { * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (WithSerializer :: serializer (& self . value . collection_sequence_type , Some ("CollectionSequenceType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (IterSerializer :: new (self . value . collection_sequence_type_name . as_ref () , Some ("CollectionSequenceTypeName") , false)) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (WithSerializer :: serializer (& self . value . collection_sequence_number , Some ("CollectionSequenceNumber") , false) ?) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: End__ , } CollectionSequenceElementTypeSerializerState :: End__ => { * self . state = CollectionSequenceElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollectionSequenceElementTypeSerializerState :: Done__ => return Ok (None) , CollectionSequenceElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -317715,6 +319100,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317899,6 +319289,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318002,6 +319397,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318086,6 +319486,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318169,6 +319574,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318381,6 +319791,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318479,6 +319894,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318574,6 +319994,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318689,6 +320114,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318803,6 +320233,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318963,6 +320398,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319057,6 +320497,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319141,6 +320586,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319224,6 +320674,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319308,6 +320763,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319392,6 +320852,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319481,6 +320946,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319571,6 +321041,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319656,6 +321131,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319750,7 +321230,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ReligiousTextFeatureElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (WithSerializer :: serializer (& self . value . religious_text_feature_type , Some ("ReligiousTextFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (WithSerializer :: serializer (& self . value . religious_text_feature_code , Some ("ReligiousTextFeatureCode") , false) ?) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (IterSerializer :: new (& self . value . religious_text_feature_description [..] , Some ("ReligiousTextFeatureDescription") , false)) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: End__ , } ReligiousTextFeatureElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ReligiousTextFeatureElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (WithSerializer :: serializer (& self . value . religious_text_feature_type , Some ("ReligiousTextFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (WithSerializer :: serializer (& self . value . religious_text_feature_code , Some ("ReligiousTextFeatureCode") , false) ?) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (IterSerializer :: new (& self . value . religious_text_feature_description [..] , Some ("ReligiousTextFeatureDescription") , false)) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: End__ , } ReligiousTextFeatureElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -319868,6 +321348,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319952,6 +321437,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320030,6 +321520,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320113,6 +321608,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320181,6 +321681,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320255,6 +321760,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320381,6 +321891,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320441,6 +321956,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320509,6 +322029,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320601,6 +322126,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320738,6 +322268,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320841,6 +322376,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320918,6 +322458,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -320984,6 +322529,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -321062,6 +322612,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -321137,6 +322692,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -321268,6 +322828,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -321472,6 +323037,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322071,6 +323641,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322290,6 +323865,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322454,6 +324034,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322547,6 +324132,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322630,6 +324220,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322713,6 +324308,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322801,6 +324401,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323110,6 +324715,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323198,6 +324808,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323281,6 +324896,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323374,6 +324994,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323465,7 +325090,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResourceVersionFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (WithSerializer :: serializer (& self . value . resource_version_feature_type , Some ("ResourceVersionFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (IterSerializer :: new (self . value . feature_value . as_ref () , Some ("FeatureValue") , false)) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (IterSerializer :: new (& self . value . feature_note [..] , Some ("FeatureNote") , false)) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: End__ , } ResourceVersionFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceVersionFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceVersionFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResourceVersionFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (WithSerializer :: serializer (& self . value . resource_version_feature_type , Some ("ResourceVersionFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (IterSerializer :: new (self . value . feature_value . as_ref () , Some ("FeatureValue") , false)) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (IterSerializer :: new (& self . value . feature_note [..] , Some ("FeatureNote") , false)) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: End__ , } ResourceVersionFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceVersionFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceVersionFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -323510,6 +325135,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323670,6 +325300,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323833,6 +325468,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323996,6 +325636,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324097,6 +325742,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324292,6 +325942,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324388,6 +326043,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324519,6 +326179,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324616,6 +326281,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324700,6 +326370,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324795,6 +326470,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324920,6 +326600,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325017,6 +326702,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325100,6 +326790,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325190,6 +326885,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325353,6 +327053,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325465,6 +327170,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325580,6 +327290,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325749,6 +327464,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325980,6 +327700,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326068,6 +327793,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326157,6 +327887,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326240,6 +327975,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326325,7 +328065,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationBundleNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (WithSerializer :: serializer (& self . value . specification_bundle_name_type_name , Some ("SpecificationBundleNameTypeName") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (WithSerializer :: serializer (& self . value . specification_bundle_name_value , Some ("SpecificationBundleNameValue") , false) ?) , } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: End__ , } SpecificationBundleNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationBundleNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (WithSerializer :: serializer (& self . value . specification_bundle_name_type_name , Some ("SpecificationBundleNameTypeName") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (WithSerializer :: serializer (& self . value . specification_bundle_name_value , Some ("SpecificationBundleNameValue") , false) ?) , } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: End__ , } SpecificationBundleNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -326370,6 +328110,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326466,7 +328211,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationFeatureElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (WithSerializer :: serializer (& self . value . specification_feature_type , Some ("SpecificationFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (IterSerializer :: new (self . value . specification_feature_value . as_ref () , Some ("SpecificationFeatureValue") , false)) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (IterSerializer :: new (& self . value . specification_feature_description [..] , Some ("SpecificationFeatureDescription") , false)) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: End__ , } SpecificationFeatureElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationFeatureElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (WithSerializer :: serializer (& self . value . specification_feature_type , Some ("SpecificationFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (IterSerializer :: new (self . value . specification_feature_value . as_ref () , Some ("SpecificationFeatureValue") , false)) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (IterSerializer :: new (& self . value . specification_feature_description [..] , Some ("SpecificationFeatureDescription") , false)) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: End__ , } SpecificationFeatureElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -326512,6 +328257,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326775,6 +328525,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326859,6 +328614,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327209,6 +328969,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327282,6 +329047,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327367,6 +329137,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327451,6 +329226,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327535,6 +329315,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327708,6 +329493,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327880,6 +329670,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328055,6 +329850,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328140,6 +329940,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328228,7 +330033,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { StockQuantityCodedElementTypeSerializerState :: Init__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (WithSerializer :: serializer (& self . value . stock_quantity_code_type , Some ("StockQuantityCodeType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (IterSerializer :: new (self . value . stock_quantity_code_type_name . as_ref () , Some ("StockQuantityCodeTypeName") , false)) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (WithSerializer :: serializer (& self . value . stock_quantity_code , Some ("StockQuantityCode") , false) ?) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: End__ , } StockQuantityCodedElementTypeSerializerState :: End__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } StockQuantityCodedElementTypeSerializerState :: Done__ => return Ok (None) , StockQuantityCodedElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { StockQuantityCodedElementTypeSerializerState :: Init__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (WithSerializer :: serializer (& self . value . stock_quantity_code_type , Some ("StockQuantityCodeType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (IterSerializer :: new (self . value . stock_quantity_code_type_name . as_ref () , Some ("StockQuantityCodeTypeName") , false)) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (WithSerializer :: serializer (& self . value . stock_quantity_code , Some ("StockQuantityCode") , false) ?) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: End__ , } StockQuantityCodedElementTypeSerializerState :: End__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } StockQuantityCodedElementTypeSerializerState :: Done__ => return Ok (None) , StockQuantityCodedElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -328396,6 +330201,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328479,6 +330289,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328562,6 +330377,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328650,6 +330470,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328734,6 +330559,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328829,6 +330659,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328942,6 +330777,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329025,6 +330865,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329126,6 +330971,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329257,6 +331107,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329355,6 +331210,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329448,6 +331308,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329552,6 +331417,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329667,6 +331537,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329760,6 +331635,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329871,6 +331751,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330001,6 +331886,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330112,6 +332002,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330268,6 +332163,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330377,6 +332277,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330513,6 +332418,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330686,6 +332596,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330777,6 +332692,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330867,6 +332787,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330952,6 +332877,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331043,6 +332973,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331140,6 +333075,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331469,6 +333409,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331809,6 +333754,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331893,6 +333843,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331982,6 +333937,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332147,6 +334107,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332231,6 +334196,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332320,6 +334290,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332412,6 +334387,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332495,7 +334475,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ReligiousTextFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (IterSerializer :: new (& self . value . content [..] , None , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; helper . write_attrib_opt (& mut bytes , "textformat" , & self . value . textformat) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ , } ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ReligiousTextFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (IterSerializer :: new (& self . value . content [..] , None , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; helper . write_attrib_opt (& mut bytes , "textformat" , & self . value . textformat) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ , } ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -332541,6 +334521,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -333112,6 +335097,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333540,6 +335530,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333722,6 +335717,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -333817,6 +335817,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334085,6 +336090,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334185,6 +336195,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334284,6 +336299,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334382,6 +336402,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334480,6 +336505,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334579,6 +336609,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334677,6 +336712,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334777,6 +336817,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -334957,6 +337002,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335260,6 +337310,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335368,6 +337423,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335486,6 +337546,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335571,6 +337636,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335659,6 +337729,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335744,6 +337819,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335992,6 +338072,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336080,6 +338165,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336164,6 +338254,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336248,6 +338343,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336332,6 +338432,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336415,6 +338520,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336498,6 +338608,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336596,6 +338711,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336714,6 +338834,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336884,6 +339009,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337118,6 +339248,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337213,7 +339348,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ProductContactIdentifierElementTypeSerializerState :: Init__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (WithSerializer :: serializer (& self . value . product_contact_id_type , Some ("ProductContactIDType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false)) , } ProductContactIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer (& self . value . id_value , Some ("IDValue") , false) ?) , } ProductContactIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: End__ , } ProductContactIdentifierElementTypeSerializerState :: End__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductContactIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , ProductContactIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ProductContactIdentifierElementTypeSerializerState :: Init__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (WithSerializer :: serializer (& self . value . product_contact_id_type , Some ("ProductContactIDType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false)) , } ProductContactIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer (& self . value . id_value , Some ("IDValue") , false) ?) , } ProductContactIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: End__ , } ProductContactIdentifierElementTypeSerializerState :: End__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductContactIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , ProductContactIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -337250,7 +339385,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationBundleNameTypeNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ , } SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameTypeNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationBundleNameTypeNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ , } SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameTypeNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -337297,6 +339432,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337388,6 +339528,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337480,6 +339625,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337563,7 +339713,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: End__ , } SpecificationFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: End__ , } SpecificationFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -337605,6 +339755,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337691,6 +339846,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337809,6 +339969,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337892,6 +340057,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337988,7 +340158,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResourceFileFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (WithSerializer :: serializer (& self . value . resource_file_feature_type , Some ("ResourceFileFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (IterSerializer :: new (self . value . resource_file_feature_value . as_ref () , Some ("ResourceFileFeatureValue") , false)) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (IterSerializer :: new (& self . value . resource_file_feature_description [..] , Some ("ResourceFileFeatureDescription") , false)) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: End__ , } ResourceFileFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceFileFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceFileFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResourceFileFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (WithSerializer :: serializer (& self . value . resource_file_feature_type , Some ("ResourceFileFeatureType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (IterSerializer :: new (self . value . resource_file_feature_value . as_ref () , Some ("ResourceFileFeatureValue") , false)) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (IterSerializer :: new (& self . value . resource_file_feature_description [..] , Some ("ResourceFileFeatureDescription") , false)) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: End__ , } ResourceFileFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceFileFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceFileFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -338034,6 +340204,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338130,6 +340305,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338225,6 +340405,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338317,6 +340502,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338496,6 +340686,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338597,6 +340792,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338723,6 +340923,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338849,6 +341054,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338970,6 +341180,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339059,6 +341274,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339155,6 +341375,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339240,6 +341465,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339538,6 +341768,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339621,6 +341856,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339710,6 +341950,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339805,6 +342050,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339907,6 +342157,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339991,7 +342246,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { PriceConditionQuantityElementTypeSerializerState :: Init__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (WithSerializer :: serializer (& self . value . price_condition_quantity_type , Some ("PriceConditionQuantityType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: Quantity (WithSerializer :: serializer (& self . value . quantity , Some ("Quantity") , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: Quantity (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (WithSerializer :: serializer (& self . value . quantity_unit , Some ("QuantityUnit") , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: End__ , } PriceConditionQuantityElementTypeSerializerState :: End__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PriceConditionQuantityElementTypeSerializerState :: Done__ => return Ok (None) , PriceConditionQuantityElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { PriceConditionQuantityElementTypeSerializerState :: Init__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (WithSerializer :: serializer (& self . value . price_condition_quantity_type , Some ("PriceConditionQuantityType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: Quantity (WithSerializer :: serializer (& self . value . quantity , Some ("Quantity") , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: Quantity (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (WithSerializer :: serializer (& self . value . quantity_unit , Some ("QuantityUnit") , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: End__ , } PriceConditionQuantityElementTypeSerializerState :: End__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PriceConditionQuantityElementTypeSerializerState :: Done__ => return Ok (None) , PriceConditionQuantityElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -340036,6 +342291,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340120,6 +342380,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340203,6 +342468,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340287,6 +342557,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340380,6 +342655,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340463,6 +342743,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340759,6 +343044,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340842,6 +343132,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340926,6 +343221,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341010,6 +343310,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341103,6 +343408,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341387,6 +343697,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341653,6 +343968,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -341717,6 +344037,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -341797,6 +344122,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -341933,6 +344263,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -342064,6 +344399,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -342132,6 +344472,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -342198,6 +344543,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342512,6 +344862,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342622,6 +344977,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342736,6 +345096,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342820,6 +345185,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343004,6 +345374,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343119,6 +345494,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343207,6 +345587,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343292,6 +345677,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343383,6 +345773,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343475,6 +345870,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343570,6 +345970,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343673,6 +346078,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343791,6 +346201,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343874,6 +346289,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343958,6 +346378,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344046,6 +346471,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344129,6 +346559,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344212,6 +346647,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344301,6 +346741,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344392,6 +346837,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344475,6 +346925,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344633,6 +347088,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344991,6 +347451,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345090,6 +347555,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345237,6 +347707,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -345416,6 +347891,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -345615,6 +348095,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345794,7 +348279,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CopyrightOwnerIdentifierElementTypeSerializerState :: Init__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (WithSerializer :: serializer (& self . value . copyright_owner_id_type , Some ("CopyrightOwnerIDType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false)) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer (& self . value . id_value , Some ("IDValue") , false) ?) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: End__ , } CopyrightOwnerIdentifierElementTypeSerializerState :: End__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , CopyrightOwnerIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CopyrightOwnerIdentifierElementTypeSerializerState :: Init__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (WithSerializer :: serializer (& self . value . copyright_owner_id_type , Some ("CopyrightOwnerIDType") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false)) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer (& self . value . id_value , Some ("IDValue") , false) ?) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: End__ , } CopyrightOwnerIdentifierElementTypeSerializerState :: End__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , CopyrightOwnerIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -345839,6 +348324,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345923,6 +348413,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346008,6 +348503,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346104,6 +348604,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346248,6 +348753,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346383,6 +348893,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346458,6 +348973,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -346526,6 +349046,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346614,6 +349139,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346698,6 +349228,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346788,6 +349323,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346871,6 +349411,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346964,6 +349509,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -347047,6 +349597,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -347367,6 +349922,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -347451,6 +350011,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -347535,6 +350100,11 @@ pub mod onix {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_ONIX,
+                                );
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;

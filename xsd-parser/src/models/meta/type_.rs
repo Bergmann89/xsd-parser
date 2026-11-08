@@ -213,6 +213,15 @@ impl TypeEq for MetaType {
             return false;
         }
 
+        // The form decides the tag of types that represent an element.
+        if matches!(
+            &self.variant,
+            All(_) | Choice(_) | Sequence(_) | ComplexType(_)
+        ) && self.form() != other.form()
+        {
+            return false;
+        }
+
         match (&self.variant, &other.variant) {
             (Union(x), Union(y)) => x.type_eq(y, types),
             (BuildIn(x), BuildIn(y)) => x == y,

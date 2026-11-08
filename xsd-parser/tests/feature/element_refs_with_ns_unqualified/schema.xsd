@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:bar="Bar"
+    xmlns:baz="Baz"
+    targetNamespace="Foo"
+    elementFormDefault="unqualified">
+
+    <xs:import namespace="Bar" schemaLocation="bar.xsd" />
+    <xs:import namespace="Baz" schemaLocation="baz.xsd" />
+
+    <xs:element name="Outer">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="bar:Inner" />
+                <xs:element ref="baz:Note" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

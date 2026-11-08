@@ -25,7 +25,7 @@ impl WithSerializer for ListType {
         Ok(quick_xml_serialize::ListTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ListTypeSerializerState::Init__),
-            name: name.unwrap_or("list"),
+            name: name.unwrap_or("tns:list"),
             is_root,
         })
     }
@@ -46,10 +46,10 @@ impl WithSerializer for AnimalType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        let _name = name;
         Ok(quick_xml_serialize::AnimalTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::AnimalTypeSerializerState::Init__),
+            name,
             is_root,
         })
     }
@@ -965,7 +965,7 @@ pub mod quick_xml_serialize {
                     ListTypeSerializerState::Init__ => {
                         *self.state = ListTypeSerializerState::Animal(IterSerializer::new(
                             &self.value.animal[..],
-                            Some("animal"),
+                            Some("tns:animal"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
@@ -976,6 +976,11 @@ pub mod quick_xml_serialize {
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
                                 &super::NS_XSI,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
                             );
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -1011,6 +1016,7 @@ pub mod quick_xml_serialize {
     pub struct AnimalTypeSerializer<'ser> {
         pub(super) value: &'ser super::AnimalType,
         pub(super) state: Box<AnimalTypeSerializerState<'ser>>,
+        pub(super) name: Option<&'ser str>,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1033,22 +1039,29 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     AnimalTypeSerializerState::Init__ => match self.value {
                         super::AnimalType::Animal(x) => {
-                            *self.state = AnimalTypeSerializerState::Animal(
-                                WithSerializer::serializer(x, Some("animal"), self.is_root)?,
-                            )
+                            *self.state =
+                                AnimalTypeSerializerState::Animal(WithSerializer::serializer(
+                                    x,
+                                    Some(self.name.unwrap_or("tns:animal")),
+                                    self.is_root,
+                                )?)
                         }
                         super::AnimalType::Dog(x) => {
                             *self.state = AnimalTypeSerializerState::Dog(XsiTypeSerializer::new(
-                                WithSerializer::serializer(x, Some("dog"), self.is_root)?,
-                                "animal",
+                                WithSerializer::serializer(x, Some("tns:dog"), self.is_root)?,
+                                self.name.unwrap_or("animal"),
                                 self.is_root,
                             ))
                         }
                         super::AnimalType::Labrador(x) => {
                             *self.state =
                                 AnimalTypeSerializerState::Labrador(XsiTypeSerializer::new(
-                                    WithSerializer::serializer(x, Some("labrador"), self.is_root)?,
-                                    "animal",
+                                    WithSerializer::serializer(
+                                        x,
+                                        Some("tns:labrador"),
+                                        self.is_root,
+                                    )?,
+                                    self.name.unwrap_or("animal"),
                                     self.is_root,
                                 ))
                         }

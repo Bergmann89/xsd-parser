@@ -752,7 +752,7 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
     where
         F: FnOnce(&mut Self) -> Result<(), Error>,
     {
-        let entry = NodeCacheEntry::new(node);
+        let entry = NodeCacheEntry::new(node, true);
         let ident = TypeIdent {
             ns: self.current_ns(),
             schema: self.current_schema(),
@@ -783,7 +783,7 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
     where
         F: FnOnce(&mut Self) -> Result<(), Error>,
     {
-        let entry = NodeCacheEntry::new(node);
+        let entry = NodeCacheEntry::new(node, false);
         let ident = TypeIdent {
             ns: self.current_ns(),
             schema: self.current_schema(),
@@ -974,11 +974,12 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
 }
 
 impl<'schema> NodeCacheEntry<'schema> {
-    fn new(node: Node<'schema>) -> Self {
+    fn new(node: Node<'schema>, global: bool) -> Self {
         Self {
             node,
             dependencies: BTreeMap::new(),
             redefine_base: None,
+            global,
         }
     }
 

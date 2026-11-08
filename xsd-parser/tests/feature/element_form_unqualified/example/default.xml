@@ -1,0 +1,7 @@
+<tns:Root xmlns:tns="T" xml:lang="de" attr="1">
+    <child><value>v</value></child>
+    <item>i</item>
+    <tns:q>q</tns:q>
+    <tns:Ref><v>r</v></tns:Ref>
+    <Ref2><v>r2</v></Ref2>
+</tns:Root>

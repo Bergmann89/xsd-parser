@@ -30,7 +30,7 @@ impl WithSerializer for ListType {
         Ok(quick_xml_serialize::ListTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ListTypeSerializerState::Init__),
-            name: name.unwrap_or("list"),
+            name: name.unwrap_or("tns:list"),
             is_root,
         })
     }
@@ -53,14 +53,21 @@ impl WithSerializer for AnimalType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        if (*self.0).as_any().is::<DogType>() || (*self.0).as_any().is::<LabradorType>() {
+        if (*self.0).as_any().is::<DogType>() {
             return Ok(Box::new(XsiTypeSerializer::new(
-                self.0.serializer(None, is_root)?,
+                self.0.serializer(Some("tns:dog"), is_root)?,
                 name.unwrap_or("animal"),
                 is_root,
             )));
         }
-        self.0.serializer(None, is_root)
+        if (*self.0).as_any().is::<LabradorType>() {
+            return Ok(Box::new(XsiTypeSerializer::new(
+                self.0.serializer(Some("tns:labrador"), is_root)?,
+                name.unwrap_or("animal"),
+                is_root,
+            )));
+        }
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for AnimalType {
@@ -723,7 +730,7 @@ pub mod quick_xml_serialize {
                     ListTypeSerializerState::Init__ => {
                         *self.state = ListTypeSerializerState::Animal(IterSerializer::new(
                             &self.value.animal[..],
-                            Some("animal"),
+                            Some("tns:animal"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
@@ -734,6 +741,11 @@ pub mod quick_xml_serialize {
                                 &mut bytes,
                                 Some(&super::PREFIX_XSI),
                                 &super::NS_XSI,
+                            );
+                            helper.write_xmlns(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
                             );
                         }
                         return Ok(Some(Event::Start(bytes)));

@@ -20909,10 +20909,10 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            let _name = name;
             Ok(quick_xml_serialize::CtGraphicUnitXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtGraphicUnitXTypeSerializerState::Init__),
+                name,
                 is_root,
             })
         }
@@ -35535,6 +35535,7 @@ pub mod page {
         pub struct CtGraphicUnitXTypeSerializer<'ser> {
             pub(super) value: &'ser super::CtGraphicUnitXType,
             pub(super) state: Box<CtGraphicUnitXTypeSerializerState<'ser>>,
+            pub(super) name: Option<&'ser str>,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35586,7 +35587,7 @@ pub mod page {
                                             Some("CT_Text"),
                                             self.is_root,
                                         )?,
-                                        "CT_GraphicUnit",
+                                        self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     ),
                                 )
@@ -35609,7 +35610,7 @@ pub mod page {
                                             Some("CT_Path"),
                                             self.is_root,
                                         )?,
-                                        "CT_GraphicUnit",
+                                        self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     ),
                                 )
@@ -35632,7 +35633,7 @@ pub mod page {
                                             Some("CT_Image"),
                                             self.is_root,
                                         )?,
-                                        "CT_GraphicUnit",
+                                        self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     ),
                                 )
@@ -35655,7 +35656,7 @@ pub mod page {
                                             Some("CT_Composite"),
                                             self.is_root,
                                         )?,
-                                        "CT_GraphicUnit",
+                                        self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     ),
                                 )

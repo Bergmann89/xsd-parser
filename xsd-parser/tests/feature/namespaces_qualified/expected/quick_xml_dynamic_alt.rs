@@ -26,7 +26,9 @@ impl WithDeserializer for FooType {
 }
 impl CollectNamespaces for FooType {
     fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
+        helper.write_xmlns(bytes, Some(&PREFIX_BAR), &NS_BAR);
         self.inner_1.collect_namespaces(helper, bytes);
+        helper.write_xmlns(bytes, Some(&PREFIX_BAZ), &NS_BAZ);
         self.inner_2.collect_namespaces(helper, bytes);
     }
 }
@@ -831,6 +833,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_BAR);
                             CollectNamespaces::collect_namespaces(self.value, helper, &mut bytes);
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -893,6 +896,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_BAZ);
                             CollectNamespaces::collect_namespaces(self.value, helper, &mut bytes);
                         }
                         return Ok(Some(Event::Start(bytes)));

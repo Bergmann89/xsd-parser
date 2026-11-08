@@ -331,6 +331,11 @@ pub mod other {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_OTHER,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_OTHER),
@@ -701,6 +706,11 @@ pub mod tns {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_TNS,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_TNS),

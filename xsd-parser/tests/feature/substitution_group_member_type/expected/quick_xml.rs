@@ -33,7 +33,7 @@ impl WithSerializer for Head {
         if (*self.0).as_any().is::<BaseType>() {
             return self.0.serializer(Some("tns:Member"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for Head {
@@ -87,7 +87,7 @@ impl WithSerializer for Chain1 {
         if (*self.0).as_any().is::<BaseType>() {
             return self.0.serializer(Some("tns:Chain2"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for Chain1 {
@@ -117,7 +117,7 @@ impl WithSerializer for ChainHead {
         if (*self.0).as_any().is::<BaseType>() {
             return self.0.serializer(Some("tns:Chain2"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for ChainHead {
@@ -141,7 +141,7 @@ impl WithSerializer for UntypedHead {
         if (*self.0).as_any().is::<AnyType>() {
             return self.0.serializer(Some("tns:UntypedMember"), is_root);
         }
-        self.0.serializer(None, is_root)
+        self.0.serializer(name, is_root)
     }
 }
 impl WithDeserializer for UntypedHead {
@@ -833,6 +833,7 @@ pub mod quick_xml_serialize {
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),

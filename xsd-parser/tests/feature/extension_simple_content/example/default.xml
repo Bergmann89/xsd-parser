@@ -1,4 +1,4 @@
-<Foo
+<Foo xmlns="http://example.com"
     xmlns:tns="http://example.com"
     value="an attribute value"
     anotherValue="more attribute data">

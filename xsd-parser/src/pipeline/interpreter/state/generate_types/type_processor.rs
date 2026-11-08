@@ -5,7 +5,10 @@ use tracing::instrument;
 use xsd_parser_types::{misc::Namespace, xml::QName};
 
 use crate::models::meta::{BuildInMeta, MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta};
-use crate::models::schema::{xs::Schema, NamespaceId, SchemaId, Schemas};
+use crate::models::schema::{
+    xs::{FormChoiceType, Schema},
+    NamespaceId, SchemaId, Schemas,
+};
 use crate::models::{IdentCache, IdentType, Name, TypeIdent};
 use crate::traits::{NameBuilder, NameBuilderExt as _};
 
@@ -171,7 +174,14 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
             unreachable!("Unexpected stack entry");
         };
 
-        let type_ = ret?;
+        let mut type_ = ret?;
+
+        // Global element declarations are always in the target namespace of their schema,
+        // independent of `elementFormDefault`.
+        if self.is_global_element(&ident) {
+            type_.form = Some(FormChoiceType::Qualified);
+        }
+
         self.add_type(ident, type_, false)?;
 
         Ok(())
@@ -393,5 +403,19 @@ impl<'state, 'schema> TypeProcessor<'state, 'schema> {
             .content_type_name()
             .shared_name("Content")
             .finish()
+    }
+
+    /// Returns `true` if the passed `ident` is a global element or the inline
+    /// type of a global element.
+    fn is_global_element(&self, ident: &TypeIdent) -> bool {
+        if !matches!(ident.type_, IdentType::Element | IdentType::ElementType) {
+            return false;
+        }
+
+        let element = ident.clone().with_type(IdentType::Element);
+
+        self.node_cache
+            .get(&element)
+            .is_some_and(|entry| entry.global)
     }
 }

@@ -28119,6 +28119,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -28139,7 +28144,7 @@ pub mod cdf {
                                 "style-href",
                                 &self.value.style_href,
                             )?;
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         BenchmarkElementTypeSerializerState::Content__(x) => {
@@ -28534,6 +28539,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -28603,6 +28613,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -28667,13 +28682,18 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
                                     &super::super::NS_CDF,
                                 );
                             }
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -28741,13 +28761,18 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
                                     &super::super::NS_CDF,
                                 );
                             }
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -28813,6 +28838,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -28820,8 +28850,8 @@ pub mod cdf {
                                 );
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
-                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         NoticeTypeSerializerState::TextBefore(x) => {
@@ -28894,6 +28924,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -28974,6 +29009,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29037,6 +29077,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29094,6 +29139,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29164,6 +29214,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29231,6 +29286,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29300,6 +29360,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29319,7 +29384,7 @@ pub mod cdf {
                                 &self.value.note_tag,
                             )?;
                             helper.write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
-                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
                             helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -29597,6 +29662,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29616,8 +29686,8 @@ pub mod cdf {
                                 "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
                             helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
@@ -29970,6 +30040,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -29989,8 +30064,8 @@ pub mod cdf {
                                 "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
                             helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             helper.write_attrib(&mut bytes, "selected", &self.value.selected)?;
                             helper.write_attrib(&mut bytes, "weight", &self.value.weight)?;
@@ -30299,6 +30374,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -30318,8 +30398,8 @@ pub mod cdf {
                                 "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
-                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
                             helper.write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             helper.write_attrib(&mut bytes, "selected", &self.value.selected)?;
                             helper.write_attrib(&mut bytes, "weight", &self.value.weight)?;
@@ -30691,6 +30771,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31055,6 +31140,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31115,6 +31205,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31259,6 +31354,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31330,13 +31430,18 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
                                     &super::super::NS_CDF,
                                 );
                             }
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -31407,6 +31512,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31468,6 +31578,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31536,6 +31651,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31604,6 +31724,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31674,6 +31799,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31754,6 +31884,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31839,13 +31974,18 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
                                     &super::super::NS_CDF,
                                 );
                             }
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             helper.write_attrib(&mut bytes, "category", &self.value.category)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -31908,6 +32048,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -31975,6 +32120,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32042,6 +32192,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32115,6 +32270,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32249,6 +32409,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32302,6 +32467,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32355,6 +32525,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32412,6 +32587,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32486,13 +32666,18 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
                                     &super::super::NS_CDF,
                                 );
                             }
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             helper.write_attrib(&mut bytes, "tag", &self.value.tag)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -32634,13 +32819,18 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
                                     &super::super::NS_CDF,
                                 );
                             }
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             helper.write_attrib(&mut bytes, "override", &self.value.override_)?;
                             helper.write_attrib_opt(&mut bytes, "fixref", &self.value.fixref)?;
                             helper.write_attrib(&mut bytes, "reboot", &self.value.reboot)?;
@@ -32717,6 +32907,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32896,6 +33091,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -32911,7 +33111,7 @@ pub mod cdf {
                                 "multi-check",
                                 &self.value.multi_check,
                             )?;
-                            helper.write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CheckTypeSerializerState::CheckImport(x) => {
@@ -33018,6 +33218,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33152,6 +33357,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33206,6 +33416,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33266,6 +33481,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33342,6 +33562,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33404,6 +33629,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33469,6 +33699,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33695,6 +33930,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33763,6 +34003,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33825,6 +34070,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33887,6 +34137,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -33983,6 +34238,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -34041,6 +34301,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -34105,6 +34370,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -34237,6 +34507,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -34310,6 +34585,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -34406,6 +34686,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -34473,6 +34758,11 @@ pub mod cdf {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CDF,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CDF),
@@ -35990,6 +36280,11 @@ pub mod cpe {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CPE,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CPE),
@@ -36061,6 +36356,11 @@ pub mod cpe {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CPE,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CPE),
@@ -36155,13 +36455,18 @@ pub mod cpe {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CPE,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CPE),
                                     &super::super::NS_CPE,
                                 );
                             }
-                            helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            helper.write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         TextTypeSerializerState::Content__(x) => {
@@ -36231,6 +36536,11 @@ pub mod cpe {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CPE,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CPE),
@@ -36323,6 +36633,11 @@ pub mod cpe {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CPE,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CPE),
@@ -36381,6 +36696,11 @@ pub mod cpe {
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
                             if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_CPE,
+                                );
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_CPE),
