@@ -400,6 +400,23 @@ impl ReferenceData<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
+        // The new type of a global element is the element itself, so it passes the
+        // element's (always qualified) tag if no name is given.
+        let name = if ctx.ident.type_ == IdentType::Element {
+            let config = ctx.get_ref::<SerializerConfig>();
+            let tag_name = TagName::new(
+                ctx.types,
+                ctx.ident.ns,
+                &ctx.ident.name,
+                FormChoiceType::Qualified,
+            )
+            .get_for_default_namespace(&config.default_namespace);
+
+            quote!(Some(name.unwrap_or(#tag_name)))
+        } else {
+            quote!(name)
+        };
+
         let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
         let result = resolve_build_in!(ctx, "::core::result::Result");
@@ -417,7 +434,7 @@ impl ReferenceData<'_> {
                     name: #option<&'ser #str_>,
                     is_root: #bool_,
                 ) -> #result<Self::Serializer<'ser>, #error> {
-                    #with_serializer::serializer(&self.0, name, is_root)
+                    #with_serializer::serializer(&self.0, #name, is_root)
                 }
             }
         };

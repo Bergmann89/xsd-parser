@@ -21,7 +21,7 @@ impl WithSerializer for Foo {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        WithSerializer::serializer(&self.0, name, is_root)
+        WithSerializer::serializer(&self.0, Some(name.unwrap_or("tns:Foo")), is_root)
     }
 }
 impl WithDeserializer for Foo {
@@ -59,7 +59,7 @@ impl WithSerializer for Holder {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        WithSerializer::serializer(&self.0, name, is_root)
+        WithSerializer::serializer(&self.0, Some(name.unwrap_or("tns:Holder")), is_root)
     }
 }
 impl WithDeserializer for Holder {

@@ -204,12 +204,28 @@ where
     P: AsRef<Path>,
     T: WithSerializer,
 {
+    quick_xml_write_test_impl(value, Some(root), path);
+}
+
+pub fn quick_xml_write_test_default_root<T, P>(value: &T, path: P)
+where
+    P: AsRef<Path>,
+    T: WithSerializer,
+{
+    quick_xml_write_test_impl(value, None, path);
+}
+
+fn quick_xml_write_test_impl<T, P>(value: &T, root: Option<&str>, path: P)
+where
+    P: AsRef<Path>,
+    T: WithSerializer,
+{
     let mut content = Vec::new();
     let mut writer = Writer::new(&mut content);
 
     let mut actual = FilteredIter::new(
         value
-            .serializer(Some(root), true)
+            .serializer(root, true)
             .unwrap()
             .into_iter()
             .map(|ret| ret.unwrap()),
