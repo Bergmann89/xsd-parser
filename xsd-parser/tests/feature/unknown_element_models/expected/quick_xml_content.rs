@@ -574,7 +574,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"A" | b"Child" | b"B")
             ) {
                 return true;
@@ -761,7 +761,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Inner")
             ) {
                 return true;
@@ -947,14 +947,14 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"X")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_x(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Y")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -1197,7 +1197,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"X" | b"Y")
             ) {
                 return true;
@@ -1390,7 +1390,7 @@ pub mod quick_xml_deserialize {
             let mut allow_any_element = false;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Y")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -1656,7 +1656,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Y")
             ) {
                 return true;
@@ -1928,7 +1928,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"P" | b"Q")
             ) {
                 return true;

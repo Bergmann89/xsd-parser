@@ -87,12 +87,12 @@ pub mod tns {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_TNS),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_TNS),
                         Some(b"a-int")
                     ) {
                         helper.read_attrib(&mut a_int, b"a-int", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_TNS),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_TNS),
                         Some(b"b-int")
                     ) {
                         helper.read_attrib(&mut b_int, b"b-int", &attrib.value)?;

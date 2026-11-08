@@ -71,7 +71,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"Ccy")
                 ) {
                     helper.read_attrib(&mut ccy, b"Ccy", &attrib.value)?;

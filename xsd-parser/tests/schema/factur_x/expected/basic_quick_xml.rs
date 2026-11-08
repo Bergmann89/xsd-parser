@@ -3651,7 +3651,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UDT),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UDT),
                     Some(b"schemeID")
                 ) {
                     helper.read_attrib(&mut scheme_id, b"schemeID", &attrib.value)?;
@@ -4051,7 +4051,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UDT),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UDT),
                     Some(b"DateTimeString")
                 ) {
                     let output = <super::DateTimeTypeDateTimeStringType as WithDeserializer>::init(
@@ -7324,7 +7324,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UDT),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UDT),
                     Some(b"format")
                 ) {
                     helper.read_attrib(&mut format, b"format", &attrib.value)?;
@@ -14135,7 +14135,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UDT),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UDT),
                     Some(b"unitCode")
                 ) {
                     helper.read_attrib(&mut unit_code, b"unitCode", &attrib.value)?;
@@ -16501,7 +16501,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UDT),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UDT),
                     Some(b"currencyID")
                 ) {
                     helper.read_attrib(&mut currency_id, b"currencyID", &attrib.value)?;
@@ -17273,7 +17273,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UDT),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UDT),
                     Some(b"Indicator")
                 ) {
                     let output = <bool as WithDeserializer>::init(helper, event)?;
@@ -17716,7 +17716,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_QDT),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_QDT),
                     Some(b"format")
                 ) {
                     helper.read_attrib(&mut format, b"format", &attrib.value)?;

@@ -699,7 +699,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Name")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;

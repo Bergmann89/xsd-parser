@@ -1046,7 +1046,7 @@ pub mod tns {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_TNS),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_TNS),
                         Some(b"a")
                     ) {
                         helper.read_attrib(&mut a, b"a", &attrib.value)?;
@@ -1422,13 +1422,16 @@ pub mod tns {
                 };
                 let type_name = type_name.into_owned();
                 if matches!(
-                    helper.resolve_local_name(QName(&type_name), &super::super::NS_TNS),
+                    helper.resolve_element_local_name(QName(&type_name), &super::super::NS_TNS),
                     Some(b"Animal")
                 ) {
                     if let Some(type_name) = helper.get_dynamic_type_from_attrib(&event)? {
                         let type_name = type_name.into_owned();
                         if matches!(
-                            helper.resolve_local_name(QName(&type_name), &super::super::NS_TNS),
+                            helper.resolve_element_local_name(
+                                QName(&type_name),
+                                &super::super::NS_TNS
+                            ),
                             Some(b"Dog")
                         ) {
                             let DeserializerOutput {

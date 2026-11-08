@@ -561,7 +561,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"NegativeDecimal")
                 ) {
                     let output =
@@ -569,7 +569,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_negative_decimal(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"PositiveDecimal")
                 ) {
                     let output =
@@ -577,7 +577,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_positive_decimal(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"RestrictedString")
                 ) {
                     let output =
@@ -585,14 +585,14 @@ pub mod quick_xml_deserialize {
                     return self.handle_restricted_string(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"HexType")
                 ) {
                     let output = <super::HexType as WithDeserializer>::init(helper, event)?;
                     return self.handle_hex_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Base64Type")
                 ) {
                     let output = <super::Base64Type as WithDeserializer>::init(helper, event)?;

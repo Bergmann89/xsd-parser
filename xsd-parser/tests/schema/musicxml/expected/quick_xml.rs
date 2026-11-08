@@ -19611,12 +19611,12 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"space")
                 ) {
                     helper.read_attrib(&mut space, b"space", &attrib.value)?;
@@ -51906,12 +51906,12 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"space")
                 ) {
                     helper.read_attrib(&mut space, b"space", &attrib.value)?;
@@ -52183,12 +52183,12 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"line-height" {
                     helper.read_attrib(&mut line_height, b"line-height", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"space")
                 ) {
                     helper.read_attrib(&mut space, b"space", &attrib.value)?;
@@ -66923,32 +66923,32 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"href")
                 ) {
                     helper.read_attrib(&mut href, b"href", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"role")
                 ) {
                     helper.read_attrib(&mut role, b"role", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"title")
                 ) {
                     helper.read_attrib(&mut title, b"title", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"show")
                 ) {
                     helper.read_attrib(&mut show, b"show", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"actuate")
                 ) {
                     helper.read_attrib(&mut actuate, b"actuate", &attrib.value)?;
@@ -69923,7 +69923,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"name" {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -85609,32 +85609,32 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"href")
                 ) {
                     helper.read_attrib(&mut href, b"href", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"role")
                 ) {
                     helper.read_attrib(&mut role, b"role", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"title")
                 ) {
                     helper.read_attrib(&mut title, b"title", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"show")
                 ) {
                     helper.read_attrib(&mut show, b"show", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"actuate")
                 ) {
                     helper.read_attrib(&mut actuate, b"actuate", &attrib.value)?;
@@ -92324,32 +92324,32 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"href")
                 ) {
                     helper.read_attrib(&mut href, b"href", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"role")
                 ) {
                     helper.read_attrib(&mut role, b"role", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"title")
                 ) {
                     helper.read_attrib(&mut title, b"title", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"show")
                 ) {
                     helper.read_attrib(&mut show, b"show", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XLINK),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XLINK),
                     Some(b"actuate")
                 ) {
                     helper.read_attrib(&mut actuate, b"actuate", &attrib.value)?;
@@ -120263,7 +120263,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"letter-spacing" {
                     helper.read_attrib(&mut letter_spacing, b"letter-spacing", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -127310,7 +127310,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -164144,7 +164144,7 @@ pub mod xs {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XSI),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XSI),
                         Some(b"type")
                     ) {
                         helper.read_attrib(&mut type_, b"type", &attrib.value)?;

@@ -292,7 +292,7 @@ pub mod annotations {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"PageID")
                     ) {
                         helper.read_attrib(&mut page_id, b"PageID", &attrib.value)?;
@@ -1131,52 +1131,52 @@ pub mod annotion {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Creator")
                     ) {
                         helper.read_attrib(&mut creator, b"Creator", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LastModDate")
                     ) {
                         helper.read_attrib(&mut last_mod_date, b"LastModDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Subtype")
                     ) {
                         helper.read_attrib(&mut subtype, b"Subtype", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Print")
                     ) {
                         helper.read_attrib(&mut print, b"Print", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NoZoom")
                     ) {
                         helper.read_attrib(&mut no_zoom, b"NoZoom", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NoRotate")
                     ) {
                         helper.read_attrib(&mut no_rotate, b"NoRotate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReadOnly")
                     ) {
                         helper.read_attrib(&mut read_only, b"ReadOnly", &attrib.value)?;
@@ -1751,7 +1751,7 @@ pub mod annotion {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
@@ -1917,7 +1917,7 @@ pub mod annotion {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -2839,42 +2839,42 @@ pub mod attachments {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Format")
                     ) {
                         helper.read_attrib(&mut format, b"Format", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CreationDate")
                     ) {
                         helper.read_attrib(&mut creation_date, b"CreationDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ModDate")
                     ) {
                         helper.read_attrib(&mut mod_date, b"ModDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Size")
                     ) {
                         helper.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Usage")
                     ) {
                         helper.read_attrib(&mut usage, b"Usage", &attrib.value)?;
@@ -3529,7 +3529,7 @@ pub mod custom_tags {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NameSpace")
                     ) {
                         helper.read_attrib(&mut name_space, b"NameSpace", &attrib.value)?;
@@ -4794,7 +4794,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Event")
                     ) {
                         helper.read_attrib(&mut event, b"Event", &attrib.value)?;
@@ -4984,7 +4984,7 @@ pub mod definition {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Region")
                     ) {
                         let output =
@@ -4992,7 +4992,7 @@ pub mod definition {
                         return self.handle_region(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Goto")
                     ) {
                         let output = <super::CtActionGotoXElementType as WithDeserializer>::init(
@@ -5001,7 +5001,7 @@ pub mod definition {
                         return self.handle_goto(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"URI")
                     ) {
                         let output = <super::CtActionUriXElementType as WithDeserializer>::init(
@@ -5010,7 +5010,7 @@ pub mod definition {
                         return self.handle_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"GotoA")
                     ) {
                         let output = <super::CtActionGotoAxElementType as WithDeserializer>::init(
@@ -5019,7 +5019,7 @@ pub mod definition {
                         return self.handle_goto_a(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Sound")
                     ) {
                         let output = <super::CtActionSoundXElementType as WithDeserializer>::init(
@@ -5028,7 +5028,7 @@ pub mod definition {
                         return self.handle_sound(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Movie")
                     ) {
                         let output = <super::CtActionMovieXElementType as WithDeserializer>::init(
@@ -5648,37 +5648,37 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"PageID")
                     ) {
                         helper.read_attrib(&mut page_id, b"PageID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Left")
                     ) {
                         helper.read_attrib(&mut left, b"Left", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Top")
                     ) {
                         helper.read_attrib(&mut top, b"Top", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Right")
                     ) {
                         helper.read_attrib(&mut right, b"Right", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Bottom")
                     ) {
                         helper.read_attrib(&mut bottom, b"Bottom", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Zoom")
                     ) {
                         helper.read_attrib(&mut zoom, b"Zoom", &attrib.value)?;
@@ -6380,14 +6380,14 @@ pub mod definition {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Dest")
                     ) {
                         let output = <super::CtDestXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_dest(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Bookmark")
                     ) {
                         let output =
@@ -6671,17 +6671,17 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"URI")
                     ) {
                         helper.read_attrib(&mut uri, b"URI", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Base")
                     ) {
                         helper.read_attrib(&mut base, b"Base", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Target")
                     ) {
                         helper.read_attrib(&mut target, b"Target", &attrib.value)?;
@@ -6769,12 +6769,12 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"AttachID")
                     ) {
                         helper.read_attrib(&mut attach_id, b"AttachID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"NewWindow")
                     ) {
                         helper.read_attrib(&mut new_window, b"NewWindow", &attrib.value)?;
@@ -6866,22 +6866,22 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Volume")
                     ) {
                         helper.read_attrib(&mut volume, b"Volume", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Repeat")
                     ) {
                         helper.read_attrib(&mut repeat, b"Repeat", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Synchronous")
                     ) {
                         helper.read_attrib(&mut synchronous, b"Synchronous", &attrib.value)?;
@@ -6972,12 +6972,12 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Operator")
                     ) {
                         helper.read_attrib(&mut operator, b"Operator", &attrib.value)?;
@@ -7066,7 +7066,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Start")
                     ) {
                         helper.read_attrib(&mut start, b"Start", &attrib.value)?;
@@ -7224,7 +7224,7 @@ pub mod definition {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Move")
                     ) {
                         let output =
@@ -7234,7 +7234,7 @@ pub mod definition {
                         return self.handle_move_(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Line")
                     ) {
                         let output =
@@ -7244,7 +7244,7 @@ pub mod definition {
                         return self.handle_line(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"OuadraticBezier")
                     ) {
                         let output = < super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -7256,7 +7256,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CubicBezier")
                     ) {
                         let output =
@@ -7266,7 +7266,7 @@ pub mod definition {
                         return self.handle_cubic_bezier(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Arc")
                     ) {
                         let output =
@@ -7276,7 +7276,7 @@ pub mod definition {
                         return self.handle_arc(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Close")
                     ) {
                         let output = <AnyElement as WithDeserializer>::init(helper, event)?;
@@ -7884,7 +7884,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -7964,7 +7964,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point1")
                     ) {
                         helper.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
@@ -8048,12 +8048,12 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Pointl")
                     ) {
                         helper.read_attrib(&mut pointl, b"Pointl", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point2")
                     ) {
                         helper.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
@@ -8145,17 +8145,17 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point1")
                     ) {
                         helper.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point2")
                     ) {
                         helper.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point3")
                     ) {
                         helper.read_attrib(&mut point_3, b"Point3", &attrib.value)?;
@@ -8249,7 +8249,7 @@ pub mod definition {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"SweepDirection")
                     ) {
                         helper.read_attrib(
@@ -8258,12 +8258,12 @@ pub mod definition {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LargeArc")
                     ) {
                         helper.read_attrib(&mut large_arc, b"LargeArc", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"RotationAnglet")
                     ) {
                         helper.read_attrib(
@@ -8272,12 +8272,12 @@ pub mod definition {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EllipseSize")
                     ) {
                         helper.read_attrib(&mut ellipse_size, b"EllipseSize", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndPoint")
                     ) {
                         helper.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
@@ -10551,7 +10551,7 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -10747,17 +10747,17 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Title")
                     ) {
                         helper.read_attrib(&mut title, b"Title", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Count")
                     ) {
                         helper.read_attrib(&mut count, b"Count", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Expanded")
                     ) {
                         helper.read_attrib(&mut expanded, b"Expanded", &attrib.value)?;
@@ -11975,7 +11975,7 @@ pub mod document {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageMode")
                     ) {
                         let output =
@@ -11985,35 +11985,35 @@ pub mod document {
                         return self.handle_page_mode(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageLayout")
                     ) {
                         let output = < super :: CtVPreferencesPageLayoutXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_page_layout(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TabDisplay")
                     ) {
                         let output = < super :: CtVPreferencesTabDisplayXElementType as WithDeserializer > :: init (helper , event) ? ;
                         return self.handle_tab_display(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"HideToolbar")
                     ) {
                         let output = <bool as WithDeserializer>::init(helper, event)?;
                         return self.handle_hide_toolbar(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"HideMenubar")
                     ) {
                         let output = <bool as WithDeserializer>::init(helper, event)?;
                         return self.handle_hide_menubar(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"HideWindowUI")
                     ) {
                         let output = <bool as WithDeserializer>::init(helper, event)?;
@@ -12025,7 +12025,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ZoomMode")
                     ) {
                         let output =
@@ -12035,7 +12035,7 @@ pub mod document {
                         return self.handle_zoom_mode(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Zoom")
                     ) {
                         let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -13774,12 +13774,12 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Printable")
                     ) {
                         helper.read_attrib(&mut printable, b"Printable", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Copies")
                     ) {
                         helper.read_attrib(&mut copies, b"Copies", &attrib.value)?;
@@ -13867,12 +13867,12 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartDate")
                     ) {
                         helper.read_attrib(&mut start_date, b"StartDate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndDate")
                     ) {
                         helper.read_attrib(&mut end_date, b"EndDate", &attrib.value)?;
@@ -15096,22 +15096,22 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ZOrder")
                     ) {
                         helper.read_attrib(&mut z_order, b"ZOrder", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -15206,12 +15206,12 @@ pub mod document {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -17119,27 +17119,27 @@ pub mod extensions {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"AppName")
                     ) {
                         helper.read_attrib(&mut app_name, b"AppName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Company")
                     ) {
                         helper.read_attrib(&mut company, b"Company", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"AppVersion")
                     ) {
                         helper.read_attrib(&mut app_version, b"AppVersion", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Date")
                     ) {
                         helper.read_attrib(&mut date, b"Date", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"RefId")
                     ) {
                         helper.read_attrib(&mut ref_id, b"RefId", &attrib.value)?;
@@ -17322,7 +17322,7 @@ pub mod extensions {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Property")
                     ) {
                         let output =
@@ -17332,14 +17332,14 @@ pub mod extensions {
                         return self.handle_property(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Data")
                     ) {
                         let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                         return self.handle_data(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ExtendData")
                     ) {
                         let output = <String as WithDeserializer>::init(helper, event)?;
@@ -17886,12 +17886,12 @@ pub mod extensions {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
@@ -19831,12 +19831,12 @@ pub mod ofd {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Version")
                     ) {
                         helper.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DocType")
                     ) {
                         helper.read_attrib(&mut doc_type, b"DocType", &attrib.value)?;
@@ -21040,22 +21040,22 @@ pub mod ofd {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Index")
                     ) {
                         helper.read_attrib(&mut index, b"Index", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Current")
                     ) {
                         helper.read_attrib(&mut current, b"Current", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -24453,27 +24453,27 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapType")
                     ) {
                         helper.read_attrib(&mut map_type, b"MapType", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapUnit")
                     ) {
                         helper.read_attrib(&mut map_unit, b"MapUnit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartPoint")
                     ) {
                         helper.read_attrib(&mut start_point, b"StartPoint", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndPoint")
                     ) {
                         helper.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
@@ -24688,17 +24688,17 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CodePosition")
                     ) {
                         helper.read_attrib(&mut code_position, b"CodePosition", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CodeCount")
                     ) {
                         helper.read_attrib(&mut code_count, b"CodeCount", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"GlyphCount")
                     ) {
                         helper.read_attrib(&mut glyph_count, b"GlyphCount", &attrib.value)?;
@@ -25085,22 +25085,22 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Value")
                     ) {
                         helper.read_attrib(&mut value, b"Value", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Index")
                     ) {
                         helper.read_attrib(&mut index, b"Index", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ColorSpace")
                     ) {
                         helper.read_attrib(&mut color_space, b"ColorSpace", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
@@ -25285,7 +25285,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Pattern")
                     ) {
                         let output =
@@ -25293,7 +25293,7 @@ pub mod page {
                         return self.handle_pattern(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"AxialShd")
                     ) {
                         let output =
@@ -25301,7 +25301,7 @@ pub mod page {
                         return self.handle_axial_shd(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"RadialShd")
                     ) {
                         let output =
@@ -25309,7 +25309,7 @@ pub mod page {
                         return self.handle_radial_shd(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"GouraudShd")
                     ) {
                         let output =
@@ -25317,7 +25317,7 @@ pub mod page {
                         return self.handle_gouraud_shd(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"LaGourandShd")
                     ) {
                         let output =
@@ -25875,67 +25875,67 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
@@ -26240,7 +26240,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -26510,13 +26510,13 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CT_GraphicUnit")
                     ) {
                         if let Some(type_name) = helper.get_dynamic_type_from_attrib_bytes(x)? {
                             let type_name = type_name.into_owned();
                             if matches!(
-                                helper.resolve_local_name(
+                                helper.resolve_element_local_name(
                                     QName(&type_name),
                                     &super::super::NS_UNNAMED_5
                                 ),
@@ -26532,7 +26532,7 @@ pub mod page {
                                 );
                             }
                             if matches!(
-                                helper.resolve_local_name(
+                                helper.resolve_element_local_name(
                                     QName(&type_name),
                                     &super::super::NS_UNNAMED_5
                                 ),
@@ -26548,7 +26548,7 @@ pub mod page {
                                 );
                             }
                             if matches!(
-                                helper.resolve_local_name(
+                                helper.resolve_element_local_name(
                                     QName(&type_name),
                                     &super::super::NS_UNNAMED_5
                                 ),
@@ -26564,7 +26564,7 @@ pub mod page {
                                 );
                             }
                             if matches!(
-                                helper.resolve_local_name(
+                                helper.resolve_element_local_name(
                                     QName(&type_name),
                                     &super::super::NS_UNNAMED_5
                                 ),
@@ -27410,62 +27410,62 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
@@ -27801,77 +27801,77 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Substitution")
                     ) {
                         helper.read_attrib(&mut substitution, b"Substitution", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ImageMask")
                     ) {
                         helper.read_attrib(&mut image_mask, b"ImageMask", &attrib.value)?;
@@ -28259,7 +28259,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"VerticesPerRow")
                     ) {
                         helper.read_attrib(
@@ -28268,7 +28268,7 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -28550,12 +28550,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
@@ -28909,77 +28909,77 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Rule")
                     ) {
                         helper.read_attrib(&mut rule, b"Rule", &attrib.value)?;
@@ -29528,37 +29528,37 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Width")
                     ) {
                         helper.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Height")
                     ) {
                         helper.read_attrib(&mut height, b"Height", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"XStep")
                     ) {
                         helper.read_attrib(&mut x_step, b"XStep", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"YStep")
                     ) {
                         helper.read_attrib(&mut y_step, b"YStep", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReflectMethod")
                     ) {
                         helper.read_attrib(&mut reflect_method, b"ReflectMethod", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"RelativeTo")
                     ) {
                         helper.read_attrib(&mut relative_to, b"RelativeTo", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
@@ -29789,47 +29789,47 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapType")
                     ) {
                         helper.read_attrib(&mut map_type, b"MapType", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MapUnit")
                     ) {
                         helper.read_attrib(&mut map_unit, b"MapUnit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Eccentricity")
                     ) {
                         helper.read_attrib(&mut eccentricity, b"Eccentricity", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Angle")
                     ) {
                         helper.read_attrib(&mut angle, b"Angle", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartPoint")
                     ) {
                         helper.read_attrib(&mut start_point, b"StartPoint", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"StartRadius")
                     ) {
                         helper.read_attrib(&mut start_radius, b"StartRadius", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndPoint")
                     ) {
                         helper.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EndRadius")
                     ) {
                         helper.read_attrib(&mut end_radius, b"EndRadius", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Extend")
                     ) {
                         helper.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -30091,107 +30091,107 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Font")
                     ) {
                         helper.read_attrib(&mut font, b"Font", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Size")
                     ) {
                         helper.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"HScale")
                     ) {
                         helper.read_attrib(&mut h_scale, b"HScale", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReadDirection")
                     ) {
                         helper.read_attrib(&mut read_direction, b"ReadDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CharDirection")
                     ) {
                         helper.read_attrib(&mut char_direction, b"CharDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Weight")
                     ) {
                         helper.read_attrib(&mut weight, b"Weight", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
@@ -30889,7 +30889,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Position")
                     ) {
                         helper.read_attrib(&mut position, b"Position", &attrib.value)?;
@@ -31089,12 +31089,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
@@ -31267,14 +31267,14 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Path")
                     ) {
                         let output = <super::CtPathXType as WithDeserializer>::init(helper, event)?;
                         return self.handle_path(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Text")
                     ) {
                         let output = <super::CtTextXType as WithDeserializer>::init(helper, event)?;
@@ -31939,17 +31939,17 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"X")
                     ) {
                         helper.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"y")
                     ) {
                         helper.read_attrib(&mut y, b"y", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"EdgeFlag")
                     ) {
                         helper.read_attrib(&mut edge_flag, b"EdgeFlag", &attrib.value)?;
@@ -32193,112 +32193,112 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Font")
                     ) {
                         helper.read_attrib(&mut font, b"Font", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Size")
                     ) {
                         helper.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"HScale")
                     ) {
                         helper.read_attrib(&mut h_scale, b"HScale", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ReadDirection")
                     ) {
                         helper.read_attrib(&mut read_direction, b"ReadDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CharDirection")
                     ) {
                         helper.read_attrib(&mut char_direction, b"CharDirection", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Weight")
                     ) {
                         helper.read_attrib(&mut weight, b"Weight", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -32564,82 +32564,82 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Stroke")
                     ) {
                         helper.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Fill")
                     ) {
                         helper.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Rule")
                     ) {
                         helper.read_attrib(&mut rule, b"Rule", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -33229,82 +33229,82 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Substitution")
                     ) {
                         helper.read_attrib(&mut substitution, b"Substitution", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ImageMask")
                     ) {
                         helper.read_attrib(&mut image_mask, b"ImageMask", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -33732,72 +33732,72 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Visible")
                     ) {
                         helper.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CTM")
                     ) {
                         helper.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Alpha")
                     ) {
                         helper.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ResourceID")
                     ) {
                         helper.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -34126,12 +34126,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"HorizonalCornerRadius")
                     ) {
                         helper.read_attrib(
@@ -34140,7 +34140,7 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"VerticalCornerRadius")
                     ) {
                         helper.read_attrib(
@@ -34149,12 +34149,12 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
@@ -34364,12 +34364,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"X")
                     ) {
                         helper.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"y")
                     ) {
                         helper.read_attrib(&mut y, b"y", &attrib.value)?;
@@ -34569,7 +34569,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -34729,7 +34729,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextObject")
                     ) {
                         let output =
@@ -34739,7 +34739,7 @@ pub mod page {
                         return self.handle_text_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PathObject")
                     ) {
                         let output =
@@ -34749,7 +34749,7 @@ pub mod page {
                         return self.handle_path_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ImageObject")
                     ) {
                         let output =
@@ -34759,7 +34759,7 @@ pub mod page {
                         return self.handle_image_object(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -34771,7 +34771,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"PageBlock")
                     ) {
                         let output =
@@ -35310,7 +35310,7 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Thumbnail")
                     ) {
                         helper.read_attrib(&mut thumbnail, b"Thumbnail", &attrib.value)?;
@@ -35482,22 +35482,22 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"X")
                     ) {
                         helper.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"y")
                     ) {
                         helper.read_attrib(&mut y, b"y", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DeltaX")
                     ) {
                         helper.read_attrib(&mut delta_x, b"DeltaX", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Deltay")
                     ) {
                         helper.read_attrib(&mut deltay, b"Deltay", &attrib.value)?;
@@ -35669,7 +35669,7 @@ pub mod page {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Actions")
                     ) {
                         let output =
@@ -35679,7 +35679,7 @@ pub mod page {
                         return self.handle_actions(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Clips")
                     ) {
                         let output =
@@ -35689,7 +35689,7 @@ pub mod page {
                         return self.handle_clips(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"FillColor")
                     ) {
                         let output =
@@ -35697,7 +35697,7 @@ pub mod page {
                         return self.handle_fill_color(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"StrokeColor")
                     ) {
                         let output =
@@ -35705,7 +35705,7 @@ pub mod page {
                         return self.handle_stroke_color(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CGTransform")
                     ) {
                         let output =
@@ -35713,7 +35713,7 @@ pub mod page {
                         return self.handle_cg_transform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"TextCode")
                     ) {
                         let output = <super::CtTextTextCodeXElementType as WithDeserializer>::init(
@@ -36323,12 +36323,12 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"TemplateID")
                     ) {
                         helper.read_attrib(&mut template_id, b"TemplateID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ZOrder")
                     ) {
                         helper.read_attrib(&mut z_order, b"ZOrder", &attrib.value)?;
@@ -36613,17 +36613,17 @@ pub mod page {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DrawParam")
                     ) {
                         helper.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -41990,12 +41990,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BitsPerComponent")
                     ) {
                         helper.read_attrib(
@@ -42004,7 +42004,7 @@ pub mod res {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Profile")
                     ) {
                         helper.read_attrib(&mut profile, b"Profile", &attrib.value)?;
@@ -42220,37 +42220,37 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Relative")
                     ) {
                         helper.read_attrib(&mut relative, b"Relative", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
@@ -42551,37 +42551,37 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FontName")
                     ) {
                         helper.read_attrib(&mut font_name, b"FontName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FamilyName")
                     ) {
                         helper.read_attrib(&mut family_name, b"FamilyName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Charset")
                     ) {
                         helper.read_attrib(&mut charset, b"Charset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Bold")
                     ) {
                         helper.read_attrib(&mut bold, b"Bold", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Serif")
                     ) {
                         helper.read_attrib(&mut serif, b"Serif", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FixedWidth")
                     ) {
                         helper.read_attrib(&mut fixed_width, b"FixedWidth", &attrib.value)?;
@@ -42786,12 +42786,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Format")
                     ) {
                         helper.read_attrib(&mut format, b"Format", &attrib.value)?;
@@ -42997,12 +42997,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Width")
                     ) {
                         helper.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Height")
                     ) {
                         helper.read_attrib(&mut height, b"Height", &attrib.value)?;
@@ -43355,7 +43355,7 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -43540,7 +43540,7 @@ pub mod res {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"ColorSpaces")
                     ) {
                         let output = <super::ResColorSpacesXElementType as WithDeserializer>::init(
@@ -43549,7 +43549,7 @@ pub mod res {
                         return self.handle_color_spaces(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"DrawParams")
                     ) {
                         let output = <super::ResDrawParamsXElementType as WithDeserializer>::init(
@@ -43558,7 +43558,7 @@ pub mod res {
                         return self.handle_draw_params(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"Fonts")
                     ) {
                         let output =
@@ -43566,7 +43566,7 @@ pub mod res {
                         return self.handle_fonts(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"MultiMedias")
                     ) {
                         let output = <super::ResMultiMediasXElementType as WithDeserializer>::init(
@@ -43575,7 +43575,7 @@ pub mod res {
                         return self.handle_multi_medias(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_UNNAMED_5),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_UNNAMED_5),
                         Some(b"CompositeGraphicUnits")
                     ) {
                         let output = < super :: ResCompositeGraphicUnitsXElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -45297,12 +45297,12 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BitsPerComponent")
                     ) {
                         helper.read_attrib(
@@ -45311,12 +45311,12 @@ pub mod res {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Profile")
                     ) {
                         helper.read_attrib(&mut profile, b"Profile", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -45541,42 +45541,42 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Relative")
                     ) {
                         helper.read_attrib(&mut relative, b"Relative", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"LineWidth")
                     ) {
                         helper.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Join")
                     ) {
                         helper.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Cap")
                     ) {
                         helper.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashOffset")
                     ) {
                         helper.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"DashPattern")
                     ) {
                         helper.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"MiterLimit")
                     ) {
                         helper.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -45887,42 +45887,42 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FontName")
                     ) {
                         helper.read_attrib(&mut font_name, b"FontName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FamilyName")
                     ) {
                         helper.read_attrib(&mut family_name, b"FamilyName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Charset")
                     ) {
                         helper.read_attrib(&mut charset, b"Charset", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Italic")
                     ) {
                         helper.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Bold")
                     ) {
                         helper.read_attrib(&mut bold, b"Bold", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Serif")
                     ) {
                         helper.read_attrib(&mut serif, b"Serif", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FixedWidth")
                     ) {
                         helper.read_attrib(&mut fixed_width, b"FixedWidth", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -46137,17 +46137,17 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Format")
                     ) {
                         helper.read_attrib(&mut format, b"Format", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -46361,17 +46361,17 @@ pub mod res {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Width")
                     ) {
                         helper.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Height")
                     ) {
                         helper.read_attrib(&mut height, b"Height", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -49517,17 +49517,17 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ProviderName")
                     ) {
                         helper.read_attrib(&mut provider_name, b"ProviderName", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Version")
                     ) {
                         helper.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Company")
                     ) {
                         helper.read_attrib(&mut company, b"Company", &attrib.value)?;
@@ -49618,7 +49618,7 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CheckMethod")
                     ) {
                         helper.read_attrib(&mut check_method, b"CheckMethod", &attrib.value)?;
@@ -49833,22 +49833,22 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"PageRef")
                     ) {
                         helper.read_attrib(&mut page_ref, b"PageRef", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Boundary")
                     ) {
                         helper.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Clip")
                     ) {
                         helper.read_attrib(&mut clip, b"Clip", &attrib.value)?;
@@ -50132,7 +50132,7 @@ pub mod signature {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"FileRef")
                     ) {
                         helper.read_attrib(&mut file_ref, b"FileRef", &attrib.value)?;
@@ -51248,17 +51248,17 @@ pub mod signatures {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Type")
                     ) {
                         helper.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"BaseLoc")
                     ) {
                         helper.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -51651,22 +51651,22 @@ pub mod version {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Version")
                     ) {
                         helper.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Name")
                     ) {
                         helper.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"CreationDate")
                     ) {
                         helper.read_attrib(&mut creation_date, b"CreationDate", &attrib.value)?;
@@ -52144,7 +52144,7 @@ pub mod version {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_5),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"ID")
                     ) {
                         helper.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -52683,7 +52683,7 @@ pub mod xs {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XSI),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XSI),
                         Some(b"type")
                     ) {
                         helper.read_attrib(&mut type_, b"type", &attrib.value)?;

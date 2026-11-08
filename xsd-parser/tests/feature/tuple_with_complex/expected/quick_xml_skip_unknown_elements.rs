@@ -353,7 +353,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Name" | b"Value")
             ) {
                 return true;
@@ -575,7 +575,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Head")
             ) {
                 return true;
@@ -604,7 +604,7 @@ pub mod quick_xml_deserialize {
             };
             let type_name = type_name.into_owned();
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Member")
             ) {
                 let DeserializerOutput {
@@ -651,7 +651,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Member")
             ) {
                 return true;
@@ -836,7 +836,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Info")
             ) {
                 return true;

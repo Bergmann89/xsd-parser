@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="T"
+    xmlns:o="O"
+    targetNamespace="T"
+    elementFormDefault="qualified">
+
+    <xs:import namespace="O" schemaLocation="other.xsd" />
+
+    <xs:element name="Foo">
+        <xs:complexType>
+            <xs:choice>
+                <xs:element name="a" type="xs:string" />
+                <xs:element ref="o:a" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

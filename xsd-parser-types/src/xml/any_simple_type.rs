@@ -582,7 +582,7 @@ impl<'de> Deserializer<'de, AnySimpleType> for AnySimpleTypeDeserializer {
             let attrib = attrib?;
 
             if matches!(
-                helper.resolve_local_name(attrib.key, &Namespace::XSI),
+                helper.resolve_attrib_local_name(attrib.key, &Namespace::XSI),
                 Some(b"type")
             ) {
                 helper.read_attrib(&mut type_, b"type", &attrib.value)?;

@@ -5802,7 +5802,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"version")
                 ) {
                     helper.read_attrib(&mut version, b"version", &attrib.value)?;
@@ -5987,7 +5987,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"HEADER")
                 ) {
                     let output =
@@ -5995,7 +5995,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_header(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"T_NEW_CATALOG")
                 ) {
                     let output =
@@ -6003,7 +6003,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_t_new_catalog(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"T_UPDATE_PRODUCTS")
                 ) {
                     let output = <super::TUpdateProductsElementType as WithDeserializer>::init(
@@ -6012,7 +6012,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_t_update_products(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"T_UPDATE_PRICES")
                 ) {
                     let output =
@@ -6020,7 +6020,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_t_update_prices(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"T_NEW_PRODUCTDATA")
                 ) {
                     let output = <super::TNewProductdataElementType as WithDeserializer>::init(
@@ -7252,7 +7252,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"prev_version")
                 ) {
                     helper.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
@@ -7456,7 +7456,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"prev_version")
                 ) {
                     helper.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
@@ -9495,7 +9495,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -10300,7 +10300,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -11069,7 +11069,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -11449,7 +11449,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -11959,7 +11959,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"default")
                 ) {
                     helper.read_attrib(&mut default, b"default", &attrib.value)?;
@@ -12095,7 +12095,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -12226,7 +12226,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -12419,7 +12419,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -12564,7 +12564,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -18588,12 +18588,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"quantity")
                 ) {
                     helper.read_attrib(&mut quantity, b"quantity", &attrib.value)?;
@@ -21034,7 +21034,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -21172,7 +21172,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -21308,7 +21308,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -21450,12 +21450,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -22012,7 +22012,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -22216,7 +22216,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"price_type")
                 ) {
                     helper.read_attrib(&mut price_type, b"price_type", &attrib.value)?;
@@ -23406,7 +23406,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -23418,7 +23418,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -30078,12 +30078,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"country")
                 ) {
                     helper.read_attrib(&mut country, b"country", &attrib.value)?;
@@ -30223,12 +30223,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"country")
                 ) {
                     helper.read_attrib(&mut country, b"country", &attrib.value)?;
@@ -32128,7 +32128,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.SURCHARGE_TYPE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -32140,7 +32140,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.SURCHARGE_CLASS")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -32152,7 +32152,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.SURCHARGE_MANNER")
                 ) {
                     let output =
@@ -32167,7 +32167,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.SURCHARGE_PERCENTAGE")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -32179,7 +32179,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -32191,7 +32191,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.SURCHARGE_CALCULATION")
                 ) {
                     let output = < super :: UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -32203,7 +32203,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.MATERIAL_BASIS")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -32215,7 +32215,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_WEIGHT")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -32227,7 +32227,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD")
                 ) {
                     let output = <f64 as WithDeserializer>::init(helper, event)?;
@@ -32239,7 +32239,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER")
                 ) {
                     let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -32251,7 +32251,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT")
                 ) {
                     let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType as WithDeserializer > :: init (helper , event) ? ;
@@ -32263,7 +32263,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -33695,28 +33695,28 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PORTCODE")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_portcode(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.FNAME")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_fname(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.FVALUE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_udx_edxf_fvalue(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.COORDINATE_X")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -33728,7 +33728,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.COORDINATE_Y")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -33740,7 +33740,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.COORDINATE_Z")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -33752,7 +33752,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.MATRIX_VALUES")
                 ) {
                     let output = <super::UdxEdxfMatrixValuesElementType as WithDeserializer>::init(
@@ -34649,7 +34649,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_CODE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34661,7 +34661,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_NAME")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -34673,7 +34673,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_BOOLEAN")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34685,7 +34685,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_NUMERIC")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -34697,7 +34697,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_FROM")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -34709,7 +34709,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_TO")
                 ) {
                     let output = <f32 as WithDeserializer>::init(helper, event)?;
@@ -34721,7 +34721,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_STRING")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -34733,7 +34733,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SET")
                 ) {
                     let output = <super::DtMlstring as WithDeserializer>::init(helper, event)?;
@@ -34745,7 +34745,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SELECT")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34757,7 +34757,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_UNIT_CODE")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -34769,7 +34769,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_UNNAMED_5),
+                    helper.resolve_element_local_name(x.name(), &super::NS_UNNAMED_5),
                     Some(b"UDX.EDXF.PRODUCT_CHARACTERISTIC_REFERENCE_GTIN")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;

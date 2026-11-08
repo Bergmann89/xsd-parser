@@ -403,14 +403,14 @@ pub mod quick_xml_deserialize {
             let mut allow_any_element = false;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
                     return self.handle_bar(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Baz")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;

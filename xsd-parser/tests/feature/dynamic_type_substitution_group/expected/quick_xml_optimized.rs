@@ -404,7 +404,7 @@ pub mod quick_xml_deserialize {
             let mut allow_any_element = false;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"cat")
                 ) {
                     let output = <super::CatType as WithDeserializer>::init(helper, event)?;
@@ -686,12 +686,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"breed")
                 ) {
                     helper.read_attrib(&mut breed, b"breed", &attrib.value)?;
@@ -776,13 +776,13 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"dog")
                 ) {
                     if let Some(type_name) = helper.get_dynamic_type_from_attrib_bytes(x)? {
                         let type_name = type_name.into_owned();
                         if matches!(
-                            helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                            helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                             Some(b"labrador")
                         ) {
                             let output =
@@ -790,7 +790,7 @@ pub mod quick_xml_deserialize {
                             return self.handle_labrador(helper, Default::default(), None, output);
                         }
                         if matches!(
-                            helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                            helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                             Some(b"beagle")
                         ) {
                             let output =
@@ -1070,17 +1070,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"color")
                 ) {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
@@ -1162,17 +1162,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"age")
                 ) {
                     helper.read_attrib(&mut age, b"age", &attrib.value)?;

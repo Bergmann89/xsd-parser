@@ -302,7 +302,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"A" | b"B")
             ) {
                 return true;

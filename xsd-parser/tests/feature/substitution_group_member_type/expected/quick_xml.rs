@@ -280,7 +280,7 @@ pub mod quick_xml_deserialize {
             };
             let type_name = type_name.into_owned();
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Head")
             ) {
                 let DeserializerOutput {
@@ -295,7 +295,7 @@ pub mod quick_xml_deserialize {
                 });
             }
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Member")
             ) {
                 let DeserializerOutput {
@@ -548,7 +548,7 @@ pub mod quick_xml_deserialize {
             };
             let type_name = type_name.into_owned();
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Chain1")
             ) {
                 let DeserializerOutput {
@@ -563,7 +563,7 @@ pub mod quick_xml_deserialize {
                 });
             }
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Chain2")
             ) {
                 let DeserializerOutput {
@@ -642,7 +642,7 @@ pub mod quick_xml_deserialize {
             };
             let type_name = type_name.into_owned();
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"ChainHead")
             ) {
                 let DeserializerOutput {
@@ -658,7 +658,7 @@ pub mod quick_xml_deserialize {
                 });
             }
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Chain1")
             ) {
                 let DeserializerOutput {
@@ -673,7 +673,7 @@ pub mod quick_xml_deserialize {
                 });
             }
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Chain2")
             ) {
                 let DeserializerOutput {
@@ -766,7 +766,7 @@ pub mod quick_xml_deserialize {
             };
             let type_name = type_name.into_owned();
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"UntypedMember")
             ) {
                 let DeserializerOutput {

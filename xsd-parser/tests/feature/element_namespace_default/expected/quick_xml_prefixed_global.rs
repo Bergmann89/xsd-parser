@@ -1134,7 +1134,7 @@ pub mod quick_xml_deserialize {
             };
             let type_name = type_name.into_owned();
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_O),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_O),
                 Some(b"Circle")
             ) {
                 let DeserializerOutput {

@@ -512,7 +512,7 @@ impl DerivedType<'_> {
 
         if let Some(ns_name) = resolve_ns_const(ctx, key.ns) {
             quote! {
-                if matches!(helper.resolve_local_name(#qname(&type_name), &#ns_name), Some(#b_name)) {
+                if matches!(helper.resolve_element_local_name(#qname(&type_name), &#ns_name), Some(#b_name)) {
                     #body
                 }
             }
@@ -3274,7 +3274,7 @@ impl ComplexDataAttribute<'_> {
             *index += 1;
 
             Some(quote! {
-                #else_ if matches!(helper.resolve_local_name(attrib.key, &#ns_name), Some(#b_name)) {
+                #else_ if matches!(helper.resolve_attrib_local_name(attrib.key, &#ns_name), Some(#b_name)) {
                     helper.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
                 }
             })
@@ -3454,7 +3454,7 @@ impl ComplexDataElement<'_> {
 
         if let Some(ns_name) = resolve_ns_const(ctx, self.meta().ident.ns) {
             Some(quote! {
-                if matches!(helper.resolve_local_name(#get_qname, &#ns_name), Some(#b_name)) {
+                if matches!(helper.resolve_element_local_name(#get_qname, &#ns_name), Some(#b_name)) {
                     #body
                 }
             })
@@ -4951,7 +4951,7 @@ fn make_type_element_matcher(
 
     if let Some(ns_name) = resolve_ns_const(ctx, ident.ns) {
         quote! {
-            matches!(helper.resolve_local_name(#get_qname, &#ns_name), Some(#b_name))
+            matches!(helper.resolve_element_local_name(#get_qname, &#ns_name), Some(#b_name))
         }
     } else {
         quote! {
@@ -5017,7 +5017,7 @@ impl KnownStartTags {
         let names = self.names.iter().map(|(ns, names)| {
             if let Some(ns_name) = resolve_ns_const(ctx, *ns) {
                 quote! {
-                    if matches!(helper.resolve_local_name(x.name(), &#ns_name), Some(#( #names )|*)) {
+                    if matches!(helper.resolve_element_local_name(x.name(), &#ns_name), Some(#( #names )|*)) {
                         return true;
                     }
                 }

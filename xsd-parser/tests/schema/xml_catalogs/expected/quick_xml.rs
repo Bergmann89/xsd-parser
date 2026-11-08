@@ -676,12 +676,12 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"prefer")
                     ) {
                         helper.read_attrib(&mut prefer, b"prefer", &attrib.value)?;
@@ -893,28 +893,28 @@ pub mod er {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
                         let output = <super::PublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_public(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
                         let output = <super::SystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_system(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         let output = <super::UriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteSystem")
                     ) {
                         let output =
@@ -927,7 +927,7 @@ pub mod er {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteURI")
                     ) {
                         let output =
@@ -935,7 +935,7 @@ pub mod er {
                         return self.handle_rewrite_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
                         let output =
@@ -943,7 +943,7 @@ pub mod er {
                         return self.handle_uri_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"systemSuffix")
                     ) {
                         let output =
@@ -951,7 +951,7 @@ pub mod er {
                         return self.handle_system_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegatePublic")
                     ) {
                         let output =
@@ -964,7 +964,7 @@ pub mod er {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateSystem")
                     ) {
                         let output =
@@ -977,7 +977,7 @@ pub mod er {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateURI")
                     ) {
                         let output =
@@ -985,7 +985,7 @@ pub mod er {
                         return self.handle_delegate_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"nextCatalog")
                     ) {
                         let output =
@@ -993,7 +993,7 @@ pub mod er {
                         return self.handle_next_catalog(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"group")
                     ) {
                         let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
@@ -2084,7 +2084,7 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"publicIdStartString")
                     ) {
                         helper.read_attrib(
@@ -2093,12 +2093,12 @@ pub mod er {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
                         helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -2186,7 +2186,7 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemIdStartString")
                     ) {
                         helper.read_attrib(
@@ -2195,12 +2195,12 @@ pub mod er {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
                         helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -2288,7 +2288,7 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uriStartString")
                     ) {
                         helper.read_attrib(
@@ -2297,12 +2297,12 @@ pub mod er {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
                         helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -2391,12 +2391,12 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"prefer")
                     ) {
                         helper.read_attrib(&mut prefer, b"prefer", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -2599,28 +2599,28 @@ pub mod er {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"public")
                     ) {
                         let output = <super::PublicType as WithDeserializer>::init(helper, event)?;
                         return self.handle_public(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"system")
                     ) {
                         let output = <super::SystemType as WithDeserializer>::init(helper, event)?;
                         return self.handle_system(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         let output = <super::UriType as WithDeserializer>::init(helper, event)?;
                         return self.handle_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteSystem")
                     ) {
                         let output =
@@ -2633,7 +2633,7 @@ pub mod er {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"rewriteURI")
                     ) {
                         let output =
@@ -2641,7 +2641,7 @@ pub mod er {
                         return self.handle_rewrite_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
                         let output =
@@ -2649,7 +2649,7 @@ pub mod er {
                         return self.handle_uri_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"systemSuffix")
                     ) {
                         let output =
@@ -2657,7 +2657,7 @@ pub mod er {
                         return self.handle_system_suffix(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegatePublic")
                     ) {
                         let output =
@@ -2670,7 +2670,7 @@ pub mod er {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateSystem")
                     ) {
                         let output =
@@ -2683,7 +2683,7 @@ pub mod er {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"delegateURI")
                     ) {
                         let output =
@@ -2691,7 +2691,7 @@ pub mod er {
                         return self.handle_delegate_uri(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_ER),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_ER),
                         Some(b"nextCatalog")
                     ) {
                         let output =
@@ -3700,12 +3700,12 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"catalog")
                     ) {
                         helper.read_attrib(&mut catalog, b"catalog", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -3790,17 +3790,17 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"publicId")
                     ) {
                         helper.read_attrib(&mut public_id, b"publicId", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -3884,7 +3884,7 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemIdStartString")
                     ) {
                         helper.read_attrib(
@@ -3893,12 +3893,12 @@ pub mod er {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"rewritePrefix")
                     ) {
                         helper.read_attrib(&mut rewrite_prefix, b"rewritePrefix", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -3986,7 +3986,7 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uriStartString")
                     ) {
                         helper.read_attrib(
@@ -3995,12 +3995,12 @@ pub mod er {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"rewritePrefix")
                     ) {
                         helper.read_attrib(&mut rewrite_prefix, b"rewritePrefix", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -4088,17 +4088,17 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemId")
                     ) {
                         helper.read_attrib(&mut system_id, b"systemId", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -4182,7 +4182,7 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"systemIdSuffix")
                     ) {
                         helper.read_attrib(
@@ -4191,12 +4191,12 @@ pub mod er {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -4283,17 +4283,17 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"name")
                     ) {
                         helper.read_attrib(&mut name, b"name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -4373,17 +4373,17 @@ pub mod er {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uriSuffix")
                     ) {
                         helper.read_attrib(&mut uri_suffix, b"uriSuffix", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"uri")
                     ) {
                         helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_ER),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_ER),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;

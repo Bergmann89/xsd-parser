@@ -211,7 +211,7 @@ where
         // variant of the choice can try it).
         let index = match &event {
             Event::Start(bytes) | Event::Empty(bytes) => {
-                let (resolved, local) = helper.resolve(bytes.name(), true);
+                let (resolved, local) = helper.resolve(bytes.name(), false);
                 let local = local.into_inner();
                 let namespace = match resolved {
                     ResolveResult::Bound(namespace) => Some(namespace.0),

@@ -403,7 +403,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Transforms" | b"DigestMethod" | b"DigestValue")
             ) {
                 return true;
@@ -601,7 +601,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"Transform")
             ) {
                 return true;
@@ -631,7 +631,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"Algorithm")
                 ) {
                     helper.read_attrib(&mut algorithm, b"Algorithm", &attrib.value)?;
@@ -797,7 +797,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"XPath")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -977,7 +977,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"XPath")
             ) {
                 return true;
@@ -1254,7 +1254,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"SignedInfo" | b"SignatureValue")
             ) {
                 return true;
@@ -1453,7 +1453,7 @@ pub mod quick_xml_deserialize {
         }
         fn is_known_start_tag(helper: &DeserializeHelper, x: &BytesStart<'_>) -> bool {
             if matches!(
-                helper.resolve_local_name(x.name(), &super::NS_TNS),
+                helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                 Some(b"CanonicalizationMethod")
             ) {
                 return true;

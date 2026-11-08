@@ -524,7 +524,7 @@ pub mod tns {
                 let mut event = event;
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_TNS),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_TNS),
                         Some(b"Known")
                     ) {
                         let output = <super::KnownType as WithDeserializer>::init(helper, event)?;
@@ -804,7 +804,7 @@ pub mod tns {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_TNS),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_TNS),
                         Some(b"name")
                     ) {
                         helper.read_attrib(&mut name, b"name", &attrib.value)?;

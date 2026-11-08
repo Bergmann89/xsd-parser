@@ -5117,32 +5117,32 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"Id")
                     ) {
                         helper.read_attrib(&mut xml_id, b"Id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"resolved")
                     ) {
                         helper.read_attrib(&mut resolved, b"resolved", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"style")
                     ) {
                         helper.read_attrib(&mut style, b"style", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"style-href")
                     ) {
                         helper.read_attrib(&mut style_href, b"style-href", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -5309,7 +5309,7 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"status")
                     ) {
                         let output =
@@ -5317,7 +5317,7 @@ pub mod cdf {
                         return self.handle_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
                         let output =
@@ -5325,14 +5325,14 @@ pub mod cdf {
                         return self.handle_dc_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
                         let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"description")
                     ) {
                         let output =
@@ -5340,14 +5340,14 @@ pub mod cdf {
                         return self.handle_description(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"notice")
                     ) {
                         let output = <super::NoticeType as WithDeserializer>::init(helper, event)?;
                         return self.handle_notice(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"front-matter")
                     ) {
                         let output =
@@ -5355,7 +5355,7 @@ pub mod cdf {
                         return self.handle_front_matter(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"rear-matter")
                     ) {
                         let output =
@@ -5363,7 +5363,7 @@ pub mod cdf {
                         return self.handle_rear_matter(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"reference")
                     ) {
                         let output =
@@ -5371,7 +5371,7 @@ pub mod cdf {
                         return self.handle_reference(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"plain-text")
                     ) {
                         let output =
@@ -5379,7 +5379,7 @@ pub mod cdf {
                         return self.handle_plain_text(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CPE),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CPE),
                         Some(b"platform-specification")
                     ) {
                         let output = < super :: super :: cpe :: PlatformSpecificationType as WithDeserializer > :: init (helper , event) ? ;
@@ -5391,7 +5391,7 @@ pub mod cdf {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
                         let output =
@@ -5399,14 +5399,14 @@ pub mod cdf {
                         return self.handle_platform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
                         let output =
@@ -5414,7 +5414,7 @@ pub mod cdf {
                         return self.handle_metadata(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"model")
                     ) {
                         let output =
@@ -5422,35 +5422,35 @@ pub mod cdf {
                         return self.handle_model(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Profile")
                     ) {
                         let output = <super::ProfileType as WithDeserializer>::init(helper, event)?;
                         return self.handle_profile(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Value")
                     ) {
                         let output = <super::ValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_value(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Group")
                     ) {
                         let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                         return self.handle_group(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Rule")
                     ) {
                         let output = <super::RuleType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rule(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"TestResult")
                     ) {
                         let output =
@@ -5458,7 +5458,7 @@ pub mod cdf {
                         return self.handle_test_result(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"signature")
                     ) {
                         let output =
@@ -7205,7 +7205,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"date")
                     ) {
                         helper.read_attrib(&mut date, b"date", &attrib.value)?;
@@ -7534,12 +7534,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         helper.read_attrib(&mut override_, b"override", &attrib.value)?;
@@ -7674,12 +7674,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         helper.read_attrib(&mut override_, b"override", &attrib.value)?;
@@ -7851,17 +7851,17 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"base")
                     ) {
                         helper.read_attrib(&mut base, b"base", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -8136,12 +8136,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"href")
                     ) {
                         helper.read_attrib(&mut href, b"href", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         helper.read_attrib(&mut override_, b"override", &attrib.value)?;
@@ -8412,7 +8412,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -8546,7 +8546,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
@@ -8628,12 +8628,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"time")
                     ) {
                         helper.read_attrib(&mut time, b"time", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"update")
                     ) {
                         helper.read_attrib(&mut update, b"update", &attrib.value)?;
@@ -8960,7 +8960,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"system")
                     ) {
                         helper.read_attrib(&mut system, b"system", &attrib.value)?;
@@ -9159,12 +9159,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"prohibitChanges")
                     ) {
                         helper.read_attrib(
@@ -9173,27 +9173,27 @@ pub mod cdf {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"abstract")
                     ) {
                         helper.read_attrib(&mut abstract_, b"abstract", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"note-tag")
                     ) {
                         helper.read_attrib(&mut note_tag, b"note-tag", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"extends")
                     ) {
                         helper.read_attrib(&mut extends, b"extends", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"base")
                     ) {
                         helper.read_attrib(&mut base, b"base", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"Id")
                     ) {
                         helper.read_attrib(&mut xml_id, b"Id", &attrib.value)?;
@@ -9428,7 +9428,7 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"status")
                     ) {
                         let output =
@@ -9436,7 +9436,7 @@ pub mod cdf {
                         return self.handle_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
                         let output =
@@ -9444,14 +9444,14 @@ pub mod cdf {
                         return self.handle_dc_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
                         let output =
@@ -9459,7 +9459,7 @@ pub mod cdf {
                         return self.handle_title(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"description")
                     ) {
                         let output =
@@ -9467,7 +9467,7 @@ pub mod cdf {
                         return self.handle_description(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"reference")
                     ) {
                         let output =
@@ -9475,7 +9475,7 @@ pub mod cdf {
                         return self.handle_reference(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
                         let output = <super::OverrideableCpe2IdrefType as WithDeserializer>::init(
@@ -9484,7 +9484,7 @@ pub mod cdf {
                         return self.handle_platform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"select")
                     ) {
                         let output =
@@ -9492,7 +9492,7 @@ pub mod cdf {
                         return self.handle_select(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"set-complex-value")
                     ) {
                         let output = <super::ProfileSetComplexValueType as WithDeserializer>::init(
@@ -9506,7 +9506,7 @@ pub mod cdf {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"set-value")
                     ) {
                         let output =
@@ -9514,7 +9514,7 @@ pub mod cdf {
                         return self.handle_set_value(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"refine-value")
                     ) {
                         let output = <super::ProfileRefineValueType as WithDeserializer>::init(
@@ -9523,7 +9523,7 @@ pub mod cdf {
                         return self.handle_refine_value(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"refine-rule")
                     ) {
                         let output = <super::ProfileRefineRuleType as WithDeserializer>::init(
@@ -9532,7 +9532,7 @@ pub mod cdf {
                         return self.handle_refine_rule(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
                         let output =
@@ -9540,7 +9540,7 @@ pub mod cdf {
                         return self.handle_metadata(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"signature")
                     ) {
                         let output =
@@ -10821,27 +10821,27 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"abstract")
                     ) {
                         helper.read_attrib(&mut abstract_, b"abstract", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"cluster-id")
                     ) {
                         helper.read_attrib(&mut cluster_id, b"cluster-id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"extends")
                     ) {
                         helper.read_attrib(&mut extends, b"extends", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"hidden")
                     ) {
                         helper.read_attrib(&mut hidden, b"hidden", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"prohibitChanges")
                     ) {
                         helper.read_attrib(
@@ -10850,42 +10850,42 @@ pub mod cdf {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"base")
                     ) {
                         helper.read_attrib(&mut base, b"base", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"Id")
                     ) {
                         helper.read_attrib(&mut xml_id, b"Id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"type")
                     ) {
                         helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"operator")
                     ) {
                         helper.read_attrib(&mut operator, b"operator", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"interactive")
                     ) {
                         helper.read_attrib(&mut interactive, b"interactive", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"interfaceHint")
                     ) {
                         helper.read_attrib(&mut interface_hint, b"interfaceHint", &attrib.value)?;
@@ -11153,7 +11153,7 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"status")
                     ) {
                         let output =
@@ -11161,7 +11161,7 @@ pub mod cdf {
                         return self.handle_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
                         let output =
@@ -11169,14 +11169,14 @@ pub mod cdf {
                         return self.handle_dc_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
                         let output =
@@ -11184,7 +11184,7 @@ pub mod cdf {
                         return self.handle_title(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"description")
                     ) {
                         let output =
@@ -11192,21 +11192,21 @@ pub mod cdf {
                         return self.handle_description(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"warning")
                     ) {
                         let output = <super::WarningType as WithDeserializer>::init(helper, event)?;
                         return self.handle_warning(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"question")
                     ) {
                         let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_question(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"reference")
                     ) {
                         let output =
@@ -11214,7 +11214,7 @@ pub mod cdf {
                         return self.handle_reference(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
                         let output =
@@ -11222,7 +11222,7 @@ pub mod cdf {
                         return self.handle_metadata(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"value")
                     ) {
                         let output =
@@ -11230,7 +11230,7 @@ pub mod cdf {
                         return self.handle_value(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"complex-value")
                     ) {
                         let output =
@@ -11238,7 +11238,7 @@ pub mod cdf {
                         return self.handle_complex_value(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"default")
                     ) {
                         let output =
@@ -11246,7 +11246,7 @@ pub mod cdf {
                         return self.handle_default(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"complex-default")
                     ) {
                         let output =
@@ -11259,7 +11259,7 @@ pub mod cdf {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"match")
                     ) {
                         let output =
@@ -11267,21 +11267,21 @@ pub mod cdf {
                         return self.handle_match_(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"lower-bound")
                     ) {
                         let output = <super::SelNumType as WithDeserializer>::init(helper, event)?;
                         return self.handle_lower_bound(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"upper-bound")
                     ) {
                         let output = <super::SelNumType as WithDeserializer>::init(helper, event)?;
                         return self.handle_upper_bound(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"choices")
                     ) {
                         let output =
@@ -11289,14 +11289,14 @@ pub mod cdf {
                         return self.handle_choices(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"source")
                     ) {
                         let output = <super::UriRefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_source(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"signature")
                     ) {
                         let output =
@@ -12974,27 +12974,27 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"abstract")
                     ) {
                         helper.read_attrib(&mut abstract_, b"abstract", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"cluster-id")
                     ) {
                         helper.read_attrib(&mut cluster_id, b"cluster-id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"extends")
                     ) {
                         helper.read_attrib(&mut extends, b"extends", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"hidden")
                     ) {
                         helper.read_attrib(&mut hidden, b"hidden", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"prohibitChanges")
                     ) {
                         helper.read_attrib(
@@ -13003,32 +13003,32 @@ pub mod cdf {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"base")
                     ) {
                         helper.read_attrib(&mut base, b"base", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"Id")
                     ) {
                         helper.read_attrib(&mut xml_id, b"Id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selected")
                     ) {
                         helper.read_attrib(&mut selected, b"selected", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"weight")
                     ) {
                         helper.read_attrib(&mut weight, b"weight", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -13282,7 +13282,7 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"status")
                     ) {
                         let output =
@@ -13290,7 +13290,7 @@ pub mod cdf {
                         return self.handle_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
                         let output =
@@ -13298,14 +13298,14 @@ pub mod cdf {
                         return self.handle_dc_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
                         let output =
@@ -13313,7 +13313,7 @@ pub mod cdf {
                         return self.handle_title(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"description")
                     ) {
                         let output =
@@ -13321,21 +13321,21 @@ pub mod cdf {
                         return self.handle_description(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"warning")
                     ) {
                         let output = <super::WarningType as WithDeserializer>::init(helper, event)?;
                         return self.handle_warning(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"question")
                     ) {
                         let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_question(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"reference")
                     ) {
                         let output =
@@ -13343,7 +13343,7 @@ pub mod cdf {
                         return self.handle_reference(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
                         let output =
@@ -13351,7 +13351,7 @@ pub mod cdf {
                         return self.handle_metadata(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"rationale")
                     ) {
                         let output =
@@ -13359,7 +13359,7 @@ pub mod cdf {
                         return self.handle_rationale(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
                         let output = <super::OverrideableCpe2IdrefType as WithDeserializer>::init(
@@ -13368,7 +13368,7 @@ pub mod cdf {
                         return self.handle_platform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"requires")
                     ) {
                         let output =
@@ -13376,35 +13376,35 @@ pub mod cdf {
                         return self.handle_requires(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"conflicts")
                     ) {
                         let output = <super::IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_conflicts(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Value")
                     ) {
                         let output = <super::ValueType as WithDeserializer>::init(helper, event)?;
                         return self.handle_value(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Group")
                     ) {
                         let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                         return self.handle_group(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"Rule")
                     ) {
                         let output = <super::RuleType as WithDeserializer>::init(helper, event)?;
                         return self.handle_rule(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"signature")
                     ) {
                         let output =
@@ -14925,27 +14925,27 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"abstract")
                     ) {
                         helper.read_attrib(&mut abstract_, b"abstract", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"cluster-id")
                     ) {
                         helper.read_attrib(&mut cluster_id, b"cluster-id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"extends")
                     ) {
                         helper.read_attrib(&mut extends, b"extends", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"hidden")
                     ) {
                         helper.read_attrib(&mut hidden, b"hidden", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"prohibitChanges")
                     ) {
                         helper.read_attrib(
@@ -14954,47 +14954,47 @@ pub mod cdf {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"base")
                     ) {
                         helper.read_attrib(&mut base, b"base", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"Id")
                     ) {
                         helper.read_attrib(&mut xml_id, b"Id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selected")
                     ) {
                         helper.read_attrib(&mut selected, b"selected", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"weight")
                     ) {
                         helper.read_attrib(&mut weight, b"weight", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"role")
                     ) {
                         helper.read_attrib(&mut role, b"role", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"severity")
                     ) {
                         helper.read_attrib(&mut severity, b"severity", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"multiple")
                     ) {
                         helper.read_attrib(&mut multiple, b"multiple", &attrib.value)?;
@@ -15274,7 +15274,7 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"status")
                     ) {
                         let output =
@@ -15282,7 +15282,7 @@ pub mod cdf {
                         return self.handle_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"dc-status")
                     ) {
                         let output =
@@ -15290,14 +15290,14 @@ pub mod cdf {
                         return self.handle_dc_status(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         let output = <super::VersionType as WithDeserializer>::init(helper, event)?;
                         return self.handle_version(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
                         let output =
@@ -15305,7 +15305,7 @@ pub mod cdf {
                         return self.handle_title(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"description")
                     ) {
                         let output =
@@ -15313,21 +15313,21 @@ pub mod cdf {
                         return self.handle_description(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"warning")
                     ) {
                         let output = <super::WarningType as WithDeserializer>::init(helper, event)?;
                         return self.handle_warning(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"question")
                     ) {
                         let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_question(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"reference")
                     ) {
                         let output =
@@ -15335,7 +15335,7 @@ pub mod cdf {
                         return self.handle_reference(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
                         let output =
@@ -15343,7 +15343,7 @@ pub mod cdf {
                         return self.handle_metadata(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"rationale")
                     ) {
                         let output =
@@ -15351,7 +15351,7 @@ pub mod cdf {
                         return self.handle_rationale(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
                         let output = <super::OverrideableCpe2IdrefType as WithDeserializer>::init(
@@ -15360,7 +15360,7 @@ pub mod cdf {
                         return self.handle_platform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"requires")
                     ) {
                         let output =
@@ -15368,28 +15368,28 @@ pub mod cdf {
                         return self.handle_requires(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"conflicts")
                     ) {
                         let output = <super::IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_conflicts(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"ident")
                     ) {
                         let output = <super::IdentType as WithDeserializer>::init(helper, event)?;
                         return self.handle_ident(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"impact-metric")
                     ) {
                         let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_impact_metric(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"profile-note")
                     ) {
                         let output =
@@ -15397,28 +15397,28 @@ pub mod cdf {
                         return self.handle_profile_note(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"fixtext")
                     ) {
                         let output = <super::FixTextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fixtext(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"fix")
                     ) {
                         let output = <super::FixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fix(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"check")
                     ) {
                         let output = <super::CheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_check(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"complex-check")
                     ) {
                         let output =
@@ -15426,7 +15426,7 @@ pub mod cdf {
                         return self.handle_complex_check(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"signature")
                     ) {
                         let output =
@@ -17255,32 +17255,32 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"start-time")
                     ) {
                         helper.read_attrib(&mut start_time, b"start-time", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"end-time")
                     ) {
                         helper.read_attrib(&mut end_time, b"end-time", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"test-system")
                     ) {
                         helper.read_attrib(&mut test_system, b"test-system", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         helper.read_attrib(&mut version, b"version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"Id")
                     ) {
                         helper.read_attrib(&mut xml_id, b"Id", &attrib.value)?;
@@ -17542,7 +17542,7 @@ pub mod cdf {
                 let mut event = event;
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"benchmark")
                     ) {
                         let output = <super::BenchmarkReferenceType as WithDeserializer>::init(
@@ -17551,7 +17551,7 @@ pub mod cdf {
                         return self.handle_benchmark(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"tailoring-file")
                     ) {
                         let output = <super::TailoringReferenceType as WithDeserializer>::init(
@@ -17565,28 +17565,28 @@ pub mod cdf {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"title")
                     ) {
                         let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_title(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"remark")
                     ) {
                         let output = <super::TextType as WithDeserializer>::init(helper, event)?;
                         return self.handle_remark(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"organization")
                     ) {
                         let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_organization(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"identity")
                     ) {
                         let output =
@@ -17594,21 +17594,21 @@ pub mod cdf {
                         return self.handle_identity(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"profile")
                     ) {
                         let output = <super::IdrefType as WithDeserializer>::init(helper, event)?;
                         return self.handle_profile(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"target")
                     ) {
                         let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_target(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"target-address")
                     ) {
                         let output = <String as WithDeserializer>::init(helper, event)?;
@@ -17620,7 +17620,7 @@ pub mod cdf {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"target-facts")
                     ) {
                         let output =
@@ -17628,7 +17628,7 @@ pub mod cdf {
                         return self.handle_target_facts(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"target-id-ref")
                     ) {
                         let output =
@@ -17636,7 +17636,7 @@ pub mod cdf {
                         return self.handle_target_id_ref(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
                         let output =
@@ -17644,7 +17644,7 @@ pub mod cdf {
                         return self.handle_platform(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"set-value")
                     ) {
                         let output =
@@ -17652,7 +17652,7 @@ pub mod cdf {
                         return self.handle_set_value(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"set-complex-value")
                     ) {
                         let output = <super::ProfileSetComplexValueType as WithDeserializer>::init(
@@ -17666,7 +17666,7 @@ pub mod cdf {
                         );
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"rule-result")
                     ) {
                         let output =
@@ -17674,14 +17674,14 @@ pub mod cdf {
                         return self.handle_rule_result(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"score")
                     ) {
                         let output = <super::ScoreType as WithDeserializer>::init(helper, event)?;
                         return self.handle_score(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
                         let output =
@@ -17689,7 +17689,7 @@ pub mod cdf {
                         return self.handle_metadata(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"signature")
                     ) {
                         let output =
@@ -19540,12 +19540,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"use")
                     ) {
                         helper.read_attrib(&mut use_, b"use", &attrib.value)?;
@@ -19636,7 +19636,7 @@ pub mod cdf {
                 let mut event = event;
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
                         let output = <super::SubType as WithDeserializer>::init(helper, event)?;
@@ -20003,7 +20003,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"name")
                     ) {
                         helper.read_attrib(&mut name, b"name", &attrib.value)?;
@@ -20138,12 +20138,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         helper.read_attrib(&mut override_, b"override", &attrib.value)?;
@@ -20404,12 +20404,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         helper.read_attrib(&mut override_, b"override", &attrib.value)?;
@@ -20499,12 +20499,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selected")
                     ) {
                         helper.read_attrib(&mut selected, b"selected", &attrib.value)?;
@@ -20694,7 +20694,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
@@ -20880,7 +20880,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
@@ -21021,17 +21021,17 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selector")
                     ) {
                         helper.read_attrib(&mut selector, b"selector", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"operator")
                     ) {
                         helper.read_attrib(&mut operator, b"operator", &attrib.value)?;
@@ -21230,27 +21230,27 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"weight")
                     ) {
                         helper.read_attrib(&mut weight, b"weight", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selector")
                     ) {
                         helper.read_attrib(&mut selector, b"selector", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"severity")
                     ) {
                         helper.read_attrib(&mut severity, b"severity", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"role")
                     ) {
                         helper.read_attrib(&mut role, b"role", &attrib.value)?;
@@ -21449,17 +21449,17 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         helper.read_attrib(&mut override_, b"override", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"category")
                     ) {
                         helper.read_attrib(&mut category, b"category", &attrib.value)?;
@@ -21622,7 +21622,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selector")
                     ) {
                         helper.read_attrib(&mut selector, b"selector", &attrib.value)?;
@@ -21759,7 +21759,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selector")
                     ) {
                         helper.read_attrib(&mut selector, b"selector", &attrib.value)?;
@@ -21943,7 +21943,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selector")
                     ) {
                         helper.read_attrib(&mut selector, b"selector", &attrib.value)?;
@@ -22079,12 +22079,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"mustMatch")
                     ) {
                         helper.read_attrib(&mut must_match, b"mustMatch", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selector")
                     ) {
                         helper.read_attrib(&mut selector, b"selector", &attrib.value)?;
@@ -22251,14 +22251,14 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"choice")
                     ) {
                         let output = <String as WithDeserializer>::init(helper, event)?;
                         return self.handle_choice(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"complex-choice")
                     ) {
                         let output =
@@ -22541,7 +22541,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"uri")
                     ) {
                         helper.read_attrib(&mut uri, b"uri", &attrib.value)?;
@@ -22616,7 +22616,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
@@ -22694,7 +22694,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
@@ -22770,7 +22770,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"system")
                     ) {
                         helper.read_attrib(&mut system, b"system", &attrib.value)?;
@@ -22905,12 +22905,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"tag")
                     ) {
                         helper.read_attrib(&mut tag, b"tag", &attrib.value)?;
@@ -23083,7 +23083,7 @@ pub mod cdf {
                 let mut event = event;
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
                         let output = <super::SubType as WithDeserializer>::init(helper, event)?;
@@ -23461,37 +23461,37 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         helper.read_attrib(&mut override_, b"override", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"fixref")
                     ) {
                         helper.read_attrib(&mut fixref, b"fixref", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"reboot")
                     ) {
                         helper.read_attrib(&mut reboot, b"reboot", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"strategy")
                     ) {
                         helper.read_attrib(&mut strategy, b"strategy", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"disruption")
                     ) {
                         helper.read_attrib(&mut disruption, b"disruption", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"complexity")
                     ) {
                         helper.read_attrib(&mut complexity, b"complexity", &attrib.value)?;
@@ -23675,37 +23675,37 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"reboot")
                     ) {
                         helper.read_attrib(&mut reboot, b"reboot", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"strategy")
                     ) {
                         helper.read_attrib(&mut strategy, b"strategy", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"disruption")
                     ) {
                         helper.read_attrib(&mut disruption, b"disruption", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"complexity")
                     ) {
                         helper.read_attrib(&mut complexity, b"complexity", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"system")
                     ) {
                         helper.read_attrib(&mut system, b"system", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"platform")
                     ) {
                         helper.read_attrib(&mut platform, b"platform", &attrib.value)?;
@@ -23881,14 +23881,14 @@ pub mod cdf {
                 let mut event = event;
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"sub")
                     ) {
                         let output = <super::SubType as WithDeserializer>::init(helper, event)?;
                         return self.handle_sub(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"instance")
                     ) {
                         let output =
@@ -24267,32 +24267,32 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"system")
                     ) {
                         helper.read_attrib(&mut system, b"system", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"negate")
                     ) {
                         helper.read_attrib(&mut negate, b"negate", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"selector")
                     ) {
                         helper.read_attrib(&mut selector, b"selector", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"multi-check")
                     ) {
                         helper.read_attrib(&mut multi_check, b"multi-check", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"base")
                     ) {
                         helper.read_attrib(&mut base, b"base", &attrib.value)?;
@@ -24706,12 +24706,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"operator")
                     ) {
                         helper.read_attrib(&mut operator, b"operator", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"negate")
                     ) {
                         helper.read_attrib(&mut negate, b"negate", &attrib.value)?;
@@ -24883,14 +24883,14 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"check")
                     ) {
                         let output = <super::CheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_check(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"complex-check")
                     ) {
                         let output =
@@ -25174,12 +25174,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"href")
                     ) {
                         helper.read_attrib(&mut href, b"href", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -25267,22 +25267,22 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"href")
                     ) {
                         helper.read_attrib(&mut href, b"href", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         helper.read_attrib(&mut version, b"version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"time")
                     ) {
                         helper.read_attrib(&mut time, b"time", &attrib.value)?;
@@ -25373,12 +25373,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"authenticated")
                     ) {
                         helper.read_attrib(&mut authenticated, b"authenticated", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"privileged")
                     ) {
                         helper.read_attrib(&mut privileged, b"privileged", &attrib.value)?;
@@ -25689,17 +25689,17 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"system")
                     ) {
                         helper.read_attrib(&mut system, b"system", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"href")
                     ) {
                         helper.read_attrib(&mut href, b"href", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"name")
                     ) {
                         helper.read_attrib(&mut name, b"name", &attrib.value)?;
@@ -25796,32 +25796,32 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"idref")
                     ) {
                         helper.read_attrib(&mut idref, b"idref", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"role")
                     ) {
                         helper.read_attrib(&mut role, b"role", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"severity")
                     ) {
                         helper.read_attrib(&mut severity, b"severity", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"time")
                     ) {
                         helper.read_attrib(&mut time, b"time", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"version")
                     ) {
                         helper.read_attrib(&mut version, b"version", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"weight")
                     ) {
                         helper.read_attrib(&mut weight, b"weight", &attrib.value)?;
@@ -26031,7 +26031,7 @@ pub mod cdf {
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"result")
                     ) {
                         let output =
@@ -26039,7 +26039,7 @@ pub mod cdf {
                         return self.handle_result(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"override")
                     ) {
                         let output =
@@ -26047,14 +26047,14 @@ pub mod cdf {
                         return self.handle_override_(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"ident")
                     ) {
                         let output = <super::IdentType as WithDeserializer>::init(helper, event)?;
                         return self.handle_ident(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"metadata")
                     ) {
                         let output =
@@ -26062,14 +26062,14 @@ pub mod cdf {
                         return self.handle_metadata(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"message")
                     ) {
                         let output = <super::MessageType as WithDeserializer>::init(helper, event)?;
                         return self.handle_message(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"instance")
                     ) {
                         let output =
@@ -26077,21 +26077,21 @@ pub mod cdf {
                         return self.handle_instance(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"fix")
                     ) {
                         let output = <super::FixType as WithDeserializer>::init(helper, event)?;
                         return self.handle_fix(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"check")
                     ) {
                         let output = <super::CheckType as WithDeserializer>::init(helper, event)?;
                         return self.handle_check(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(x.name(), &super::super::NS_CDF),
+                        helper.resolve_element_local_name(x.name(), &super::super::NS_CDF),
                         Some(b"complex-check")
                     ) {
                         let output =
@@ -26940,12 +26940,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"system")
                     ) {
                         helper.read_attrib(&mut system, b"system", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"maximum")
                     ) {
                         helper.read_attrib(&mut maximum, b"maximum", &attrib.value)?;
@@ -27247,7 +27247,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"context")
                     ) {
                         helper.read_attrib(&mut context, b"context", &attrib.value)?;
@@ -27336,12 +27336,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"import-name")
                     ) {
                         helper.read_attrib(&mut import_name, b"import-name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"import-xpath")
                     ) {
                         helper.read_attrib(&mut import_xpath, b"import-xpath", &attrib.value)?;
@@ -27684,12 +27684,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"value-id")
                     ) {
                         helper.read_attrib(&mut value_id, b"value-id", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"export-name")
                     ) {
                         helper.read_attrib(&mut export_name, b"export-name", &attrib.value)?;
@@ -27775,12 +27775,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"href")
                     ) {
                         helper.read_attrib(&mut href, b"href", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"name")
                     ) {
                         helper.read_attrib(&mut name, b"name", &attrib.value)?;
@@ -28307,12 +28307,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"name")
                     ) {
                         helper.read_attrib(&mut name, b"name", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"type")
                     ) {
                         helper.read_attrib(&mut type_, b"type", &attrib.value)?;
@@ -28451,12 +28451,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"time")
                     ) {
                         helper.read_attrib(&mut time, b"time", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"authority")
                     ) {
                         helper.read_attrib(&mut authority, b"authority", &attrib.value)?;
@@ -28811,7 +28811,7 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"severity")
                     ) {
                         helper.read_attrib(&mut severity, b"severity", &attrib.value)?;
@@ -28947,12 +28947,12 @@ pub mod cdf {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"context")
                     ) {
                         helper.read_attrib(&mut context, b"context", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CDF),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CDF),
                         Some(b"parentContext")
                     ) {
                         helper.read_attrib(&mut parent_context, b"parentContext", &attrib.value)?;
@@ -37348,7 +37348,7 @@ pub mod cpe {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"id")
                     ) {
                         helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -37682,7 +37682,7 @@ pub mod cpe {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_XML),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_XML),
                         Some(b"lang")
                     ) {
                         helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -37819,12 +37819,12 @@ pub mod cpe {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"operator")
                     ) {
                         helper.read_attrib(&mut operator, b"operator", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"negate")
                     ) {
                         helper.read_attrib(&mut negate, b"negate", &attrib.value)?;
@@ -38158,12 +38158,12 @@ pub mod cpe {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"description")
                     ) {
                         helper.read_attrib(&mut description, b"description", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"name")
                     ) {
                         helper.read_attrib(&mut name, b"name", &attrib.value)?;
@@ -38251,22 +38251,22 @@ pub mod cpe {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"description")
                     ) {
                         helper.read_attrib(&mut description, b"description", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"system")
                     ) {
                         helper.read_attrib(&mut system, b"system", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"href")
                     ) {
                         helper.read_attrib(&mut href, b"href", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_CPE),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_CPE),
                         Some(b"id-ref")
                     ) {
                         helper.read_attrib(&mut id_ref, b"id-ref", &attrib.value)?;

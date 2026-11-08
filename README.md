@@ -179,11 +179,15 @@ Below you can find a short list of the most important changes for each released 
   - The generated code of elements and types of an `xs:import` without `namespace` moves from the namespace of the importing schema to no namespace.
   - Below a root name without prefix the serializers omit the prefixes of elements in the default namespace and the redundant prefix declaration on the root.
   - The generated serializers implement `WithSerializer::serializer_with_namespace` and pass the namespace of each element. Hand-written `WithSerializer` implementations that write elements should override `serializer_with_namespace` and forward the namespace, otherwise their elements keep the old behavior.
+  - The generated deserializers resolve unprefixed element names in the default namespace. An unprefixed element below a foreign default namespace (`xmlns="..."`) is rejected now, like a wrongly prefixed name. Unprefixed dynamic type names (`xsi:type` values) are resolved the same way.
 
 ## xsd-parser-types 0.3.1
 
 - **Reading and Writing Other Encodings**
   `xsd-parser-types` 0.3.1 adds the `DecodingIoReader`, which decodes the input based on the BOM or the XML declaration (e.g. `Windows-1251` or `UTF-16`), and the `EncodingWriter`, which encodes the serialized output (`write_document` writes a complete document including the matching XML declaration). Characters that can not be represented in the target encoding are written as numeric character references in text and attribute values. Since the upgrade to `quick-xml` 0.42 the `IoReader` only accepts UTF-8.
+
+- **Element and Attribute Name Resolution**
+  `DeserializeHelper` has the new methods `resolve_element_local_name`, which resolves an unprefixed name in the default namespace, and `resolve_attrib_local_name`, which keeps the old behavior of `resolve_local_name` for attributes. `resolve_local_name` is deprecated in favor of them.
 
 - **Balanced Namespace Scopes**
   The `SerializeHelper` lost track of the declared namespaces in some cases: `AnySimpleType` never closed its namespace scope, the `XsiTypeSerializer` left its scope open for empty elements and dropped the `xmlns:xsi` declared by the wrapped serializer, and a nil `Nillable` declared `xmlns:xsi` without a scope of its own. A following element then omitted declarations it needed. The helper now also checks the binding of a prefix instead of only the namespace, so a re-bound prefix is not used for the old namespace anymore, and it never declares the same prefix twice on one element. A prefix of a QName value (e.g. `xsi:type`) that is bound to a different namespace is replaced by a generated prefix (`ns0`, `ns1`, ...).

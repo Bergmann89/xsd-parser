@@ -298,7 +298,7 @@ where
         for attrib in bytes.attributes() {
             let attrib = attrib?;
             if matches!(
-                helper.resolve_local_name(attrib.key, &Namespace::XSI),
+                helper.resolve_attrib_local_name(attrib.key, &Namespace::XSI),
                 Some(b"nil")
             ) && matches!(
                 &*attrib.value,

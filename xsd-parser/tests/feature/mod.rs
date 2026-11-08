@@ -24,6 +24,7 @@ mod custom_type;
 mod default_namespace_runtime;
 mod defaultable_content;
 mod derive;
+mod deserialize_default_namespace;
 mod documentation;
 mod duplicate_idents;
 mod duplicate_type_name;

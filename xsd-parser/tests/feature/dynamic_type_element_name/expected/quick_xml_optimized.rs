@@ -334,7 +334,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"animal")
                 ) {
                     let type_name = helper
@@ -342,14 +342,14 @@ pub mod quick_xml_deserialize {
                         .unwrap_or(Cow::Borrowed("animal"))
                         .into_owned();
                     if matches!(
-                        helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                        helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                         Some(b"animal")
                     ) {
                         let output = <super::AnimalDyn as WithDeserializer>::init(helper, event)?;
                         return self.handle_animal(helper, Default::default(), None, output);
                     }
                     if matches!(
-                        helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                        helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                         Some(b"dog")
                     ) {
                         let output = <super::DogType as WithDeserializer>::init(helper, event)?;
@@ -621,7 +621,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -695,12 +695,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
