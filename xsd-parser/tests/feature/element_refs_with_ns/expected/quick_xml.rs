@@ -307,16 +307,20 @@ pub mod bar {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_BAR)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_BAR,
-                                );
-                                helper.write_xmlns(
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
+                                helper.write_xmlns_unless_default(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_BAR),
                                     &super::super::NS_BAR,
@@ -611,16 +615,20 @@ pub mod baz {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_BAZ)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_BAZ,
-                                );
-                                helper.write_xmlns(
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
+                                helper.write_xmlns_unless_default(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_BAZ),
                                     &super::super::NS_BAZ,
@@ -915,16 +923,20 @@ pub mod biz {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_BIZ)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_BIZ,
-                                );
-                                helper.write_xmlns(
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
+                                helper.write_xmlns_unless_default(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_BIZ),
                                     &super::super::NS_BIZ,
@@ -1351,22 +1363,30 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
-                            helper.write_xmlns(
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_BAR),
                                 &super::NS_BAR,
                             );
-                            helper.write_xmlns(
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_BAZ),
                                 &super::NS_BAZ,
                             );
-                            helper.write_xmlns(
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_BIZ),
                                 &super::NS_BIZ,

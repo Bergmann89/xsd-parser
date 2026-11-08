@@ -289873,15 +289873,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290033,15 +290037,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290362,15 +290370,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290529,15 +290541,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290671,15 +290687,19 @@ pub mod onix {
                             *self.state = MessageNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290762,15 +290782,19 @@ pub mod onix {
                             *self.state = MessageRepeatElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290853,15 +290877,19 @@ pub mod onix {
                             *self.state = SentDateTimeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -290943,15 +290971,19 @@ pub mod onix {
                             *self.state = MessageNoteElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291039,15 +291071,19 @@ pub mod onix {
                                 DefaultLanguageOfTextElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291134,15 +291170,19 @@ pub mod onix {
                             *self.state = DefaultPriceTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291225,15 +291265,19 @@ pub mod onix {
                             *self.state = DefaultCurrencyCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291316,15 +291360,19 @@ pub mod onix {
                     match &mut *self.state {
                         NoProductElementTypeSerializerState::Init__ => {
                             *self.state = NoProductElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291458,15 +291506,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291777,15 +291829,19 @@ pub mod onix {
                             *self.state = ContactNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291867,15 +291923,19 @@ pub mod onix {
                             *self.state = TelephoneNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -291958,15 +292018,19 @@ pub mod onix {
                             *self.state = EmailAddressElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -292399,15 +292463,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -292633,7 +292701,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CollateralDetailElementTypeSerializerState :: Init__ => { * self . state = CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer_with_namespace (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , ElementNamespace :: None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: GpPrizes (WithSerializer :: serializer_with_namespace (& self . value . gp_prizes , Some ("gp.prizes") , ElementNamespace :: None , false) ?) , } CollateralDetailElementTypeSerializerState :: GpPrizes (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: End__ , } CollateralDetailElementTypeSerializerState :: End__ => { * self . state = CollateralDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollateralDetailElementTypeSerializerState :: Done__ => return Ok (None) , CollateralDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CollateralDetailElementTypeSerializerState :: Init__ => { * self . state = CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer_with_namespace (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , ElementNamespace :: None , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollateralDetailElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: GpPrizes (WithSerializer :: serializer_with_namespace (& self . value . gp_prizes , Some ("gp.prizes") , ElementNamespace :: None , false) ?) , } CollateralDetailElementTypeSerializerState :: GpPrizes (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollateralDetailElementTypeSerializerState :: End__ , } CollateralDetailElementTypeSerializerState :: End__ => { * self . state = CollateralDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollateralDetailElementTypeSerializerState :: Done__ => return Ok (None) , CollateralDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -292690,15 +292758,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -292792,15 +292864,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -292873,7 +292949,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { PublishingDetailElementTypeSerializerState :: Init__ => { * self . state = PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (WithSerializer :: serializer_with_namespace (& self . value . gp_imprints_and_publishers , Some ("gp.imprints_and_publishers") , ElementNamespace :: None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (WithSerializer :: serializer_with_namespace (& self . value . gp_publishing_status_dates_and_copyright , Some ("gp.publishing_status_dates_and_copyright") , ElementNamespace :: None , false) ?) , } PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (WithSerializer :: serializer_with_namespace (& self . value . gp_sales_rights_and_restrictions , Some ("gp.sales_rights_and_restrictions") , ElementNamespace :: None , false) ?) , } PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: End__ , } PublishingDetailElementTypeSerializerState :: End__ => { * self . state = PublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , PublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { PublishingDetailElementTypeSerializerState :: Init__ => { * self . state = PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (WithSerializer :: serializer_with_namespace (& self . value . gp_imprints_and_publishers , Some ("gp.imprints_and_publishers") , ElementNamespace :: None , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PublishingDetailElementTypeSerializerState :: GpImprintsAndPublishers (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (WithSerializer :: serializer_with_namespace (& self . value . gp_publishing_status_dates_and_copyright , Some ("gp.publishing_status_dates_and_copyright") , ElementNamespace :: None , false) ?) , } PublishingDetailElementTypeSerializerState :: GpPublishingStatusDatesAndCopyright (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (WithSerializer :: serializer_with_namespace (& self . value . gp_sales_rights_and_restrictions , Some ("gp.sales_rights_and_restrictions") , ElementNamespace :: None , false) ?) , } PublishingDetailElementTypeSerializerState :: GpSalesRightsAndRestrictions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailElementTypeSerializerState :: End__ , } PublishingDetailElementTypeSerializerState :: End__ => { * self . state = PublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , PublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -292934,15 +293010,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293057,15 +293137,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293177,15 +293261,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293402,15 +293490,19 @@ pub mod onix {
                             *self.state = SenderNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293575,15 +293667,19 @@ pub mod onix {
                             *self.state = AddresseeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293666,15 +293762,19 @@ pub mod onix {
                             *self.state = RecordReferenceElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293757,15 +293857,19 @@ pub mod onix {
                             *self.state = NotificationTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293848,15 +293952,19 @@ pub mod onix {
                             *self.state = DeletionTextElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -293943,15 +294051,19 @@ pub mod onix {
                             *self.state = RecordSourceTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294042,15 +294154,19 @@ pub mod onix {
                     match &mut *self.state {
                         RecordSourceIdentifierElementTypeSerializerState::Init__ => {
                             * self . state = RecordSourceIdentifierElementTypeSerializerState :: RecordSourceIdType (WithSerializer :: serializer_with_namespace (& self . value . record_source_id_type , Some ("RecordSourceIDType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294173,15 +294289,19 @@ pub mod onix {
                             *self.state = RecordSourceNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294278,15 +294398,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -294416,15 +294540,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295655,15 +295783,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -295966,7 +296098,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ContentItemElementTypeSerializerState :: Init__ => { * self . state = ContentItemElementTypeSerializerState :: LevelSequenceNumber (IterSerializer :: new (self . value . level_sequence_number . as_ref () , Some ("LevelSequenceNumber") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ContentItemElementTypeSerializerState :: LevelSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content118 (WithSerializer :: serializer_with_namespace (& self . value . content_118 , Some ("Content118") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content118 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubUsageConstraint (IterSerializer :: new (& self . value . epub_usage_constraint [..] , Some ("EpubUsageConstraint") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubUsageConstraint (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubLicense (IterSerializer :: new (& self . value . epub_license [..] , Some ("EpubLicense") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubLicense (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content119 (WithSerializer :: serializer_with_namespace (& self . value . content_119 , Some ("Content119") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content119 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpAuthorship (IterSerializer :: new (self . value . gp_authorship . as_ref () , Some ("gp.authorship") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: GpAuthorship (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpLanguages (WithSerializer :: serializer_with_namespace (& self . value . gp_languages , Some ("gp.languages") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpLanguages (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpSubjects (WithSerializer :: serializer_with_namespace (& self . value . gp_subjects , Some ("gp.subjects") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpSubjects (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer_with_namespace (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Publisher (IterSerializer :: new (& self . value . publisher [..] , Some ("Publisher") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: Publisher (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content123 (IterSerializer :: new (self . value . content_123 . as_ref () , Some ("Content123") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: Content123 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpRelatedMaterials (WithSerializer :: serializer_with_namespace (& self . value . gp_related_materials , Some ("gp.related_materials") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpRelatedMaterials (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: End__ , } ContentItemElementTypeSerializerState :: End__ => { * self . state = ContentItemElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ContentItemElementTypeSerializerState :: Done__ => return Ok (None) , ContentItemElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ContentItemElementTypeSerializerState :: Init__ => { * self . state = ContentItemElementTypeSerializerState :: LevelSequenceNumber (IterSerializer :: new (self . value . level_sequence_number . as_ref () , Some ("LevelSequenceNumber") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ContentItemElementTypeSerializerState :: LevelSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content118 (WithSerializer :: serializer_with_namespace (& self . value . content_118 , Some ("Content118") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content118 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubUsageConstraint (IterSerializer :: new (& self . value . epub_usage_constraint [..] , Some ("EpubUsageConstraint") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubUsageConstraint (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubLicense (IterSerializer :: new (& self . value . epub_license [..] , Some ("EpubLicense") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubLicense (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content119 (WithSerializer :: serializer_with_namespace (& self . value . content_119 , Some ("Content119") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content119 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpAuthorship (IterSerializer :: new (self . value . gp_authorship . as_ref () , Some ("gp.authorship") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: GpAuthorship (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpLanguages (WithSerializer :: serializer_with_namespace (& self . value . gp_languages , Some ("gp.languages") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpLanguages (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpSubjects (WithSerializer :: serializer_with_namespace (& self . value . gp_subjects , Some ("gp.subjects") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpSubjects (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer_with_namespace (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Publisher (IterSerializer :: new (& self . value . publisher [..] , Some ("Publisher") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: Publisher (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content123 (IterSerializer :: new (self . value . content_123 . as_ref () , Some ("Content123") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: Content123 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpRelatedMaterials (WithSerializer :: serializer_with_namespace (& self . value . gp_related_materials , Some ("gp.related_materials") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpRelatedMaterials (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: End__ , } ContentItemElementTypeSerializerState :: End__ => { * self . state = ContentItemElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ContentItemElementTypeSerializerState :: Done__ => return Ok (None) , ContentItemElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -296202,15 +296334,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296338,15 +296474,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296499,15 +296639,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296665,15 +296809,19 @@ pub mod onix {
                             *self.state = MarketReferenceElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296768,15 +296916,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -296935,7 +297087,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { MarketPublishingDetailElementTypeSerializerState :: Init__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (IterSerializer :: new (& self . value . publisher_representative [..] , Some ("PublisherRepresentative") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ProductContact (IterSerializer :: new (& self . value . product_contact [..] , Some ("ProductContact") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: ProductContact (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (WithSerializer :: serializer_with_namespace (& self . value . market_publishing_status , Some ("MarketPublishingStatus") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (IterSerializer :: new (& self . value . market_publishing_status_note [..] , Some ("MarketPublishingStatusNote") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketDate (IterSerializer :: new (& self . value . market_date [..] , Some ("MarketDate") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: MarketDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (IterSerializer :: new (& self . value . promotion_campaign [..] , Some ("PromotionCampaign") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (IterSerializer :: new (& self . value . initial_print_run [..] , Some ("InitialPrintRun") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (IterSerializer :: new (& self . value . reprint_detail [..] , Some ("ReprintDetail") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: CopiesSold (IterSerializer :: new (& self . value . copies_sold [..] , Some ("CopiesSold") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: CopiesSold (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (IterSerializer :: new (& self . value . book_club_adoption [..] , Some ("BookClubAdoption") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: End__ , } MarketPublishingDetailElementTypeSerializerState :: End__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } MarketPublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , MarketPublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { MarketPublishingDetailElementTypeSerializerState :: Init__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (IterSerializer :: new (& self . value . publisher_representative [..] , Some ("PublisherRepresentative") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } MarketPublishingDetailElementTypeSerializerState :: PublisherRepresentative (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ProductContact (IterSerializer :: new (& self . value . product_contact [..] , Some ("ProductContact") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: ProductContact (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (WithSerializer :: serializer_with_namespace (& self . value . market_publishing_status , Some ("MarketPublishingStatus") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (IterSerializer :: new (& self . value . market_publishing_status_note [..] , Some ("MarketPublishingStatusNote") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: MarketPublishingStatusNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: MarketDate (IterSerializer :: new (& self . value . market_date [..] , Some ("MarketDate") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: MarketDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (IterSerializer :: new (& self . value . promotion_campaign [..] , Some ("PromotionCampaign") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: PromotionCampaign (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (IterSerializer :: new (& self . value . initial_print_run [..] , Some ("InitialPrintRun") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: InitialPrintRun (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (IterSerializer :: new (& self . value . reprint_detail [..] , Some ("ReprintDetail") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: ReprintDetail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: CopiesSold (IterSerializer :: new (& self . value . copies_sold [..] , Some ("CopiesSold") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: CopiesSold (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (IterSerializer :: new (& self . value . book_club_adoption [..] , Some ("BookClubAdoption") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } MarketPublishingDetailElementTypeSerializerState :: BookClubAdoption (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = MarketPublishingDetailElementTypeSerializerState :: End__ , } MarketPublishingDetailElementTypeSerializerState :: End__ => { * self . state = MarketPublishingDetailElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } MarketPublishingDetailElementTypeSerializerState :: Done__ => return Ok (None) , MarketPublishingDetailElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -297051,15 +297203,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297359,15 +297515,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297500,15 +297660,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297629,15 +297793,19 @@ pub mod onix {
                             *self.state = RecordSourceIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297724,15 +297892,19 @@ pub mod onix {
                             *self.state = IdTypeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297819,15 +297991,19 @@ pub mod onix {
                             *self.state = IdValueElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -297909,15 +298085,19 @@ pub mod onix {
                             *self.state = ProductIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298000,15 +298180,19 @@ pub mod onix {
                             *self.state = BarcodeTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298090,15 +298274,19 @@ pub mod onix {
                             *self.state = PositionOnProductElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298182,15 +298370,19 @@ pub mod onix {
                             *self.state = ProductCompositionElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298277,15 +298469,19 @@ pub mod onix {
                             *self.state = ProductFormElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298367,15 +298563,19 @@ pub mod onix {
                             *self.state = ProductFormDetailElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298470,7 +298670,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ProductFormFeatureElementTypeSerializerState :: Init__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (WithSerializer :: serializer_with_namespace (& self . value . product_form_feature_type , Some ("ProductFormFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (IterSerializer :: new (self . value . product_form_feature_value . as_ref () , Some ("ProductFormFeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (IterSerializer :: new (& self . value . product_form_feature_description [..] , Some ("ProductFormFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: End__ , } ProductFormFeatureElementTypeSerializerState :: End__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductFormFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ProductFormFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ProductFormFeatureElementTypeSerializerState :: Init__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (WithSerializer :: serializer_with_namespace (& self . value . product_form_feature_type , Some ("ProductFormFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (IterSerializer :: new (self . value . product_form_feature_value . as_ref () , Some ("ProductFormFeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (IterSerializer :: new (& self . value . product_form_feature_description [..] , Some ("ProductFormFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductFormFeatureElementTypeSerializerState :: ProductFormFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductFormFeatureElementTypeSerializerState :: End__ , } ProductFormFeatureElementTypeSerializerState :: End__ => { * self . state = ProductFormFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductFormFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ProductFormFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -298513,15 +298713,19 @@ pub mod onix {
                             *self.state = ProductPackagingElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298605,15 +298809,19 @@ pub mod onix {
                                 ProductFormDescriptionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298707,15 +298915,19 @@ pub mod onix {
                             *self.state = TradeCategoryElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298798,15 +299010,19 @@ pub mod onix {
                             *self.state = PrimaryContentTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298893,15 +299109,19 @@ pub mod onix {
                             *self.state = ProductContentTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -298997,15 +299217,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299117,15 +299341,19 @@ pub mod onix {
                             *self.state = CountryOfManufactureElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299213,15 +299441,19 @@ pub mod onix {
                                 EpubTechnicalProtectionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299326,15 +299558,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299476,15 +299712,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299600,15 +299840,19 @@ pub mod onix {
                             *self.state = MapScaleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -299704,7 +299948,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ProductClassificationElementTypeSerializerState :: Init__ => { * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationType (WithSerializer :: serializer_with_namespace (& self . value . product_classification_type , Some ("ProductClassificationType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductClassificationElementTypeSerializerState :: ProductClassificationType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (IterSerializer :: new (self . value . product_classification_type_name . as_ref () , Some ("ProductClassificationTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationCode (WithSerializer :: serializer_with_namespace (& self . value . product_classification_code , Some ("ProductClassificationCode") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } ProductClassificationElementTypeSerializerState :: ProductClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: Percent (IterSerializer :: new (self . value . percent . as_ref () , Some ("Percent") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductClassificationElementTypeSerializerState :: Percent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: End__ , } ProductClassificationElementTypeSerializerState :: End__ => { * self . state = ProductClassificationElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductClassificationElementTypeSerializerState :: Done__ => return Ok (None) , ProductClassificationElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ProductClassificationElementTypeSerializerState :: Init__ => { * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationType (WithSerializer :: serializer_with_namespace (& self . value . product_classification_type , Some ("ProductClassificationType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductClassificationElementTypeSerializerState :: ProductClassificationType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (IterSerializer :: new (self . value . product_classification_type_name . as_ref () , Some ("ProductClassificationTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductClassificationElementTypeSerializerState :: ProductClassificationTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: ProductClassificationCode (WithSerializer :: serializer_with_namespace (& self . value . product_classification_code , Some ("ProductClassificationCode") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } ProductClassificationElementTypeSerializerState :: ProductClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: Percent (IterSerializer :: new (self . value . percent . as_ref () , Some ("Percent") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductClassificationElementTypeSerializerState :: Percent (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductClassificationElementTypeSerializerState :: End__ , } ProductClassificationElementTypeSerializerState :: End__ => { * self . state = ProductClassificationElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductClassificationElementTypeSerializerState :: Done__ => return Ok (None) , ProductClassificationElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -299812,15 +300056,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300174,15 +300422,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300483,15 +300735,19 @@ pub mod onix {
                     match &mut *self.state {
                         NoContributorElementTypeSerializerState::Init__ => {
                             *self.state = NoContributorElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300620,15 +300876,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -300931,15 +301191,19 @@ pub mod onix {
                             *self.state = ReligiousTextElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301133,15 +301397,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301296,15 +301564,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301416,15 +301688,19 @@ pub mod onix {
                             *self.state = IllustratedElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301507,15 +301783,19 @@ pub mod onix {
                                 NumberOfIllustrationsElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301602,15 +301882,19 @@ pub mod onix {
                             *self.state = IllustrationsNoteElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301715,7 +301999,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { AncillaryContentElementTypeSerializerState :: Init__ => { * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentType (WithSerializer :: serializer_with_namespace (& self . value . ancillary_content_type , Some ("AncillaryContentType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } AncillaryContentElementTypeSerializerState :: AncillaryContentType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (IterSerializer :: new (& self . value . ancillary_content_description [..] , Some ("AncillaryContentDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: Number (IterSerializer :: new (self . value . number . as_ref () , Some ("Number") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } AncillaryContentElementTypeSerializerState :: Number (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: End__ , } AncillaryContentElementTypeSerializerState :: End__ => { * self . state = AncillaryContentElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } AncillaryContentElementTypeSerializerState :: Done__ => return Ok (None) , AncillaryContentElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { AncillaryContentElementTypeSerializerState :: Init__ => { * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentType (WithSerializer :: serializer_with_namespace (& self . value . ancillary_content_type , Some ("AncillaryContentType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } AncillaryContentElementTypeSerializerState :: AncillaryContentType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (IterSerializer :: new (& self . value . ancillary_content_description [..] , Some ("AncillaryContentDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } AncillaryContentElementTypeSerializerState :: AncillaryContentDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: Number (IterSerializer :: new (self . value . number . as_ref () , Some ("Number") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } AncillaryContentElementTypeSerializerState :: Number (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = AncillaryContentElementTypeSerializerState :: End__ , } AncillaryContentElementTypeSerializerState :: End__ => { * self . state = AncillaryContentElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } AncillaryContentElementTypeSerializerState :: Done__ => return Ok (None) , AncillaryContentElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -301787,15 +302071,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -301977,15 +302265,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302162,15 +302454,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302322,15 +302618,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302458,15 +302758,19 @@ pub mod onix {
                             *self.state = AudienceDescriptionElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302572,15 +302876,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -302768,15 +303076,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303137,15 +303449,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303410,15 +303726,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303676,15 +303996,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -303932,15 +304256,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304056,15 +304384,19 @@ pub mod onix {
                             *self.state = EventTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304146,15 +304478,19 @@ pub mod onix {
                             *self.state = EventStatusElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304236,15 +304572,19 @@ pub mod onix {
                             *self.state = ContentAudienceElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304327,15 +304667,19 @@ pub mod onix {
                             *self.state = EventNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304500,15 +304844,19 @@ pub mod onix {
                             *self.state = EventDescriptionElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304654,15 +305002,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -304864,15 +305216,19 @@ pub mod onix {
                             *self.state = EventSponsorElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305082,15 +305438,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305207,15 +305567,19 @@ pub mod onix {
                             *self.state = LevelSequenceNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305545,15 +305909,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -305932,15 +306300,19 @@ pub mod onix {
                             *self.state = CityOfPublicationElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306029,15 +306401,19 @@ pub mod onix {
                             *self.state = CountryOfPublicationElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306168,15 +306544,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306453,15 +306833,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306559,15 +306943,19 @@ pub mod onix {
                             *self.state = LatestReprintNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306737,15 +307125,19 @@ pub mod onix {
                             *self.state = WorkRelationCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306841,15 +307233,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -306965,15 +307361,19 @@ pub mod onix {
                             *self.state = ProductRelationCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307154,15 +307554,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307278,15 +307682,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307402,15 +307810,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307549,15 +307961,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307678,15 +308094,19 @@ pub mod onix {
                             *self.state = TerritoryElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -307880,15 +308300,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308077,15 +308501,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308258,15 +308686,19 @@ pub mod onix {
                                 MarketPublishingStatusElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308356,15 +308788,19 @@ pub mod onix {
                                 MarketPublishingStatusNoteElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308470,15 +308906,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308575,15 +309015,19 @@ pub mod onix {
                             *self.state = PromotionCampaignElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308677,15 +309121,19 @@ pub mod onix {
                             *self.state = InitialPrintRunElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308778,15 +309226,19 @@ pub mod onix {
                             *self.state = ReprintDetailElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308879,15 +309331,19 @@ pub mod onix {
                             *self.state = CopiesSoldElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -308979,15 +309435,19 @@ pub mod onix {
                             *self.state = BookClubAdoptionElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309110,15 +309570,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309328,15 +309792,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309540,15 +310008,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309686,15 +310158,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309831,15 +310307,19 @@ pub mod onix {
                             *self.state = ProductAvailabilityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -309932,15 +310412,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310037,15 +310521,19 @@ pub mod onix {
                             *self.state = OrderTimeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310156,15 +310644,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310349,15 +310841,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310505,15 +311001,19 @@ pub mod onix {
                             *self.state = PackQuantityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310595,15 +311095,19 @@ pub mod onix {
                             *self.state = PalletQuantityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310847,15 +311351,19 @@ pub mod onix {
                             *self.state = SenderIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -310937,15 +311445,19 @@ pub mod onix {
                             *self.state = AddresseeIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311029,15 +311541,19 @@ pub mod onix {
                                 ProductFormFeatureTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311127,15 +311643,19 @@ pub mod onix {
                                 ProductFormFeatureValueElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311225,15 +311745,19 @@ pub mod onix {
                                 ProductFormFeatureDescriptionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311327,15 +311851,19 @@ pub mod onix {
                             *self.state = MeasureTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311417,15 +311945,19 @@ pub mod onix {
                             *self.state = MeasurementElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311507,15 +312039,19 @@ pub mod onix {
                             *self.state = MeasureUnitCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311598,15 +312134,19 @@ pub mod onix {
                             *self.state = EpubUsageTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311689,15 +312229,19 @@ pub mod onix {
                             *self.state = EpubUsageStatusElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311786,15 +312330,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311893,15 +312441,19 @@ pub mod onix {
                             *self.state = EpubLicenseNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -311996,7 +312548,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { EpubLicenseExpressionElementTypeSerializerState :: Init__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (WithSerializer :: serializer_with_namespace (& self . value . epub_license_expression_type , Some ("EpubLicenseExpressionType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (IterSerializer :: new (self . value . epub_license_expression_type_name . as_ref () , Some ("EpubLicenseExpressionTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (WithSerializer :: serializer_with_namespace (& self . value . epub_license_expression_link , Some ("EpubLicenseExpressionLink") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: End__ , } EpubLicenseExpressionElementTypeSerializerState :: End__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } EpubLicenseExpressionElementTypeSerializerState :: Done__ => return Ok (None) , EpubLicenseExpressionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { EpubLicenseExpressionElementTypeSerializerState :: Init__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (WithSerializer :: serializer_with_namespace (& self . value . epub_license_expression_type , Some ("EpubLicenseExpressionType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (IterSerializer :: new (self . value . epub_license_expression_type_name . as_ref () , Some ("EpubLicenseExpressionTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (WithSerializer :: serializer_with_namespace (& self . value . epub_license_expression_link , Some ("EpubLicenseExpressionLink") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } EpubLicenseExpressionElementTypeSerializerState :: EpubLicenseExpressionLink (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = EpubLicenseExpressionElementTypeSerializerState :: End__ , } EpubLicenseExpressionElementTypeSerializerState :: End__ => { * self . state = EpubLicenseExpressionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } EpubLicenseExpressionElementTypeSerializerState :: Done__ => return Ok (None) , EpubLicenseExpressionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -312048,15 +312600,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312155,15 +312711,19 @@ pub mod onix {
                                 ProductClassificationTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312254,15 +312814,19 @@ pub mod onix {
                                 ProductClassificationTypeNameElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312357,15 +312921,19 @@ pub mod onix {
                                 ProductClassificationCodeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312455,15 +313023,19 @@ pub mod onix {
                             *self.state = PercentElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312541,15 +313113,19 @@ pub mod onix {
                     match &mut *self.state {
                         PrimaryPartElementTypeSerializerState::Init__ => {
                             *self.state = PrimaryPartElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312741,15 +313317,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -312930,15 +313510,19 @@ pub mod onix {
                     match &mut *self.state {
                         NoCollectionElementTypeSerializerState::Init__ => {
                             *self.state = NoCollectionElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313010,15 +313594,19 @@ pub mod onix {
                             *self.state = TitleTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313122,15 +313710,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313260,15 +313852,19 @@ pub mod onix {
                             *self.state = TitleStatementElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313361,15 +313957,19 @@ pub mod onix {
                             *self.state = ThesisTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313451,15 +314051,19 @@ pub mod onix {
                             *self.state = ThesisPresentedToElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313548,15 +314152,19 @@ pub mod onix {
                             *self.state = ThesisYearElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -313729,15 +314337,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314042,15 +314654,19 @@ pub mod onix {
                             *self.state = ContributorStatementElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314147,15 +314763,19 @@ pub mod onix {
                             *self.state = EventRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314237,15 +314857,19 @@ pub mod onix {
                             *self.state = EventAcronymElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314332,15 +314956,19 @@ pub mod onix {
                             *self.state = EventNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314422,15 +315050,19 @@ pub mod onix {
                             *self.state = EventThemeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314517,15 +315149,19 @@ pub mod onix {
                             *self.state = EventDateElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314612,15 +315248,19 @@ pub mod onix {
                             *self.state = EventPlaceElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314812,15 +315452,19 @@ pub mod onix {
                     match &mut *self.state {
                         NoEditionElementTypeSerializerState::Init__ => {
                             *self.state = NoEditionElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -314945,15 +315589,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315221,15 +315869,19 @@ pub mod onix {
                             *self.state = LanguageRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315311,15 +315963,19 @@ pub mod onix {
                             *self.state = LanguageCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315401,15 +316057,19 @@ pub mod onix {
                             *self.state = CountryCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315491,15 +316151,19 @@ pub mod onix {
                             *self.state = RegionCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315581,15 +316245,19 @@ pub mod onix {
                             *self.state = ScriptCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315671,15 +316339,19 @@ pub mod onix {
                             *self.state = ExtentTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -315836,15 +316508,19 @@ pub mod onix {
                             *self.state = ExtentUnitElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316868,15 +317544,19 @@ pub mod onix {
                             *self.state = AncillaryContentTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -316964,15 +317644,19 @@ pub mod onix {
                                 AncillaryContentDescriptionElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317072,15 +317756,19 @@ pub mod onix {
                             *self.state = NumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317158,15 +317846,19 @@ pub mod onix {
                     match &mut *self.state {
                         MainSubjectElementTypeSerializerState::Init__ => {
                             *self.state = MainSubjectElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317239,15 +317931,19 @@ pub mod onix {
                                 SubjectSchemeIdentifierElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317336,15 +318032,19 @@ pub mod onix {
                             *self.state = SubjectSchemeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317433,15 +318133,19 @@ pub mod onix {
                             *self.state = SubjectSchemeVersionElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317609,15 +318313,19 @@ pub mod onix {
                             *self.state = NameTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317824,15 +318532,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -317939,15 +318651,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318049,15 +318765,19 @@ pub mod onix {
                                 ProfessionalAffiliationElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318183,15 +318903,19 @@ pub mod onix {
                     match &mut *self.state {
                         MainAudienceElementTypeSerializerState::Init__ => {
                             *self.state = MainAudienceElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318263,15 +318987,19 @@ pub mod onix {
                             *self.state = AudienceCodeTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318354,15 +319082,19 @@ pub mod onix {
                             *self.state = AudienceCodeTypeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318536,15 +319268,19 @@ pub mod onix {
                                 AudienceRangeQualifierElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318634,15 +319370,19 @@ pub mod onix {
                                 AudienceRangePrecisionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318731,15 +319471,19 @@ pub mod onix {
                             *self.state = AudienceRangeValueElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -318902,15 +319646,19 @@ pub mod onix {
                                 ComplexitySchemeIdentifierElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319000,15 +319748,19 @@ pub mod onix {
                             *self.state = ComplexityCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319091,15 +319843,19 @@ pub mod onix {
                             *self.state = SequenceNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319182,15 +319938,19 @@ pub mod onix {
                             *self.state = TextTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319272,15 +320032,19 @@ pub mod onix {
                             *self.state = TextElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319391,15 +320155,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319517,15 +320285,19 @@ pub mod onix {
                             *self.state = TextAuthorElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319612,15 +320384,19 @@ pub mod onix {
                             *self.state = TextSourceCorporateElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319713,15 +320489,19 @@ pub mod onix {
                                 TextSourceDescriptionElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319818,15 +320598,19 @@ pub mod onix {
                             *self.state = SourceTitleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -319913,15 +320697,19 @@ pub mod onix {
                             *self.state = TextSourceLinkElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320017,15 +320805,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320122,15 +320914,19 @@ pub mod onix {
                             *self.state = CitedContentTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320213,15 +321009,19 @@ pub mod onix {
                             *self.state = SourceTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320393,15 +321193,19 @@ pub mod onix {
                             *self.state = CitationNoteElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320493,15 +321297,19 @@ pub mod onix {
                             *self.state = ResourceLinkElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320588,15 +321396,19 @@ pub mod onix {
                             *self.state = ResourceContentTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320683,15 +321495,19 @@ pub mod onix {
                             *self.state = ResourceModeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320795,15 +321611,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -320962,15 +321782,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321153,15 +321977,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321277,15 +322105,19 @@ pub mod onix {
                             *self.state = PrizeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321372,15 +322204,19 @@ pub mod onix {
                             *self.state = PrizeYearElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321462,15 +322298,19 @@ pub mod onix {
                             *self.state = AwardingBodyElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321562,15 +322402,19 @@ pub mod onix {
                             *self.state = PrizeCountryElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321652,15 +322496,19 @@ pub mod onix {
                             *self.state = PrizeRegionElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321742,15 +322590,19 @@ pub mod onix {
                             *self.state = PrizeCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321832,15 +322684,19 @@ pub mod onix {
                             *self.state = PrizeStatementElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -321933,15 +322789,19 @@ pub mod onix {
                             *self.state = PrizeJuryElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322033,15 +322893,19 @@ pub mod onix {
                             *self.state = EventIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322210,15 +323074,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322544,15 +323412,19 @@ pub mod onix {
                             *self.state = PersonNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322649,15 +323521,19 @@ pub mod onix {
                             *self.state = CorporateNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322755,15 +323631,19 @@ pub mod onix {
                             *self.state = WebsiteRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322845,15 +323725,19 @@ pub mod onix {
                             *self.state = WebsiteDescriptionElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -322950,15 +323834,19 @@ pub mod onix {
                             *self.state = WebsiteLinkElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323067,15 +323955,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323231,15 +324123,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323559,15 +324455,19 @@ pub mod onix {
                             *self.state = PublishingRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323742,15 +324642,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323847,15 +324751,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -323959,15 +324867,19 @@ pub mod onix {
                                 CopyrightStatementTextElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324147,15 +325059,19 @@ pub mod onix {
                             *self.state = ProductContactRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324322,15 +325238,19 @@ pub mod onix {
                             *self.state = FaxNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324550,15 +325470,19 @@ pub mod onix {
                             *self.state = PublishingStatusElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324641,15 +325565,19 @@ pub mod onix {
                             *self.state = PublishingStatusNoteElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324746,15 +325674,19 @@ pub mod onix {
                             *self.state = PublishingDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324841,15 +325773,19 @@ pub mod onix {
                             *self.state = DateElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -324965,15 +325901,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325124,15 +326064,19 @@ pub mod onix {
                             *self.state = RowSalesRightsTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325219,15 +326163,19 @@ pub mod onix {
                             *self.state = WorkIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325463,15 +326411,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325602,15 +326554,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325716,15 +326672,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325841,15 +326801,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -325971,15 +326935,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326352,15 +327320,19 @@ pub mod onix {
                             *self.state = SalesRestrictionTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326447,15 +327419,19 @@ pub mod onix {
                             *self.state = SalesRestrictionNoteElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326552,15 +327528,19 @@ pub mod onix {
                             *self.state = StartDateElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326647,15 +327627,19 @@ pub mod onix {
                             *self.state = EndDateElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326742,15 +327726,19 @@ pub mod onix {
                             *self.state = AgentRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -326921,15 +327909,19 @@ pub mod onix {
                             *self.state = MarketDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327012,15 +328004,19 @@ pub mod onix {
                             *self.state = SupplierRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327175,15 +328171,19 @@ pub mod onix {
                             *self.state = SupplyContactRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327347,15 +328347,19 @@ pub mod onix {
                             *self.state = SupplierCodeTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327438,15 +328442,19 @@ pub mod onix {
                             *self.state = SupplierCodeTypeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327538,15 +328546,19 @@ pub mod onix {
                             *self.state = SupplierCodeValueElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327630,15 +328642,19 @@ pub mod onix {
                             *self.state = ReturnsCodeTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327721,15 +328737,19 @@ pub mod onix {
                             *self.state = ReturnsCodeTypeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327821,15 +328841,19 @@ pub mod onix {
                             *self.state = ReturnsCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -327911,15 +328935,19 @@ pub mod onix {
                             *self.state = ReturnsNoteElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328006,15 +329034,19 @@ pub mod onix {
                             *self.state = SupplyDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328184,15 +329216,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328313,15 +329349,19 @@ pub mod onix {
                             *self.state = LocationNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328502,15 +329542,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328639,15 +329683,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328761,15 +329809,19 @@ pub mod onix {
                             *self.state = OrderQuantityMinimumElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328857,15 +329909,19 @@ pub mod onix {
                                 OrderQuantityMultipleElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -328952,15 +330008,19 @@ pub mod onix {
                             *self.state = UnpricedItemTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329173,15 +330233,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329586,15 +330650,19 @@ pub mod onix {
                             *self.state = QuantityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329676,15 +330744,19 @@ pub mod onix {
                             *self.state = EpubUsageUnitElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329768,15 +330840,19 @@ pub mod onix {
                                 EpubLicenseExpressionTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329867,15 +330943,19 @@ pub mod onix {
                                 EpubLicenseExpressionTypeNameElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -329970,15 +331050,19 @@ pub mod onix {
                                 EpubLicenseExpressionLinkElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330068,15 +331152,19 @@ pub mod onix {
                             *self.state = EpubLicenseDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330244,15 +331332,19 @@ pub mod onix {
                             *self.state = NumberOfCopiesElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330335,15 +331427,19 @@ pub mod onix {
                             *self.state = CollectionTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330426,15 +331522,19 @@ pub mod onix {
                             *self.state = CollectionFrequencyElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330521,15 +331621,19 @@ pub mod onix {
                             *self.state = SourceNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330626,15 +331730,19 @@ pub mod onix {
                     match &mut *self.state {
                         CollectionIdentifierElementTypeSerializerState::Init__ => {
                             * self . state = CollectionIdentifierElementTypeSerializerState :: CollectionElementLevel (IterSerializer :: new (self . value . collection_element_level . as_ref () , Some ("CollectionElementLevel") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) ;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -330778,7 +331886,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CollectionSequenceElementTypeSerializerState :: Init__ => { * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (WithSerializer :: serializer_with_namespace (& self . value . collection_sequence_type , Some ("CollectionSequenceType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (IterSerializer :: new (self . value . collection_sequence_type_name . as_ref () , Some ("CollectionSequenceTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (WithSerializer :: serializer_with_namespace (& self . value . collection_sequence_number , Some ("CollectionSequenceNumber") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: End__ , } CollectionSequenceElementTypeSerializerState :: End__ => { * self . state = CollectionSequenceElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollectionSequenceElementTypeSerializerState :: Done__ => return Ok (None) , CollectionSequenceElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CollectionSequenceElementTypeSerializerState :: Init__ => { * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (WithSerializer :: serializer_with_namespace (& self . value . collection_sequence_type , Some ("CollectionSequenceType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CollectionSequenceElementTypeSerializerState :: CollectionSequenceType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (IterSerializer :: new (self . value . collection_sequence_type_name . as_ref () , Some ("CollectionSequenceTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (WithSerializer :: serializer_with_namespace (& self . value . collection_sequence_number , Some ("CollectionSequenceNumber") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } CollectionSequenceElementTypeSerializerState :: CollectionSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CollectionSequenceElementTypeSerializerState :: End__ , } CollectionSequenceElementTypeSerializerState :: End__ => { * self . state = CollectionSequenceElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CollectionSequenceElementTypeSerializerState :: Done__ => return Ok (None) , CollectionSequenceElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -330902,15 +332010,19 @@ pub mod onix {
                             *self.state = TitleElementLevelElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331101,15 +332213,19 @@ pub mod onix {
                             *self.state = SubtitleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331211,15 +332327,19 @@ pub mod onix {
                             *self.state = ContributorRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331302,15 +332422,19 @@ pub mod onix {
                             *self.state = FromLanguageElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331392,15 +332516,19 @@ pub mod onix {
                             *self.state = ToLanguageElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331617,15 +332745,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331723,15 +332855,19 @@ pub mod onix {
                             *self.state = BiographicalNoteElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331825,15 +332961,19 @@ pub mod onix {
                                 ContributorDescriptionElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -331948,15 +333088,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332073,15 +333217,19 @@ pub mod onix {
                             *self.state = EditionTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332244,15 +333392,19 @@ pub mod onix {
                             *self.state = EditionStatementElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332345,15 +333497,19 @@ pub mod onix {
                             *self.state = BibleContentsElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332436,15 +333592,19 @@ pub mod onix {
                             *self.state = BibleVersionElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332526,15 +333686,19 @@ pub mod onix {
                             *self.state = StudyBibleTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332617,15 +333781,19 @@ pub mod onix {
                             *self.state = BiblePurposeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332708,15 +333876,19 @@ pub mod onix {
                                 BibleTextOrganizationElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332804,15 +333976,19 @@ pub mod onix {
                                 BibleReferenceLocationElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332901,15 +334077,19 @@ pub mod onix {
                             *self.state = BibleTextFeatureElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -332993,15 +334173,19 @@ pub mod onix {
                                 ReligiousTextIdentifierElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -333097,7 +334281,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ReligiousTextFeatureElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (WithSerializer :: serializer_with_namespace (& self . value . religious_text_feature_type , Some ("ReligiousTextFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (WithSerializer :: serializer_with_namespace (& self . value . religious_text_feature_code , Some ("ReligiousTextFeatureCode") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (IterSerializer :: new (& self . value . religious_text_feature_description [..] , Some ("ReligiousTextFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: End__ , } ReligiousTextFeatureElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ReligiousTextFeatureElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (WithSerializer :: serializer_with_namespace (& self . value . religious_text_feature_type , Some ("ReligiousTextFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (WithSerializer :: serializer_with_namespace (& self . value . religious_text_feature_code , Some ("ReligiousTextFeatureCode") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (IterSerializer :: new (& self . value . religious_text_feature_description [..] , Some ("ReligiousTextFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ReligiousTextFeatureElementTypeSerializerState :: ReligiousTextFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureElementTypeSerializerState :: End__ , } ReligiousTextFeatureElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -333217,15 +334401,19 @@ pub mod onix {
                             *self.state = ExtentValueRomanElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -333308,15 +334496,19 @@ pub mod onix {
                             *self.state = DdElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333395,15 +334587,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::None),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333490,15 +334686,19 @@ pub mod onix {
                                         super::super::NS_ONIX,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333566,15 +334766,19 @@ pub mod onix {
                                         super::super::NS_ONIX,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333647,15 +334851,19 @@ pub mod onix {
                             *self.state = DlElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333790,15 +334998,19 @@ pub mod onix {
                     match &mut *self.state {
                         HrElementTypeSerializerState::Init__ => {
                             *self.state = HrElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333857,15 +335069,19 @@ pub mod onix {
                             *self.state = PreElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -333935,15 +335151,19 @@ pub mod onix {
                                         super::super::NS_ONIX,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -334036,15 +335256,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -334190,15 +335414,19 @@ pub mod onix {
                             *self.state = AElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -334302,15 +335530,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::None),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -334390,15 +335622,19 @@ pub mod onix {
                     match &mut *self.state {
                         BrElementTypeSerializerState::Init__ => {
                             *self.state = BrElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -334465,15 +335701,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::None),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -334554,15 +335794,19 @@ pub mod onix {
                     match &mut *self.state {
                         ImgElementTypeSerializerState::Init__ => {
                             *self.state = ImgElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -334636,15 +335880,19 @@ pub mod onix {
                             *self.state = MapElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
@@ -334784,15 +336032,19 @@ pub mod onix {
                             *self.state = RubyElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -335009,15 +336261,19 @@ pub mod onix {
                             *self.state = SubjectHeadingTextElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335651,15 +336907,19 @@ pub mod onix {
                             *self.state = SubjectDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -335880,15 +337140,19 @@ pub mod onix {
                             *self.state = AffiliationElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336055,15 +337319,19 @@ pub mod onix {
                             *self.state = AudienceHeadingTextElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336155,15 +337423,19 @@ pub mod onix {
                             *self.state = RatingElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336245,15 +337517,19 @@ pub mod onix {
                             *self.state = RatingLimitElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336335,15 +337611,19 @@ pub mod onix {
                             *self.state = RatingUnitsElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336430,15 +337710,19 @@ pub mod onix {
                             *self.state = ContentDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336758,15 +338042,19 @@ pub mod onix {
                             *self.state = ResourceFeatureTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336853,15 +338141,19 @@ pub mod onix {
                             *self.state = FeatureValueElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -336943,15 +338235,19 @@ pub mod onix {
                             *self.state = FeatureNoteElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337043,15 +338339,19 @@ pub mod onix {
                             *self.state = ResourceFormElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337144,7 +338444,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResourceVersionFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (WithSerializer :: serializer_with_namespace (& self . value . resource_version_feature_type , Some ("ResourceVersionFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (IterSerializer :: new (self . value . feature_value . as_ref () , Some ("FeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (IterSerializer :: new (& self . value . feature_note [..] , Some ("FeatureNote") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: End__ , } ResourceVersionFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceVersionFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceVersionFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResourceVersionFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (WithSerializer :: serializer_with_namespace (& self . value . resource_version_feature_type , Some ("ResourceVersionFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceVersionFeatureElementTypeSerializerState :: ResourceVersionFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (IterSerializer :: new (self . value . feature_value . as_ref () , Some ("FeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (IterSerializer :: new (& self . value . feature_note [..] , Some ("FeatureNote") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceVersionFeatureElementTypeSerializerState :: FeatureNote (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceVersionFeatureElementTypeSerializerState :: End__ , } ResourceVersionFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceVersionFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceVersionFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceVersionFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -337187,15 +338487,19 @@ pub mod onix {
                             *self.state = PrizeIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337358,15 +338662,19 @@ pub mod onix {
                             *self.state = OccurrenceDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337530,15 +338838,19 @@ pub mod onix {
                             *self.state = VenueNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337704,15 +339016,19 @@ pub mod onix {
                             *self.state = VenueNoteElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -337812,15 +339128,19 @@ pub mod onix {
                     match &mut *self.state {
                         EventSponsorIdentifierElementTypeSerializerState::Init__ => {
                             * self . state = EventSponsorIdentifierElementTypeSerializerState :: EventSponsorIdType (WithSerializer :: serializer_with_namespace (& self . value . event_sponsor_id_type , Some ("EventSponsorIDType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338020,15 +339340,19 @@ pub mod onix {
                             *self.state = TextItemTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338124,15 +339448,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338267,15 +339595,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338374,15 +339706,19 @@ pub mod onix {
                             *self.state = NumberOfPagesElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338465,15 +339801,19 @@ pub mod onix {
                             *self.state = AvItemTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338568,15 +339908,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338705,15 +340049,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338812,15 +340160,19 @@ pub mod onix {
                             *self.state = AvDurationElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338902,15 +340254,19 @@ pub mod onix {
                             *self.state = ComponentTypeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -338999,15 +340355,19 @@ pub mod onix {
                             *self.state = ComponentNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339173,15 +340533,19 @@ pub mod onix {
                             *self.state = PublisherNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339293,15 +340657,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339419,15 +340787,19 @@ pub mod onix {
                             *self.state = CopyrightTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339599,15 +340971,19 @@ pub mod onix {
                             *self.state = ImprintElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339853,15 +341229,19 @@ pub mod onix {
                             *self.state = ProductContactNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -339948,15 +341328,19 @@ pub mod onix {
                             *self.state = StreetAddressElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340044,15 +341428,19 @@ pub mod onix {
                             *self.state = PostalCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340134,15 +341522,19 @@ pub mod onix {
                             *self.state = SalesRightsTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340229,7 +341621,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationBundleNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (WithSerializer :: serializer_with_namespace (& self . value . specification_bundle_name_type_name , Some ("SpecificationBundleNameTypeName") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (WithSerializer :: serializer_with_namespace (& self . value . specification_bundle_name_value , Some ("SpecificationBundleNameValue") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: End__ , } SpecificationBundleNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationBundleNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (WithSerializer :: serializer_with_namespace (& self . value . specification_bundle_name_type_name , Some ("SpecificationBundleNameTypeName") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (WithSerializer :: serializer_with_namespace (& self . value . specification_bundle_name_value , Some ("SpecificationBundleNameValue") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } SpecificationBundleNameElementTypeSerializerState :: SpecificationBundleNameValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameElementTypeSerializerState :: End__ , } SpecificationBundleNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -340272,15 +341664,19 @@ pub mod onix {
                             *self.state = SpecificationDetailElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340378,7 +341774,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationFeatureElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (WithSerializer :: serializer_with_namespace (& self . value . specification_feature_type , Some ("SpecificationFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (IterSerializer :: new (self . value . specification_feature_value . as_ref () , Some ("SpecificationFeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (IterSerializer :: new (& self . value . specification_feature_description [..] , Some ("SpecificationFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: End__ , } SpecificationFeatureElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationFeatureElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (WithSerializer :: serializer_with_namespace (& self . value . specification_feature_type , Some ("SpecificationFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (IterSerializer :: new (self . value . specification_feature_value . as_ref () , Some ("SpecificationFeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (IterSerializer :: new (& self . value . specification_feature_description [..] , Some ("SpecificationFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } SpecificationFeatureElementTypeSerializerState :: SpecificationFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureElementTypeSerializerState :: End__ , } SpecificationFeatureElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -340422,15 +341818,19 @@ pub mod onix {
                                 SpecificationDescriptionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340694,15 +342094,19 @@ pub mod onix {
                             *self.state = InsertPointTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -340785,15 +342189,19 @@ pub mod onix {
                             *self.state = InsertPointValueElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341164,15 +342572,19 @@ pub mod onix {
                     match &mut *self.state {
                         NoSupplementElementTypeSerializerState::Init__ => {
                             *self.state = NoSupplementElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341244,15 +342656,19 @@ pub mod onix {
                             *self.state = CountriesIncludedElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341336,15 +342752,19 @@ pub mod onix {
                             *self.state = RegionsIncludedElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341427,15 +342847,19 @@ pub mod onix {
                             *self.state = RegionsExcludedElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341518,15 +342942,19 @@ pub mod onix {
                             *self.state = CountriesExcludedElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341704,15 +343132,19 @@ pub mod onix {
                             *self.state = AgentNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -341887,15 +343319,19 @@ pub mod onix {
                             *self.state = SupplierNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342075,15 +343511,19 @@ pub mod onix {
                             *self.state = SupplyContactNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342167,15 +343607,19 @@ pub mod onix {
                             *self.state = LocationIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342265,7 +343709,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { StockQuantityCodedElementTypeSerializerState :: Init__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (WithSerializer :: serializer_with_namespace (& self . value . stock_quantity_code_type , Some ("StockQuantityCodeType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (IterSerializer :: new (self . value . stock_quantity_code_type_name . as_ref () , Some ("StockQuantityCodeTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (WithSerializer :: serializer_with_namespace (& self . value . stock_quantity_code , Some ("StockQuantityCode") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: End__ , } StockQuantityCodedElementTypeSerializerState :: End__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } StockQuantityCodedElementTypeSerializerState :: Done__ => return Ok (None) , StockQuantityCodedElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { StockQuantityCodedElementTypeSerializerState :: Init__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (WithSerializer :: serializer_with_namespace (& self . value . stock_quantity_code_type , Some ("StockQuantityCodeType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (IterSerializer :: new (self . value . stock_quantity_code_type_name . as_ref () , Some ("StockQuantityCodeTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCodeTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (WithSerializer :: serializer_with_namespace (& self . value . stock_quantity_code , Some ("StockQuantityCode") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } StockQuantityCodedElementTypeSerializerState :: StockQuantityCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = StockQuantityCodedElementTypeSerializerState :: End__ , } StockQuantityCodedElementTypeSerializerState :: End__ => { * self . state = StockQuantityCodedElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } StockQuantityCodedElementTypeSerializerState :: Done__ => return Ok (None) , StockQuantityCodedElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -342439,15 +343883,19 @@ pub mod onix {
                             *self.state = OnOrderElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342529,15 +343977,19 @@ pub mod onix {
                             *self.state = ProximityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342619,15 +344071,19 @@ pub mod onix {
                             *self.state = ExpectedDateElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342714,15 +344170,19 @@ pub mod onix {
                             *self.state = VelocityMetricElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342805,15 +344265,19 @@ pub mod onix {
                             *self.state = RateElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -342908,15 +344372,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343032,15 +344500,19 @@ pub mod onix {
                             *self.state = PriceTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343122,15 +344594,19 @@ pub mod onix {
                             *self.state = PriceQualifierElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343231,15 +344707,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343374,15 +344854,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343482,15 +344966,19 @@ pub mod onix {
                             *self.state = PriceTypeDescriptionElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343582,15 +345070,19 @@ pub mod onix {
                             *self.state = PricePerElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343694,15 +345186,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343822,15 +345318,19 @@ pub mod onix {
                             *self.state = MinimumOrderQuantityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -343923,15 +345423,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344043,15 +345547,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344185,15 +345693,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344305,15 +345817,19 @@ pub mod onix {
                             *self.state = PriceStatusElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344470,15 +345986,19 @@ pub mod onix {
                             *self.state = CurrencyCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344589,15 +346109,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344740,15 +346264,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -344925,15 +346453,19 @@ pub mod onix {
                                 NumberOfItemsOfThisFormElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345023,15 +346555,19 @@ pub mod onix {
                                 CollectionElementLevelElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345120,15 +346656,19 @@ pub mod onix {
                             *self.state = CollectionIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345212,15 +346752,19 @@ pub mod onix {
                                 CollectionSequenceTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345310,15 +346854,19 @@ pub mod onix {
                                 CollectionSequenceTypeNameElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345414,15 +346962,19 @@ pub mod onix {
                                 CollectionSequenceNumberElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -345759,15 +347311,19 @@ pub mod onix {
                             *self.state = TitleTextElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346114,15 +347670,19 @@ pub mod onix {
                             *self.state = UnnamedPersonsElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346205,15 +347765,19 @@ pub mod onix {
                             *self.state = ContributorDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346301,15 +347865,19 @@ pub mod onix {
                                 ContributorPlaceRelatorElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346475,15 +348043,19 @@ pub mod onix {
                             *self.state = EditionNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346566,15 +348138,19 @@ pub mod onix {
                             *self.state = EditionVersionNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346662,15 +348238,19 @@ pub mod onix {
                                 ReligiousTextFeatureTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346761,15 +348341,19 @@ pub mod onix {
                                 ReligiousTextFeatureCodeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -346854,7 +348438,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ReligiousTextFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (IterSerializer :: new (& self . value . content [..] , None , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; helper . write_attrib_opt (& mut bytes , "textformat" , & self . value . textformat) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ , } ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ReligiousTextFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (IterSerializer :: new (& self . value . content [..] , None , false)) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; helper . write_attrib_opt (& mut bytes , "textformat" , & self . value . textformat) ? ; return Ok (Some (Event :: Start (bytes))) } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ , } ReligiousTextFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ReligiousTextFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , ReligiousTextFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -346898,15 +348482,19 @@ pub mod onix {
                             *self.state = ExtentValueElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -347604,15 +349192,19 @@ pub mod onix {
                                         super::super::NS_ONIX,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -348120,15 +349712,19 @@ pub mod onix {
                     match &mut *self.state {
                         AreaElementTypeSerializerState::Init__ => {
                             *self.state = AreaElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -348324,15 +349920,19 @@ pub mod onix {
                             *self.state = SubjectCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -348427,15 +350027,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -348710,15 +350314,19 @@ pub mod onix {
                             *self.state = TitlesBeforeNamesElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -348817,15 +350425,19 @@ pub mod onix {
                             *self.state = NamesBeforeKeyElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -348923,15 +350535,19 @@ pub mod onix {
                             *self.state = PrefixToKeyElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -349028,15 +350644,19 @@ pub mod onix {
                             *self.state = KeyNamesElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -349133,15 +350753,19 @@ pub mod onix {
                             *self.state = NamesAfterKeyElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -349239,15 +350863,19 @@ pub mod onix {
                             *self.state = SuffixToKeyElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -349344,15 +350972,19 @@ pub mod onix {
                             *self.state = LettersAfterNamesElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -349451,15 +351083,19 @@ pub mod onix {
                             *self.state = TitlesAfterNamesElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -349642,15 +351278,19 @@ pub mod onix {
                                 CorporateNameInvertedElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -349956,15 +351596,19 @@ pub mod onix {
                             *self.state = ProfessionalPositionElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350072,15 +351716,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350201,15 +351849,19 @@ pub mod onix {
                             *self.state = AudienceCodeValueElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350293,15 +351945,19 @@ pub mod onix {
                             *self.state = ListNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350388,15 +352044,19 @@ pub mod onix {
                             *self.state = PositionOnListElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350480,15 +352140,19 @@ pub mod onix {
                                 ResourceVersionFeatureTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350745,15 +352409,19 @@ pub mod onix {
                             *self.state = EventSponsorIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350840,15 +352508,19 @@ pub mod onix {
                             *self.state = TextItemIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -350931,15 +352603,19 @@ pub mod onix {
                             *self.state = FirstPageNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351022,15 +352698,19 @@ pub mod onix {
                             *self.state = LastPageNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351113,15 +352793,19 @@ pub mod onix {
                             *self.state = AvItemIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351203,15 +352887,19 @@ pub mod onix {
                             *self.state = StartTimeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351293,15 +352981,19 @@ pub mod onix {
                             *self.state = EndTimeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351399,15 +353091,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351528,15 +353224,19 @@ pub mod onix {
                             *self.state = FundingIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351711,15 +353411,19 @@ pub mod onix {
                             *self.state = CopyrightOwnerElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -351956,15 +353660,19 @@ pub mod onix {
                             *self.state = ImprintNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352061,7 +353769,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ProductContactIdentifierElementTypeSerializerState :: Init__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (WithSerializer :: serializer_with_namespace (& self . value . product_contact_id_type , Some ("ProductContactIDType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductContactIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer_with_namespace (& self . value . id_value , Some ("IDValue") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } ProductContactIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: End__ , } ProductContactIdentifierElementTypeSerializerState :: End__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductContactIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , ProductContactIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ProductContactIdentifierElementTypeSerializerState :: Init__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (WithSerializer :: serializer_with_namespace (& self . value . product_contact_id_type , Some ("ProductContactIDType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ProductContactIdentifierElementTypeSerializerState :: ProductContactIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ProductContactIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer_with_namespace (& self . value . id_value , Some ("IDValue") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } ProductContactIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ProductContactIdentifierElementTypeSerializerState :: End__ , } ProductContactIdentifierElementTypeSerializerState :: End__ => { * self . state = ProductContactIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ProductContactIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , ProductContactIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -352099,7 +353807,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationBundleNameTypeNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ , } SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameTypeNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationBundleNameTypeNameElementTypeSerializerState :: Init__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationBundleNameTypeNameElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ , } SpecificationBundleNameTypeNameElementTypeSerializerState :: End__ => { * self . state = SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationBundleNameTypeNameElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationBundleNameTypeNameElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -352144,15 +353852,19 @@ pub mod onix {
                                 SpecificationBundleNameValueElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352242,15 +353954,19 @@ pub mod onix {
                                 SpecificationFeatureTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352341,15 +354057,19 @@ pub mod onix {
                                 SpecificationFeatureValueElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352434,7 +354154,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SpecificationFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: End__ , } SpecificationFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SpecificationFeatureDescriptionElementTypeSerializerState :: Init__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; helper . write_attrib_opt (& mut bytes , "language" , & self . value . language) ? ; return Ok (Some (Event :: Start (bytes))) } SpecificationFeatureDescriptionElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: End__ , } SpecificationFeatureDescriptionElementTypeSerializerState :: End__ => { * self . state = SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SpecificationFeatureDescriptionElementTypeSerializerState :: Done__ => return Ok (None) , SpecificationFeatureDescriptionElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -352474,15 +354194,19 @@ pub mod onix {
                     match &mut *self.state {
                         NoResourceElementTypeSerializerState::Init__ => {
                             *self.state = NoResourceElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352568,15 +354292,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352697,15 +354425,19 @@ pub mod onix {
                             *self.state = ResourceRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352787,15 +354519,19 @@ pub mod onix {
                             *self.state = ResourceFileDetailElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -352893,7 +354629,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResourceFileFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (WithSerializer :: serializer_with_namespace (& self . value . resource_file_feature_type , Some ("ResourceFileFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (IterSerializer :: new (self . value . resource_file_feature_value . as_ref () , Some ("ResourceFileFeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (IterSerializer :: new (& self . value . resource_file_feature_description [..] , Some ("ResourceFileFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: End__ , } ResourceFileFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceFileFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceFileFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResourceFileFeatureElementTypeSerializerState :: Init__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (WithSerializer :: serializer_with_namespace (& self . value . resource_file_feature_type , Some ("ResourceFileFeatureType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (IterSerializer :: new (self . value . resource_file_feature_value . as_ref () , Some ("ResourceFileFeatureValue") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (IterSerializer :: new (& self . value . resource_file_feature_description [..] , Some ("ResourceFileFeatureDescription") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ResourceFileFeatureElementTypeSerializerState :: ResourceFileFeatureDescription (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResourceFileFeatureElementTypeSerializerState :: End__ , } ResourceFileFeatureElementTypeSerializerState :: End__ => { * self . state = ResourceFileFeatureElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResourceFileFeatureElementTypeSerializerState :: Done__ => return Ok (None) , ResourceFileFeatureElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -352937,15 +354673,19 @@ pub mod onix {
                                 ResourceFileDescriptionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353040,15 +354780,19 @@ pub mod onix {
                                 ResourceFileContentDescriptionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353142,15 +354886,19 @@ pub mod onix {
                             *self.state = ResourceFileLinkElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353242,15 +354990,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353435,15 +355187,19 @@ pub mod onix {
                             *self.state = SalesOutletNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353544,15 +355300,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353682,15 +355442,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353819,15 +355583,19 @@ pub mod onix {
                     match &mut *self.state {
                         SupplyContactIdentifierElementTypeSerializerState::Init__ => {
                             * self . state = SupplyContactIdentifierElementTypeSerializerState :: SupplyContactIdType (WithSerializer :: serializer_with_namespace (& self . value . supply_contact_id_type , Some ("SupplyContactIDType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -353951,15 +355719,19 @@ pub mod onix {
                                 StockQuantityCodeTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354047,15 +355819,19 @@ pub mod onix {
                                 StockQuantityCodeTypeNameElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354150,15 +355926,19 @@ pub mod onix {
                             *self.state = StockQuantityCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354242,15 +356022,19 @@ pub mod onix {
                             *self.state = OnHandElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354563,15 +356347,19 @@ pub mod onix {
                             *self.state = PriceIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354653,15 +356441,19 @@ pub mod onix {
                             *self.state = PriceConstraintTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354749,15 +356541,19 @@ pub mod onix {
                                 PriceConstraintStatusElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354852,15 +356648,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -354962,15 +356762,19 @@ pub mod onix {
                             *self.state = PriceConditionTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355056,7 +356860,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { PriceConditionQuantityElementTypeSerializerState :: Init__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (WithSerializer :: serializer_with_namespace (& self . value . price_condition_quantity_type , Some ("PriceConditionQuantityType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: Quantity (WithSerializer :: serializer_with_namespace (& self . value . quantity , Some ("Quantity") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: Quantity (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (WithSerializer :: serializer_with_namespace (& self . value . quantity_unit , Some ("QuantityUnit") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: End__ , } PriceConditionQuantityElementTypeSerializerState :: End__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PriceConditionQuantityElementTypeSerializerState :: Done__ => return Ok (None) , PriceConditionQuantityElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { PriceConditionQuantityElementTypeSerializerState :: Init__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (WithSerializer :: serializer_with_namespace (& self . value . price_condition_quantity_type , Some ("PriceConditionQuantityType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } PriceConditionQuantityElementTypeSerializerState :: PriceConditionQuantityType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: Quantity (WithSerializer :: serializer_with_namespace (& self . value . quantity , Some ("Quantity") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: Quantity (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (WithSerializer :: serializer_with_namespace (& self . value . quantity_unit , Some ("QuantityUnit") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } PriceConditionQuantityElementTypeSerializerState :: QuantityUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PriceConditionQuantityElementTypeSerializerState :: End__ , } PriceConditionQuantityElementTypeSerializerState :: End__ => { * self . state = PriceConditionQuantityElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } PriceConditionQuantityElementTypeSerializerState :: Done__ => return Ok (None) , PriceConditionQuantityElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -355099,15 +356903,19 @@ pub mod onix {
                             *self.state = BatchQuantityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355190,15 +356998,19 @@ pub mod onix {
                             *self.state = FreeQuantityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355280,15 +357092,19 @@ pub mod onix {
                             *self.state = DiscountCodeTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355371,15 +357187,19 @@ pub mod onix {
                             *self.state = DiscountCodeTypeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355471,15 +357291,19 @@ pub mod onix {
                             *self.state = DiscountCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355561,15 +357385,19 @@ pub mod onix {
                             *self.state = DiscountTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355872,15 +357700,19 @@ pub mod onix {
                             *self.state = PriceAmountElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -355962,15 +357794,19 @@ pub mod onix {
                             *self.state = PriceDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -356053,15 +357889,19 @@ pub mod onix {
                             *self.state = PrintedOnProductElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -356144,15 +357984,19 @@ pub mod onix {
                             *self.state = PartNumberElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -356244,15 +358088,19 @@ pub mod onix {
                             *self.state = YearOfAnnualElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -356553,15 +358401,19 @@ pub mod onix {
                             *self.state = TitleWithoutPrefixElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -356831,15 +358683,19 @@ pub mod onix {
                     match &mut *self.state {
                         ColElementTypeSerializerState::Init__ => {
                             *self.state = ColElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -356905,15 +358761,19 @@ pub mod onix {
                                         super::super::NS_ONIX,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -356992,15 +358852,19 @@ pub mod onix {
                             *self.state = TrElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -357145,15 +359009,19 @@ pub mod onix {
                             *self.state = RbElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -357294,15 +359162,19 @@ pub mod onix {
                                         super::super::NS_ONIX,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -357370,15 +359242,19 @@ pub mod onix {
                                         super::super::NS_ONIX,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -357443,15 +359319,19 @@ pub mod onix {
                             *self.state = NameIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -357774,15 +359654,19 @@ pub mod onix {
                             *self.state = AffiliationIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -357894,15 +359778,19 @@ pub mod onix {
                                         ElementNamespace::Namespace(super::super::NS_ONIX),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358021,15 +359909,19 @@ pub mod onix {
                             *self.state = PublisherIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358112,15 +360004,19 @@ pub mod onix {
                             *self.state = CopyrightYearElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358308,15 +360204,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358434,15 +360334,19 @@ pub mod onix {
                             *self.state = ProductContactIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358529,15 +360433,19 @@ pub mod onix {
                             *self.state = ResourceIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358621,15 +360529,19 @@ pub mod onix {
                                 ResourceFileFeatureTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358719,15 +360631,19 @@ pub mod onix {
                                 ResourceFileFeatureValueElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358818,15 +360734,19 @@ pub mod onix {
                                 ResourceFileFeatureDescriptionElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -358920,15 +360840,19 @@ pub mod onix {
                             *self.state = ResourceFileDateRoleElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359031,15 +360955,19 @@ pub mod onix {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359160,15 +361088,19 @@ pub mod onix {
                             *self.state = AgentIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359250,15 +361182,19 @@ pub mod onix {
                             *self.state = SupplierIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359341,15 +361277,19 @@ pub mod onix {
                             *self.state = SupplyContactIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359436,15 +361376,19 @@ pub mod onix {
                             *self.state = ReservedElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359526,15 +361470,19 @@ pub mod onix {
                             *self.state = CboElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359616,15 +361564,19 @@ pub mod onix {
                             *self.state = PriceConstraintUnitElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359712,15 +361664,19 @@ pub mod onix {
                                 PriceConditionQuantityTypeElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359810,15 +361766,19 @@ pub mod onix {
                             *self.state = QuantityUnitElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -359900,15 +361860,19 @@ pub mod onix {
                             *self.state = ToQuantityElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -360069,15 +362033,19 @@ pub mod onix {
                             *self.state = DiscountAmountElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -360448,15 +362416,19 @@ pub mod onix {
                             *self.state = TitlePrefixElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -360554,15 +362526,19 @@ pub mod onix {
                     match &mut *self.state {
                         NoPrefixElementTypeSerializerState::Init__ => {
                             *self.state = NoPrefixElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -360710,15 +362686,19 @@ pub mod onix {
                             *self.state = TdElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -360921,15 +362901,19 @@ pub mod onix {
                             *self.state = RtElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -361141,15 +363125,19 @@ pub mod onix {
                             *self.state = PersonNameInvertedElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -361336,7 +363324,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CopyrightOwnerIdentifierElementTypeSerializerState :: Init__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (WithSerializer :: serializer_with_namespace (& self . value . copyright_owner_id_type , Some ("CopyrightOwnerIDType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_ONIX) ; helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer_with_namespace (& self . value . id_value , Some ("IDValue") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: End__ , } CopyrightOwnerIdentifierElementTypeSerializerState :: End__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , CopyrightOwnerIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CopyrightOwnerIdentifierElementTypeSerializerState :: Init__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (WithSerializer :: serializer_with_namespace (& self . value . copyright_owner_id_type , Some ("CopyrightOwnerIDType") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } CopyrightOwnerIdentifierElementTypeSerializerState :: CopyrightOwnerIdType (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (IterSerializer :: new (self . value . id_type_name . as_ref () , Some ("IDTypeName") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdTypeName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (WithSerializer :: serializer_with_namespace (& self . value . id_value , Some ("IDValue") , ElementNamespace :: Namespace (super :: super :: NS_ONIX) , false) ?) , } CopyrightOwnerIdentifierElementTypeSerializerState :: IdValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: End__ , } CopyrightOwnerIdentifierElementTypeSerializerState :: End__ => { * self . state = CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CopyrightOwnerIdentifierElementTypeSerializerState :: Done__ => return Ok (None) , CopyrightOwnerIdentifierElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -361379,15 +363367,19 @@ pub mod onix {
                             *self.state = ImprintIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -361470,15 +363462,19 @@ pub mod onix {
                             *self.state = SalesOutletIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -361562,15 +363558,19 @@ pub mod onix {
                             *self.state = DiscountPercentElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -361666,15 +363666,19 @@ pub mod onix {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -361822,15 +363826,19 @@ pub mod onix {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::super::NS_ONIX)),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -361975,15 +363983,19 @@ pub mod onix {
                     match &mut *self.state {
                         TaxExemptElementTypeSerializerState::Init__ => {
                             *self.state = TaxExemptElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -362056,15 +364068,19 @@ pub mod onix {
                                 IterSerializer::new(self.value.text.as_ref(), Some(""), false)
                                     .with_namespace(ElementNamespace::None),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -362131,15 +364147,19 @@ pub mod onix {
                             *self.state = CopyrightOwnerIdTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -362226,15 +364246,19 @@ pub mod onix {
                             *self.state = PriceCodeTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -362317,15 +364341,19 @@ pub mod onix {
                             *self.state = PriceCodeTypeNameElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -362414,15 +364442,19 @@ pub mod onix {
                             *self.state = PriceCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -362504,15 +364536,19 @@ pub mod onix {
                             *self.state = PricePartDescriptionElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -362604,15 +364640,19 @@ pub mod onix {
                             *self.state = TaxTypeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -362694,15 +364734,19 @@ pub mod onix {
                             *self.state = TaxRateCodeElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -363033,15 +365077,19 @@ pub mod onix {
                             *self.state = TaxRatePercentElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -363124,15 +365172,19 @@ pub mod onix {
                             *self.state = TaxableAmountElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;
@@ -363215,15 +365267,19 @@ pub mod onix {
                             *self.state = TaxAmountElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ONIX)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ONIX,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(&mut bytes, None, &super::super::NS_ONIX);
                             }
                             helper.write_attrib_opt(&mut bytes, "refname", &self.value.refname)?;

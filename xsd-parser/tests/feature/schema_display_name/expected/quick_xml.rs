@@ -516,16 +516,20 @@ pub mod example {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_EXAMPLE)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_EXAMPLE,
-                                );
-                                helper.write_xmlns(
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
+                                helper.write_xmlns_unless_default(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_EXAMPLE),
                                     &super::super::NS_EXAMPLE,

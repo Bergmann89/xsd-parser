@@ -184,6 +184,27 @@ pub trait SerializeSync: Sized {
     ///
     /// Returns a suitable error if the operation was not successful.
     fn serialize<W: Write>(&self, root: &str, writer: &mut Writer<W>) -> Result<(), Self::Error>;
+
+    /// Like [`serialize`](Self::serialize), but uses the passed `helper`, e.g.
+    /// to set a default namespace with [`SerializeHelper::with_default_namespace`].
+    ///
+    /// The default implementation ignores the `helper` and calls
+    /// [`serialize`](Self::serialize), so custom implementers must override
+    /// this method to honor the `helper`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable error if the operation was not successful.
+    fn serialize_with<W: Write>(
+        &self,
+        root: &str,
+        writer: &mut Writer<W>,
+        helper: SerializeHelper,
+    ) -> Result<(), Self::Error> {
+        let _helper = helper;
+
+        self.serialize(root, writer)
+    }
 }
 
 impl<X> SerializeSync for X
@@ -193,7 +214,16 @@ where
     type Error = Error;
 
     fn serialize<W: Write>(&self, root: &str, writer: &mut Writer<W>) -> Result<(), Self::Error> {
-        SerializeImpl::new(self, Some(root), writer)?.serialize_sync()
+        self.serialize_with(root, writer, SerializeHelper::default())
+    }
+
+    fn serialize_with<W: Write>(
+        &self,
+        root: &str,
+        writer: &mut Writer<W>,
+        helper: SerializeHelper,
+    ) -> Result<(), Self::Error> {
+        SerializeImpl::new(self, Some(root), writer, helper)?.serialize_sync()
     }
 }
 
@@ -215,6 +245,24 @@ pub trait SerializeAsync: Sized {
         root: &'a str,
         writer: &'a mut Writer<W>,
     ) -> Self::Future<'a>;
+
+    /// Like [`serialize_async`](Self::serialize_async), but uses the passed
+    /// `helper`, e.g. to set a default namespace with
+    /// [`SerializeHelper::with_default_namespace`].
+    ///
+    /// The default implementation ignores the `helper` and calls
+    /// [`serialize_async`](Self::serialize_async), so custom implementers must
+    /// override this method to honor the `helper`.
+    fn serialize_async_with<'a, W: tokio::io::AsyncWrite + Unpin>(
+        &'a self,
+        root: &'a str,
+        writer: &'a mut Writer<W>,
+        helper: SerializeHelper,
+    ) -> Self::Future<'a> {
+        let _helper = helper;
+
+        self.serialize_async(root, writer)
+    }
 }
 
 #[cfg(feature = "async")]
@@ -234,8 +282,17 @@ where
         root: &'a str,
         writer: &'a mut Writer<W>,
     ) -> Self::Future<'a> {
+        self.serialize_async_with(root, writer, SerializeHelper::default())
+    }
+
+    fn serialize_async_with<'a, W: tokio::io::AsyncWrite + Unpin>(
+        &'a self,
+        root: &'a str,
+        writer: &'a mut Writer<W>,
+        helper: SerializeHelper,
+    ) -> Self::Future<'a> {
         Box::pin(async move {
-            SerializeImpl::new(self, Some(root), writer)?
+            SerializeImpl::new(self, Some(root), writer, helper)?
                 .serialize_async()
                 .await
         })
@@ -415,6 +472,7 @@ where
                 } => match value.serialize_bytes(helper) {
                     Ok(None) => {
                         return name.map(|name| {
+                            let name = helper.element_name(name, &namespace);
                             let mut bytes = BytesStart::new(name);
                             helper.begin_ns_scope();
                             helper.write_xmlns_for_element(&mut bytes, name, &namespace);
@@ -431,6 +489,7 @@ where
                             .into()));
                         }
 
+                        let name = name.map(|name| helper.element_name(name, &namespace));
                         *self = Self::Data { name, data };
 
                         if let Some(name) = name {
@@ -661,7 +720,6 @@ pub struct XsiTypeSerializer<'ser, T> {
     inner: T,
     name: &'ser str,
     namespace: ElementNamespace,
-    is_root: bool,
     state: XsiTypeState,
 }
 
@@ -685,13 +743,17 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
     /// Create a new [`XsiTypeSerializer`] that wraps the passed `inner`
     /// serializer and rewrites the emitted element to use the passed base
     /// element `name`.
+    ///
+    /// `is_root` is not used anymore: `xmlns:xsi` is declared on the rewritten
+    /// element whenever it is not bound yet.
     #[must_use]
     pub fn new(inner: T, name: &'ser str, is_root: bool) -> Self {
+        let _is_root = is_root;
+
         Self {
             inner,
             name,
             namespace: ElementNamespace::Unknown,
-            is_root,
             state: XsiTypeState::Init,
         }
     }
@@ -706,32 +768,44 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
 
     /// Rewrite the opening element so that it uses the base element name and
     /// references its original (concrete) name via a `xsi:type` attribute.
-    fn rewrite(&self, bytes: BytesStart<'ser>, helper: &mut SerializeHelper) -> BytesStart<'ser> {
-        // The value uses the base element name already, so it is the base type
-        // and does not need a `xsi:type` attribute.
-        if bytes.name().0 == self.name {
+    fn rewrite(
+        &mut self,
+        bytes: BytesStart<'ser>,
+        helper: &mut SerializeHelper,
+    ) -> BytesStart<'ser> {
+        // The inner element uses the base element name (stripped if it got the
+        // namespace of the root) if it is the base type, which does not need a
+        // `xsi:type` attribute.
+        let name = helper.element_name(self.name, &self.namespace);
+        let is_base = bytes.name().0 == self.name || bytes.name().0 == name;
+        if is_base && name == self.name {
             return bytes;
         }
 
         let type_name = bytes.name().0.to_owned();
 
-        let mut new = BytesStart::new(self.name);
-        helper.write_xmlns_for_element(&mut new, self.name, &self.namespace);
+        self.name = name;
 
-        // An empty inner element has already ended its scope, so the helper does
-        // not know about its `xmlns:xsi` anymore.
-        let has_xmlns_xsi = bytes
-            .attributes()
-            .any(|attr| matches!(attr, Ok(attr) if attr.key.0 == "xmlns:xsi"));
-        if self.is_root && !has_xmlns_xsi {
-            helper.write_xmlns(&mut new, Some(&NamespacePrefix::XSI), &Namespace::XSI);
+        let mut new = BytesStart::new(name);
+        helper.write_xmlns_for_element(&mut new, name, &self.namespace);
+
+        if !is_base {
+            // An empty inner element has already ended its scope, so the helper
+            // does not know about its `xmlns:xsi` anymore.
+            let has_xmlns_xsi = bytes
+                .attributes()
+                .any(|attr| matches!(attr, Ok(attr) if attr.key.0 == "xmlns:xsi"));
+            if !has_xmlns_xsi {
+                helper.write_xmlns(&mut new, Some(&NamespacePrefix::XSI), &Namespace::XSI);
+            }
+
+            new.push_attribute(("xsi:type", &type_name[..]));
         }
 
-        new.push_attribute(("xsi:type", &type_name[..]));
         new.extend_attributes(bytes.attributes().filter_map(|attr| {
             let attr = attr.ok()?;
 
-            if attr.key.0 == "xsi:type" {
+            if !is_base && attr.key.0 == "xsi:type" {
                 None
             } else {
                 Some(attr)
@@ -916,6 +990,7 @@ impl<T: CollectNamespaces> CollectNamespaces for [T] {
 #[derive(Default, Debug)]
 pub struct SerializeHelper {
     level: usize,
+    default_namespace: Option<Namespace>,
     namespaces: Vec<NamespaceEntry>,
 }
 
@@ -927,6 +1002,82 @@ struct NamespaceEntry {
 }
 
 impl SerializeHelper {
+    /// Set the default namespace that the root element declares. Elements in
+    /// this namespace are written without prefix as long as it is active.
+    #[must_use]
+    pub fn with_default_namespace(mut self, namespace: Namespace) -> Self {
+        self.default_namespace = Some(namespace);
+
+        self
+    }
+
+    /// Set (or reset with `None`) the default namespace, see
+    /// [`with_default_namespace`](Self::with_default_namespace).
+    pub fn set_default_namespace(&mut self, namespace: Option<Namespace>) {
+        self.default_namespace = namespace;
+    }
+
+    /// Returns `name` without its prefix if the `namespace` of the element is
+    /// the active default namespace anyway.
+    #[must_use]
+    pub fn element_name<'a>(&self, name: &'a str, namespace: &ElementNamespace) -> &'a str {
+        let ElementNamespace::Namespace(namespace) = namespace else {
+            return name;
+        };
+
+        if self.active_default_namespace() == Some(namespace) {
+            name.split_once(':').map_or(name, |(_, local)| local)
+        } else {
+            name
+        }
+    }
+
+    /// Declare the default namespace of the helper on the root element `name`,
+    /// unless an unprefixed `name` of another namespace needs the default.
+    pub fn write_default_namespace(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        name: &str,
+        namespace: &ElementNamespace,
+    ) {
+        let Some(default) = self.default_namespace.clone() else {
+            return;
+        };
+
+        let is_default = matches!(namespace, ElementNamespace::Namespace(ns) if *ns == default);
+        if name.contains(':') || is_default {
+            self.write_xmlns(bytes, None, &default);
+        }
+    }
+
+    /// Like [`write_xmlns`](Self::write_xmlns), but nothing is written if the
+    /// `namespace` is the active default namespace.
+    pub fn write_xmlns_unless_default(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        prefix: Option<&NamespacePrefix>,
+        namespace: &Namespace,
+    ) {
+        if self.active_default_namespace() != Some(namespace) {
+            self.write_xmlns(bytes, prefix, namespace);
+        }
+    }
+
+    /// Returns the active default namespace: the newest declaration without
+    /// prefix, or the default namespace of the helper if none was declared.
+    fn active_default_namespace(&self) -> Option<&Namespace> {
+        match self
+            .namespaces
+            .iter()
+            .rev()
+            .find(|entry| entry.prefix.is_none())
+        {
+            Some(entry) if entry.namespace.is_empty() => None,
+            Some(entry) => Some(&entry.namespace),
+            None => self.default_namespace.as_ref(),
+        }
+    }
+
     /// Begin a new namespace scope inside the serialized XML.
     ///
     /// This is usually the case, if you create a [`Event::Start`] or [`Event::Empty`].
@@ -1209,8 +1360,12 @@ impl<'a, T, W> SerializeImpl<'a, T, W>
 where
     T: WithSerializer,
 {
-    fn new(value: &'a T, name: Option<&'a str>, writer: &'a mut Writer<W>) -> Result<Self, Error> {
-        let helper = SerializeHelper::default();
+    fn new(
+        value: &'a T,
+        name: Option<&'a str>,
+        writer: &'a mut Writer<W>,
+        helper: SerializeHelper,
+    ) -> Result<Self, Error> {
         let serializer = value.serializer(name, true)?;
 
         Ok(Self {
@@ -1258,14 +1413,17 @@ where
 #[cfg(test)]
 mod tests {
     use std::cell::Cell;
+    use std::mem::replace;
 
     use quick_xml::events::{BytesEnd, BytesStart, Event};
+    use quick_xml::Writer;
 
     use crate::misc::{Namespace, NamespacePrefix};
     use crate::xml::{AnySimpleType, Element, Nillable, QName};
 
     use super::{
-        ElementNamespace, Error, SerializeHelper, Serializer, WithSerializer, XsiTypeSerializer,
+        ElementNamespace, Error, SerializeHelper, SerializeSync, Serializer, WithSerializer,
+        XsiTypeSerializer,
     };
 
     const NS_X: Namespace = Namespace::new_const(b"X");
@@ -1312,6 +1470,7 @@ mod tests {
     /// Emits one `tns:Dog` element like generated code does.
     #[derive(Debug)]
     struct Stub {
+        name: &'static str,
         kind: StubKind,
         scope: bool,
         xsi: bool,
@@ -1321,11 +1480,18 @@ mod tests {
     impl Stub {
         fn new(kind: StubKind, scope: bool, xsi: bool) -> Self {
             Self {
+                name: "tns:Dog",
                 kind,
                 scope,
                 xsi,
                 step: 0,
             }
+        }
+
+        fn named(mut self, name: &'static str) -> Self {
+            self.name = name;
+
+            self
         }
     }
 
@@ -1336,7 +1502,7 @@ mod tests {
 
             match (self.kind, step) {
                 (StubKind::Empty | StubKind::StartEnd, 0) => {
-                    let mut bytes = BytesStart::new("tns:Dog");
+                    let mut bytes = BytesStart::new(self.name);
                     if self.scope {
                         helper.begin_ns_scope();
                     }
@@ -1363,7 +1529,7 @@ mod tests {
                         helper.end_ns_scope();
                     }
 
-                    Some(Ok(Event::End(BytesEnd::new("tns:Dog"))))
+                    Some(Ok(Event::End(BytesEnd::new(self.name))))
                 }
                 _ => None,
             }
@@ -1372,6 +1538,27 @@ mod tests {
 
     fn xsi_type(kind: StubKind, scope: bool, xsi: bool) -> XsiTypeSerializer<'static, Stub> {
         XsiTypeSerializer::new(Stub::new(kind, scope, xsi), "tns:Animal", true)
+    }
+
+    #[test]
+    fn xsi_type_serializer_detects_stripped_base_type() {
+        for kind in [StubKind::Empty, StubKind::StartEnd] {
+            let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+            helper.begin_ns_scope();
+            helper.write_xmlns(&mut BytesStart::new("root"), None, &NS_X);
+
+            let serializer = XsiTypeSerializer::new(
+                Stub::new(kind, true, false).named("Animal"),
+                "tns:Animal",
+                true,
+            )
+            .with_namespace(ElementNamespace::Namespace(NS_X));
+            let events = events(serializer, &mut helper);
+            let bytes = first_tag(&events);
+
+            assert_eq!(bytes.name().0, "Animal", "{kind:?}");
+            assert!(attribs(bytes, "xsi:type").is_empty(), "{kind:?}");
+        }
     }
 
     #[test]
@@ -1750,5 +1937,242 @@ mod tests {
 
         assert_eq!(value.calls.get(), 1);
         assert!(attribs(first_tag(&events), "xmlns").is_empty());
+    }
+
+    fn names(events: &[Event<'_>]) -> Vec<String> {
+        events
+            .iter()
+            .filter_map(|event| match event {
+                Event::Start(bytes) | Event::Empty(bytes) => Some(bytes.name().0.to_owned()),
+                Event::End(bytes) => Some(format!("/{}", bytes.name().0)),
+                _ => None,
+            })
+            .collect()
+    }
+
+    #[test]
+    fn element_name_uses_active_default_namespace() {
+        let ns_x = ElementNamespace::Namespace(NS_X);
+
+        // An active default namespace is used without a runtime default.
+        let mut helper = SerializeHelper::default();
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut BytesStart::new("root"), None, &NS_X);
+        assert_eq!(helper.element_name("a:e", &ns_x), "e");
+
+        let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+        helper.begin_ns_scope();
+        helper.write_default_namespace(&mut BytesStart::new("o:root"), "o:root", &ns_x);
+        assert_eq!(helper.element_name("a:e", &ns_x), "e");
+
+        // Below `xmlns=""` the prefix is kept, also with a runtime default.
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut BytesStart::new("q"), None, &Namespace::EMPTY);
+        assert_eq!(helper.element_name("a:e", &ns_x), "a:e");
+    }
+
+    #[test]
+    fn write_default_namespace_declares_runtime_default() {
+        let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+        let ns_o = ElementNamespace::Namespace(NS_Y);
+        let mut bytes = BytesStart::new("o:root");
+        helper.begin_ns_scope();
+        helper.write_default_namespace(&mut bytes, "o:root", &ns_o);
+        helper.write_default_namespace(&mut bytes, "o:root", &ns_o);
+        assert_eq!(attribs(&bytes, "xmlns"), ["X"]);
+
+        // An unprefixed root of another (or no) namespace keeps its default.
+        for namespace in [ns_o, ElementNamespace::None, ElementNamespace::Unknown] {
+            let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+            let mut bytes = BytesStart::new("root");
+            helper.begin_ns_scope();
+            helper.write_default_namespace(&mut bytes, "root", &namespace);
+            assert!(attribs(&bytes, "xmlns").is_empty(), "{namespace:?}");
+        }
+
+        let mut helper = SerializeHelper::default();
+        let mut bytes = BytesStart::new("root");
+        helper.begin_ns_scope();
+        helper.write_default_namespace(&mut bytes, "root", &ElementNamespace::Unknown);
+        assert!(attribs(&bytes, "xmlns").is_empty());
+    }
+
+    #[test]
+    fn element_name_strips_prefix_of_default_namespace_only() {
+        let ns_x = ElementNamespace::Namespace(NS_X);
+        let ns_y = ElementNamespace::Namespace(NS_Y);
+        let with_default = SerializeHelper::default().with_default_namespace(NS_X);
+        let without_default = SerializeHelper::default();
+
+        assert_eq!(with_default.element_name("a:e", &ns_x), "e");
+        assert_eq!(with_default.element_name("e", &ns_x), "e");
+        assert_eq!(with_default.element_name("a:e", &ns_y), "a:e");
+        assert_eq!(
+            with_default.element_name("a:e", &ElementNamespace::None),
+            "a:e"
+        );
+        assert_eq!(
+            with_default.element_name("a:e", &ElementNamespace::Unknown),
+            "a:e"
+        );
+        assert_eq!(without_default.element_name("a:e", &ns_x), "a:e");
+
+        let mut helper = without_default;
+        helper.set_default_namespace(Some(NS_X));
+        assert_eq!(helper.element_name("a:e", &ns_x), "e");
+        helper.set_default_namespace(None);
+        assert_eq!(helper.element_name("a:e", &ns_x), "a:e");
+    }
+
+    #[test]
+    fn write_xmlns_unless_default_skips_default_namespace() {
+        for (default, expected) in [
+            (Some(NS_X), &[][..]),
+            (Some(NS_Y), &["X"][..]),
+            (None, &["X"][..]),
+        ] {
+            let mut helper = SerializeHelper::default();
+            if let Some(default) = default {
+                helper.set_default_namespace(Some(default));
+            }
+
+            let mut bytes = BytesStart::new("e");
+            helper.begin_ns_scope();
+            helper.write_xmlns_unless_default(&mut bytes, Some(&PREFIX_A), &NS_X);
+
+            assert_eq!(attribs(&bytes, "xmlns:a"), expected);
+        }
+    }
+
+    /// Writes an empty element named like the helper wants it for namespace `X`.
+    #[derive(Debug)]
+    struct Probe;
+
+    impl WithSerializer for Probe {
+        type Serializer<'x> = ProbeSerializer;
+
+        fn serializer<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            is_root: bool,
+        ) -> Result<ProbeSerializer, Error> {
+            let _args = (name, is_root);
+
+            Ok(ProbeSerializer(true))
+        }
+    }
+
+    #[derive(Debug)]
+    struct ProbeSerializer(bool);
+
+    impl<'ser> Serializer<'ser> for ProbeSerializer {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            if !replace(&mut self.0, false) {
+                return None;
+            }
+
+            let name = helper.element_name("a:p", &ElementNamespace::Namespace(NS_X));
+
+            Some(Ok(Event::Empty(BytesStart::new(name))))
+        }
+    }
+
+    #[test]
+    fn serialize_with_passes_the_helper() {
+        let helper = SerializeHelper::default().with_default_namespace(NS_X);
+        let mut writer = Writer::new(Vec::new());
+        Probe.serialize_with("r", &mut writer, helper).unwrap();
+        assert_eq!(writer.into_inner(), b"<p/>");
+
+        let mut writer = Writer::new(Vec::new());
+        Probe.serialize("r", &mut writer).unwrap();
+        assert_eq!(writer.into_inner(), b"<a:p/>");
+    }
+
+    #[test]
+    fn content_serializer_strips_prefix_and_ends_with_same_name() {
+        let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+        let value = String::from("a");
+
+        let serializer = value
+            .serializer_with_namespace(Some("a:v"), ElementNamespace::Namespace(NS_X), false)
+            .unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(names(&events), ["v", "/v"]);
+        assert_eq!(attribs(first_tag(&events), "xmlns"), ["X"]);
+        assert!(attribs(first_tag(&events), "xmlns:a").is_empty());
+        assert_eq!(helper.level, 0);
+    }
+
+    #[test]
+    fn content_serializer_keeps_prefix_of_other_namespace() {
+        let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+        let value = String::from("a");
+
+        let serializer = value
+            .serializer_with_namespace(Some("a:v"), ElementNamespace::Namespace(NS_Y), false)
+            .unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(names(&events), ["a:v", "/a:v"]);
+        assert_eq!(attribs(first_tag(&events), "xmlns:a"), ["Y"]);
+    }
+
+    #[test]
+    fn any_simple_type_strips_prefix_and_ends_with_same_name() {
+        let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+        let value = AnySimpleType::String("a".into());
+
+        let serializer = value
+            .serializer_with_namespace(Some("a:v"), ElementNamespace::Namespace(NS_X), false)
+            .unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(names(&events), ["v", "/v"]);
+        assert_eq!(attribs(first_tag(&events), "xmlns"), ["X"]);
+    }
+
+    #[test]
+    fn nillable_nil_strips_prefix() {
+        let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+        let value = Nillable::<String>::nil();
+
+        let serializer = value
+            .serializer_with_namespace(Some("a:v"), ElementNamespace::Namespace(NS_X), false)
+            .unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(names(&events), ["v"]);
+        assert_eq!(attribs(first_tag(&events), "xmlns"), ["X"]);
+    }
+
+    #[test]
+    fn xsi_type_serializer_strips_base_name_under_default_namespace() {
+        for kind in [StubKind::Empty, StubKind::StartEnd] {
+            for (inner, xsi_type) in [("tns:Dog", Some("tns:Dog")), ("tns:Animal", None)] {
+                let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+                let stub = Stub::new(kind, true, false).named(inner);
+                let serializer = XsiTypeSerializer::new(stub, "tns:Animal", true)
+                    .with_namespace(ElementNamespace::Namespace(NS_X));
+
+                let events = events(serializer, &mut helper);
+                let bytes = first_tag(&events);
+
+                let expected: &[&str] = if matches!(kind, StubKind::Empty) {
+                    &["Animal"]
+                } else {
+                    &["Animal", "/Animal"]
+                };
+                assert_eq!(names(&events), expected, "{kind:?} {inner}");
+                assert_eq!(attribs(bytes, "xmlns"), ["X"], "{kind:?} {inner}");
+                assert_eq!(
+                    attribs(bytes, "xsi:type"),
+                    xsi_type.as_slice(),
+                    "{kind:?} {inner}"
+                );
+                assert_eq!(helper.level, 0, "{kind:?} {inner}");
+            }
+        }
     }
 }

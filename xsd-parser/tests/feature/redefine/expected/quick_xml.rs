@@ -433,7 +433,7 @@ pub mod tns {
                     ::xsd_parser_types::quick_xml::Error,
                 > {
                     loop {
-                        match & mut * self . state { PersonTypeSerializerState :: Init__ => { * self . state = PersonTypeSerializerState :: Name (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . name , Some ("name") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) ; let mut bytes = :: xsd_parser_types :: quick_xml :: BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: super :: NS_TNS) ; } return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: Start (bytes))) } PersonTypeSerializerState :: Name (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Gender (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . gender , Some ("gender") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Gender (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: End__ , } PersonTypeSerializerState :: End__ => { * self . state = PersonTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: End (:: xsd_parser_types :: quick_xml :: BytesEnd :: new (self . name)))) ; } PersonTypeSerializerState :: Done__ => return Ok (None) , PersonTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                        match & mut * self . state { PersonTypeSerializerState :: Init__ => { * self . state = PersonTypeSerializerState :: Name (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . name , Some ("name") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) ; let namespace = if self . is_root { :: xsd_parser_types :: quick_xml :: ElementNamespace :: Namespace (super :: super :: super :: NS_TNS) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = :: xsd_parser_types :: quick_xml :: BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: Start (bytes))) } PersonTypeSerializerState :: Name (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Gender (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . gender , Some ("gender") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Gender (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: End__ , } PersonTypeSerializerState :: End__ => { * self . state = PersonTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: End (:: xsd_parser_types :: quick_xml :: BytesEnd :: new (self . name)))) ; } PersonTypeSerializerState :: Done__ => return Ok (None) , PersonTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                     }
                 }
             }
@@ -755,21 +755,24 @@ pub mod tns {
                                         ),
                                     ),
                                 );
+                                let namespace = if self.is_root {
+                                    ::xsd_parser_types::quick_xml::ElementNamespace::Namespace(
+                                        super::super::super::NS_TNS,
+                                    )
+                                } else {
+                                    self.namespace.clone()
+                                };
+                                self.name = helper.element_name(self.name, &namespace);
                                 let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                                 helper.begin_ns_scope();
-                                helper.write_xmlns_for_element(
-                                    &mut bytes,
-                                    self.name,
-                                    &self.namespace,
-                                );
+                                helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                                 if self.is_root {
-                                    helper.write_xmlns_for_tag(
-                                        &mut bytes,
-                                        self.name,
-                                        &super::super::super::NS_TNS,
-                                    );
-                                    helper.write_xmlns(
+                                    helper
+                                        .write_default_namespace(&mut bytes, self.name, &namespace);
+                                }
+                                if self.is_root {
+                                    helper.write_xmlns_unless_default(
                                         &mut bytes,
                                         Some(&super::super::super::PREFIX_TNS),
                                         &super::super::super::NS_TNS,
@@ -1675,21 +1678,24 @@ pub mod tns {
                                         ),
                                     ),
                                 );
+                                let namespace = if self.is_root {
+                                    ::xsd_parser_types::quick_xml::ElementNamespace::Namespace(
+                                        super::super::super::NS_TNS,
+                                    )
+                                } else {
+                                    self.namespace.clone()
+                                };
+                                self.name = helper.element_name(self.name, &namespace);
                                 let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                                 helper.begin_ns_scope();
-                                helper.write_xmlns_for_element(
-                                    &mut bytes,
-                                    self.name,
-                                    &self.namespace,
-                                );
+                                helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                                 if self.is_root {
-                                    helper.write_xmlns_for_tag(
-                                        &mut bytes,
-                                        self.name,
-                                        &super::super::super::NS_TNS,
-                                    );
-                                    helper.write_xmlns(
+                                    helper
+                                        .write_default_namespace(&mut bytes, self.name, &namespace);
+                                }
+                                if self.is_root {
+                                    helper.write_xmlns_unless_default(
                                         &mut bytes,
                                         Some(&super::super::super::PREFIX_TNS),
                                         &super::super::super::NS_TNS,
@@ -1758,7 +1764,7 @@ pub mod tns {
                     ::xsd_parser_types::quick_xml::Error,
                 > {
                     loop {
-                        match & mut * self . state { PersonTypeSerializerState :: Init__ => { * self . state = PersonTypeSerializerState :: Name (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . name , Some ("name") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) ; let mut bytes = :: xsd_parser_types :: quick_xml :: BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: super :: NS_TNS) ; } return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: Start (bytes))) } PersonTypeSerializerState :: Name (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Gender (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . gender , Some ("gender") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Gender (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: LastName (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . last_name , Some ("lastName") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: LastName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Age (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . age , Some ("age") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Age (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: End__ , } PersonTypeSerializerState :: End__ => { * self . state = PersonTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: End (:: xsd_parser_types :: quick_xml :: BytesEnd :: new (self . name)))) ; } PersonTypeSerializerState :: Done__ => return Ok (None) , PersonTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                        match & mut * self . state { PersonTypeSerializerState :: Init__ => { * self . state = PersonTypeSerializerState :: Name (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . name , Some ("name") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) ; let namespace = if self . is_root { :: xsd_parser_types :: quick_xml :: ElementNamespace :: Namespace (super :: super :: super :: NS_TNS) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = :: xsd_parser_types :: quick_xml :: BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: Start (bytes))) } PersonTypeSerializerState :: Name (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Gender (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . gender , Some ("gender") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Gender (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: LastName (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . last_name , Some ("lastName") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: LastName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Age (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . age , Some ("age") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Age (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: End__ , } PersonTypeSerializerState :: End__ => { * self . state = PersonTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: End (:: xsd_parser_types :: quick_xml :: BytesEnd :: new (self . name)))) ; } PersonTypeSerializerState :: Done__ => return Ok (None) , PersonTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                     }
                 }
             }

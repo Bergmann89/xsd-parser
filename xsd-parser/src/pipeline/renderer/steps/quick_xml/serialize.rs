@@ -21,8 +21,8 @@ use crate::models::{
         SimpleData, TagName, UnionData, UnionTypeVariant,
     },
     meta::{
-        CustomMetaNamespace, DeriveRelationship, DerivedTypeMeta, ElementMeta, ElementMetaFlags,
-        ElementMetaVariant, MetaTypeVariant, MetaTypes,
+        AttributeMetaVariant, CustomMetaNamespace, DeriveRelationship, DerivedTypeMeta,
+        ElementMeta, ElementMetaFlags, ElementMetaVariant, MetaTypeVariant, MetaTypes,
     },
     schema::{xs::FormChoiceType, NamespaceId},
     IdentType, TypeIdent,
@@ -113,14 +113,18 @@ impl ValueKey for SerializerConfig {
 #[derive(Default, Debug)]
 struct NamespaceCollector {
     cache: HashMap<TypeIdent, Option<SharedGlobalNamespaces>>,
+    tainted: HashMap<TypeIdent, bool>,
     xsi_namespace: Option<NamespaceId>,
     nillable_type_support: bool,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
 enum NamespaceKey {
+    /// Prefix needed by attributes, `xsi:type` values or custom types.
     Normal(NamespaceId),
     Default(NamespaceId),
+    /// Prefix only needed by the names of elements.
+    ElementOnly(NamespaceId),
 }
 
 type GlobalNamespaces = BTreeMap<NamespaceKey, (Option<PathData>, PathData)>;
@@ -968,18 +972,6 @@ impl ComplexBase<'_> {
                 let mut xmlns = Vec::new();
                 let mut cache = HashSet::new();
 
-                let root_xmlns = self
-                    .tag_name
-                    .as_ref()
-                    .and_then(|x| x.render_root_xmlns(ctx));
-                if let Some(root_xmlns) = root_xmlns {
-                    xmlns.push(quote! {
-                        if self.is_root {
-                            #root_xmlns
-                        }
-                    });
-                }
-
                 // Emit attribute namespaces with their own fixed prefix.
                 let attribute_modules = attributes.iter().filter_map(|attrib| {
                     (attrib.tag_name.form == FormChoiceType::Qualified)
@@ -1023,15 +1015,29 @@ impl ComplexBase<'_> {
                     .clone();
                 let mut collector = collector.borrow_mut();
 
-                let root_xmlns = self
-                    .tag_name
-                    .as_ref()
-                    .and_then(|x| x.render_root_xmlns(ctx));
-
-                let global_xmlns = collector
+                let skip_default = !collector.is_tainted(ctx.types, ctx.ident);
+                let namespaces = collector
                     .get_namespaces(ctx.types, ctx.ident, default_namespace.as_ref())
+                    .clone();
+
+                // A namespace is declared with `write_xmlns` if it is needed by
+                // more than the names of elements.
+                let mut global = BTreeMap::new();
+                for (key, (prefix, namespace)) in &*namespaces {
+                    let (key, element_only) = match *key {
+                        NamespaceKey::ElementOnly(id) => (NamespaceKey::Normal(id), skip_default),
+                        key => (key, false),
+                    };
+
+                    global
+                        .entry(key)
+                        .and_modify(|(_, _, only)| *only &= element_only)
+                        .or_insert((prefix, namespace, element_only));
+                }
+
+                let global_xmlns = global
                     .values()
-                    .map(|(prefix, namespace)| {
+                    .map(|&(prefix, namespace, element_only)| {
                         let ns_const = ctx.resolve_type_for_serialize_module(namespace);
                         let prefix_const = prefix.as_ref().map_or_else(
                             || quote!(None),
@@ -1042,26 +1048,26 @@ impl ComplexBase<'_> {
                             },
                         );
 
+                        let write_xmlns = if element_only {
+                            quote!(write_xmlns_unless_default)
+                        } else {
+                            quote!(write_xmlns)
+                        };
+
                         quote! {
-                            helper.write_xmlns(&mut bytes, #prefix_const, &#ns_const);
+                            helper.#write_xmlns(&mut bytes, #prefix_const, &#ns_const);
                         }
                     })
                     .collect::<Vec<_>>();
-                (root_xmlns.is_some() || !global_xmlns.is_empty()).then(|| {
+                global_xmlns.is_empty().not().then(|| {
                     quote! {
                         if self.is_root {
-                            #root_xmlns
                             #( #global_xmlns )*
                         }
                     }
                 })
             }
             NamespaceSerialization::Dynamic => {
-                let root_xmlns = self
-                    .tag_name
-                    .as_ref()
-                    .and_then(|x| x.render_root_xmlns(ctx));
-
                 let collect_namespaces = resolve_quick_xml_ident!(
                     ctx,
                     "::xsd_parser_types::quick_xml::CollectNamespaces"
@@ -1069,7 +1075,6 @@ impl ComplexBase<'_> {
 
                 Some(quote! {
                     if self.is_root {
-                        #root_xmlns
                         #collect_namespaces::collect_namespaces(self.value, helper, &mut bytes);
                     }
                 })
@@ -1083,13 +1088,31 @@ impl ComplexBase<'_> {
         let bytes_start =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
 
+        let element_name = need_ns_scope.then(|| {
+            let element_namespace =
+                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
+            let root_namespace = self
+                .tag_name
+                .as_ref()
+                .and_then(|x| x.render_root_namespace(ctx))
+                .unwrap_or_else(|| quote!(#element_namespace::Unknown));
+
+            quote! {
+                let namespace = if self.is_root { #root_namespace } else { self.namespace.clone() };
+                self.name = helper.element_name(self.name, &namespace);
+            }
+        });
         let begin_ns_scope = need_ns_scope.then(|| {
             quote! {
                 helper.begin_ns_scope();
-                helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                if self.is_root {
+                    helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                }
             }
         });
         let code = quote! {
+            #element_name
             let #mut_ bytes = #bytes_start::new(self.name);
             #begin_ns_scope
             #xmlns
@@ -1796,17 +1819,20 @@ impl TagName<'_> {
         }
     }
 
-    /// Generates the namespace declaration of the root element.
+    /// Generates the [`ElementNamespace`](xsd_parser_types::quick_xml::ElementNamespace)
+    /// of the root element.
     ///
     /// The root element is always namespace-qualified, but its name is chosen by
     /// the caller. Depending on that name the namespace is declared with the
     /// prefix of the name or as default namespace (`xmlns="..."`).
-    fn render_root_xmlns(&self, ctx: &mut Context<'_, '_>) -> Option<TokenStream> {
+    fn render_root_namespace(&self, ctx: &mut Context<'_, '_>) -> Option<TokenStream> {
         let module = self.module?;
         let ns = module.make_ns_const()?;
         let ns_const = ctx.resolve_type_for_serialize_module(&ns);
+        let element_namespace =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
 
-        Some(quote!(helper.write_xmlns_for_tag(&mut bytes, self.name, &#ns_const);))
+        Some(quote!(#element_namespace::Namespace(#ns_const)))
     }
 }
 
@@ -1834,9 +1860,74 @@ impl NamespaceCollector {
 
         Rc::new(RefCell::new(Self {
             cache: HashMap::new(),
+            tainted: HashMap::new(),
             xsi_namespace,
             nillable_type_support,
         }))
+    }
+
+    /// Returns `true` if the type tree of `ident` contains an `xs:QName` or
+    /// `xs:any`, so the prefixes used by values and replayed names are unknown
+    /// and no namespace declaration may be skipped.
+    fn is_tainted(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
+        if let Some(tainted) = self.tainted.get(ident) {
+            return *tainted;
+        }
+
+        let tainted = Self::visit_tainted(types, ident, &mut HashSet::new());
+        self.tainted.insert(ident.clone(), tainted);
+
+        tainted
+    }
+
+    fn visit_tainted(
+        types: &MetaTypes,
+        ident: &TypeIdent,
+        visited: &mut HashSet<TypeIdent>,
+    ) -> bool {
+        if !visited.insert(ident.clone()) {
+            return false;
+        }
+
+        let is_xs = types
+            .modules
+            .get(&ident.ns)
+            .is_some_and(|module| module.namespace.as_ref() == Some(&Namespace::XS));
+        if is_xs && ident.name.as_str() == "QName" {
+            return true;
+        }
+
+        let Some(ty) = types.items.get(ident) else {
+            return false;
+        };
+
+        let mut any = |ident: &TypeIdent| Self::visit_tainted(types, ident, visited);
+
+        match &ty.variant {
+            MetaTypeVariant::BuildIn(_) => false,
+            MetaTypeVariant::Custom(x) => x.allow_any(),
+            MetaTypeVariant::Union(x) => x.types.iter().any(|x| any(&x.type_)),
+            MetaTypeVariant::Reference(x) => any(&x.type_),
+            MetaTypeVariant::SimpleType(x) => any(&x.base),
+            MetaTypeVariant::Enumeration(x) => {
+                x.variants.iter().filter_map(|x| x.type_.as_ref()).any(any)
+            }
+            MetaTypeVariant::Dynamic(x) => x.derived_types.values().any(|x| any(&x.type_)),
+            MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
+                x.elements.iter().any(|el| match &el.variant {
+                    ElementMetaVariant::Any { .. } => true,
+                    ElementMetaVariant::Type { type_, .. } => any(type_),
+                    ElementMetaVariant::Text => false,
+                })
+            }
+            MetaTypeVariant::ComplexType(x) => {
+                x.content.as_ref().is_some_and(&mut any)
+                    || x.attributes.iter().any(|attrib| match &attrib.variant {
+                        AttributeMetaVariant::Any(_) => true,
+                        AttributeMetaVariant::Type(ident) => any(ident),
+                    })
+            }
+        }
     }
 
     fn get_namespaces(
@@ -1892,6 +1983,11 @@ impl NamespaceCollector {
                 MetaTypeVariant::Dynamic(x) => {
                     for meta in x.derived_types.values() {
                         self.merge(&mut state, types, &meta.type_, default_ns);
+                    }
+
+                    // The prefix of a derived type is used as `xsi:type` value.
+                    for (_, meta) in filter_dynamic_types(&x.derived_types, |x| *x) {
+                        Self::add_ns(&mut state, types, NamespaceKey::Normal(meta.type_.ns));
                     }
 
                     let has_dynamic_types = filter_dynamic_types(&x.derived_types, |x| *x)
@@ -2040,7 +2136,7 @@ impl NamespaceCollector {
         let key = if matches!((module_ns, default_ns), (Some(a), Some(b)) if a == b) {
             NamespaceKey::Default(ns)
         } else {
-            NamespaceKey::Normal(ns)
+            NamespaceKey::ElementOnly(ns)
         };
 
         Self::add_ns(state, types, key);
@@ -2078,7 +2174,7 @@ impl NamespaceCollector {
 
     fn make_value(types: &MetaTypes, key: NamespaceKey) -> Option<(Option<PathData>, PathData)> {
         match key {
-            NamespaceKey::Normal(id) => {
+            NamespaceKey::Normal(id) | NamespaceKey::ElementOnly(id) => {
                 let module = types.modules.get(&id)?;
                 if module.namespace.as_ref() == Some(&Namespace::XML) {
                     // The `xml` prefix is bound by definition and is never declared.
@@ -2101,6 +2197,21 @@ impl NamespaceCollector {
 }
 
 /* Helper */
+
+/// Returns `true` if a namespace that is only used by element names of the type
+/// `ctx.ident` may be declared with `write_xmlns_unless_default`.
+pub(super) fn skip_default_namespace(ctx: &mut Context<'_, '_>) -> bool {
+    let nillable_type_support = ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
+    let types: &MetaTypes = ctx.types;
+    let collector = ctx
+        .get_or_create_with::<NamespaceCollector, _>(|| {
+            NamespaceCollector::new(types, nillable_type_support)
+        })
+        .clone();
+    let tainted = collector.borrow_mut().is_tainted(ctx.types, ctx.ident);
+
+    !tainted
+}
 
 fn use_namespaces(ctx: &Context<'_, '_>) -> bool {
     ctx.get_ref::<SerializerConfig>().namespaces.is_some()

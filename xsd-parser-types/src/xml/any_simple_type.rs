@@ -392,6 +392,7 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                     }
                 };
 
+                let name = helper.element_name(name, &namespace);
                 let mut bytes = BytesStart::new(name);
 
                 helper.begin_ns_scope();

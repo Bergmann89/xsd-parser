@@ -168,12 +168,16 @@ Below you can find a short list of the most important changes for each released 
 - **Element Namespaces from the Parent**
   The namespace of an element was derived from its type, but the type is shared by all elements that use it, and a name without prefix can mean the default namespace or no namespace. Unqualified elements below an active default namespace (e.g. a root name without prefix like `Foo`, which declares `xmlns="..."`) therefore ended up in that namespace. The parent now passes the namespace of each element to the serializer of the child (`WithSerializer::serializer_with_namespace`), which writes `xmlns=""` for elements in no namespace below a default namespace and declares the namespace of the element instead of the namespace of its type in `NamespaceSerialization::Local` mode.
 
+- **Default Namespace at Runtime**
+  The default namespace of the serializer can be set at runtime with `SerializeHelper::with_default_namespace` and passed to `SerializeSync::serialize_with`, `SerializeAsync::serialize_async_with`, `EncodingWriter::write_document_with` or `Serializer::into_iter_with`. The root element declares it as `xmlns="..."`. Elements are written without prefix while their namespace is the active default namespace, also below a root name without prefix (`xmlns="T"`), and keep their prefix where another default is active (e.g. below an unqualified element with `xmlns=""`). The root does not declare the prefix of the active default namespace if only element names use it; elements that need it further down declare it themselves. This removes the redundant `xmlns="T" xmlns:tns="T"` and `tns:` prefixes below a root name without prefix. The serializers of dynamic types now always declare `xmlns:xsi` for their `xsi:type` value, not only on the root.
+
 - **Breaking Changes**
   - The generated code changes for schemas with merged content types, see above.
   - `GroupMeta` has the new field `group`.
   - The generated serializers write referenced elements and attributes with their namespace prefix (e.g. `tns:id` instead of `id`), also if they are in the namespace of the referencing schema.
   - For schemas with `elementFormDefault="unqualified"` the default root name of a global element is qualified (`tns:list` instead of `list`), and `xsi:type` values get the prefix of the type (`tns:dog` instead of `dog`). Reading documents in the old form still works.
   - The generated code of elements and types of an `xs:import` without `namespace` moves from the namespace of the importing schema to no namespace.
+  - Below a root name without prefix the serializers omit the prefixes of elements in the default namespace and the redundant prefix declaration on the root.
   - The generated serializers implement `WithSerializer::serializer_with_namespace` and pass the namespace of each element. Hand-written `WithSerializer` implementations that write elements should override `serializer_with_namespace` and forward the namespace, otherwise their elements keep the old behavior.
 
 ## xsd-parser-types 0.3.1
@@ -186,6 +190,9 @@ Below you can find a short list of the most important changes for each released 
 
 - **Element Namespaces**
   `WithSerializer` and `WithBoxedSerializer` have the new provided method `serializer_with_namespace`, which also takes the `ElementNamespace` of the element. Its default calls `serializer`. `SerializeHelper::write_xmlns_for_element` writes the declaration the element needs (`xmlns=""` for an element in no namespace below a default namespace), `ContentSerializer`, `IterSerializer` and `XsiTypeSerializer` have a `with_namespace` builder, and `Element` and `AnySimpleType` implement `CollectNamespaces`. Breaking: the public variants of `ContentSerializer`, `AnySimpleTypeSerializer` and `NillableSerializer` have a new `namespace` field.
+
+- **Default Namespace at Runtime**
+  `SerializeHelper::with_default_namespace` / `set_default_namespace` set the default namespace of the root element (`write_default_namespace`), `SerializeHelper::element_name` omits the prefix of an element whose namespace is the active default namespace and `write_xmlns_unless_default` skips a declaration of the active default namespace. `SerializeSync::serialize_with`, `SerializeAsync::serialize_async_with` and `EncodingWriter::write_document_with` take a prepared helper (custom implementations of the traits must override the new methods to honor it). The `XsiTypeSerializer` declares `xmlns:xsi` on the rewritten element if it is not bound yet.
 
 ## Version 1.6.0
 

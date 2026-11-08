@@ -4482,15 +4482,19 @@ pub mod er {
                             *self.state = CatalogTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -4795,15 +4799,19 @@ pub mod er {
                     match &mut *self.state {
                         DelegatePublicTypeSerializerState::Init__ => {
                             *self.state = DelegatePublicTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -4861,15 +4869,19 @@ pub mod er {
                     match &mut *self.state {
                         DelegateSystemTypeSerializerState::Init__ => {
                             *self.state = DelegateSystemTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -4927,15 +4939,19 @@ pub mod er {
                     match &mut *self.state {
                         DelegateUriTypeSerializerState::Init__ => {
                             *self.state = DelegateUriTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5001,15 +5017,19 @@ pub mod er {
                                 None,
                                 false,
                             ));
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5297,15 +5317,19 @@ pub mod er {
                     match &mut *self.state {
                         NextCatalogTypeSerializerState::Init__ => {
                             *self.state = NextCatalogTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5358,15 +5382,19 @@ pub mod er {
                     match &mut *self.state {
                         PublicTypeSerializerState::Init__ => {
                             *self.state = PublicTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5420,15 +5448,19 @@ pub mod er {
                     match &mut *self.state {
                         RewriteSystemTypeSerializerState::Init__ => {
                             *self.state = RewriteSystemTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5490,15 +5522,19 @@ pub mod er {
                     match &mut *self.state {
                         RewriteUriTypeSerializerState::Init__ => {
                             *self.state = RewriteUriTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5560,15 +5596,19 @@ pub mod er {
                     match &mut *self.state {
                         SystemTypeSerializerState::Init__ => {
                             *self.state = SystemTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5622,15 +5662,19 @@ pub mod er {
                     match &mut *self.state {
                         SystemSuffixTypeSerializerState::Init__ => {
                             *self.state = SystemSuffixTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5688,15 +5732,19 @@ pub mod er {
                     match &mut *self.state {
                         UriTypeSerializerState::Init__ => {
                             *self.state = UriTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),
@@ -5750,15 +5798,19 @@ pub mod er {
                     match &mut *self.state {
                         UriSuffixTypeSerializerState::Init__ => {
                             *self.state = UriSuffixTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_ER)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_ER,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_ER),

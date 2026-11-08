@@ -26,9 +26,9 @@ pub struct OuterType {
 }
 impl CollectNamespaces for OuterType {
     fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
-        helper.write_xmlns(bytes, Some(&PREFIX_BAR), &NS_BAR);
+        helper.write_xmlns_unless_default(bytes, Some(&PREFIX_BAR), &NS_BAR);
         self.inner.collect_namespaces(helper, bytes);
-        helper.write_xmlns(bytes, Some(&PREFIX_BAZ), &NS_BAZ);
+        helper.write_xmlns_unless_default(bytes, Some(&PREFIX_BAZ), &NS_BAZ);
         self.note.collect_namespaces(helper, bytes);
         self.plain.collect_namespaces(helper, bytes);
         self.typed.collect_namespaces(helper, bytes);
@@ -72,7 +72,7 @@ pub mod bar {
     }
     impl CollectNamespaces for InnerType {
         fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
-            helper.write_xmlns(bytes, Some(&super::PREFIX_BAR), &super::NS_BAR);
+            helper.write_xmlns_unless_default(bytes, Some(&super::PREFIX_BAR), &super::NS_BAR);
             self.a.collect_namespaces(helper, bytes);
         }
     }
@@ -328,15 +328,19 @@ pub mod bar {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_BAR)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_BAR,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 CollectNamespaces::collect_namespaces(
                                     self.value, helper, &mut bytes,
                                 );
@@ -831,11 +835,19 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
                             CollectNamespaces::collect_namespaces(self.value, helper, &mut bytes);
                         }
                         return Ok(Some(Event::Start(bytes)));

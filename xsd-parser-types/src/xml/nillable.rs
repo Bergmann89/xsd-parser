@@ -231,7 +231,8 @@ where
             Self::Nil { name, namespace } => {
                 use crate::misc::NamespacePrefix;
 
-                let mut bytes = BytesStart::new(*name);
+                let name = helper.element_name(name, namespace);
+                let mut bytes = BytesStart::new(name);
 
                 helper.begin_ns_scope();
                 helper.write_xmlns_for_element(&mut bytes, name, namespace);

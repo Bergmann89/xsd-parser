@@ -21,6 +21,7 @@ mod complex_type_with_repeated_content;
 mod content_display_name;
 mod content_type_names;
 mod custom_type;
+mod default_namespace_runtime;
 mod defaultable_content;
 mod derive;
 mod documentation;

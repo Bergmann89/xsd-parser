@@ -112,7 +112,7 @@ fn write_quick_xml() {
     crate::utils::quick_xml_write_test(
         &obj,
         "Foo",
-        "tests/feature/schema_display_name/example/default.xml",
+        "tests/feature/schema_display_name/example/serialize.xml",
     );
 }
 

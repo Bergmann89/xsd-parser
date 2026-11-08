@@ -16904,9 +16904,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "header", &self.value.header)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -17227,9 +17236,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "opcode", &self.value.opcode)?;
                         helper.write_attrib_opt(
@@ -17486,9 +17504,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(
@@ -17666,9 +17693,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     PacketStructCopyTypeSerializerState::Init__ => {
                         *self.state = PacketStructCopyTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib(&mut bytes, "ref", &self.value.ref_)?;
@@ -17726,9 +17762,18 @@ pub mod quick_xml_serialize {
                         *self.state = PacketStructTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -17897,9 +17942,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -18074,9 +18128,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     XidtypeTypeSerializerState::Init__ => {
                         *self.state = XidtypeTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
@@ -18127,9 +18190,18 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.type_[..], Some("type"), false)
                                 .with_namespace(ElementNamespace::None),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -18189,9 +18261,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -18306,9 +18387,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     TypedefTypeSerializerState::Init__ => {
                         *self.state = TypedefTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "oldname", &self.value.oldname)?;
                         helper.write_attrib(&mut bytes, "newname", &self.value.newname)?;
                         helper.end_ns_scope();
@@ -18355,9 +18445,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     PadTypeSerializerState::Init__ => {
                         *self.state = PadTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "bytes", &self.value.bytes)?;
                         helper.write_attrib_opt(&mut bytes, "align", &self.value.align)?;
                         helper.end_ns_scope();
@@ -18404,9 +18503,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     VarTypeSerializerState::Init__ => {
                         *self.state = VarTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "enum", &self.value.enum_)?;
@@ -18464,9 +18572,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "enum", &self.value.enum_)?;
@@ -18692,11 +18809,17 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     AnyTypeSerializerState::Init__ => {
                         *self.state = AnyTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_XS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_XS);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
@@ -18746,9 +18869,18 @@ pub mod quick_xml_serialize {
                         *self.state = ExprfieldTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "enum", &self.value.enum_)?;
@@ -18982,9 +19114,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ValueparamTypeSerializerState::Init__ => {
                         *self.state = ValueparamTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(
                             &mut bytes,
                             "value-mask-type",
@@ -19054,9 +19195,18 @@ pub mod quick_xml_serialize {
                         *self.state = SwitchexprTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -19381,9 +19531,18 @@ pub mod quick_xml_serialize {
                         *self.state = RequestReplyTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     RequestReplyTypeSerializerState::Content__(x) => {
@@ -19601,9 +19760,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     DocTypeSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -19792,9 +19960,18 @@ pub mod quick_xml_serialize {
                         *self.state = EnumItemTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -19928,9 +20105,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "op", &self.value.op)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -20152,9 +20338,18 @@ pub mod quick_xml_serialize {
                         *self.state = UnopTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "op", &self.value.op)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -20380,9 +20575,18 @@ pub mod quick_xml_serialize {
                         *self.state = EnumrefTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "ref", &self.value.ref_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -20526,9 +20730,18 @@ pub mod quick_xml_serialize {
                                 )
                             }
                         }
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     PopcountTypeSerializerState::Op(x) => match x.next(helper).transpose()? {
@@ -20613,9 +20826,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     SumofTypeSerializerState::Init__ => {
                         *self.state = SumofTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "ref", &self.value.ref_)?;
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
@@ -20669,9 +20891,18 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -20990,9 +21221,18 @@ pub mod quick_xml_serialize {
                         *self.state = FieldTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -21050,9 +21290,18 @@ pub mod quick_xml_serialize {
                         *self.state = ErrorTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -21106,9 +21355,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     SeeTypeSerializerState::Init__ => {
                         *self.state = SeeTypeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         helper.end_ns_scope();

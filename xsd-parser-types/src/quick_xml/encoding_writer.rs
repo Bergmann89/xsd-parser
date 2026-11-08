@@ -6,7 +6,7 @@ use std::str::from_utf8;
 use encoding_rs::{CoderResult, Encoder, EncoderResult, Encoding};
 use quick_xml::events::{BytesDecl, Event};
 
-use super::{Error as XmlError, SerializeSync, Writer};
+use super::{Error as XmlError, SerializeHelper, SerializeSync, Writer};
 
 /// Implements [`Write`] for any other [`Write`] and encodes the written UTF-8
 /// data using the passed [`Encoding`].
@@ -84,13 +84,33 @@ impl<W: Write> EncodingWriter<W> {
         T: SerializeSync,
         T::Error: From<XmlError>,
     {
+        self.write_document_with(value, root, SerializeHelper::default())
+    }
+
+    /// Like [`write_document`](Self::write_document), but uses the passed
+    /// `helper`, e.g. to set a default namespace.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the value could not be serialized, contains
+    /// characters that can not be encoded, or if the underlying writer fails.
+    pub fn write_document_with<T>(
+        self,
+        value: &T,
+        root: &str,
+        helper: SerializeHelper,
+    ) -> std::result::Result<W, T::Error>
+    where
+        T: SerializeSync,
+        T::Error: From<XmlError>,
+    {
         let encoding = self.encoder.encoding().name();
 
         let mut writer = Writer::new(self);
         writer
             .write_event(Event::Decl(BytesDecl::new("1.0", Some(encoding), None)))
             .map_err(XmlError::from)?;
-        value.serialize(root, &mut writer)?;
+        value.serialize_with(root, &mut writer, helper)?;
 
         let inner = writer.into_inner().finish().map_err(XmlError::from)?;
 

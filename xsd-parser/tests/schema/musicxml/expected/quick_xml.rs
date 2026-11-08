@@ -132256,9 +132256,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "cautionary",
@@ -132379,9 +132388,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "parentheses",
@@ -132500,9 +132518,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -132637,9 +132664,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "string", &self.value.string)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -132766,9 +132802,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -132996,9 +133041,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     AppearanceSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -133226,9 +133280,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ArpeggiateSerializerState::Init__ => {
                         *self.state = ArpeggiateSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "direction", &self.value.direction)?;
                         helper.write_attrib_opt(&mut bytes, "unbroken", &self.value.unbroken)?;
@@ -133316,9 +133379,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -133489,9 +133561,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -133603,9 +133684,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     AssessSerializerState::Init__ => {
                         *self.state = AssessSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "player", &self.value.player)?;
                         helper.write_attrib_opt(&mut bytes, "time-only", &self.value.time_only)?;
@@ -133678,9 +133768,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     AttributesSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -133799,9 +133898,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     BackupSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -133984,9 +134092,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "color", &self.value.color)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -134067,9 +134184,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "location", &self.value.location)?;
                         helper.write_attrib_opt(&mut bytes, "segno", &self.value.segno_attr)?;
                         helper.write_attrib_opt(&mut bytes, "coda", &self.value.coda_attr)?;
@@ -134392,9 +134518,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     BarreSerializerState::Init__ => {
                         *self.state = BarreSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "color", &self.value.color)?;
                         helper.end_ns_scope();
@@ -134462,9 +134597,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "arrangement",
@@ -134604,9 +134748,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -134712,9 +134865,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "repeater", &self.value.repeater)?;
                         helper.write_attrib_opt(&mut bytes, "fan", &self.value.fan)?;
@@ -134799,9 +134961,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "slashes", &self.value.slashes)?;
                         helper.write_attrib_opt(&mut bytes, "use-dots", &self.value.use_dots)?;
@@ -134987,9 +135158,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     BeatUnitTiedSerializerState::Content__(x) => {
@@ -135148,9 +135328,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "tip", &self.value.tip)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -135231,9 +135420,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "shape", &self.value.shape)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -135399,9 +135597,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     BookmarkSerializerState::Init__ => {
                         *self.state = BookmarkSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib_opt(&mut bytes, "element", &self.value.element)?;
@@ -135461,9 +135668,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     BracketSerializerState::Init__ => {
                         *self.state = BracketSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib(&mut bytes, "line-end", &self.value.line_end)?;
@@ -135564,9 +135780,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -135674,9 +135899,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -135782,9 +136016,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "location", &self.value.location)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -135861,9 +136104,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -136077,9 +136329,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     CodaSerializerState::Init__ => {
                         *self.state = CodaSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -136182,9 +136443,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -136300,9 +136570,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     DashesSerializerState::Init__ => {
                         *self.state = DashesSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(
@@ -136396,9 +136675,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     DefaultsSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -136762,9 +137050,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -136900,9 +137197,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -137014,9 +137320,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -137115,9 +137430,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "symbol", &self.value.symbol)?;
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
@@ -137226,9 +137550,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "placement", &self.value.placement)?;
                         helper.write_attrib_opt(&mut bytes, "directive", &self.value.directive)?;
                         helper.write_attrib_opt(&mut bytes, "system", &self.value.system)?;
@@ -137550,9 +137883,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -137676,9 +138018,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -137745,9 +138096,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     DoubleSerializerState::Init__ => {
                         *self.state = DoubleSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "above", &self.value.above)?;
                         helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
@@ -137818,9 +138178,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -138010,9 +138379,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -138091,9 +138469,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -138177,9 +138564,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptySerializerState::Init__ => {
                         *self.state = EmptySerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
                     }
@@ -138235,9 +138631,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyFontSerializerState::Init__ => {
                         *self.state = EmptyFontSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -138309,9 +138714,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyLineSerializerState::Init__ => {
                         *self.state = EmptyLineSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "line-shape",
@@ -138418,9 +138832,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyPlacementSerializerState::Init__ => {
                         *self.state = EmptyPlacementSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -138506,9 +138929,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyPlacementSmuflSerializerState::Init__ => {
                         *self.state = EmptyPlacementSmuflSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -138595,9 +139027,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyPrintObjectStyleAlignSerializerState::Init__ => {
                         *self.state = EmptyPrintObjectStyleAlignSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -138691,9 +139132,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyPrintStyleSerializerState::Init__ => {
                         *self.state = EmptyPrintStyleSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -138778,9 +139228,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyPrintStyleAlignSerializerState::Init__ => {
                         *self.state = EmptyPrintStyleAlignSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -138869,9 +139328,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyPrintStyleAlignIdSerializerState::Init__ => {
                         *self.state = EmptyPrintStyleAlignIdSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -138961,9 +139429,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     EmptyTrillSoundSerializerState::Init__ => {
                         *self.state = EmptyTrillSoundSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -139090,9 +139567,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     EncodingSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -139235,9 +139721,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(
@@ -139347,9 +139842,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ExtendSerializerState::Init__ => {
                         *self.state = ExtendSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -139431,9 +139935,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -139512,9 +140025,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -139623,9 +140145,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     FigureSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -139876,9 +140407,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -140152,9 +140692,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "substitution",
@@ -140259,9 +140808,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "location", &self.value.location)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -140341,9 +140899,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -140479,9 +141046,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -140613,9 +141189,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -140748,9 +141333,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -140884,9 +141478,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -141021,9 +141624,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     ForwardSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -141252,9 +141864,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -141392,9 +142013,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     FrameNoteSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -141530,9 +142160,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -141625,9 +142264,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -141706,9 +142354,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "line-type", &self.value.line_type)?;
@@ -141829,9 +142486,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -141898,9 +142564,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     GraceSerializerState::Init__ => {
                         *self.state = GraceSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "steal-time-previous",
@@ -141971,9 +142646,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "color", &self.value.color)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -142054,9 +142738,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -142164,9 +142857,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -142257,9 +142959,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "member-of", &self.value.member_of)?;
@@ -142411,9 +143122,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
@@ -142525,9 +143245,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -142626,9 +143355,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "location", &self.value.location)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -142700,9 +143438,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -142873,9 +143620,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -143047,9 +143803,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -143216,9 +143981,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -143324,9 +144098,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -143494,9 +144277,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     HeelToeSerializerState::Init__ => {
                         *self.state = HeelToeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -143597,9 +144389,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -143768,9 +144569,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "location", &self.value.location)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -143837,9 +144647,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     HorizontalTurnSerializerState::Init__ => {
                         *self.state = HorizontalTurnSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -143956,9 +144775,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     IdentificationSerializerState::Content__(x) => {
@@ -144218,9 +145046,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ImageSerializerState::Init__ => {
                         *self.state = ImageSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "source", &self.value.source)?;
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "height", &self.value.height)?;
@@ -144295,9 +145132,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     InstrumentSerializerState::Init__ => {
                         *self.state = InstrumentSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
@@ -144368,9 +145214,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -144482,9 +145337,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     InstrumentLinkSerializerState::Init__ => {
                         *self.state = InstrumentLinkSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
@@ -144555,9 +145419,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "symbol", &self.value.symbol)?;
                         helper.write_attrib_opt(&mut bytes, "separator", &self.value.separator)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -144698,9 +145571,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -144810,9 +145692,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -144991,9 +145882,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -145072,9 +145972,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "cancel", &self.value.cancel)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -145152,9 +146061,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "use-symbols",
@@ -145284,9 +146202,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "reference", &self.value.reference)?;
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(
@@ -145361,9 +146288,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     LineDetailSerializerState::Init__ => {
                         *self.state = LineDetailSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "line", &self.value.line)?;
                         helper.write_attrib_opt(&mut bytes, "width", &self.value.width)?;
                         helper.write_attrib_opt(&mut bytes, "color", &self.value.color)?;
@@ -145440,9 +146376,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -145509,9 +146454,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     LinkSerializerState::Init__ => {
                         *self.state = LinkSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -145609,9 +146563,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     ListenSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -145742,9 +146705,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     ListeningSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -145875,9 +146847,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib_opt(&mut bytes, "justify", &self.value.justify)?;
@@ -146035,9 +147016,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     LyricFontSerializerState::Init__ => {
                         *self.state = LyricFontSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib_opt(
@@ -146111,9 +147101,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     LyricLanguageSerializerState::Init__ => {
                         *self.state = LyricLanguageSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                         helper.write_attrib(&mut bytes, "xml:lang", &self.value.lang)?;
@@ -146175,9 +147174,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     MeasureLayoutSerializerState::Content__(x) => {
@@ -146320,9 +147328,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "system", &self.value.system)?;
                         helper.write_attrib_opt(&mut bytes, "staff", &self.value.staff)?;
                         helper.write_attrib_opt(
@@ -146436,9 +147453,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "slashes", &self.value.slashes)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -146511,9 +147537,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -146670,9 +147705,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -146749,9 +147793,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -146832,9 +147885,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -147026,9 +148088,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -147100,9 +148171,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     MetronomeNoteSerializerState::Content__(x) => {
@@ -147325,9 +148405,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     MetronomeTiedSerializerState::Init__ => {
                         *self.state = MetronomeTiedSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
@@ -147387,9 +148476,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "bracket", &self.value.bracket)?;
                         helper.write_attrib_opt(
@@ -147538,9 +148636,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "port", &self.value.port)?;
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -147611,9 +148718,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -147925,9 +149041,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     MiscellaneousSerializerState::Content__(x) => {
@@ -148079,9 +149204,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "name", &self.value.name)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -148150,9 +149284,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     MordentSerializerState::Init__ => {
                         *self.state = MordentSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -148271,9 +149414,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "use-symbols",
@@ -148360,9 +149512,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -148487,9 +149648,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     NonArpeggiateSerializerState::Init__ => {
                         *self.state = NonArpeggiateSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
@@ -148576,9 +149746,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -148756,9 +149935,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -148938,9 +150126,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -149019,9 +150216,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "size", &self.value.size)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -149100,9 +150306,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "filled", &self.value.filled)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -149206,9 +150421,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     NoteheadTextSerializerState::Content__(x) => {
@@ -149342,9 +150566,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     NumeralSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -149520,9 +150753,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -149646,9 +150888,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -149744,9 +150995,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     OctaveShiftSerializerState::Init__ => {
                         *self.state = OctaveShiftSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib(&mut bytes, "size", &self.value.size)?;
@@ -149857,9 +151117,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "sound", &self.value.sound)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -149926,9 +151195,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     OpusSerializerState::Init__ => {
                         *self.state = OpusSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -150011,9 +151289,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -150133,9 +151420,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -150216,9 +151512,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "print-object",
@@ -150336,9 +151641,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "player", &self.value.player)?;
                         helper.write_attrib_opt(&mut bytes, "time-only", &self.value.time_only)?;
@@ -150421,9 +151735,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(
@@ -150542,9 +151865,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -150655,9 +151987,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -150736,9 +152077,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -150808,9 +152158,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     PageLayoutSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -150997,9 +152356,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -151142,9 +152510,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     PartClefSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -151323,9 +152700,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -151668,9 +153054,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -151857,9 +153252,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -151994,9 +153398,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -152109,9 +153522,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "top-staff", &self.value.top_staff)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -152199,9 +153621,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     PartTransposeSerializerState::Content__(x) => {
@@ -152341,9 +153772,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     PedalSerializerState::Init__ => {
                         *self.state = PedalSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "line", &self.value.line)?;
@@ -152443,9 +153883,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     PedalTuningSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -152573,9 +154022,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -152660,9 +154118,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -152840,9 +154307,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     PitchSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -152973,9 +154449,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -153054,9 +154539,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -153168,9 +154662,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -153305,9 +154808,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -153447,9 +154959,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "symbol", &self.value.symbol)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
@@ -153563,9 +155084,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "staff-spacing",
@@ -153867,9 +155397,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ReleaseSerializerState::Init__ => {
                         *self.state = ReleaseSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "offset", &self.value.offset)?;
                         helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
@@ -153926,9 +155465,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     RepeatSerializerState::Init__ => {
                         *self.state = RepeatSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "direction", &self.value.direction)?;
                         helper.write_attrib_opt(&mut bytes, "times", &self.value.times)?;
                         helper.write_attrib_opt(
@@ -154002,9 +155550,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "measure", &self.value.measure)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -154175,9 +155732,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     RootSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -154330,9 +155896,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "text", &self.value.text)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -154440,9 +156015,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     ScalingSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -154565,9 +156149,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -154718,9 +156311,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -154846,9 +156448,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -155008,9 +156619,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -155189,9 +156809,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -155367,9 +156996,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     SegnoSerializerState::Init__ => {
                         *self.state = SegnoSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -155472,9 +157110,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "use-dots", &self.value.use_dots)?;
                         helper.write_attrib_opt(&mut bytes, "use-stems", &self.value.use_stems)?;
@@ -155667,9 +157314,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "line-type", &self.value.line_type)?;
@@ -155790,9 +157446,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     SlurSerializerState::Init__ => {
                         *self.state = SlurSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "line-type", &self.value.line_type)?;
@@ -155909,9 +157574,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "tempo", &self.value.tempo)?;
                         helper.write_attrib_opt(&mut bytes, "dynamics", &self.value.dynamics)?;
                         helper.write_attrib_opt(&mut bytes, "dacapo", &self.value.dacapo)?;
@@ -156074,9 +157748,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -156350,9 +158033,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     StaffDivideSerializerState::Init__ => {
                         *self.state = StaffDivideSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -156444,9 +158136,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -156595,9 +158296,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "scaling", &self.value.scaling)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -156667,9 +158377,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "line", &self.value.line)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -156803,9 +158522,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -156896,9 +158624,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "tip", &self.value.tip)?;
                         helper.write_attrib_opt(
                             &mut bytes,
@@ -157030,9 +158767,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -157128,9 +158874,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     StringMuteSerializerState::Init__ => {
                         *self.state = StringMuteSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -157219,9 +158974,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     StrongAccentSerializerState::Init__ => {
                         *self.state = StrongAccentSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -157320,9 +159084,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -157417,9 +159190,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     SupportsSerializerState::Init__ => {
                         *self.state = SupportsSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib(&mut bytes, "element", &self.value.element)?;
                         helper.write_attrib_opt(&mut bytes, "attribute", &self.value.attribute)?;
@@ -157493,9 +159275,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     SwingSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -157602,9 +159393,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     SyncSerializerState::Init__ => {
                         *self.state = SyncSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "latency", &self.value.latency)?;
                         helper.write_attrib_opt(&mut bytes, "player", &self.value.player)?;
@@ -157667,9 +159467,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     SystemDividersSerializerState::Content__(x) => {
@@ -157783,9 +159592,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     SystemLayoutSerializerState::Content__(x) => {
@@ -157998,9 +159816,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     SystemMarginsSerializerState::Content__(x) => {
@@ -158136,9 +159963,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "hand", &self.value.hand)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -158249,9 +160085,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -158371,9 +160216,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -158473,9 +160327,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     TieSerializerState::Init__ => {
                         *self.state = TieSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "time-only", &self.value.time_only)?;
                         helper.end_ns_scope();
@@ -158533,9 +160396,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     TiedSerializerState::Init__ => {
                         *self.state = TiedSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "line-type", &self.value.line_type)?;
@@ -158652,9 +160524,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "symbol", &self.value.symbol)?;
                         helper.write_attrib_opt(&mut bytes, "separator", &self.value.separator)?;
@@ -158827,9 +160708,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     TimeModificationSerializerState::Content__(x) => {
@@ -158959,9 +160849,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     TimpaniSerializerState::Init__ => {
                         *self.state = TimpaniSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         helper.end_ns_scope();
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Empty(bytes)));
@@ -159030,9 +160929,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
@@ -159180,9 +161088,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
@@ -159292,9 +161209,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "bracket", &self.value.bracket)?;
@@ -159482,9 +161408,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     TupletDotSerializerState::Init__ => {
                         *self.state = TupletDotSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -159567,9 +161502,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -159657,9 +161601,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     TupletPortionSerializerState::Content__(x) => {
@@ -159859,9 +161812,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(
                             &mut bytes,
                             "font-family",
@@ -159956,9 +161918,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -160037,9 +162008,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     UnpitchedSerializerState::Content__(x) => match x.next(helper).transpose()? {
@@ -160202,9 +162182,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
                     VirtualInstrumentSerializerState::Content__(x) => {
@@ -160368,9 +162357,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     WaitSerializerState::Init__ => {
                         *self.state = WaitSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "player", &self.value.player)?;
                         helper.write_attrib_opt(&mut bytes, "time-only", &self.value.time_only)?;
                         helper.end_ns_scope();
@@ -160428,9 +162426,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     WavyLineSerializerState::Init__ => {
                         *self.state = WavyLineSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
@@ -160530,9 +162537,18 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     WedgeSerializerState::Init__ => {
                         *self.state = WedgeSerializerState::Done__;
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "number", &self.value.number)?;
                         helper.write_attrib_opt(&mut bytes, "spread", &self.value.spread)?;
@@ -160627,9 +162643,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "smufl", &self.value.smufl)?;
                         return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(bytes)));
                     }
@@ -160706,9 +162731,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -160907,9 +162941,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib_opt(&mut bytes, "default-x", &self.value.default_x)?;
                         helper.write_attrib_opt(&mut bytes, "default-y", &self.value.default_y)?;
                         helper.write_attrib_opt(
@@ -161013,9 +163056,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -161175,9 +163227,18 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -161360,9 +163421,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -161548,9 +163618,18 @@ pub mod quick_xml_serialize {
                                 false,
                             ),
                         );
+                        let namespace = if self.is_root {
+                            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(
                                 &mut bytes,
@@ -162237,16 +164316,22 @@ pub mod xs {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ::xsd_parser_types::quick_xml::ElementNamespace::Namespace(
+                                    super::super::NS_XS,
+                                )
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes =
                                 ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_XS,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_XSI),

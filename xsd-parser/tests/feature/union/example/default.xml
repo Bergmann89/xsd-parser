@@ -1,1 +1,1 @@
-<Foo xmlns="http://example.com" xmlns:tns="http://example.com" union="string" />
+<Foo xmlns="http://example.com" union="string" />

@@ -36489,11 +36489,17 @@ pub mod quick_xml_serialize {
                         *self.state = BmecatElementTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "version", &self.value.version)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -36686,11 +36692,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -36818,11 +36830,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -36889,11 +36907,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(
                             &mut bytes,
@@ -36965,11 +36989,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(
                             &mut bytes,
@@ -37041,11 +37071,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37115,11 +37151,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.language[..], Some("LANGUAGE"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37290,11 +37332,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.buyer_id[..], Some("BUYER_ID"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37389,11 +37437,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37505,11 +37559,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -37607,11 +37667,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "mode", &self.value.mode)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -37819,7 +37885,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TUpdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer_with_namespace (& self . value . supplier_pid , Some ("SUPPLIER_PID") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer_with_namespace (& self . value . product_details , Some ("PRODUCT_DETAILS") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer_with_namespace (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: End__ , } TUpdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer_with_namespace (& self . value . supplier_pid , Some ("SUPPLIER_PID") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer_with_namespace (& self . value . product_details , Some ("PRODUCT_DETAILS") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer_with_namespace (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: End__ , } TUpdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -37867,7 +37933,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TUpdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer_with_namespace (& self . value . supplier_pid , Some ("SUPPLIER_PID") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: End__ , } TUpdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer_with_namespace (& self . value . supplier_pid , Some ("SUPPLIER_PID") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } helper . write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: End__ , } TUpdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -37933,11 +37999,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "mode", &self.value.mode)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -38066,11 +38138,17 @@ pub mod quick_xml_serialize {
                         *self.state = LanguageElementTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib_opt(&mut bytes, "default", &self.value.default)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -38131,11 +38209,17 @@ pub mod quick_xml_serialize {
                         *self.state = DtMlstringSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -38199,11 +38283,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -38264,11 +38354,17 @@ pub mod quick_xml_serialize {
                         *self.state = TypePartyIdSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -38335,11 +38431,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.contact[..], Some("CONTACT"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -38502,11 +38604,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.mime[..], Some("MIME"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -38614,11 +38722,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -38900,11 +39014,17 @@ pub mod quick_xml_serialize {
                                     false,
                                 )?,
                             );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -39005,11 +39125,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -39176,11 +39302,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.datetime[..], Some("DATETIME"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -39416,11 +39548,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -39940,11 +40078,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         helper.write_attrib_opt(&mut bytes, "quantity", &self.value.quantity)?;
@@ -40068,11 +40212,17 @@ pub mod quick_xml_serialize {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                             );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -40226,11 +40376,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -40526,11 +40682,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -40622,11 +40784,17 @@ pub mod quick_xml_serialize {
                         *self.state = InternationalPidElementTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -40687,11 +40855,17 @@ pub mod quick_xml_serialize {
                         *self.state = BuyerPidElementTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -40752,11 +40926,17 @@ pub mod quick_xml_serialize {
                         *self.state = SpecialTreatmentClassElementTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -40819,11 +40999,17 @@ pub mod quick_xml_serialize {
                         *self.state = ProductStatusElementTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
@@ -40889,11 +41075,17 @@ pub mod quick_xml_serialize {
                             IterSerializer::new(&self.value.fname[..], Some("FNAME"), false)
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -41004,11 +41196,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -41086,11 +41284,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib(&mut bytes, "price_type", &self.value.price_type)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -41235,11 +41439,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -41326,11 +41536,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -41396,11 +41612,17 @@ pub mod quick_xml_serialize {
                         *self.state = UdxEdxfDiscountGroupElementTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -41494,7 +41716,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfAdditionalFactorsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_additional_price_factor , Some ("UDX.EDXF.ADDITIONAL_PRICE_FACTOR") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (IterSerializer :: new (& self . value . udx_edxf_additional_factor_info [..] , Some ("UDX.EDXF.ADDITIONAL_FACTOR_INFO") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfAdditionalFactorsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfAdditionalFactorsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_additional_price_factor , Some ("UDX.EDXF.ADDITIONAL_PRICE_FACTOR") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalPriceFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (IterSerializer :: new (& self . value . udx_edxf_additional_factor_info [..] , Some ("UDX.EDXF.ADDITIONAL_FACTOR_INFO") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: UdxEdxfAdditionalFactorInfo (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ , } UdxEdxfAdditionalFactorsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfAdditionalFactorsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfAdditionalFactorsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41538,7 +41760,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (IterSerializer :: new (& self . value . udx_edxf_country_branch_number [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_NUMBER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (IterSerializer :: new (& self . value . udx_edxf_country_branch_number [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_NUMBER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: UdxEdxfCountryBranchNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41571,7 +41793,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (IterSerializer :: new (& self . value . udx_edxf_country_branch_supplier_id [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (IterSerializer :: new (& self . value . udx_edxf_country_branch_supplier_id [..] , Some ("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: UdxEdxfCountryBranchSupplierId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41626,11 +41848,17 @@ pub mod quick_xml_serialize {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                             );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -41692,7 +41920,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (IterSerializer :: new (self . value . udx_edxf_netvolume . as_ref () , Some ("UDX.EDXF.NETVOLUME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (IterSerializer :: new (self . value . udx_edxf_netweight . as_ref () , Some ("UDX.EDXF.NETWEIGHT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (IterSerializer :: new (self . value . udx_edxf_netlength . as_ref () , Some ("UDX.EDXF.NETLENGTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (IterSerializer :: new (self . value . udx_edxf_netwidth . as_ref () , Some ("UDX.EDXF.NETWIDTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (IterSerializer :: new (self . value . udx_edxf_netdepth . as_ref () , Some ("UDX.EDXF.NETDEPTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (IterSerializer :: new (self . value . udx_edxf_netdiameter . as_ref () , Some ("UDX.EDXF.NETDIAMETER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (IterSerializer :: new (self . value . udx_edxf_region_of_origin . as_ref () , Some ("UDX.EDXF.REGION_OF_ORIGIN") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (IterSerializer :: new (self . value . udx_edxf_netvolume . as_ref () , Some ("UDX.EDXF.NETVOLUME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetvolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (IterSerializer :: new (self . value . udx_edxf_netweight . as_ref () , Some ("UDX.EDXF.NETWEIGHT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetweight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (IterSerializer :: new (self . value . udx_edxf_netlength . as_ref () , Some ("UDX.EDXF.NETLENGTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetlength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (IterSerializer :: new (self . value . udx_edxf_netwidth . as_ref () , Some ("UDX.EDXF.NETWIDTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetwidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (IterSerializer :: new (self . value . udx_edxf_netdepth . as_ref () , Some ("UDX.EDXF.NETDEPTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (IterSerializer :: new (self . value . udx_edxf_netdiameter . as_ref () , Some ("UDX.EDXF.NETDIAMETER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfNetdiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (IterSerializer :: new (self . value . udx_edxf_region_of_origin . as_ref () , Some ("UDX.EDXF.REGION_OF_ORIGIN") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: UdxEdxfRegionOfOrigin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ , } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductLogisticDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41743,11 +41971,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -41916,7 +42150,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (IterSerializer :: new (& self . value . udx_edxf_hazardous_substances [..] , Some ("UDX.EDXF.HAZARDOUS_SUBSTANCES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (IterSerializer :: new (self . value . udx_edxf_shipping_name . as_ref () , Some ("UDX.EDXF.SHIPPING_NAME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (IterSerializer :: new (self . value . udx_edxf_packing_group . as_ref () , Some ("UDX.EDXF.PACKING_GROUP") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (IterSerializer :: new (self . value . udx_edxf_transport_category . as_ref () , Some ("UDX.EDXF.TRANSPORT_CATEGORY") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (IterSerializer :: new (self . value . udx_edxf_multiplication_factor . as_ref () , Some ("UDX.EDXF.MULTIPLICATION_FACTOR") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (IterSerializer :: new (self . value . udx_edxf_limited_quantities . as_ref () , Some ("UDX.EDXF.LIMITED_QUANTITIES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (IterSerializer :: new (self . value . udx_edxf_excepted_quantities . as_ref () , Some ("UDX.EDXF.EXCEPTED_QUANTITIES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (IterSerializer :: new (self . value . udx_edxf_aggregation_state . as_ref () , Some ("UDX.EDXF.AGGREGATION_STATE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (IterSerializer :: new (& self . value . udx_edxf_special_provision_id [..] , Some ("UDX.EDXF.SPECIAL_PROVISION_ID") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (IterSerializer :: new (& self . value . udx_edxf_hazard_class [..] , Some ("UDX.EDXF.HAZARD_CLASS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (IterSerializer :: new (self . value . udx_edxf_classification_code . as_ref () , Some ("UDX.EDXF.CLASSIFICATION_CODE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (IterSerializer :: new (& self . value . udx_edxf_hazard_label [..] , Some ("UDX.EDXF.HAZARD_LABEL") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (IterSerializer :: new (self . value . udx_edxf_environmental_hazards . as_ref () , Some ("UDX.EDXF.ENVIRONMENTAL_HAZARDS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (IterSerializer :: new (self . value . udx_edxf_tunnel_code . as_ref () , Some ("UDX.EDXF.TUNNEL_CODE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (IterSerializer :: new (& self . value . udx_edxf_ghs_label_code [..] , Some ("UDX.EDXF.GHS_LABEL_CODE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (IterSerializer :: new (self . value . udx_edxf_ghs_signal_word . as_ref () , Some ("UDX.EDXF.GHS_SIGNAL_WORD") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (IterSerializer :: new (& self . value . udx_edxf_hazard_statement [..] , Some ("UDX.EDXF.HAZARD_STATEMENT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (IterSerializer :: new (& self . value . udx_edxf_precautionary_statement [..] , Some ("UDX.EDXF.PRECAUTIONARY_STATEMENT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (IterSerializer :: new (self . value . udx_edxf_li_ion_tested . as_ref () , Some ("UDX.EDXF.LI-ION_TESTED") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (IterSerializer :: new (self . value . udx_edxf_lithium_amount . as_ref () , Some ("UDX.EDXF.LITHIUM_AMOUNT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (IterSerializer :: new (self . value . udx_edxf_battery_energy . as_ref () , Some ("UDX.EDXF.BATTERY_ENERGY") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (IterSerializer :: new (self . value . udx_edxf_nos_274 . as_ref () , Some ("UDX.EDXF.NOS_274") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (IterSerializer :: new (& self . value . udx_edxf_hazard_trigger [..] , Some ("UDX.EDXF.HAZARD_TRIGGER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (IterSerializer :: new (& self . value . udx_edxf_hazardous_substances [..] , Some ("UDX.EDXF.HAZARDOUS_SUBSTANCES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (IterSerializer :: new (self . value . udx_edxf_shipping_name . as_ref () , Some ("UDX.EDXF.SHIPPING_NAME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfShippingName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (IterSerializer :: new (self . value . udx_edxf_packing_group . as_ref () , Some ("UDX.EDXF.PACKING_GROUP") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPackingGroup (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (IterSerializer :: new (self . value . udx_edxf_transport_category . as_ref () , Some ("UDX.EDXF.TRANSPORT_CATEGORY") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTransportCategory (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (IterSerializer :: new (self . value . udx_edxf_multiplication_factor . as_ref () , Some ("UDX.EDXF.MULTIPLICATION_FACTOR") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfMultiplicationFactor (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (IterSerializer :: new (self . value . udx_edxf_limited_quantities . as_ref () , Some ("UDX.EDXF.LIMITED_QUANTITIES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLimitedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (IterSerializer :: new (self . value . udx_edxf_excepted_quantities . as_ref () , Some ("UDX.EDXF.EXCEPTED_QUANTITIES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfExceptedQuantities (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (IterSerializer :: new (self . value . udx_edxf_aggregation_state . as_ref () , Some ("UDX.EDXF.AGGREGATION_STATE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfAggregationState (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (IterSerializer :: new (& self . value . udx_edxf_special_provision_id [..] , Some ("UDX.EDXF.SPECIAL_PROVISION_ID") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfSpecialProvisionId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (IterSerializer :: new (& self . value . udx_edxf_hazard_class [..] , Some ("UDX.EDXF.HAZARD_CLASS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardClass (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (IterSerializer :: new (self . value . udx_edxf_classification_code . as_ref () , Some ("UDX.EDXF.CLASSIFICATION_CODE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfClassificationCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (IterSerializer :: new (& self . value . udx_edxf_hazard_label [..] , Some ("UDX.EDXF.HAZARD_LABEL") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardLabel (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (IterSerializer :: new (self . value . udx_edxf_environmental_hazards . as_ref () , Some ("UDX.EDXF.ENVIRONMENTAL_HAZARDS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfEnvironmentalHazards (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (IterSerializer :: new (self . value . udx_edxf_tunnel_code . as_ref () , Some ("UDX.EDXF.TUNNEL_CODE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfTunnelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (IterSerializer :: new (& self . value . udx_edxf_ghs_label_code [..] , Some ("UDX.EDXF.GHS_LABEL_CODE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsLabelCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (IterSerializer :: new (self . value . udx_edxf_ghs_signal_word . as_ref () , Some ("UDX.EDXF.GHS_SIGNAL_WORD") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfGhsSignalWord (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (IterSerializer :: new (& self . value . udx_edxf_hazard_statement [..] , Some ("UDX.EDXF.HAZARD_STATEMENT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (IterSerializer :: new (& self . value . udx_edxf_precautionary_statement [..] , Some ("UDX.EDXF.PRECAUTIONARY_STATEMENT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfPrecautionaryStatement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (IterSerializer :: new (self . value . udx_edxf_li_ion_tested . as_ref () , Some ("UDX.EDXF.LI-ION_TESTED") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLiIonTested (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (IterSerializer :: new (self . value . udx_edxf_lithium_amount . as_ref () , Some ("UDX.EDXF.LITHIUM_AMOUNT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfLithiumAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (IterSerializer :: new (self . value . udx_edxf_battery_energy . as_ref () , Some ("UDX.EDXF.BATTERY_ENERGY") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfBatteryEnergy (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (IterSerializer :: new (self . value . udx_edxf_nos_274 . as_ref () , Some ("UDX.EDXF.NOS_274") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfNos274 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (IterSerializer :: new (& self . value . udx_edxf_hazard_trigger [..] , Some ("UDX.EDXF.HAZARD_TRIGGER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: UdxEdxfHazardTrigger (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ , } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfSpecialTreatmentClassDetailsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -41972,11 +42206,17 @@ pub mod quick_xml_serialize {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                             );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -42044,11 +42284,17 @@ pub mod quick_xml_serialize {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                             );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -42119,7 +42365,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductEtimDynamicElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_product_etim_release_date , Some ("UDX.EDXF.PRODUCT_ETIM_RELEASE_DATE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ , } UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductEtimDynamicElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductEtimDynamicElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_product_etim_release_date , Some ("UDX.EDXF.PRODUCT_ETIM_RELEASE_DATE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductEtimDynamicElementTypeSerializerState :: UdxEdxfProductEtimReleaseDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ , } UdxEdxfProductEtimDynamicElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductEtimDynamicElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductEtimDynamicElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -42172,7 +42418,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductFeaturesMcElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_reference_feature_mc_id , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_ID") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_reference_feature_mc_version , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_VERSION") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (IterSerializer :: new (self . value . udx_edxf_bim_status . as_ref () , Some ("UDX.EDXF.BIM_STATUS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (IterSerializer :: new (& self . value . udx_edxf_feature_mc [..] , Some ("UDX.EDXF.FEATURE_MC") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductFeaturesMcElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductFeaturesMcElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_reference_feature_mc_id , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_ID") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcId (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_reference_feature_mc_version , Some ("UDX.EDXF.REFERENCE_FEATURE_MC_VERSION") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfReferenceFeatureMcVersion (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (IterSerializer :: new (self . value . udx_edxf_bim_status . as_ref () , Some ("UDX.EDXF.BIM_STATUS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfBimStatus (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (IterSerializer :: new (& self . value . udx_edxf_feature_mc [..] , Some ("UDX.EDXF.FEATURE_MC") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: UdxEdxfFeatureMc (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ , } UdxEdxfProductFeaturesMcElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductFeaturesMcElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductFeaturesMcElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -42216,7 +42462,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfProductCharacteristicsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (IterSerializer :: new (& self . value . udx_edxf_product_characteristic [..] , Some ("UDX.EDXF.PRODUCT_CHARACTERISTIC") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ , } UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductCharacteristicsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfProductCharacteristicsElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (IterSerializer :: new (& self . value . udx_edxf_product_characteristic [..] , Some ("UDX.EDXF.PRODUCT_CHARACTERISTIC") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfProductCharacteristicsElementTypeSerializerState :: UdxEdxfProductCharacteristic (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ , } UdxEdxfProductCharacteristicsElementTypeSerializerState :: End__ => { * self . state = UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfProductCharacteristicsElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfProductCharacteristicsElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -42264,11 +42510,17 @@ pub mod quick_xml_serialize {
                                 false,
                             )?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -42341,11 +42593,17 @@ pub mod quick_xml_serialize {
                             )
                             .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -42522,7 +42780,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -42573,7 +42831,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } helper . write_attrib (& mut bytes , "type" , & self . value . type_) ? ; helper . write_attrib (& mut bytes , "country" , & self . value . country) ? ; return Ok (Some (Event :: Start (bytes))) } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Content__ (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ , } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: End__ => { * self . state = UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -42626,7 +42884,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (IterSerializer :: new (self . value . udx_edxf_packing_parts . as_ref () , Some ("UDX.EDXF.PACKING_PARTS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (IterSerializer :: new (self . value . udx_edxf_gs_1128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (IterSerializer :: new (self . value . udx_edxf_packing_parts . as_ref () , Some ("UDX.EDXF.PACKING_PARTS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (IterSerializer :: new (self . value . udx_edxf_gs_1128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -42666,7 +42924,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfHazardousSubstancesElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_un_number , Some ("UDX.EDXF.UN_NUMBER") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (IterSerializer :: new (self . value . udx_edxf_net_weight_of_hazardous_substance . as_ref () , Some ("UDX.EDXF.NET_WEIGHT_OF_HAZARDOUS_SUBSTANCE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (IterSerializer :: new (self . value . udx_edxf_volume_of_hazardous_substances . as_ref () , Some ("UDX.EDXF.VOLUME_OF_HAZARDOUS_SUBSTANCES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfHazardousSubstancesElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfHazardousSubstancesElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_un_number , Some ("UDX.EDXF.UN_NUMBER") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfUnNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (IterSerializer :: new (self . value . udx_edxf_net_weight_of_hazardous_substance . as_ref () , Some ("UDX.EDXF.NET_WEIGHT_OF_HAZARDOUS_SUBSTANCE") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfNetWeightOfHazardousSubstance (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (IterSerializer :: new (self . value . udx_edxf_volume_of_hazardous_substances . as_ref () , Some ("UDX.EDXF.VOLUME_OF_HAZARDOUS_SUBSTANCES") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: UdxEdxfVolumeOfHazardousSubstances (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ , } UdxEdxfHazardousSubstancesElementTypeSerializerState :: End__ => { * self . state = UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfHazardousSubstancesElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfHazardousSubstancesElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -42715,11 +42973,17 @@ pub mod quick_xml_serialize {
                         *self.state = UdxEdxfSurchargeElementTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -42815,11 +43079,17 @@ pub mod quick_xml_serialize {
                         *self.state = UdxEdxfFeatureMcElementTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -42928,11 +43198,17 @@ pub mod quick_xml_serialize {
                             UdxEdxfProductCharacteristicElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -43061,11 +43337,17 @@ pub mod quick_xml_serialize {
                                 )
                                 .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
                             );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -43122,7 +43404,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfMatrixValueElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_matrix_source_value , Some ("UDX.EDXF.MATRIX_SOURCE_VALUE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_matrix_result_value , Some ("UDX.EDXF.MATRIX_RESULT_VALUE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: End__ , } UdxEdxfMatrixValueElementTypeSerializerState :: End__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfMatrixValueElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfMatrixValueElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfMatrixValueElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_matrix_source_value , Some ("UDX.EDXF.MATRIX_SOURCE_VALUE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixSourceValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_matrix_result_value , Some ("UDX.EDXF.MATRIX_RESULT_VALUE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfMatrixValueElementTypeSerializerState :: UdxEdxfMatrixResultValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: End__ , } UdxEdxfMatrixValueElementTypeSerializerState :: End__ => { * self . state = UdxEdxfMatrixValueElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfMatrixValueElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfMatrixValueElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }

@@ -510,15 +510,17 @@ pub mod annotations {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -583,15 +585,17 @@ pub mod annotations {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -2080,15 +2084,17 @@ pub mod annotion {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -2165,15 +2171,17 @@ pub mod annotion {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
@@ -2296,15 +2304,17 @@ pub mod annotion {
                                         ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -2379,15 +2389,17 @@ pub mod annotion {
                                 PageAnnotAnnotAppearanceXElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -2459,15 +2471,17 @@ pub mod annotion {
                     match &mut *self.state {
                         PageAnnotAnnotParametersParameterXElementTypeSerializerState::Init__ => {
                             * self . state = PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -3090,15 +3104,17 @@ pub mod attachments {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -3163,15 +3179,17 @@ pub mod attachments {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
@@ -3810,15 +3828,17 @@ pub mod custom_tags {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -3886,15 +3906,17 @@ pub mod custom_tags {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "NameSpace", &self.value.name_space)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -8373,15 +8395,17 @@ pub mod definition {
                             *self.state = CtActionXTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Event", &self.value.event)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -8578,15 +8602,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtDestXTypeSerializerState::Init__ => {
                             *self.state = CtDestXTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
@@ -8651,15 +8677,17 @@ pub mod definition {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -8779,15 +8807,17 @@ pub mod definition {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -8867,15 +8897,17 @@ pub mod definition {
                                     )
                                 }
                             }
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -8941,15 +8973,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtActionUriXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionUriXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "URI", &self.value.uri)?;
                             helper.write_attrib_opt(&mut bytes, "Base", &self.value.base)?;
@@ -8998,15 +9032,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtActionGotoAxElementTypeSerializerState::Init__ => {
                             *self.state = CtActionGotoAxElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "AttachID", &self.value.attach_id)?;
                             helper.write_attrib(&mut bytes, "NewWindow", &self.value.new_window)?;
@@ -9054,15 +9090,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtActionSoundXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionSoundXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -9120,15 +9158,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtActionMovieXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionMovieXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -9190,15 +9230,17 @@ pub mod definition {
                             *self.state = CtRegionAreaXElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Start", &self.value.start)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -9424,15 +9466,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtActionGotoBookmarkXElementTypeSerializerState::Init__ => {
                             *self.state = CtActionGotoBookmarkXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.end_ns_scope();
@@ -9481,15 +9525,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtRegionAreaLineXElementTypeSerializerState::Init__ => {
                             *self.state = CtRegionAreaLineXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.end_ns_scope();
@@ -9537,15 +9583,17 @@ pub mod definition {
                         CtRegionAreaOuadraticBezierXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 CtRegionAreaOuadraticBezierXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
                             helper.write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
@@ -9599,15 +9647,17 @@ pub mod definition {
                         CtRegionAreaCubicBezierXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 CtRegionAreaCubicBezierXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
@@ -9660,15 +9710,17 @@ pub mod definition {
                     match &mut *self.state {
                         CtRegionAreaArcXElementTypeSerializerState::Init__ => {
                             *self.state = CtRegionAreaArcXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -15263,15 +15315,17 @@ pub mod document {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -15348,15 +15402,17 @@ pub mod document {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Title", &self.value.title)?;
                             helper.write_attrib_opt(&mut bytes, "Count", &self.value.count)?;
@@ -15458,15 +15514,17 @@ pub mod document {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -15651,15 +15709,17 @@ pub mod document {
                             *self.state = CtVPreferencesXTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -15963,15 +16023,17 @@ pub mod document {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -16195,15 +16257,17 @@ pub mod document {
                     match &mut *self.state {
                         CtPermissionPrintXElementTypeSerializerState::Init__ => {
                             *self.state = CtPermissionPrintXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Printable", &self.value.printable)?;
                             helper.write_attrib(&mut bytes, "Copies", &self.value.copies)?;
@@ -16254,15 +16318,17 @@ pub mod document {
                         CtPermissionValidPeriodXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 CtPermissionValidPeriodXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -16340,15 +16406,17 @@ pub mod document {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -16511,15 +16579,17 @@ pub mod document {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -16589,15 +16659,17 @@ pub mod document {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -16666,15 +16738,17 @@ pub mod document {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -16736,15 +16810,17 @@ pub mod document {
                         DocumentCommonDataTemplatePageXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 DocumentCommonDataTemplatePageXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -16799,15 +16875,17 @@ pub mod document {
                     match &mut *self.state {
                         DocumentPagesPageXElementTypeSerializerState::Init__ => {
                             *self.state = DocumentPagesPageXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
@@ -17976,15 +18054,17 @@ pub mod extensions {
                             *self.state = CtExtensionXTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "AppName", &self.value.app_name)?;
                             helper.write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
@@ -18157,15 +18237,17 @@ pub mod extensions {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -18225,15 +18307,17 @@ pub mod extensions {
                             *self.state = CtExtensionPropertyXElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
@@ -21107,15 +21191,17 @@ pub mod ofd {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -21392,15 +21478,17 @@ pub mod ofd {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Version", &self.value.version)?;
                             helper.write_attrib(&mut bytes, "DocType", &self.value.doc_type)?;
@@ -21469,15 +21557,17 @@ pub mod ofd {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -21556,15 +21646,17 @@ pub mod ofd {
                                         ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -21643,15 +21735,17 @@ pub mod ofd {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -21773,15 +21867,17 @@ pub mod ofd {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -21843,15 +21939,17 @@ pub mod ofd {
                         OfdDocBodyVersionsVersionXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 OfdDocBodyVersionsVersionXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Index", &self.value.index)?;
@@ -36720,15 +36818,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
@@ -36804,15 +36904,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -36892,15 +36994,17 @@ pub mod page {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -36964,15 +37068,17 @@ pub mod page {
                             *self.state = CtColorXTypeSerializerState::Content__(
                                 IterSerializer::new(self.value.content.as_ref(), None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(&mut bytes, "Value", &self.value.value)?;
                             helper.write_attrib_opt(&mut bytes, "Index", &self.value.index)?;
@@ -37183,15 +37289,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -37311,15 +37419,17 @@ pub mod page {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -37637,15 +37747,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -37777,15 +37889,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -37932,15 +38046,17 @@ pub mod page {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -38029,15 +38145,17 @@ pub mod page {
                             *self.state = CtLayerXTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
@@ -38109,15 +38227,17 @@ pub mod page {
                             *self.state = CtPageBlockXTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -38202,15 +38322,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -38372,15 +38494,17 @@ pub mod page {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
@@ -38468,15 +38592,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
@@ -38559,15 +38685,17 @@ pub mod page {
                             *self.state = CtTextXTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -38707,15 +38835,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -38848,15 +38978,17 @@ pub mod page {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -38926,15 +39058,17 @@ pub mod page {
                             *self.state = CtClipAreaXElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -39089,15 +39223,17 @@ pub mod page {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -39165,15 +39301,17 @@ pub mod page {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -39243,15 +39381,17 @@ pub mod page {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib(&mut bytes, "y", &self.value.y)?;
@@ -39326,15 +39466,17 @@ pub mod page {
                                 CtPageBlockTextObjectXElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -39472,15 +39614,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -39674,15 +39818,17 @@ pub mod page {
                                         ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -39850,15 +39996,17 @@ pub mod page {
                                         ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -39987,15 +40135,17 @@ pub mod page {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
                             helper.write_attrib(
@@ -40082,15 +40232,17 @@ pub mod page {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
@@ -40164,15 +40316,17 @@ pub mod page {
                                 CtPageBlockPageBlockXElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -40390,15 +40544,17 @@ pub mod page {
                                 CtPatternCellContentXElementTypeSerializerState::Content__(
                                     IterSerializer::new(&self.value.content[..], None, false),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -40468,15 +40624,17 @@ pub mod page {
                             *self.state = CtTextTextCodeXElementTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
@@ -40678,15 +40836,17 @@ pub mod page {
                     match &mut *self.state {
                         PageTemplateXElementTypeSerializerState::Init__ => {
                             *self.state = PageTemplateXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -40751,15 +40911,17 @@ pub mod page {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -40825,15 +40987,17 @@ pub mod page {
                             *self.state = PageContentLayerXElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
@@ -46588,15 +46752,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
@@ -46683,15 +46849,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -46798,15 +46966,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
@@ -46886,15 +47056,17 @@ pub mod res {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
@@ -46965,15 +47137,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
@@ -47073,15 +47247,17 @@ pub mod res {
                             *self.state = ResXElementTypeSerializerState::Content__(
                                 IterSerializer::new(&self.value.content[..], None, false),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -47271,15 +47447,17 @@ pub mod res {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -47357,15 +47535,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -47439,15 +47619,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -47517,15 +47699,17 @@ pub mod res {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -47598,15 +47782,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -47668,7 +47854,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -47725,15 +47911,17 @@ pub mod res {
                                         ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
@@ -47830,15 +48018,17 @@ pub mod res {
                                         ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -47952,15 +48142,17 @@ pub mod res {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
@@ -48043,15 +48235,17 @@ pub mod res {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
@@ -48122,7 +48316,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer_with_namespace (& self . value . content , Some ("Content") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer_with_namespace (& self . value . content , Some ("Content") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -50162,15 +50356,17 @@ pub mod signature {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -50265,7 +50461,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer_with_namespace (& self . value . provider , Some ("Provider") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer_with_namespace (& self . value . references , Some ("References") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer_with_namespace (& self . value . provider , Some ("Provider") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer_with_namespace (& self . value . references , Some ("References") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -50305,15 +50501,17 @@ pub mod signature {
                         SianatureSiqnedInfoProviderXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 SianatureSiqnedInfoProviderXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -50389,15 +50587,17 @@ pub mod signature {
                                         ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(
                                 &mut bytes,
@@ -50466,15 +50666,17 @@ pub mod signature {
                         SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "PageRef", &self.value.page_ref)?;
@@ -50539,15 +50741,17 @@ pub mod signature {
                                         false,
                                     )?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -50611,7 +50815,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer_with_namespace (& self . value . check_value , Some ("CheckValue") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer_with_namespace (& self . value . check_value , Some ("CheckValue") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -51166,15 +51370,17 @@ pub mod signatures {
                                     ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -51247,15 +51453,17 @@ pub mod signatures {
                     match &mut *self.state {
                         SiqnaturesSignatureXElementTypeSerializerState::Init__ => {
                             *self.state = SiqnaturesSignatureXElementTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
@@ -52091,15 +52299,17 @@ pub mod version {
                                     false,
                                 )?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
@@ -52191,15 +52401,17 @@ pub mod version {
                                         super::super::NS_UNNAMED_5,
                                     )),
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -52265,15 +52477,17 @@ pub mod version {
                                 DocVersionFileListFileXElementTypeSerializerState::Content__(
                                     WithSerializer::serializer(&self.value.content, None, false)?,
                                 );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_UNNAMED_5)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_UNNAMED_5,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -52613,15 +52827,19 @@ pub mod xs {
                             *self.state = AnySimpleTypeXTypeSerializerState::Content__(
                                 WithSerializer::serializer(&self.value.content, None, false)?,
                             );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_XS)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns_for_tag(
-                                    &mut bytes,
-                                    self.name,
-                                    &super::super::NS_XS,
-                                );
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
                                 helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_XSI),
