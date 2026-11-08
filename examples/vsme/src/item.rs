@@ -19,8 +19,8 @@ use xsd_parser_types::{
     misc::Namespace,
     quick_xml::{
         DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-        DeserializerOutput, DeserializerResult, Error, Event, ResolveResult, WithDeserializer,
-        WithSerializer,
+        DeserializerOutput, DeserializerResult, ElementNamespace, Error, Event, ResolveResult,
+        WithDeserializer, WithSerializer,
     },
 };
 
@@ -140,6 +140,24 @@ where
         let _name = name;
 
         self.inner.serializer(Some(self.tag().tag), is_root)
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        // Like the name, the namespace is determined by the wrapped value.
+        let _name = name;
+        let _namespace = namespace;
+        let tag = self.tag();
+
+        self.inner.serializer_with_namespace(
+            Some(tag.tag),
+            ElementNamespace::Namespace(tag.namespace.clone()),
+            is_root,
+        )
     }
 }
 

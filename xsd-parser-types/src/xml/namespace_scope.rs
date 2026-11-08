@@ -13,7 +13,8 @@ use crate::xml::NamespacesShared;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeBytes, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerOutput,
-    DeserializerResult, Error, SerializeBytes, SerializeHelper, WithDeserializer, WithSerializer,
+    DeserializerResult, ElementNamespace, Error, SerializeBytes, SerializeHelper, WithDeserializer,
+    WithSerializer,
 };
 
 /// A wrapper type to store the namespaces in scope for a given XML element or attribute.
@@ -143,6 +144,16 @@ where
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, crate::quick_xml::Error> {
         self.inner.serializer(name, is_root)
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, crate::quick_xml::Error> {
+        self.inner
+            .serializer_with_namespace(name, namespace, is_root)
     }
 }
 

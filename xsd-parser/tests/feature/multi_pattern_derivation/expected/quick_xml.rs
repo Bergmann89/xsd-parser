@@ -4,8 +4,9 @@ use std::{borrow::Cow, sync::LazyLock};
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper, ValidateError,
-        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, SerializeBytes,
+        SerializeHelper, ValidateError, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -163,10 +164,19 @@ impl WithSerializer for ExtendedType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ExtendedTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ExtendedTypeSerializerState::Init__),
             name: name.unwrap_or("tns:ExtendedType"),
+            namespace,
             is_root,
         })
     }
@@ -241,10 +251,19 @@ impl WithSerializer for RestrictedType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::RestrictedTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::RestrictedTypeSerializerState::Init__),
             name: name.unwrap_or("tns:RestrictedType"),
+            namespace,
             is_root,
         })
     }
@@ -570,13 +589,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct ExtendedTypeSerializer<'ser> {
         pub(super) value: &'ser super::ExtendedType,
         pub(super) state: Box<ExtendedTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -600,6 +621,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -644,6 +666,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::RestrictedType,
         pub(super) state: Box<RestrictedTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -667,6 +690,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(

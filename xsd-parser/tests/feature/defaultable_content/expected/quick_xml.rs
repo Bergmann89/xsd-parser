@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -22,10 +22,19 @@ impl WithSerializer for SimpleType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::SimpleTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::SimpleTypeSerializerState::Init__),
             name: name.unwrap_or("SimpleType"),
+            namespace,
             is_root,
         })
     }
@@ -53,10 +62,19 @@ impl WithSerializer for SequenceType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::SequenceTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::SequenceTypeSerializerState::Init__),
             name: name.unwrap_or("SequenceType"),
+            namespace,
             is_root,
         })
     }
@@ -68,7 +86,16 @@ impl WithSerializer for SequenceTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::SequenceTypeContentSerializer {
             value: self,
@@ -101,10 +128,19 @@ impl WithSerializer for NestedSeqType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::NestedSeqTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::NestedSeqTypeSerializerState::Init__),
             name: name.unwrap_or("NestedSeqType"),
+            namespace,
             is_root,
         })
     }
@@ -116,7 +152,16 @@ impl WithSerializer for NestedSeqTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::NestedSeqTypeContentSerializer {
             value: self,
@@ -145,7 +190,16 @@ impl WithSerializer for NestedSeqInnerChoiceType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::NestedSeqInnerChoiceTypeSerializer {
             value: self,
@@ -160,7 +214,16 @@ impl WithSerializer for NestedSeqInnerChoiceTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(
             quick_xml_serialize::NestedSeqInnerChoiceTypeContentSerializer {
@@ -195,7 +258,16 @@ impl WithSerializer for NestedSeqFinalSeqType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::NestedSeqFinalSeqTypeSerializer {
             value: self,
@@ -210,7 +282,16 @@ impl WithSerializer for NestedSeqFinalSeqTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(
             quick_xml_serialize::NestedSeqFinalSeqTypeContentSerializer {
@@ -2163,14 +2244,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct SimpleTypeSerializer<'ser> {
         pub(super) value: &'ser super::SimpleType,
         pub(super) state: Box<SimpleTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2193,6 +2275,8 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
                         helper.write_attrib_opt(&mut bytes, "attrib-b", &self.value.attrib_b)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -2203,6 +2287,7 @@ pub mod quick_xml_serialize {
                     },
                     SimpleTypeSerializerState::End__ => {
                         *self.state = SimpleTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SimpleTypeSerializerState::Done__ => return Ok(None),
@@ -2228,6 +2313,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::SequenceType,
         pub(super) state: Box<SequenceTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2250,6 +2336,8 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
                         helper.write_attrib_opt(&mut bytes, "attrib-b", &self.value.attrib_b)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -2262,6 +2350,7 @@ pub mod quick_xml_serialize {
                     }
                     SequenceTypeSerializerState::End__ => {
                         *self.state = SequenceTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     SequenceTypeSerializerState::Done__ => return Ok(None),
@@ -2304,17 +2393,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     SequenceTypeContentSerializerState::Init__ => {
-                        *self.state = SequenceTypeContentSerializerState::A(IterSerializer::new(
-                            self.value.a.as_ref(),
-                            Some("A"),
-                            false,
-                        ));
+                        *self.state = SequenceTypeContentSerializerState::A(
+                            IterSerializer::new(self.value.a.as_ref(), Some("A"), false)
+                                .with_namespace(ElementNamespace::None),
+                        );
                     }
                     SequenceTypeContentSerializerState::A(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = SequenceTypeContentSerializerState::B(
-                                IterSerializer::new(self.value.b.as_ref(), Some("B"), false),
+                                IterSerializer::new(self.value.b.as_ref(), Some("B"), false)
+                                    .with_namespace(ElementNamespace::None),
                             )
                         }
                     },
@@ -2322,7 +2411,8 @@ pub mod quick_xml_serialize {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = SequenceTypeContentSerializerState::C(
-                                IterSerializer::new(self.value.c.as_ref(), Some("C"), false),
+                                IterSerializer::new(self.value.c.as_ref(), Some("C"), false)
+                                    .with_namespace(ElementNamespace::None),
                             )
                         }
                     },
@@ -2353,6 +2443,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::NestedSeqType,
         pub(super) state: Box<NestedSeqTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2375,6 +2466,8 @@ pub mod quick_xml_serialize {
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         helper.write_attrib_opt(&mut bytes, "attrib-a", &self.value.attrib_a)?;
                         helper.write_attrib_opt(&mut bytes, "attrib-b", &self.value.attrib_b)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -2387,6 +2480,7 @@ pub mod quick_xml_serialize {
                     }
                     NestedSeqTypeSerializerState::End__ => {
                         *self.state = NestedSeqTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     NestedSeqTypeSerializerState::Done__ => return Ok(None),
@@ -2434,19 +2528,22 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     NestedSeqTypeContentSerializerState::Init__ => {
-                        *self.state =
-                            NestedSeqTypeContentSerializerState::InnerChoice(IterSerializer::new(
+                        *self.state = NestedSeqTypeContentSerializerState::InnerChoice(
+                            IterSerializer::new(
                                 self.value.inner_choice.as_ref(),
                                 Some("InnerChoice"),
                                 false,
-                            ));
+                            )
+                            .with_namespace(ElementNamespace::None),
+                        );
                     }
                     NestedSeqTypeContentSerializerState::InnerChoice(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = NestedSeqTypeContentSerializerState::D(
-                                    IterSerializer::new(self.value.d.as_ref(), Some("D"), false),
+                                    IterSerializer::new(self.value.d.as_ref(), Some("D"), false)
+                                        .with_namespace(ElementNamespace::None),
                                 )
                             }
                         }
@@ -2545,7 +2642,12 @@ pub mod quick_xml_serialize {
                     NestedSeqInnerChoiceTypeContentSerializerState::Init__ => match self.value {
                         super::NestedSeqInnerChoiceTypeContent::FinalSeq(x) => {
                             *self.state = NestedSeqInnerChoiceTypeContentSerializerState::FinalSeq(
-                                WithSerializer::serializer(x, Some("FinalSeq"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("FinalSeq"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
                             )
                         }
                     },
@@ -2646,7 +2748,8 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     NestedSeqFinalSeqTypeContentSerializerState::Init__ => {
                         *self.state = NestedSeqFinalSeqTypeContentSerializerState::A(
-                            IterSerializer::new(self.value.a.as_ref(), Some("A"), false),
+                            IterSerializer::new(self.value.a.as_ref(), Some("A"), false)
+                                .with_namespace(ElementNamespace::None),
                         );
                     }
                     NestedSeqFinalSeqTypeContentSerializerState::A(x) => {
@@ -2654,7 +2757,8 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = NestedSeqFinalSeqTypeContentSerializerState::B(
-                                    IterSerializer::new(self.value.b.as_ref(), Some("B"), false),
+                                    IterSerializer::new(self.value.b.as_ref(), Some("B"), false)
+                                        .with_namespace(ElementNamespace::None),
                                 )
                             }
                         }
@@ -2664,7 +2768,8 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = NestedSeqFinalSeqTypeContentSerializerState::C(
-                                    IterSerializer::new(self.value.c.as_ref(), Some("C"), false),
+                                    IterSerializer::new(self.value.c.as_ref(), Some("C"), false)
+                                        .with_namespace(ElementNamespace::None),
                                 )
                             }
                         }

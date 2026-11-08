@@ -10,7 +10,7 @@ pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub const PREFIX_OTHER: NamespacePrefix = NamespacePrefix::new_const(b"other");
 pub mod other {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     #[derive(Debug)]
     pub struct BarType {
         pub b: i32,
@@ -23,10 +23,24 @@ pub mod other {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::BarTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::BarTypeSerializerState::Init__),
                 name: name.unwrap_or("other:BarType"),
+                namespace,
                 is_root,
             })
         }
@@ -297,13 +311,15 @@ pub mod other {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct BarTypeSerializer<'ser> {
             pub(super) value: &'ser super::BarType,
             pub(super) state: Box<BarTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -323,13 +339,17 @@ pub mod other {
                 loop {
                     match &mut *self.state {
                         BarTypeSerializerState::Init__ => {
-                            *self.state = BarTypeSerializerState::B(WithSerializer::serializer(
-                                &self.value.b,
-                                Some("other:b"),
-                                false,
-                            )?);
+                            *self.state = BarTypeSerializerState::B(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.b,
+                                    Some("other:b"),
+                                    ElementNamespace::Namespace(super::super::NS_OTHER),
+                                    false,
+                                )?,
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -347,11 +367,14 @@ pub mod other {
                         BarTypeSerializerState::B(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = BarTypeSerializerState::C(WithSerializer::serializer(
-                                    &self.value.c,
-                                    Some("other:c"),
-                                    false,
-                                )?)
+                                *self.state = BarTypeSerializerState::C(
+                                    WithSerializer::serializer_with_namespace(
+                                        &self.value.c,
+                                        Some("other:c"),
+                                        ElementNamespace::Namespace(super::super::NS_OTHER),
+                                        false,
+                                    )?,
+                                )
                             }
                         },
                         BarTypeSerializerState::C(x) => match x.next(helper).transpose()? {
@@ -384,7 +407,7 @@ pub mod other {
     }
 }
 pub mod tns {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     pub type Foo = FooType;
     #[derive(Debug)]
     pub struct FooType {
@@ -398,10 +421,24 @@ pub mod tns {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::FooTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
                 name: name.unwrap_or("tns:FooType"),
+                namespace,
                 is_root,
             })
         }
@@ -672,13 +709,15 @@ pub mod tns {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct FooTypeSerializer<'ser> {
             pub(super) value: &'ser super::FooType,
             pub(super) state: Box<FooTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -698,13 +737,17 @@ pub mod tns {
                 loop {
                     match &mut *self.state {
                         FooTypeSerializerState::Init__ => {
-                            *self.state = FooTypeSerializerState::A(WithSerializer::serializer(
-                                &self.value.a,
-                                Some("tns:a"),
-                                false,
-                            )?);
+                            *self.state = FooTypeSerializerState::A(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.a,
+                                    Some("tns:a"),
+                                    ElementNamespace::Namespace(super::super::NS_TNS),
+                                    false,
+                                )?,
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -727,11 +770,14 @@ pub mod tns {
                         FooTypeSerializerState::A(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = FooTypeSerializerState::B(WithSerializer::serializer(
-                                    &self.value.b,
-                                    Some("tns:b"),
-                                    false,
-                                )?)
+                                *self.state = FooTypeSerializerState::B(
+                                    WithSerializer::serializer_with_namespace(
+                                        &self.value.b,
+                                        Some("tns:b"),
+                                        ElementNamespace::Namespace(super::super::NS_TNS),
+                                        false,
+                                    )?,
+                                )
                             }
                         },
                         FooTypeSerializerState::B(x) => match x.next(helper).transpose()? {

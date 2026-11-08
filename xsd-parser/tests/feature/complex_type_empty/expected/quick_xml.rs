@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -18,10 +18,19 @@ impl WithSerializer for SuccessType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::SuccessTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::SuccessTypeSerializerState::Init__),
             name: name.unwrap_or("SuccessType"),
+            namespace,
             is_root,
         })
     }
@@ -99,12 +108,15 @@ pub mod quick_xml_deserialize {
     }
 }
 pub mod quick_xml_serialize {
-    use xsd_parser_types::quick_xml::{BytesStart, Error, Event, SerializeHelper, Serializer};
+    use xsd_parser_types::quick_xml::{
+        BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+    };
     #[derive(Debug)]
     pub struct SuccessTypeSerializer<'ser> {
         pub(super) value: &'ser super::SuccessType,
         pub(super) state: Box<SuccessTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -124,7 +136,10 @@ pub mod quick_xml_serialize {
                         *self.state = SuccessTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        }
                         helper.end_ns_scope();
                         return Ok(Some(Event::Empty(bytes)));
                     }

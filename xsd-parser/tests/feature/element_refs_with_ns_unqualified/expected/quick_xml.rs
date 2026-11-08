@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -28,10 +28,19 @@ impl WithSerializer for OuterType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::OuterTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::OuterTypeSerializerState::Init__),
             name: name.unwrap_or("Outer"),
+            namespace,
             is_root,
         })
     }
@@ -40,7 +49,7 @@ impl WithDeserializer for OuterType {
     type Deserializer = quick_xml_deserialize::OuterTypeDeserializer;
 }
 pub mod bar {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     #[derive(Debug)]
     pub struct InnerType {
         pub a: String,
@@ -52,10 +61,24 @@ pub mod bar {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::InnerTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::InnerTypeSerializerState::Init__),
                 name: name.unwrap_or("bar:Inner"),
+                namespace,
                 is_root,
             })
         }
@@ -248,13 +271,15 @@ pub mod bar {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct InnerTypeSerializer<'ser> {
             pub(super) value: &'ser super::InnerType,
             pub(super) state: Box<InnerTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -273,13 +298,17 @@ pub mod bar {
                 loop {
                     match &mut *self.state {
                         InnerTypeSerializerState::Init__ => {
-                            *self.state = InnerTypeSerializerState::A(WithSerializer::serializer(
-                                &self.value.a,
-                                Some("bar:A"),
-                                false,
-                            )?);
+                            *self.state = InnerTypeSerializerState::A(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.a,
+                                    Some("bar:A"),
+                                    ElementNamespace::Namespace(super::super::NS_BAR),
+                                    false,
+                                )?,
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -744,13 +773,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct OuterTypeSerializer<'ser> {
         pub(super) value: &'ser super::OuterType,
         pub(super) state: Box<OuterTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -772,15 +803,19 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     OuterTypeSerializerState::Init__ => {
-                        *self.state = OuterTypeSerializerState::Inner(WithSerializer::serializer(
-                            &self.value.inner,
-                            Some("bar:Inner"),
-                            false,
-                        )?);
+                        *self.state = OuterTypeSerializerState::Inner(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.inner,
+                                Some("bar:Inner"),
+                                ElementNamespace::Namespace(super::NS_BAR),
+                                false,
+                            )?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
                             helper.write_xmlns(
                                 &mut bytes,
                                 Some(&super::PREFIX_BAR),
@@ -797,34 +832,40 @@ pub mod quick_xml_serialize {
                     OuterTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                OuterTypeSerializerState::Note(WithSerializer::serializer(
+                            *self.state = OuterTypeSerializerState::Note(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.note,
                                     Some("baz:Note"),
+                                    ElementNamespace::Namespace(super::NS_BAZ),
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     OuterTypeSerializerState::Note(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                OuterTypeSerializerState::Plain(WithSerializer::serializer(
+                            *self.state = OuterTypeSerializerState::Plain(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.plain,
                                     Some("Plain"),
+                                    ElementNamespace::None,
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     OuterTypeSerializerState::Plain(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                OuterTypeSerializerState::Typed(WithSerializer::serializer(
+                            *self.state = OuterTypeSerializerState::Typed(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.typed,
                                     Some("Typed"),
+                                    ElementNamespace::None,
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     OuterTypeSerializerState::Typed(x) => match x.next(helper).transpose()? {

@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -22,10 +22,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
+            namespace,
             is_root,
         })
     }
@@ -46,10 +55,19 @@ impl WithSerializer for FooTypeMessagesType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeMessagesTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeMessagesTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooTypeMessages"),
+            namespace,
             is_root,
         })
     }
@@ -583,13 +601,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -608,13 +628,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::Messages(WithSerializer::serializer(
-                            &self.value.messages,
-                            Some("tns:Messages"),
-                            false,
-                        )?);
+                        *self.state = FooTypeSerializerState::Messages(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.messages,
+                                Some("tns:Messages"),
+                                ElementNamespace::Namespace(super::NS_TNS),
+                                false,
+                            )?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -657,6 +681,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::FooTypeMessagesType,
         pub(super) state: Box<FooTypeMessagesTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -678,10 +703,16 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     FooTypeMessagesTypeSerializerState::Init__ => {
                         *self.state = FooTypeMessagesTypeSerializerState::Aa(
-                            WithSerializer::serializer(&self.value.aa, Some("tns:aa"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.aa,
+                                Some("tns:aa"),
+                                ElementNamespace::Namespace(super::NS_TNS),
+                                false,
+                            )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -697,9 +728,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = FooTypeMessagesTypeSerializerState::Bb(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.bb,
                                         Some("tns:bb"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
                                     )?,
                                 )
@@ -711,9 +743,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = FooTypeMessagesTypeSerializerState::A(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.a,
                                         Some("tns:a"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
                                     )?,
                                 )

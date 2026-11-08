@@ -10,9 +10,9 @@ pub const PREFIX_ER: NamespacePrefix = NamespacePrefix::new_const(b"er");
 pub mod er {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CatalogType {
@@ -42,10 +42,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CatalogTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CatalogTypeSerializerState::Init__),
                 name: name.unwrap_or("er:catalog"),
+                namespace,
                 is_root,
             })
         }
@@ -57,7 +71,21 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::CatalogTypeContentSerializer {
                 value: self,
@@ -85,10 +113,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::DelegatePublicTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::DelegatePublicTypeSerializerState::Init__),
                 name: name.unwrap_or("er:delegatePublic"),
+                namespace,
                 is_root,
             })
         }
@@ -110,10 +152,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::DelegateSystemTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::DelegateSystemTypeSerializerState::Init__),
                 name: name.unwrap_or("er:delegateSystem"),
+                namespace,
                 is_root,
             })
         }
@@ -135,10 +191,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::DelegateUriTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::DelegateUriTypeSerializerState::Init__),
                 name: name.unwrap_or("er:delegateURI"),
+                namespace,
                 is_root,
             })
         }
@@ -174,10 +244,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::GroupTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::GroupTypeSerializerState::Init__),
                 name: name.unwrap_or("er:group"),
+                namespace,
                 is_root,
             })
         }
@@ -189,7 +273,21 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::GroupTypeContentSerializer {
                 value: self,
@@ -216,10 +314,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::NextCatalogTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::NextCatalogTypeSerializerState::Init__),
                 name: name.unwrap_or("er:nextCatalog"),
+                namespace,
                 is_root,
             })
         }
@@ -243,10 +355,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PublicTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::PublicTypeSerializerState::Init__),
                 name: name.unwrap_or("er:public"),
+                namespace,
                 is_root,
             })
         }
@@ -269,10 +395,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::RewriteSystemTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::RewriteSystemTypeSerializerState::Init__),
                 name: name.unwrap_or("er:rewriteSystem"),
+                namespace,
                 is_root,
             })
         }
@@ -294,10 +434,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::RewriteUriTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::RewriteUriTypeSerializerState::Init__),
                 name: name.unwrap_or("er:rewriteURI"),
+                namespace,
                 is_root,
             })
         }
@@ -319,10 +473,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SystemTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SystemTypeSerializerState::Init__),
                 name: name.unwrap_or("er:system"),
+                namespace,
                 is_root,
             })
         }
@@ -373,10 +541,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SystemSuffixTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SystemSuffixTypeSerializerState::Init__),
                 name: name.unwrap_or("er:systemSuffix"),
+                namespace,
                 is_root,
             })
         }
@@ -398,10 +580,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::UriTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::UriTypeSerializerState::Init__),
                 name: name.unwrap_or("er:uri"),
+                namespace,
                 is_root,
             })
         }
@@ -423,10 +619,24 @@ pub mod er {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::UriSuffixTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::UriSuffixTypeSerializerState::Init__),
                 name: name.unwrap_or("er:uriSuffix"),
+                namespace,
                 is_root,
             })
         }
@@ -4240,14 +4450,15 @@ pub mod er {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct CatalogTypeSerializer<'ser> {
             pub(super) value: &'ser super::CatalogType,
             pub(super) state: Box<CatalogTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -4273,6 +4484,7 @@ pub mod er {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -4351,70 +4563,122 @@ pub mod er {
                         CatalogTypeContentSerializerState::Init__ => match self.value {
                             super::CatalogTypeContent::Public(x) => {
                                 *self.state = CatalogTypeContentSerializerState::Public(
-                                    WithSerializer::serializer(x, Some("er:public"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:public"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::System(x) => {
                                 *self.state = CatalogTypeContentSerializerState::System(
-                                    WithSerializer::serializer(x, Some("er:system"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:system"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::Uri(x) => {
                                 *self.state = CatalogTypeContentSerializerState::Uri(
-                                    WithSerializer::serializer(x, Some("er:uri"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:uri"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::RewriteSystem(x) => {
                                 *self.state = CatalogTypeContentSerializerState::RewriteSystem(
-                                    WithSerializer::serializer(x, Some("er:rewriteSystem"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:rewriteSystem"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::RewriteUri(x) => {
                                 *self.state = CatalogTypeContentSerializerState::RewriteUri(
-                                    WithSerializer::serializer(x, Some("er:rewriteURI"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:rewriteURI"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::UriSuffix(x) => {
                                 *self.state = CatalogTypeContentSerializerState::UriSuffix(
-                                    WithSerializer::serializer(x, Some("er:uriSuffix"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:uriSuffix"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::SystemSuffix(x) => {
                                 *self.state = CatalogTypeContentSerializerState::SystemSuffix(
-                                    WithSerializer::serializer(x, Some("er:systemSuffix"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:systemSuffix"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::DelegatePublic(x) => {
                                 *self.state = CatalogTypeContentSerializerState::DelegatePublic(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("er:delegatePublic"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
                                         false,
                                     )?,
                                 )
                             }
                             super::CatalogTypeContent::DelegateSystem(x) => {
                                 *self.state = CatalogTypeContentSerializerState::DelegateSystem(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("er:delegateSystem"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
                                         false,
                                     )?,
                                 )
                             }
                             super::CatalogTypeContent::DelegateUri(x) => {
                                 *self.state = CatalogTypeContentSerializerState::DelegateUri(
-                                    WithSerializer::serializer(x, Some("er:delegateURI"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:delegateURI"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::NextCatalog(x) => {
                                 *self.state = CatalogTypeContentSerializerState::NextCatalog(
-                                    WithSerializer::serializer(x, Some("er:nextCatalog"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:nextCatalog"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CatalogTypeContent::Group(x) => {
                                 *self.state = CatalogTypeContentSerializerState::Group(
-                                    WithSerializer::serializer(x, Some("er:group"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:group"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -4513,6 +4777,7 @@ pub mod er {
             pub(super) value: &'ser super::DelegatePublicType,
             pub(super) state: Box<DelegatePublicTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -4532,6 +4797,7 @@ pub mod er {
                             *self.state = DelegatePublicTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -4577,6 +4843,7 @@ pub mod er {
             pub(super) value: &'ser super::DelegateSystemType,
             pub(super) state: Box<DelegateSystemTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -4596,6 +4863,7 @@ pub mod er {
                             *self.state = DelegateSystemTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -4641,6 +4909,7 @@ pub mod er {
             pub(super) value: &'ser super::DelegateUriType,
             pub(super) state: Box<DelegateUriTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -4660,6 +4929,7 @@ pub mod er {
                             *self.state = DelegateUriTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -4705,6 +4975,7 @@ pub mod er {
             pub(super) value: &'ser super::GroupType,
             pub(super) state: Box<GroupTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -4732,6 +5003,7 @@ pub mod er {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -4809,65 +5081,112 @@ pub mod er {
                         GroupTypeContentSerializerState::Init__ => match self.value {
                             super::GroupTypeContent::Public(x) => {
                                 *self.state = GroupTypeContentSerializerState::Public(
-                                    WithSerializer::serializer(x, Some("er:public"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:public"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::System(x) => {
                                 *self.state = GroupTypeContentSerializerState::System(
-                                    WithSerializer::serializer(x, Some("er:system"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:system"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Uri(x) => {
                                 *self.state = GroupTypeContentSerializerState::Uri(
-                                    WithSerializer::serializer(x, Some("er:uri"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:uri"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::RewriteSystem(x) => {
                                 *self.state = GroupTypeContentSerializerState::RewriteSystem(
-                                    WithSerializer::serializer(x, Some("er:rewriteSystem"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:rewriteSystem"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::RewriteUri(x) => {
                                 *self.state = GroupTypeContentSerializerState::RewriteUri(
-                                    WithSerializer::serializer(x, Some("er:rewriteURI"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:rewriteURI"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::UriSuffix(x) => {
                                 *self.state = GroupTypeContentSerializerState::UriSuffix(
-                                    WithSerializer::serializer(x, Some("er:uriSuffix"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:uriSuffix"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::SystemSuffix(x) => {
                                 *self.state = GroupTypeContentSerializerState::SystemSuffix(
-                                    WithSerializer::serializer(x, Some("er:systemSuffix"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:systemSuffix"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::DelegatePublic(x) => {
                                 *self.state = GroupTypeContentSerializerState::DelegatePublic(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("er:delegatePublic"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
                                         false,
                                     )?,
                                 )
                             }
                             super::GroupTypeContent::DelegateSystem(x) => {
                                 *self.state = GroupTypeContentSerializerState::DelegateSystem(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("er:delegateSystem"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
                                         false,
                                     )?,
                                 )
                             }
                             super::GroupTypeContent::DelegateUri(x) => {
                                 *self.state = GroupTypeContentSerializerState::DelegateUri(
-                                    WithSerializer::serializer(x, Some("er:delegateURI"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:delegateURI"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::NextCatalog(x) => {
                                 *self.state = GroupTypeContentSerializerState::NextCatalog(
-                                    WithSerializer::serializer(x, Some("er:nextCatalog"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("er:nextCatalog"),
+                                        ElementNamespace::Namespace(super::super::NS_ER),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -4960,6 +5279,7 @@ pub mod er {
             pub(super) value: &'ser super::NextCatalogType,
             pub(super) state: Box<NextCatalogTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -4979,6 +5299,7 @@ pub mod er {
                             *self.state = NextCatalogTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -5019,6 +5340,7 @@ pub mod er {
             pub(super) value: &'ser super::PublicType,
             pub(super) state: Box<PublicTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -5038,6 +5360,7 @@ pub mod er {
                             *self.state = PublicTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -5079,6 +5402,7 @@ pub mod er {
             pub(super) value: &'ser super::RewriteSystemType,
             pub(super) state: Box<RewriteSystemTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -5098,6 +5422,7 @@ pub mod er {
                             *self.state = RewriteSystemTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -5147,6 +5472,7 @@ pub mod er {
             pub(super) value: &'ser super::RewriteUriType,
             pub(super) state: Box<RewriteUriTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -5166,6 +5492,7 @@ pub mod er {
                             *self.state = RewriteUriTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -5215,6 +5542,7 @@ pub mod er {
             pub(super) value: &'ser super::SystemType,
             pub(super) state: Box<SystemTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -5234,6 +5562,7 @@ pub mod er {
                             *self.state = SystemTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -5275,6 +5604,7 @@ pub mod er {
             pub(super) value: &'ser super::SystemSuffixType,
             pub(super) state: Box<SystemSuffixTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -5294,6 +5624,7 @@ pub mod er {
                             *self.state = SystemSuffixTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -5339,6 +5670,7 @@ pub mod er {
             pub(super) value: &'ser super::UriType,
             pub(super) state: Box<UriTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -5358,6 +5690,7 @@ pub mod er {
                             *self.state = UriTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -5399,6 +5732,7 @@ pub mod er {
             pub(super) value: &'ser super::UriSuffixType,
             pub(super) state: Box<UriSuffixTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -5418,6 +5752,7 @@ pub mod er {
                             *self.state = UriSuffixTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,

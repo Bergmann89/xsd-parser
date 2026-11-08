@@ -229,10 +229,24 @@ impl ::xsd_parser_types::quick_xml::WithSerializer for AnyType {
         name: ::core::option::Option<&'ser ::core::primitive::str>,
         is_root: ::core::primitive::bool,
     ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error> {
+        ::xsd_parser_types::quick_xml::WithSerializer::serializer_with_namespace(
+            self,
+            name,
+            ::xsd_parser_types::quick_xml::ElementNamespace::Unknown,
+            is_root,
+        )
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: ::core::option::Option<&'ser ::core::primitive::str>,
+        namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
+        is_root: ::core::primitive::bool,
+    ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error> {
         Ok(quick_xml_serialize::AnyTypeSerializer {
             value: self,
             state: ::std::boxed::Box::new(quick_xml_serialize::AnyTypeSerializerState::Init__),
             name: name.unwrap_or("anyType"),
+            namespace,
             is_root,
         })
     }
@@ -361,6 +375,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::AnyType,
         pub(super) state: ::std::boxed::Box<AnyTypeSerializerState<'ser>>,
         pub(super) name: &'ser ::core::primitive::str,
+        pub(super) namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
         pub(super) is_root: ::core::primitive::bool,
     }
     #[derive(Debug)]
@@ -383,6 +398,7 @@ pub mod quick_xml_serialize {
                         *self.state = AnyTypeSerializerState::Done__;
                         let mut bytes = ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_XS);
                         }

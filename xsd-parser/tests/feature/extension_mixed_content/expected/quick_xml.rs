@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
     xml::{AnyAttributes, AnyElement, Mixed, Text},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -28,10 +28,19 @@ impl WithSerializer for AttributeValueType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::AttributeValueTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::AttributeValueTypeSerializerState::Init__),
             name: name.unwrap_or("tns:AttributeValueType"),
+            namespace,
             is_root,
         })
     }
@@ -422,8 +431,8 @@ pub mod quick_xml_deserialize {
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
         quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         },
         xml::{AnyElement, Mixed, Text},
     };
@@ -432,6 +441,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::AttributeValueType,
         pub(super) state: Box<AttributeValueTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -453,10 +463,12 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     AttributeValueTypeSerializerState::Init__ => {
                         *self.state = AttributeValueTypeSerializerState::TextBefore(
-                            IterSerializer::new(self.value.text_before.as_ref(), Some(""), false),
+                            IterSerializer::new(self.value.text_before.as_ref(), Some(""), false)
+                                .with_namespace(ElementNamespace::None),
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -475,9 +487,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = AttributeValueTypeSerializerState::BaseElement(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.base_element,
                                         Some("tns:BaseElement"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
                                     )?,
                                 )
@@ -489,7 +502,8 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = AttributeValueTypeSerializerState::Any(
-                                    IterSerializer::new(&self.value.any[..], None, false),
+                                    IterSerializer::new(&self.value.any[..], None, false)
+                                        .with_namespace(ElementNamespace::Unknown),
                                 )
                             }
                         }

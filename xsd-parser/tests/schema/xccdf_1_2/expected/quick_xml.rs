@@ -15,9 +15,9 @@ pub mod cdf {
     use std::borrow::Cow;
     use xsd_parser_types::{
         quick_xml::{
-            DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-            SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-            WithSerializer,
+            DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+            SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+            WithSerializeToBytes, WithSerializer,
         },
         xml::{AnyAttributes, AnyElement, Mixed, Text},
     };
@@ -151,10 +151,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::BenchmarkElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::BenchmarkElementTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:Benchmark"),
+                namespace,
                 is_root,
             })
         }
@@ -166,7 +180,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::BenchmarkElementTypeContentSerializer {
                 value: self,
@@ -196,10 +224,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::StatusElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::StatusElementTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:status"),
+                namespace,
                 is_root,
             })
         }
@@ -221,10 +263,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::DcStatusTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::DcStatusTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:dc-statusType"),
+                namespace,
                 is_root,
             })
         }
@@ -254,10 +310,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::TextTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::TextTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:textType"),
+                namespace,
                 is_root,
             })
         }
@@ -287,10 +357,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::HtmlTextWithSubTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::HtmlTextWithSubTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:htmlTextWithSubType"),
+                namespace,
                 is_root,
             })
         }
@@ -321,10 +405,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::NoticeTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::NoticeTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:noticeType"),
+                namespace,
                 is_root,
             })
         }
@@ -357,10 +455,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ReferenceTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ReferenceTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:referenceType"),
+                namespace,
                 is_root,
             })
         }
@@ -386,10 +498,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PlainTextTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::PlainTextTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:plainTextType"),
+                namespace,
                 is_root,
             })
         }
@@ -420,10 +546,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::Cpe2IdrefTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::Cpe2IdrefTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:CPE2idrefType"),
+                namespace,
                 is_root,
             })
         }
@@ -449,10 +589,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::VersionTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::VersionTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:versionType"),
+                namespace,
                 is_root,
             })
         }
@@ -481,10 +635,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::MetadataTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::MetadataTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:metadataType"),
+                namespace,
                 is_root,
             })
         }
@@ -508,10 +676,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ModelElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ModelElementTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:model"),
+                namespace,
                 is_root,
             })
         }
@@ -620,10 +802,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ProfileTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ProfileTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:profileType"),
+                namespace,
                 is_root,
             })
         }
@@ -635,7 +831,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::ProfileTypeContentSerializer {
                 value: self,
@@ -870,10 +1080,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ValueTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ValueTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:valueType"),
+                namespace,
                 is_root,
             })
         }
@@ -885,7 +1109,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::ValueTypeContentSerializer {
                 value: self,
@@ -1070,10 +1308,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::GroupTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::GroupTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:groupType"),
+                namespace,
                 is_root,
             })
         }
@@ -1085,7 +1337,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::GroupTypeContentSerializer {
                 value: self,
@@ -1328,10 +1594,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::RuleTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::RuleTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:ruleType"),
+                namespace,
                 is_root,
             })
         }
@@ -1343,7 +1623,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::RuleTypeContentSerializer {
                 value: self,
@@ -1496,10 +1790,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::TestResultTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::TestResultTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:testResultType"),
+                namespace,
                 is_root,
             })
         }
@@ -1511,7 +1819,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::TestResultTypeContentSerializer {
                 value: self,
@@ -1540,10 +1862,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SignatureTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SignatureTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:signatureType"),
+                namespace,
                 is_root,
             })
         }
@@ -1630,10 +1966,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SubTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SubTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:subType"),
+                namespace,
                 is_root,
             })
         }
@@ -1657,7 +2007,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             Ok(
                 quick_xml_serialize::HtmlTextWithSubTypeContentTypeSerializer {
                     value: self,
@@ -1692,10 +2056,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ParamTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ParamTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:paramType"),
+                namespace,
                 is_root,
             })
         }
@@ -1728,10 +2106,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::TextWithSubTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::TextWithSubTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:textWithSubType"),
+                namespace,
                 is_root,
             })
         }
@@ -1769,12 +2161,26 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::OverrideableCpe2IdrefTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::OverrideableCpe2IdrefTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("cdf:overrideableCPE2idrefType"),
+                namespace,
                 is_root,
             })
         }
@@ -1808,10 +2214,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ProfileSelectTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ProfileSelectTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:profileSelectType"),
+                namespace,
                 is_root,
             })
         }
@@ -1841,12 +2261,26 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ProfileSetComplexValueTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::ProfileSetComplexValueTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("cdf:profileSetComplexValueType"),
+                namespace,
                 is_root,
             })
         }
@@ -1873,10 +2307,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ProfileSetValueTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ProfileSetValueTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:profileSetValueType"),
+                namespace,
                 is_root,
             })
         }
@@ -1923,10 +2371,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ProfileRefineValueTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ProfileRefineValueTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:profileRefineValueType"),
+                namespace,
                 is_root,
             })
         }
@@ -1976,10 +2438,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ProfileRefineRuleTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ProfileRefineRuleTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:profileRefineRuleType"),
+                namespace,
                 is_root,
             })
         }
@@ -2159,10 +2635,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::WarningTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::WarningTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:warningType"),
+                namespace,
                 is_root,
             })
         }
@@ -2208,10 +2698,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SelStringTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SelStringTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:selStringType"),
+                namespace,
                 is_root,
             })
         }
@@ -2258,10 +2762,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SelComplexValueTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SelComplexValueTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:selComplexValueType"),
+                namespace,
                 is_root,
             })
         }
@@ -2297,10 +2815,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SelNumTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SelNumTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:selNumType"),
+                namespace,
                 is_root,
             })
         }
@@ -2352,10 +2884,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SelChoicesTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SelChoicesTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:selChoicesType"),
+                namespace,
                 is_root,
             })
         }
@@ -2367,7 +2913,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::SelChoicesTypeContentSerializer {
                 value: self,
@@ -2395,10 +2955,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::UriRefTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::UriRefTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:uriRefType"),
+                namespace,
                 is_root,
             })
         }
@@ -2421,10 +2995,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::IdrefListTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::IdrefListTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:idrefListType"),
+                namespace,
                 is_root,
             })
         }
@@ -2447,10 +3035,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::IdrefTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::IdrefTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:idrefType"),
+                namespace,
                 is_root,
             })
         }
@@ -2571,10 +3173,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::IdentTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::IdentTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:identType"),
+                namespace,
                 is_root,
             })
         }
@@ -2619,10 +3235,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ProfileNoteTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ProfileNoteTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:profileNoteType"),
+                namespace,
                 is_root,
             })
         }
@@ -2634,7 +3264,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::ProfileNoteTypeContentSerializer {
                 value: self,
@@ -2705,10 +3349,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::FixTextTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FixTextTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:fixTextType"),
+                namespace,
                 is_root,
             })
         }
@@ -2797,10 +3455,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::FixTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FixTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:fixType"),
+                namespace,
                 is_root,
             })
         }
@@ -2812,7 +3484,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::FixTypeContentSerializer {
                 value: self,
@@ -2917,10 +3603,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CheckTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CheckTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:checkType"),
+                namespace,
                 is_root,
             })
         }
@@ -2976,10 +3676,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ComplexCheckTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ComplexCheckTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:complexCheckType"),
+                namespace,
                 is_root,
             })
         }
@@ -2991,7 +3705,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::ComplexCheckTypeContentSerializer {
                 value: self,
@@ -3024,10 +3752,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::BenchmarkReferenceTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::BenchmarkReferenceTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:benchmarkReferenceType"),
+                namespace,
                 is_root,
             })
         }
@@ -3060,10 +3802,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::TailoringReferenceTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::TailoringReferenceTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:tailoringReferenceType"),
+                namespace,
                 is_root,
             })
         }
@@ -3093,10 +3849,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::IdentityTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::IdentityTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:identityType"),
+                namespace,
                 is_root,
             })
         }
@@ -3124,10 +3894,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::TargetFactsTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::TargetFactsTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:targetFactsType"),
+                namespace,
                 is_root,
             })
         }
@@ -3161,10 +3945,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::TargetIdRefTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::TargetIdRefTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:targetIdRefType"),
+                namespace,
                 is_root,
             })
         }
@@ -3254,10 +4052,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::RuleResultTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::RuleResultTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:ruleResultType"),
+                namespace,
                 is_root,
             })
         }
@@ -3269,7 +4081,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::RuleResultTypeContentSerializer {
                 value: self,
@@ -3301,10 +4127,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ScoreTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ScoreTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:scoreType"),
+                namespace,
                 is_root,
             })
         }
@@ -3441,10 +4281,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ComplexValueTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ComplexValueTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:complexValueType"),
+                namespace,
                 is_root,
             })
         }
@@ -3593,10 +4447,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::InstanceFixTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::InstanceFixTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:instanceFixType"),
+                namespace,
                 is_root,
             })
         }
@@ -3633,10 +4501,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CheckImportTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CheckImportTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:checkImportType"),
+                namespace,
                 is_root,
             })
         }
@@ -3670,10 +4552,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CheckExportTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CheckExportTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:checkExportType"),
+                namespace,
                 is_root,
             })
         }
@@ -3701,10 +4597,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CheckContentRefTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CheckContentRefTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:checkContentRefType"),
+                namespace,
                 is_root,
             })
         }
@@ -3740,10 +4650,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CheckContentTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CheckContentTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:checkContentType"),
+                namespace,
                 is_root,
             })
         }
@@ -3755,7 +4679,21 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::CheckContentTypeContentSerializer {
                 value: self,
@@ -3833,10 +4771,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::FactTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FactTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:factType"),
+                namespace,
                 is_root,
             })
         }
@@ -3961,10 +4913,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::OverrideTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::OverrideTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:overrideType"),
+                namespace,
                 is_root,
             })
         }
@@ -3989,10 +4955,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::MessageTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::MessageTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:messageType"),
+                namespace,
                 is_root,
             })
         }
@@ -4029,10 +5009,24 @@ pub mod cdf {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::InstanceResultTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::InstanceResultTypeSerializerState::Init__),
                 name: name.unwrap_or("cdf:instanceResultType"),
+                namespace,
                 is_root,
             })
         }
@@ -28079,8 +29073,8 @@ pub mod cdf {
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
             quick_xml::{
-                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-                WithSerializer,
+                BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer,
+                SerializeHelper, Serializer, WithSerializer,
             },
             xml::{AnyElement, Mixed, Text},
         };
@@ -28089,6 +29083,7 @@ pub mod cdf {
             pub(super) value: &'ser super::BenchmarkElementType,
             pub(super) state: Box<BenchmarkElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -28118,6 +29113,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -28219,116 +29215,204 @@ pub mod cdf {
                         BenchmarkElementTypeContentSerializerState::Init__ => match self.value {
                             super::BenchmarkElementTypeContent::Status(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Status(
-                                    WithSerializer::serializer(x, Some("cdf:status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::DcStatus(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::DcStatus(
-                                    WithSerializer::serializer(x, Some("cdf:dc-status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:dc-status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Title(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Title(
-                                    WithSerializer::serializer(x, Some("cdf:title"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:title"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Description(x) => {
                                 *self.state =
                                     BenchmarkElementTypeContentSerializerState::Description(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("cdf:description"),
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
                                             false,
                                         )?,
                                     )
                             }
                             super::BenchmarkElementTypeContent::Notice(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Notice(
-                                    WithSerializer::serializer(x, Some("cdf:notice"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:notice"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::FrontMatter(x) => {
                                 *self.state =
                                     BenchmarkElementTypeContentSerializerState::FrontMatter(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("cdf:front-matter"),
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
                                             false,
                                         )?,
                                     )
                             }
                             super::BenchmarkElementTypeContent::RearMatter(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::RearMatter(
-                                    WithSerializer::serializer(x, Some("cdf:rear-matter"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:rear-matter"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Reference(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Reference(
-                                    WithSerializer::serializer(x, Some("cdf:reference"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:reference"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::PlainText(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::PlainText(
-                                    WithSerializer::serializer(x, Some("cdf:plain-text"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:plain-text"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::PlatformSpecification(x) => *self
                                 .state =
                                 BenchmarkElementTypeContentSerializerState::PlatformSpecification(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cpe:platform-specification"),
+                                        ElementNamespace::Namespace(super::super::NS_CPE),
                                         false,
                                     )?,
                                 ),
                             super::BenchmarkElementTypeContent::Platform(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Platform(
-                                    WithSerializer::serializer(x, Some("cdf:platform"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:platform"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Version(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Version(
-                                    WithSerializer::serializer(x, Some("cdf:version"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:version"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Metadata(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Metadata(
-                                    WithSerializer::serializer(x, Some("cdf:metadata"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:metadata"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Model(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Model(
-                                    WithSerializer::serializer(x, Some("cdf:model"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:model"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Profile(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Profile(
-                                    WithSerializer::serializer(x, Some("cdf:Profile"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:Profile"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Value(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Value(
-                                    WithSerializer::serializer(x, Some("cdf:Value"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:Value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Group(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Group(
-                                    WithSerializer::serializer(x, Some("cdf:Group"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:Group"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Rule(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Rule(
-                                    WithSerializer::serializer(x, Some("cdf:Rule"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:Rule"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::TestResult(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::TestResult(
-                                    WithSerializer::serializer(x, Some("cdf:TestResult"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:TestResult"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::BenchmarkElementTypeContent::Signature(x) => {
                                 *self.state = BenchmarkElementTypeContentSerializerState::Signature(
-                                    WithSerializer::serializer(x, Some("cdf:signature"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:signature"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -28515,6 +29599,7 @@ pub mod cdf {
             pub(super) value: &'ser super::StatusElementType,
             pub(super) state: Box<StatusElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -28538,6 +29623,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -28587,6 +29673,7 @@ pub mod cdf {
             pub(super) value: &'ser super::DcStatusType,
             pub(super) state: Box<DcStatusTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -28605,13 +29692,13 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         DcStatusTypeSerializerState::Init__ => {
-                            *self.state = DcStatusTypeSerializerState::Any(IterSerializer::new(
-                                &self.value.any[..],
-                                None,
-                                false,
-                            ));
+                            *self.state = DcStatusTypeSerializerState::Any(
+                                IterSerializer::new(&self.value.any[..], None, false)
+                                    .with_namespace(ElementNamespace::Unknown),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -28658,6 +29745,7 @@ pub mod cdf {
             pub(super) value: &'ser super::TextType,
             pub(super) state: Box<TextTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -28681,6 +29769,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -28731,6 +29820,7 @@ pub mod cdf {
             pub(super) value: &'ser super::HtmlTextWithSubType,
             pub(super) state: Box<HtmlTextWithSubTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -28760,6 +29850,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -28810,6 +29901,7 @@ pub mod cdf {
             pub(super) value: &'ser super::NoticeType,
             pub(super) state: Box<NoticeTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -28829,14 +29921,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         NoticeTypeSerializerState::Init__ => {
-                            *self.state =
-                                NoticeTypeSerializerState::TextBefore(IterSerializer::new(
+                            *self.state = NoticeTypeSerializerState::TextBefore(
+                                IterSerializer::new(
                                     self.value.text_before.as_ref(),
                                     Some(""),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::None),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -28859,7 +29954,8 @@ pub mod cdf {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = NoticeTypeSerializerState::Any(
-                                        IterSerializer::new(&self.value.any[..], None, false),
+                                        IterSerializer::new(&self.value.any[..], None, false)
+                                            .with_namespace(ElementNamespace::Unknown),
                                     )
                                 }
                             }
@@ -28896,6 +29992,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ReferenceType,
             pub(super) state: Box<ReferenceTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -28915,14 +30012,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         ReferenceTypeSerializerState::Init__ => {
-                            *self.state =
-                                ReferenceTypeSerializerState::TextBefore(IterSerializer::new(
+                            *self.state = ReferenceTypeSerializerState::TextBefore(
+                                IterSerializer::new(
                                     self.value.text_before.as_ref(),
                                     Some(""),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::None),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -28948,7 +30048,8 @@ pub mod cdf {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = ReferenceTypeSerializerState::Any(
-                                        IterSerializer::new(&self.value.any[..], None, false),
+                                        IterSerializer::new(&self.value.any[..], None, false)
+                                            .with_namespace(ElementNamespace::Unknown),
                                     )
                                 }
                             }
@@ -28985,6 +30086,7 @@ pub mod cdf {
             pub(super) value: &'ser super::PlainTextType,
             pub(super) state: Box<PlainTextTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -29008,6 +30110,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -29057,6 +30160,7 @@ pub mod cdf {
             pub(super) value: &'ser super::Cpe2IdrefType,
             pub(super) state: Box<Cpe2IdrefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -29076,6 +30180,7 @@ pub mod cdf {
                             *self.state = Cpe2IdrefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -29115,6 +30220,7 @@ pub mod cdf {
             pub(super) value: &'ser super::VersionType,
             pub(super) state: Box<VersionTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -29138,6 +30244,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -29188,6 +30295,7 @@ pub mod cdf {
             pub(super) value: &'ser super::MetadataType,
             pub(super) state: Box<MetadataTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -29206,13 +30314,13 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         MetadataTypeSerializerState::Init__ => {
-                            *self.state = MetadataTypeSerializerState::Any(IterSerializer::new(
-                                &self.value.any[..],
-                                None,
-                                false,
-                            ));
+                            *self.state = MetadataTypeSerializerState::Any(
+                                IterSerializer::new(&self.value.any[..], None, false)
+                                    .with_namespace(ElementNamespace::Unknown),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -29259,6 +30367,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ModelElementType,
             pub(super) state: Box<ModelElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -29277,14 +30386,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         ModelElementTypeSerializerState::Init__ => {
-                            *self.state =
-                                ModelElementTypeSerializerState::Param(IterSerializer::new(
+                            *self.state = ModelElementTypeSerializerState::Param(
+                                IterSerializer::new(
                                     &self.value.param[..],
                                     Some("cdf:param"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CDF)),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -29334,6 +30446,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ProfileType,
             pub(super) state: Box<ProfileTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -29359,6 +30472,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -29454,76 +30568,142 @@ pub mod cdf {
                         ProfileTypeContentSerializerState::Init__ => match self.value {
                             super::ProfileTypeContent::Status(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Status(
-                                    WithSerializer::serializer(x, Some("cdf:status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::DcStatus(x) => {
                                 *self.state = ProfileTypeContentSerializerState::DcStatus(
-                                    WithSerializer::serializer(x, Some("cdf:dc-status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:dc-status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Version(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Version(
-                                    WithSerializer::serializer(x, Some("cdf:version"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:version"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Title(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Title(
-                                    WithSerializer::serializer(x, Some("cdf:title"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:title"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Description(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Description(
-                                    WithSerializer::serializer(x, Some("cdf:description"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:description"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Reference(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Reference(
-                                    WithSerializer::serializer(x, Some("cdf:reference"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:reference"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Platform(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Platform(
-                                    WithSerializer::serializer(x, Some("cdf:platform"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:platform"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Select(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Select(
-                                    WithSerializer::serializer(x, Some("cdf:select"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:select"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::SetComplexValue(x) => {
                                 *self.state = ProfileTypeContentSerializerState::SetComplexValue(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:set-complex-value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::ProfileTypeContent::SetValue(x) => {
                                 *self.state = ProfileTypeContentSerializerState::SetValue(
-                                    WithSerializer::serializer(x, Some("cdf:set-value"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:set-value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::RefineValue(x) => {
                                 *self.state = ProfileTypeContentSerializerState::RefineValue(
-                                    WithSerializer::serializer(x, Some("cdf:refine-value"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:refine-value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::RefineRule(x) => {
                                 *self.state = ProfileTypeContentSerializerState::RefineRule(
-                                    WithSerializer::serializer(x, Some("cdf:refine-rule"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:refine-rule"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Metadata(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Metadata(
-                                    WithSerializer::serializer(x, Some("cdf:metadata"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:metadata"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileTypeContent::Signature(x) => {
                                 *self.state = ProfileTypeContentSerializerState::Signature(
-                                    WithSerializer::serializer(x, Some("cdf:signature"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:signature"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -29634,6 +30814,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ValueType,
             pub(super) state: Box<ValueTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -29661,6 +30842,7 @@ pub mod cdf {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -29773,105 +30955,192 @@ pub mod cdf {
                         ValueTypeContentSerializerState::Init__ => match self.value {
                             super::ValueTypeContent::Status(x) => {
                                 *self.state = ValueTypeContentSerializerState::Status(
-                                    WithSerializer::serializer(x, Some("cdf:status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::DcStatus(x) => {
                                 *self.state = ValueTypeContentSerializerState::DcStatus(
-                                    WithSerializer::serializer(x, Some("cdf:dc-status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:dc-status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Version(x) => {
                                 *self.state = ValueTypeContentSerializerState::Version(
-                                    WithSerializer::serializer(x, Some("cdf:version"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:version"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Title(x) => {
                                 *self.state = ValueTypeContentSerializerState::Title(
-                                    WithSerializer::serializer(x, Some("cdf:title"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:title"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Description(x) => {
                                 *self.state = ValueTypeContentSerializerState::Description(
-                                    WithSerializer::serializer(x, Some("cdf:description"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:description"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Warning(x) => {
                                 *self.state = ValueTypeContentSerializerState::Warning(
-                                    WithSerializer::serializer(x, Some("cdf:warning"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:warning"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Question(x) => {
                                 *self.state = ValueTypeContentSerializerState::Question(
-                                    WithSerializer::serializer(x, Some("cdf:question"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:question"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Reference(x) => {
                                 *self.state = ValueTypeContentSerializerState::Reference(
-                                    WithSerializer::serializer(x, Some("cdf:reference"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:reference"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Metadata(x) => {
                                 *self.state = ValueTypeContentSerializerState::Metadata(
-                                    WithSerializer::serializer(x, Some("cdf:metadata"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:metadata"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Value(x) => {
                                 *self.state = ValueTypeContentSerializerState::Value(
-                                    WithSerializer::serializer(x, Some("cdf:value"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::ComplexValue(x) => {
                                 *self.state = ValueTypeContentSerializerState::ComplexValue(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:complex-value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::ValueTypeContent::Default(x) => {
                                 *self.state = ValueTypeContentSerializerState::Default(
-                                    WithSerializer::serializer(x, Some("cdf:default"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:default"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::ComplexDefault(x) => {
                                 *self.state = ValueTypeContentSerializerState::ComplexDefault(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:complex-default"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::ValueTypeContent::Match(x) => {
                                 *self.state = ValueTypeContentSerializerState::Match(
-                                    WithSerializer::serializer(x, Some("cdf:match"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:match"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::LowerBound(x) => {
                                 *self.state = ValueTypeContentSerializerState::LowerBound(
-                                    WithSerializer::serializer(x, Some("cdf:lower-bound"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:lower-bound"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::UpperBound(x) => {
                                 *self.state = ValueTypeContentSerializerState::UpperBound(
-                                    WithSerializer::serializer(x, Some("cdf:upper-bound"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:upper-bound"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Choices(x) => {
                                 *self.state = ValueTypeContentSerializerState::Choices(
-                                    WithSerializer::serializer(x, Some("cdf:choices"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:choices"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Source(x) => {
                                 *self.state = ValueTypeContentSerializerState::Source(
-                                    WithSerializer::serializer(x, Some("cdf:source"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:source"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ValueTypeContent::Signature(x) => {
                                 *self.state = ValueTypeContentSerializerState::Signature(
-                                    WithSerializer::serializer(x, Some("cdf:signature"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:signature"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -30012,6 +31281,7 @@ pub mod cdf {
             pub(super) value: &'ser super::GroupType,
             pub(super) state: Box<GroupTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -30039,6 +31309,7 @@ pub mod cdf {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -30139,87 +31410,172 @@ pub mod cdf {
                         GroupTypeContentSerializerState::Init__ => match self.value {
                             super::GroupTypeContent::Status(x) => {
                                 *self.state = GroupTypeContentSerializerState::Status(
-                                    WithSerializer::serializer(x, Some("cdf:status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::DcStatus(x) => {
                                 *self.state = GroupTypeContentSerializerState::DcStatus(
-                                    WithSerializer::serializer(x, Some("cdf:dc-status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:dc-status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Version(x) => {
                                 *self.state = GroupTypeContentSerializerState::Version(
-                                    WithSerializer::serializer(x, Some("cdf:version"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:version"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Title(x) => {
                                 *self.state = GroupTypeContentSerializerState::Title(
-                                    WithSerializer::serializer(x, Some("cdf:title"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:title"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Description(x) => {
                                 *self.state = GroupTypeContentSerializerState::Description(
-                                    WithSerializer::serializer(x, Some("cdf:description"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:description"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Warning(x) => {
                                 *self.state = GroupTypeContentSerializerState::Warning(
-                                    WithSerializer::serializer(x, Some("cdf:warning"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:warning"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Question(x) => {
                                 *self.state = GroupTypeContentSerializerState::Question(
-                                    WithSerializer::serializer(x, Some("cdf:question"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:question"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Reference(x) => {
                                 *self.state = GroupTypeContentSerializerState::Reference(
-                                    WithSerializer::serializer(x, Some("cdf:reference"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:reference"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Metadata(x) => {
                                 *self.state = GroupTypeContentSerializerState::Metadata(
-                                    WithSerializer::serializer(x, Some("cdf:metadata"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:metadata"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Rationale(x) => {
                                 *self.state = GroupTypeContentSerializerState::Rationale(
-                                    WithSerializer::serializer(x, Some("cdf:rationale"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:rationale"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Platform(x) => {
                                 *self.state = GroupTypeContentSerializerState::Platform(
-                                    WithSerializer::serializer(x, Some("cdf:platform"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:platform"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Requires(x) => {
                                 *self.state = GroupTypeContentSerializerState::Requires(
-                                    WithSerializer::serializer(x, Some("cdf:requires"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:requires"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Conflicts(x) => {
                                 *self.state = GroupTypeContentSerializerState::Conflicts(
-                                    WithSerializer::serializer(x, Some("cdf:conflicts"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:conflicts"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Value(x) => {
                                 *self.state = GroupTypeContentSerializerState::Value(
-                                    WithSerializer::serializer(x, Some("cdf:Value"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:Value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Group(x) => {
                                 *self.state = GroupTypeContentSerializerState::Group(
-                                    WithSerializer::serializer(x, Some("cdf:Group"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:Group"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Rule(x) => {
                                 *self.state = GroupTypeContentSerializerState::Rule(
-                                    WithSerializer::serializer(x, Some("cdf:Rule"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:Rule"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::GroupTypeContent::Signature(x) => {
                                 *self.state = GroupTypeContentSerializerState::Signature(
-                                    WithSerializer::serializer(x, Some("cdf:signature"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:signature"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -30348,6 +31704,7 @@ pub mod cdf {
             pub(super) value: &'ser super::RuleType,
             pub(super) state: Box<RuleTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -30373,6 +31730,7 @@ pub mod cdf {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -30480,115 +31838,212 @@ pub mod cdf {
                         RuleTypeContentSerializerState::Init__ => match self.value {
                             super::RuleTypeContent::Status(x) => {
                                 *self.state = RuleTypeContentSerializerState::Status(
-                                    WithSerializer::serializer(x, Some("cdf:status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::DcStatus(x) => {
                                 *self.state = RuleTypeContentSerializerState::DcStatus(
-                                    WithSerializer::serializer(x, Some("cdf:dc-status"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:dc-status"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Version(x) => {
                                 *self.state = RuleTypeContentSerializerState::Version(
-                                    WithSerializer::serializer(x, Some("cdf:version"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:version"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Title(x) => {
                                 *self.state = RuleTypeContentSerializerState::Title(
-                                    WithSerializer::serializer(x, Some("cdf:title"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:title"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Description(x) => {
                                 *self.state = RuleTypeContentSerializerState::Description(
-                                    WithSerializer::serializer(x, Some("cdf:description"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:description"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Warning(x) => {
                                 *self.state = RuleTypeContentSerializerState::Warning(
-                                    WithSerializer::serializer(x, Some("cdf:warning"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:warning"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Question(x) => {
                                 *self.state = RuleTypeContentSerializerState::Question(
-                                    WithSerializer::serializer(x, Some("cdf:question"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:question"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Reference(x) => {
                                 *self.state = RuleTypeContentSerializerState::Reference(
-                                    WithSerializer::serializer(x, Some("cdf:reference"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:reference"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Metadata(x) => {
                                 *self.state = RuleTypeContentSerializerState::Metadata(
-                                    WithSerializer::serializer(x, Some("cdf:metadata"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:metadata"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Rationale(x) => {
                                 *self.state = RuleTypeContentSerializerState::Rationale(
-                                    WithSerializer::serializer(x, Some("cdf:rationale"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:rationale"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Platform(x) => {
                                 *self.state = RuleTypeContentSerializerState::Platform(
-                                    WithSerializer::serializer(x, Some("cdf:platform"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:platform"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Requires(x) => {
                                 *self.state = RuleTypeContentSerializerState::Requires(
-                                    WithSerializer::serializer(x, Some("cdf:requires"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:requires"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Conflicts(x) => {
                                 *self.state = RuleTypeContentSerializerState::Conflicts(
-                                    WithSerializer::serializer(x, Some("cdf:conflicts"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:conflicts"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Ident(x) => {
                                 *self.state = RuleTypeContentSerializerState::Ident(
-                                    WithSerializer::serializer(x, Some("cdf:ident"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:ident"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::ImpactMetric(x) => {
                                 *self.state = RuleTypeContentSerializerState::ImpactMetric(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:impact-metric"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::RuleTypeContent::ProfileNote(x) => {
                                 *self.state = RuleTypeContentSerializerState::ProfileNote(
-                                    WithSerializer::serializer(x, Some("cdf:profile-note"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:profile-note"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Fixtext(x) => {
                                 *self.state = RuleTypeContentSerializerState::Fixtext(
-                                    WithSerializer::serializer(x, Some("cdf:fixtext"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:fixtext"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Fix(x) => {
                                 *self.state = RuleTypeContentSerializerState::Fix(
-                                    WithSerializer::serializer(x, Some("cdf:fix"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:fix"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::Check(x) => {
                                 *self.state = RuleTypeContentSerializerState::Check(
-                                    WithSerializer::serializer(x, Some("cdf:check"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:check"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleTypeContent::ComplexCheck(x) => {
                                 *self.state = RuleTypeContentSerializerState::ComplexCheck(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:complex-check"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::RuleTypeContent::Signature(x) => {
                                 *self.state = RuleTypeContentSerializerState::Signature(
-                                    WithSerializer::serializer(x, Some("cdf:signature"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:signature"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -30741,6 +32196,7 @@ pub mod cdf {
             pub(super) value: &'ser super::TestResultType,
             pub(super) state: Box<TestResultTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -30770,6 +32226,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -30869,113 +32326,192 @@ pub mod cdf {
                         TestResultTypeContentSerializerState::Init__ => match self.value {
                             super::TestResultTypeContent::Benchmark(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Benchmark(
-                                    WithSerializer::serializer(x, Some("cdf:benchmark"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:benchmark"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::TailoringFile(x) => {
                                 *self.state = TestResultTypeContentSerializerState::TailoringFile(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:tailoring-file"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::TestResultTypeContent::Title(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Title(
-                                    WithSerializer::serializer(x, Some("cdf:title"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:title"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Remark(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Remark(
-                                    WithSerializer::serializer(x, Some("cdf:remark"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:remark"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Organization(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Organization(
-                                    WithSerializer::serializer(x, Some("cdf:organization"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:organization"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Identity(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Identity(
-                                    WithSerializer::serializer(x, Some("cdf:identity"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:identity"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Profile(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Profile(
-                                    WithSerializer::serializer(x, Some("cdf:profile"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:profile"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Target(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Target(
-                                    WithSerializer::serializer(x, Some("cdf:target"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:target"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::TargetAddress(x) => {
                                 *self.state = TestResultTypeContentSerializerState::TargetAddress(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:target-address"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::TestResultTypeContent::TargetFacts(x) => {
                                 *self.state = TestResultTypeContentSerializerState::TargetFacts(
-                                    WithSerializer::serializer(x, Some("cdf:target-facts"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:target-facts"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::TargetIdRef(x) => {
                                 *self.state = TestResultTypeContentSerializerState::TargetIdRef(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:target-id-ref"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::TestResultTypeContent::Any(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, None, false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        None,
+                                        ElementNamespace::Unknown,
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Platform(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Platform(
-                                    WithSerializer::serializer(x, Some("cdf:platform"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:platform"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::SetValue(x) => {
                                 *self.state = TestResultTypeContentSerializerState::SetValue(
-                                    WithSerializer::serializer(x, Some("cdf:set-value"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:set-value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::SetComplexValue(x) => {
                                 *self.state = TestResultTypeContentSerializerState::SetComplexValue(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:set-complex-value"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
                             }
                             super::TestResultTypeContent::RuleResult(x) => {
                                 *self.state = TestResultTypeContentSerializerState::RuleResult(
-                                    WithSerializer::serializer(x, Some("cdf:rule-result"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:rule-result"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Score(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Score(
-                                    WithSerializer::serializer(x, Some("cdf:score"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:score"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Metadata(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Metadata(
-                                    WithSerializer::serializer(x, Some("cdf:metadata"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:metadata"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::TestResultTypeContent::Signature(x) => {
                                 *self.state = TestResultTypeContentSerializerState::Signature(
-                                    WithSerializer::serializer(x, Some("cdf:signature"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:signature"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -31116,6 +32652,7 @@ pub mod cdf {
             pub(super) value: &'ser super::SignatureType,
             pub(super) state: Box<SignatureTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31135,10 +32672,16 @@ pub mod cdf {
                     match &mut *self.state {
                         SignatureTypeSerializerState::Init__ => {
                             *self.state = SignatureTypeSerializerState::Any(
-                                WithSerializer::serializer(&self.value.any, None, false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.any,
+                                    None,
+                                    ElementNamespace::Unknown,
+                                    false,
+                                )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31185,6 +32728,7 @@ pub mod cdf {
             pub(super) value: &'ser super::SubType,
             pub(super) state: Box<SubTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31204,6 +32748,7 @@ pub mod cdf {
                             *self.state = SubTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31264,17 +32809,32 @@ pub mod cdf {
                         HtmlTextWithSubTypeContentTypeSerializerState::Init__ => match self.value {
                             super::HtmlTextWithSubTypeContentType::Sub(x) => {
                                 *self.state = HtmlTextWithSubTypeContentTypeSerializerState::Sub(
-                                    WithSerializer::serializer(x, Some("cdf:sub"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:sub"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::HtmlTextWithSubTypeContentType::Any(x) => {
                                 *self.state = HtmlTextWithSubTypeContentTypeSerializerState::Any(
-                                    WithSerializer::serializer(x, None, self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        None,
+                                        ElementNamespace::Unknown,
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::HtmlTextWithSubTypeContentType::Text(x) => {
                                 *self.state = HtmlTextWithSubTypeContentTypeSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("text"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("text"),
+                                        ElementNamespace::None,
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         },
@@ -31330,6 +32890,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ParamType,
             pub(super) state: Box<ParamTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31353,6 +32914,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31402,6 +32964,7 @@ pub mod cdf {
             pub(super) value: &'ser super::TextWithSubType,
             pub(super) state: Box<TextWithSubTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31421,14 +32984,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         TextWithSubTypeSerializerState::Init__ => {
-                            *self.state =
-                                TextWithSubTypeSerializerState::TextBefore(IterSerializer::new(
+                            *self.state = TextWithSubTypeSerializerState::TextBefore(
+                                IterSerializer::new(
                                     self.value.text_before.as_ref(),
                                     Some(""),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::None),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31449,12 +33015,16 @@ pub mod cdf {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        TextWithSubTypeSerializerState::Sub(IterSerializer::new(
+                                    *self.state = TextWithSubTypeSerializerState::Sub(
+                                        IterSerializer::new(
                                             &self.value.sub[..],
                                             Some("cdf:sub"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -31492,6 +33062,7 @@ pub mod cdf {
             pub(super) value: &'ser super::OverrideableCpe2IdrefType,
             pub(super) state: Box<OverrideableCpe2IdrefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31511,6 +33082,7 @@ pub mod cdf {
                             *self.state = OverrideableCpe2IdrefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31551,6 +33123,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ProfileSelectType,
             pub(super) state: Box<ProfileSelectTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31569,14 +33142,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         ProfileSelectTypeSerializerState::Init__ => {
-                            *self.state =
-                                ProfileSelectTypeSerializerState::Remark(IterSerializer::new(
+                            *self.state = ProfileSelectTypeSerializerState::Remark(
+                                IterSerializer::new(
                                     &self.value.remark[..],
                                     Some("cdf:remark"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CDF)),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31627,6 +33203,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ProfileSetComplexValueType,
             pub(super) state: Box<ProfileSetComplexValueTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31646,10 +33223,14 @@ pub mod cdf {
                     match &mut *self.state {
                         ProfileSetComplexValueTypeSerializerState::Init__ => {
                             *self.state = ProfileSetComplexValueTypeSerializerState::Item(
-                                IterSerializer::new(&self.value.item[..], Some("cdf:item"), false),
+                                IterSerializer::new(&self.value.item[..], Some("cdf:item"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_CDF,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31700,6 +33281,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ProfileSetValueType,
             pub(super) state: Box<ProfileSetValueTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31723,6 +33305,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31772,6 +33355,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ProfileRefineValueType,
             pub(super) state: Box<ProfileRefineValueTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31790,14 +33374,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         ProfileRefineValueTypeSerializerState::Init__ => {
-                            *self.state =
-                                ProfileRefineValueTypeSerializerState::Remark(IterSerializer::new(
+                            *self.state = ProfileRefineValueTypeSerializerState::Remark(
+                                IterSerializer::new(
                                     &self.value.remark[..],
                                     Some("cdf:remark"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CDF)),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31857,6 +33444,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ProfileRefineRuleType,
             pub(super) state: Box<ProfileRefineRuleTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31875,14 +33463,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         ProfileRefineRuleTypeSerializerState::Init__ => {
-                            *self.state =
-                                ProfileRefineRuleTypeSerializerState::Remark(IterSerializer::new(
+                            *self.state = ProfileRefineRuleTypeSerializerState::Remark(
+                                IterSerializer::new(
                                     &self.value.remark[..],
                                     Some("cdf:remark"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CDF)),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -31944,6 +33535,7 @@ pub mod cdf {
             pub(super) value: &'ser super::WarningType,
             pub(super) state: Box<WarningTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -31973,6 +33565,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32024,6 +33617,7 @@ pub mod cdf {
             pub(super) value: &'ser super::SelStringType,
             pub(super) state: Box<SelStringTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32047,6 +33641,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32096,6 +33691,7 @@ pub mod cdf {
             pub(super) value: &'ser super::SelComplexValueType,
             pub(super) state: Box<SelComplexValueTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32115,10 +33711,14 @@ pub mod cdf {
                     match &mut *self.state {
                         SelComplexValueTypeSerializerState::Init__ => {
                             *self.state = SelComplexValueTypeSerializerState::Item(
-                                IterSerializer::new(&self.value.item[..], Some("cdf:item"), false),
+                                IterSerializer::new(&self.value.item[..], Some("cdf:item"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_CDF,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32168,6 +33768,7 @@ pub mod cdf {
             pub(super) value: &'ser super::SelNumType,
             pub(super) state: Box<SelNumTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32191,6 +33792,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32240,6 +33842,7 @@ pub mod cdf {
             pub(super) value: &'ser super::SelChoicesType,
             pub(super) state: Box<SelChoicesTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32269,6 +33872,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32341,14 +33945,20 @@ pub mod cdf {
                         SelChoicesTypeContentSerializerState::Init__ => match self.value {
                             super::SelChoicesTypeContent::Choice(x) => {
                                 *self.state = SelChoicesTypeContentSerializerState::Choice(
-                                    WithSerializer::serializer(x, Some("cdf:choice"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:choice"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::SelChoicesTypeContent::ComplexChoice(x) => {
                                 *self.state = SelChoicesTypeContentSerializerState::ComplexChoice(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:complex-choice"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
@@ -32389,6 +33999,7 @@ pub mod cdf {
             pub(super) value: &'ser super::UriRefType,
             pub(super) state: Box<UriRefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32408,6 +34019,7 @@ pub mod cdf {
                             *self.state = UriRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32447,6 +34059,7 @@ pub mod cdf {
             pub(super) value: &'ser super::IdrefListType,
             pub(super) state: Box<IdrefListTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32466,6 +34079,7 @@ pub mod cdf {
                             *self.state = IdrefListTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32505,6 +34119,7 @@ pub mod cdf {
             pub(super) value: &'ser super::IdrefType,
             pub(super) state: Box<IdrefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32524,6 +34139,7 @@ pub mod cdf {
                             *self.state = IdrefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32563,6 +34179,7 @@ pub mod cdf {
             pub(super) value: &'ser super::IdentType,
             pub(super) state: Box<IdentTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32586,6 +34203,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32636,6 +34254,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ProfileNoteType,
             pub(super) state: Box<ProfileNoteTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32665,6 +34284,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32734,17 +34354,32 @@ pub mod cdf {
                         ProfileNoteTypeContentSerializerState::Init__ => match self.value {
                             super::ProfileNoteTypeContent::Sub(x) => {
                                 *self.state = ProfileNoteTypeContentSerializerState::Sub(
-                                    WithSerializer::serializer(x, Some("cdf:sub"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:sub"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileNoteTypeContent::Any(x) => {
                                 *self.state = ProfileNoteTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, None, false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        None,
+                                        ElementNamespace::Unknown,
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ProfileNoteTypeContent::Text(x) => {
                                 *self.state = ProfileNoteTypeContentSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("text"),
+                                        ElementNamespace::None,
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -32789,6 +34424,7 @@ pub mod cdf {
             pub(super) value: &'ser super::FixTextType,
             pub(super) state: Box<FixTextTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32818,6 +34454,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32881,6 +34518,7 @@ pub mod cdf {
             pub(super) value: &'ser super::FixType,
             pub(super) state: Box<FixTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -32906,6 +34544,7 @@ pub mod cdf {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -32990,17 +34629,32 @@ pub mod cdf {
                         FixTypeContentSerializerState::Init__ => match self.value {
                             super::FixTypeContent::Sub(x) => {
                                 *self.state = FixTypeContentSerializerState::Sub(
-                                    WithSerializer::serializer(x, Some("cdf:sub"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:sub"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::FixTypeContent::Instance(x) => {
                                 *self.state = FixTypeContentSerializerState::Instance(
-                                    WithSerializer::serializer(x, Some("cdf:instance"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:instance"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::FixTypeContent::Text(x) => {
                                 *self.state = FixTypeContentSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("text"),
+                                        ElementNamespace::None,
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -33045,6 +34699,7 @@ pub mod cdf {
             pub(super) value: &'ser super::CheckType,
             pub(super) state: Box<CheckTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33082,14 +34737,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         CheckTypeSerializerState::Init__ => {
-                            *self.state =
-                                CheckTypeSerializerState::CheckImport(IterSerializer::new(
+                            *self.state = CheckTypeSerializerState::CheckImport(
+                                IterSerializer::new(
                                     &self.value.check_import[..],
                                     Some("cdf:check-import"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CDF)),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33118,12 +34776,16 @@ pub mod cdf {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CheckTypeSerializerState::CheckExport(IterSerializer::new(
+                                    *self.state = CheckTypeSerializerState::CheckExport(
+                                        IterSerializer::new(
                                             &self.value.check_export[..],
                                             Some("cdf:check-export"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -33136,6 +34798,9 @@ pub mod cdf {
                                             &self.value.check_content_ref[..],
                                             Some("cdf:check-content-ref"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
                                         ),
                                     )
                                 }
@@ -33145,12 +34810,16 @@ pub mod cdf {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CheckTypeSerializerState::CheckContent(IterSerializer::new(
+                                    *self.state = CheckTypeSerializerState::CheckContent(
+                                        IterSerializer::new(
                                             self.value.check_content.as_ref(),
                                             Some("cdf:check-content"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -33188,6 +34857,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ComplexCheckType,
             pub(super) state: Box<ComplexCheckTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33217,6 +34887,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33285,14 +34956,20 @@ pub mod cdf {
                         ComplexCheckTypeContentSerializerState::Init__ => match self.value {
                             super::ComplexCheckTypeContent::Check(x) => {
                                 *self.state = ComplexCheckTypeContentSerializerState::Check(
-                                    WithSerializer::serializer(x, Some("cdf:check"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:check"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ComplexCheckTypeContent::ComplexCheck(x) => {
                                 *self.state = ComplexCheckTypeContentSerializerState::ComplexCheck(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:complex-check"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
@@ -33337,6 +35014,7 @@ pub mod cdf {
             pub(super) value: &'ser super::BenchmarkReferenceType,
             pub(super) state: Box<BenchmarkReferenceTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33356,6 +35034,7 @@ pub mod cdf {
                             *self.state = BenchmarkReferenceTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33396,6 +35075,7 @@ pub mod cdf {
             pub(super) value: &'ser super::TailoringReferenceType,
             pub(super) state: Box<TailoringReferenceTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33415,6 +35095,7 @@ pub mod cdf {
                             *self.state = TailoringReferenceTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33457,6 +35138,7 @@ pub mod cdf {
             pub(super) value: &'ser super::IdentityType,
             pub(super) state: Box<IdentityTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33480,6 +35162,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33538,6 +35221,7 @@ pub mod cdf {
             pub(super) value: &'ser super::TargetFactsType,
             pub(super) state: Box<TargetFactsTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33557,10 +35241,14 @@ pub mod cdf {
                     match &mut *self.state {
                         TargetFactsTypeSerializerState::Init__ => {
                             *self.state = TargetFactsTypeSerializerState::Fact(
-                                IterSerializer::new(&self.value.fact[..], Some("cdf:fact"), false),
+                                IterSerializer::new(&self.value.fact[..], Some("cdf:fact"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_CDF,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33609,6 +35297,7 @@ pub mod cdf {
             pub(super) value: &'ser super::TargetIdRefType,
             pub(super) state: Box<TargetIdRefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33628,6 +35317,7 @@ pub mod cdf {
                             *self.state = TargetIdRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33669,6 +35359,7 @@ pub mod cdf {
             pub(super) value: &'ser super::RuleResultType,
             pub(super) state: Box<RuleResultTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33698,6 +35389,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33781,49 +35473,90 @@ pub mod cdf {
                         RuleResultTypeContentSerializerState::Init__ => match self.value {
                             super::RuleResultTypeContent::Result(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Result(
-                                    WithSerializer::serializer(x, Some("cdf:result"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:result"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::Override(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Override(
-                                    WithSerializer::serializer(x, Some("cdf:override"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:override"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::Ident(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Ident(
-                                    WithSerializer::serializer(x, Some("cdf:ident"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:ident"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::Metadata(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Metadata(
-                                    WithSerializer::serializer(x, Some("cdf:metadata"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:metadata"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::Message(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Message(
-                                    WithSerializer::serializer(x, Some("cdf:message"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:message"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::Instance(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Instance(
-                                    WithSerializer::serializer(x, Some("cdf:instance"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:instance"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::Fix(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Fix(
-                                    WithSerializer::serializer(x, Some("cdf:fix"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:fix"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::Check(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::Check(
-                                    WithSerializer::serializer(x, Some("cdf:check"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("cdf:check"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::RuleResultTypeContent::ComplexCheck(x) => {
                                 *self.state = RuleResultTypeContentSerializerState::ComplexCheck(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("cdf:complex-check"),
+                                        ElementNamespace::Namespace(super::super::NS_CDF),
                                         false,
                                     )?,
                                 )
@@ -33906,6 +35639,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ScoreType,
             pub(super) state: Box<ScoreTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33929,6 +35663,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -33979,6 +35714,7 @@ pub mod cdf {
             pub(super) value: &'ser super::ComplexValueType,
             pub(super) state: Box<ComplexValueTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -33998,10 +35734,14 @@ pub mod cdf {
                     match &mut *self.state {
                         ComplexValueTypeSerializerState::Init__ => {
                             *self.state = ComplexValueTypeSerializerState::Item(
-                                IterSerializer::new(&self.value.item[..], Some("cdf:item"), false),
+                                IterSerializer::new(&self.value.item[..], Some("cdf:item"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_CDF,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34050,6 +35790,7 @@ pub mod cdf {
             pub(super) value: &'ser super::InstanceFixType,
             pub(super) state: Box<InstanceFixTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34069,6 +35810,7 @@ pub mod cdf {
                             *self.state = InstanceFixTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34108,6 +35850,7 @@ pub mod cdf {
             pub(super) value: &'ser super::CheckImportType,
             pub(super) state: Box<CheckImportTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34128,14 +35871,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         CheckImportTypeSerializerState::Init__ => {
-                            *self.state =
-                                CheckImportTypeSerializerState::TextBefore(IterSerializer::new(
+                            *self.state = CheckImportTypeSerializerState::TextBefore(
+                                IterSerializer::new(
                                     self.value.text_before.as_ref(),
                                     Some("text_before"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::None),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34165,7 +35911,8 @@ pub mod cdf {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CheckImportTypeSerializerState::Any(
-                                        IterSerializer::new(self.value.any.as_ref(), None, false),
+                                        IterSerializer::new(self.value.any.as_ref(), None, false)
+                                            .with_namespace(ElementNamespace::Unknown),
                                     )
                                 }
                             }
@@ -34179,7 +35926,8 @@ pub mod cdf {
                                             self.value.text_after_any_40.as_ref(),
                                             Some("text_after_any40"),
                                             false,
-                                        ),
+                                        )
+                                        .with_namespace(ElementNamespace::None),
                                     )
                                 }
                             }
@@ -34218,6 +35966,7 @@ pub mod cdf {
             pub(super) value: &'ser super::CheckExportType,
             pub(super) state: Box<CheckExportTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34237,6 +35986,7 @@ pub mod cdf {
                             *self.state = CheckExportTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34281,6 +36031,7 @@ pub mod cdf {
             pub(super) value: &'ser super::CheckContentRefType,
             pub(super) state: Box<CheckContentRefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34300,6 +36051,7 @@ pub mod cdf {
                             *self.state = CheckContentRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34340,6 +36092,7 @@ pub mod cdf {
             pub(super) value: &'ser super::CheckContentType,
             pub(super) state: Box<CheckContentTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34369,6 +36122,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34435,12 +36189,22 @@ pub mod cdf {
                         CheckContentTypeContentSerializerState::Init__ => match self.value {
                             super::CheckContentTypeContent::Any(x) => {
                                 *self.state = CheckContentTypeContentSerializerState::Any(
-                                    WithSerializer::serializer(x, None, false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        None,
+                                        ElementNamespace::Unknown,
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CheckContentTypeContent::Text(x) => {
                                 *self.state = CheckContentTypeContentSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("text"),
+                                        ElementNamespace::None,
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -34483,6 +36247,7 @@ pub mod cdf {
             pub(super) value: &'ser super::FactType,
             pub(super) state: Box<FactTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34506,6 +36271,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34556,6 +36322,7 @@ pub mod cdf {
             pub(super) value: &'ser super::OverrideType,
             pub(super) state: Box<OverrideTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34576,14 +36343,17 @@ pub mod cdf {
                 loop {
                     match &mut *self.state {
                         OverrideTypeSerializerState::Init__ => {
-                            *self.state =
-                                OverrideTypeSerializerState::OldResult(WithSerializer::serializer(
+                            *self.state = OverrideTypeSerializerState::OldResult(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.old_result,
                                     Some("cdf:old-result"),
+                                    ElementNamespace::Namespace(super::super::NS_CDF),
                                     false,
-                                )?);
+                                )?,
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34605,9 +36375,10 @@ pub mod cdf {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = OverrideTypeSerializerState::NewResult(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.new_result,
                                             Some("cdf:new-result"),
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
                                             false,
                                         )?,
                                     )
@@ -34619,9 +36390,10 @@ pub mod cdf {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = OverrideTypeSerializerState::Remark(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.remark,
                                             Some("cdf:remark"),
+                                            ElementNamespace::Namespace(super::super::NS_CDF),
                                             false,
                                         )?,
                                     )
@@ -34662,6 +36434,7 @@ pub mod cdf {
             pub(super) value: &'ser super::MessageType,
             pub(super) state: Box<MessageTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34685,6 +36458,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34734,6 +36508,7 @@ pub mod cdf {
             pub(super) value: &'ser super::InstanceResultType,
             pub(super) state: Box<InstanceResultTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34757,6 +36532,7 @@ pub mod cdf {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -34811,9 +36587,9 @@ pub mod cdf {
 pub mod cpe {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug)]
     pub struct PlatformSpecificationType {
@@ -34826,12 +36602,26 @@ pub mod cpe {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PlatformSpecificationTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::PlatformSpecificationTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("cpe:platformSpecificationType"),
+                namespace,
                 is_root,
             })
         }
@@ -34864,10 +36654,24 @@ pub mod cpe {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PlatformTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::PlatformTypeSerializerState::Init__),
                 name: name.unwrap_or("cpe:PlatformType"),
+                namespace,
                 is_root,
             })
         }
@@ -34889,10 +36693,24 @@ pub mod cpe {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::TextTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::TextTypeSerializerState::Init__),
                 name: name.unwrap_or("cpe:TextType"),
+                namespace,
                 is_root,
             })
         }
@@ -34933,10 +36751,24 @@ pub mod cpe {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::LogicalTestTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::LogicalTestTypeSerializerState::Init__),
                 name: name.unwrap_or("cpe:LogicalTestType"),
+                namespace,
                 is_root,
             })
         }
@@ -34989,10 +36821,24 @@ pub mod cpe {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CpeFactRefTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CpeFactRefTypeSerializerState::Init__),
                 name: name.unwrap_or("cpe:CPEFactRefType"),
+                namespace,
                 is_root,
             })
         }
@@ -35023,10 +36869,24 @@ pub mod cpe {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CheckFactRefTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CheckFactRefTypeSerializerState::Init__),
                 name: name.unwrap_or("cpe:CheckFactRefType"),
+                namespace,
                 is_root,
             })
         }
@@ -36244,14 +38104,15 @@ pub mod cpe {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct PlatformSpecificationTypeSerializer<'ser> {
             pub(super) value: &'ser super::PlatformSpecificationType,
             pub(super) state: Box<PlatformSpecificationTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36275,10 +38136,12 @@ pub mod cpe {
                                     &self.value.platform[..],
                                     Some("cpe:platform"),
                                     false,
-                                ),
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CPE)),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -36328,6 +38191,7 @@ pub mod cpe {
             pub(super) value: &'ser super::PlatformType,
             pub(super) state: Box<PlatformTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36348,13 +38212,17 @@ pub mod cpe {
                 loop {
                     match &mut *self.state {
                         PlatformTypeSerializerState::Init__ => {
-                            *self.state = PlatformTypeSerializerState::Title(IterSerializer::new(
-                                &self.value.title[..],
-                                Some("cpe:title"),
-                                false,
-                            ));
+                            *self.state = PlatformTypeSerializerState::Title(
+                                IterSerializer::new(
+                                    &self.value.title[..],
+                                    Some("cpe:title"),
+                                    false,
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CPE)),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -36374,12 +38242,16 @@ pub mod cpe {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        PlatformTypeSerializerState::Remark(IterSerializer::new(
+                                    *self.state = PlatformTypeSerializerState::Remark(
+                                        IterSerializer::new(
                                             &self.value.remark[..],
                                             Some("cpe:remark"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_CPE),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -36388,9 +38260,10 @@ pub mod cpe {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = PlatformTypeSerializerState::LogicalTest(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.logical_test,
                                             Some("cpe:logical-test"),
+                                            ElementNamespace::Namespace(super::super::NS_CPE),
                                             false,
                                         )?,
                                     )
@@ -36431,6 +38304,7 @@ pub mod cpe {
             pub(super) value: &'ser super::TextType,
             pub(super) state: Box<TextTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36454,6 +38328,7 @@ pub mod cpe {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -36503,6 +38378,7 @@ pub mod cpe {
             pub(super) value: &'ser super::LogicalTestType,
             pub(super) state: Box<LogicalTestTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36527,14 +38403,17 @@ pub mod cpe {
                 loop {
                     match &mut *self.state {
                         LogicalTestTypeSerializerState::Init__ => {
-                            *self.state =
-                                LogicalTestTypeSerializerState::LogicalTest(IterSerializer::new(
+                            *self.state = LogicalTestTypeSerializerState::LogicalTest(
+                                IterSerializer::new(
                                     &self.value.logical_test[..],
                                     Some("cpe:logical-test"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::super::NS_CPE)),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -36560,6 +38439,9 @@ pub mod cpe {
                                             &self.value.fact_ref[..],
                                             Some("cpe:fact-ref"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_CPE),
                                         ),
                                     )
                                 }
@@ -36574,6 +38456,9 @@ pub mod cpe {
                                             &self.value.check_fact_ref[..],
                                             Some("cpe:check-fact-ref"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_CPE),
                                         ),
                                     )
                                 }
@@ -36613,6 +38498,7 @@ pub mod cpe {
             pub(super) value: &'ser super::CpeFactRefType,
             pub(super) state: Box<CpeFactRefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36632,6 +38518,7 @@ pub mod cpe {
                             *self.state = CpeFactRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,
@@ -36676,6 +38563,7 @@ pub mod cpe {
             pub(super) value: &'ser super::CheckFactRefType,
             pub(super) state: Box<CheckFactRefTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36695,6 +38583,7 @@ pub mod cpe {
                             *self.state = CheckFactRefTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,

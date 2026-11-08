@@ -7,7 +7,7 @@ pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub mod annotations {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     pub type Annotations = AnnotationsXElementType;
     #[derive(Debug)]
     pub struct AnnotationsXElementType {
@@ -20,12 +20,26 @@ pub mod annotations {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::AnnotationsXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::AnnotationsXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("Annotations"),
+                namespace,
                 is_root,
             })
         }
@@ -45,12 +59,26 @@ pub mod annotations {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::AnnotationsPageXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::AnnotationsPageXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("AnnotationsPage"),
+                namespace,
                 is_root,
             })
         }
@@ -443,14 +471,15 @@ pub mod annotations {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct AnnotationsXElementTypeSerializer<'ser> {
             pub(super) value: &'ser super::AnnotationsXElementType,
             pub(super) state: Box<AnnotationsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -476,15 +505,21 @@ pub mod annotations {
                     match &mut *self.state {
                         AnnotationsXElementTypeSerializerState::Init__ => {
                             *self.state = AnnotationsXElementTypeSerializerState::Page(
-                                IterSerializer::new(&self.value.page[..], Some("Page"), false),
+                                IterSerializer::new(&self.value.page[..], Some("Page"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AnnotationsXElementTypeSerializerState::Page(x) => {
@@ -521,6 +556,7 @@ pub mod annotations {
             pub(super) value: &'ser super::AnnotationsPageXElementType,
             pub(super) state: Box<AnnotationsPageXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -540,19 +576,23 @@ pub mod annotations {
                     match &mut *self.state {
                         AnnotationsPageXElementTypeSerializerState::Init__ => {
                             *self.state = AnnotationsPageXElementTypeSerializerState::FileLoc(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.file_loc,
                                     Some("FileLoc"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -591,9 +631,9 @@ pub mod annotations {
 pub mod annotion {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     pub type PageAnnot = PageAnnotXElementType;
     #[derive(Debug)]
@@ -607,10 +647,24 @@ pub mod annotion {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PageAnnotXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::PageAnnotXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("PageAnnot"),
+                namespace,
                 is_root,
             })
         }
@@ -663,12 +717,26 @@ pub mod annotion {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PageAnnotAnnotXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::PageAnnotAnnotXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("PageAnnotAnnot"),
+                namespace,
                 is_root,
             })
         }
@@ -726,7 +794,20 @@ pub mod annotion {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotParameters") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotParameters") , namespace , is_root , })
         }
     }
     impl WithDeserializer for PageAnnotAnnotParametersXElementType {
@@ -745,7 +826,20 @@ pub mod annotion {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotAppearance") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotAppearance") , namespace , is_root , })
         }
     }
     impl WithDeserializer for PageAnnotAnnotAppearanceXElementType {
@@ -764,7 +858,20 @@ pub mod annotion {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotParametersParameter") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotParametersParameter") , namespace , is_root , })
         }
     }
     impl WithDeserializer for PageAnnotAnnotParametersParameterXElementType {
@@ -1934,14 +2041,15 @@ pub mod annotion {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct PageAnnotXElementTypeSerializer<'ser> {
             pub(super) value: &'ser super::PageAnnotXElementType,
             pub(super) state: Box<PageAnnotXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -1967,15 +2075,21 @@ pub mod annotion {
                     match &mut *self.state {
                         PageAnnotXElementTypeSerializerState::Init__ => {
                             *self.state = PageAnnotXElementTypeSerializerState::Annot(
-                                IterSerializer::new(&self.value.annot[..], Some("Annot"), false),
+                                IterSerializer::new(&self.value.annot[..], Some("Annot"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotXElementTypeSerializerState::Annot(x) => {
@@ -2012,6 +2126,7 @@ pub mod annotion {
             pub(super) value: &'ser super::PageAnnotAnnotXElementType,
             pub(super) state: Box<PageAnnotAnnotXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -2045,15 +2160,21 @@ pub mod annotion {
                                     self.value.remark.as_ref(),
                                     Some("Remark"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "Creator", &self.value.creator)?;
@@ -2080,26 +2201,30 @@ pub mod annotion {
                                                 self.value.parameters.as_ref(),
                                                 Some("Parameters"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
                         }
-                        PageAnnotAnnotXElementTypeSerializerState::Parameters(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        PageAnnotAnnotXElementTypeSerializerState::Appearance(
-                                            WithSerializer::serializer(
-                                                &self.value.appearance,
-                                                Some("Appearance"),
-                                                false,
-                                            )?,
-                                        )
-                                }
+                        PageAnnotAnnotXElementTypeSerializerState::Parameters(x) => match x
+                            .next(helper)
+                            .transpose()?
+                        {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = PageAnnotAnnotXElementTypeSerializerState::Appearance(
+                                    WithSerializer::serializer_with_namespace(
+                                        &self.value.appearance,
+                                        Some("Appearance"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
+                                )
                             }
-                        }
+                        },
                         PageAnnotAnnotXElementTypeSerializerState::Appearance(x) => match x
                             .next(helper)
                             .transpose()?
@@ -2135,6 +2260,7 @@ pub mod annotion {
             pub(super) value: &'ser super::PageAnnotAnnotParametersXElementType,
             pub(super) state: Box<PageAnnotAnnotParametersXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -2165,15 +2291,21 @@ pub mod annotion {
                                         &self.value.parameter[..],
                                         Some("Parameter"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageAnnotAnnotParametersXElementTypeSerializerState::Parameter(x) => {
@@ -2218,6 +2350,7 @@ pub mod annotion {
             pub(super) value: &'ser super::PageAnnotAnnotAppearanceXElementType,
             pub(super) state: Box<PageAnnotAnnotAppearanceXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -2248,11 +2381,14 @@ pub mod annotion {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Boundary",
@@ -2303,6 +2439,7 @@ pub mod annotion {
             pub(super) state:
                 Box<PageAnnotAnnotParametersParameterXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -2324,11 +2461,14 @@ pub mod annotion {
                             * self . state = PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -2370,7 +2510,7 @@ pub mod annotion {
     }
 }
 pub mod attachments {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     pub type Attachments = AttachmentsXElementType;
     #[derive(Debug)]
     pub struct AttachmentsXElementType {
@@ -2383,12 +2523,26 @@ pub mod attachments {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::AttachmentsXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::AttachmentsXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("Attachments"),
+                namespace,
                 is_root,
             })
         }
@@ -2425,10 +2579,24 @@ pub mod attachments {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtAttachmentXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtAttachmentXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Attachment"),
+                namespace,
                 is_root,
             })
         }
@@ -2883,14 +3051,15 @@ pub mod attachments {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct AttachmentsXElementTypeSerializer<'ser> {
             pub(super) value: &'ser super::AttachmentsXElementType,
             pub(super) state: Box<AttachmentsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -2916,15 +3085,21 @@ pub mod attachments {
                                     &self.value.attachment[..],
                                     Some("Attachment"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         AttachmentsXElementTypeSerializerState::Attachment(x) => {
@@ -2961,6 +3136,7 @@ pub mod attachments {
             pub(super) value: &'ser super::CtAttachmentXType,
             pub(super) state: Box<CtAttachmentXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -2980,19 +3156,23 @@ pub mod attachments {
                     match &mut *self.state {
                         CtAttachmentXTypeSerializerState::Init__ => {
                             *self.state = CtAttachmentXTypeSerializerState::FileLoc(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.file_loc,
                                     Some("FileLoc"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
@@ -3039,7 +3219,7 @@ pub mod attachments {
     }
 }
 pub mod custom_tags {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     pub type CustomTags = CustomTagsXElementType;
     #[derive(Debug)]
     pub struct CustomTagsXElementType {
@@ -3052,10 +3232,24 @@ pub mod custom_tags {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CustomTagsXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CustomTagsXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("CustomTags"),
+                namespace,
                 is_root,
             })
         }
@@ -3076,6 +3270,19 @@ pub mod custom_tags {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CustomTagsCustomTagXElementTypeSerializer {
                     value: self,
@@ -3083,6 +3290,7 @@ pub mod custom_tags {
                         quick_xml_serialize::CustomTagsCustomTagXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CustomTagsCustomTag"),
+                    namespace,
                     is_root,
                 },
             )
@@ -3559,14 +3767,15 @@ pub mod custom_tags {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct CustomTagsXElementTypeSerializer<'ser> {
             pub(super) value: &'ser super::CustomTagsXElementType,
             pub(super) state: Box<CustomTagsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -3596,15 +3805,21 @@ pub mod custom_tags {
                                     &self.value.custom_tag[..],
                                     Some("CustomTag"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CustomTagsXElementTypeSerializerState::CustomTag(x) => {
@@ -3641,6 +3856,7 @@ pub mod custom_tags {
             pub(super) value: &'ser super::CustomTagsCustomTagXElementType,
             pub(super) state: Box<CustomTagsCustomTagXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -3665,33 +3881,41 @@ pub mod custom_tags {
                                     self.value.schema_loc.as_ref(),
                                     Some("SchemaLoc"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "NameSpace", &self.value.name_space)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        CustomTagsCustomTagXElementTypeSerializerState::SchemaLoc(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        CustomTagsCustomTagXElementTypeSerializerState::FileLoc(
-                                            WithSerializer::serializer(
-                                                &self.value.file_loc,
-                                                Some("FileLoc"),
-                                                false,
-                                            )?,
-                                        )
-                                }
+                        CustomTagsCustomTagXElementTypeSerializerState::SchemaLoc(x) => match x
+                            .next(helper)
+                            .transpose()?
+                        {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    CustomTagsCustomTagXElementTypeSerializerState::FileLoc(
+                                        WithSerializer::serializer_with_namespace(
+                                            &self.value.file_loc,
+                                            Some("FileLoc"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                            false,
+                                        )?,
+                                    )
                             }
-                        }
+                        },
                         CustomTagsCustomTagXElementTypeSerializerState::FileLoc(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
@@ -3732,9 +3956,9 @@ pub mod definition {
     use std::borrow::Cow;
     use xsd_parser_types::{
         quick_xml::{
-            DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-            SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-            WithSerializer,
+            DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+            SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+            WithSerializeToBytes, WithSerializer,
         },
         xml::AnyElement,
     };
@@ -3759,10 +3983,24 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtActionXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtActionXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Action"),
+                namespace,
                 is_root,
             })
         }
@@ -3774,7 +4012,21 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::CtActionXTypeContentSerializer {
                 value: self,
@@ -3805,10 +4057,24 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtDestXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtDestXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Dest"),
+                namespace,
                 is_root,
             })
         }
@@ -3830,10 +4096,24 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtPageAreaXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtPageAreaXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_PageArea"),
+                namespace,
                 is_root,
             })
         }
@@ -3852,10 +4132,24 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtRegionXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtRegionXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Region"),
+                namespace,
                 is_root,
             })
         }
@@ -3913,12 +4207,26 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtActionGotoXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtActionGotoXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtActionGoto"),
+                namespace,
                 is_root,
             })
         }
@@ -3939,12 +4247,26 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtActionUriXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtActionUriXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtActionUri"),
+                namespace,
                 is_root,
             })
         }
@@ -3970,12 +4292,26 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtActionGotoAxElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtActionGotoAxElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtActionGotoA"),
+                namespace,
                 is_root,
             })
         }
@@ -3997,12 +4333,26 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtActionSoundXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtActionSoundXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtActionSound"),
+                namespace,
                 is_root,
             })
         }
@@ -4028,12 +4378,26 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtActionMovieXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtActionMovieXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtActionMovie"),
+                namespace,
                 is_root,
             })
         }
@@ -4100,12 +4464,26 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtRegionAreaXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtRegionAreaXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtRegionArea"),
+                namespace,
                 is_root,
             })
         }
@@ -4117,7 +4495,21 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(
                 quick_xml_serialize::CtRegionAreaXElementTypeContentSerializer {
@@ -4146,7 +4538,20 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtActionGotoBookmark") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtActionGotoBookmark") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtActionGotoBookmarkXElementType {
@@ -4198,6 +4603,19 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtRegionAreaLineXElementTypeSerializer {
                     value: self,
@@ -4205,6 +4623,7 @@ pub mod definition {
                         quick_xml_serialize::CtRegionAreaLineXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtRegionAreaLine"),
+                    namespace,
                     is_root,
                 },
             )
@@ -4226,7 +4645,20 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtRegionAreaOuadraticBezier") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtRegionAreaOuadraticBezier") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtRegionAreaOuadraticBezierXElementType {
@@ -4247,7 +4679,20 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtRegionAreaCubicBezier") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtRegionAreaCubicBezier") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtRegionAreaCubicBezierXElementType {
@@ -4268,12 +4713,26 @@ pub mod definition {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtRegionAreaArcXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtRegionAreaArcXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtRegionAreaArc"),
+                namespace,
                 is_root,
             })
         }
@@ -7876,8 +8335,8 @@ pub mod definition {
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
             quick_xml::{
-                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-                WithSerializer,
+                BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer,
+                SerializeHelper, Serializer, WithSerializer,
             },
             xml::AnyElement,
         };
@@ -7886,6 +8345,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtActionXType,
             pub(super) state: Box<CtActionXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -7915,11 +8375,14 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Event", &self.value.event)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -7979,32 +8442,62 @@ pub mod definition {
                         CtActionXTypeContentSerializerState::Init__ => match self.value {
                             super::CtActionXTypeContent::Region(x) => {
                                 *self.state = CtActionXTypeContentSerializerState::Region(
-                                    WithSerializer::serializer(x, Some("Region"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Region"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtActionXTypeContent::Goto(x) => {
                                 *self.state = CtActionXTypeContentSerializerState::Goto(
-                                    WithSerializer::serializer(x, Some("Goto"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Goto"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtActionXTypeContent::Uri(x) => {
                                 *self.state = CtActionXTypeContentSerializerState::Uri(
-                                    WithSerializer::serializer(x, Some("URI"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("URI"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtActionXTypeContent::GotoA(x) => {
                                 *self.state = CtActionXTypeContentSerializerState::GotoA(
-                                    WithSerializer::serializer(x, Some("GotoA"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("GotoA"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtActionXTypeContent::Sound(x) => {
                                 *self.state = CtActionXTypeContentSerializerState::Sound(
-                                    WithSerializer::serializer(x, Some("Sound"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Sound"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtActionXTypeContent::Movie(x) => {
                                 *self.state = CtActionXTypeContentSerializerState::Movie(
-                                    WithSerializer::serializer(x, Some("Movie"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Movie"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -8067,6 +8560,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtDestXType,
             pub(super) state: Box<CtDestXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8086,11 +8580,14 @@ pub mod definition {
                             *self.state = CtDestXTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             helper.write_attrib_opt(&mut bytes, "Left", &self.value.left)?;
@@ -8124,6 +8621,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtPageAreaXType,
             pub(super) state: Box<CtPageAreaXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8146,19 +8644,23 @@ pub mod definition {
                     match &mut *self.state {
                         CtPageAreaXTypeSerializerState::Init__ => {
                             *self.state = CtPageAreaXTypeSerializerState::PhysicalBox(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.physical_box,
                                     Some("PhysicalBox"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageAreaXTypeSerializerState::PhysicalBox(x) => {
@@ -8170,6 +8672,9 @@ pub mod definition {
                                             self.value.application_box.as_ref(),
                                             Some("ApplicationBox"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -8184,6 +8689,9 @@ pub mod definition {
                                             self.value.content_box.as_ref(),
                                             Some("ContentBox"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -8198,6 +8706,9 @@ pub mod definition {
                                             self.value.bleed_box.as_ref(),
                                             Some("BleedBox"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -8237,6 +8748,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtRegionXType,
             pub(super) state: Box<CtRegionXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8261,18 +8773,22 @@ pub mod definition {
                 loop {
                     match &mut *self.state {
                         CtRegionXTypeSerializerState::Init__ => {
-                            *self.state = CtRegionXTypeSerializerState::Area(IterSerializer::new(
-                                &self.value.area[..],
-                                Some("Area"),
-                                false,
-                            ));
+                            *self.state = CtRegionXTypeSerializerState::Area(
+                                IterSerializer::new(&self.value.area[..], Some("Area"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtRegionXTypeSerializerState::Area(x) => {
@@ -8309,6 +8825,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtActionGotoXElementType,
             pub(super) state: Box<CtActionGotoXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8331,14 +8848,20 @@ pub mod definition {
                             match self.value {
                                 super::CtActionGotoXElementType::Dest(x) => {
                                     *self.state = CtActionGotoXElementTypeSerializerState::Dest(
-                                        WithSerializer::serializer(x, Some("Dest"), self.is_root)?,
+                                        WithSerializer::serializer_with_namespace(
+                                            x,
+                                            Some("Dest"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                            self.is_root,
+                                        )?,
                                     )
                                 }
                                 super::CtActionGotoXElementType::Bookmark(x) => {
                                     *self.state = CtActionGotoXElementTypeSerializerState::Bookmark(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("Bookmark"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             self.is_root,
                                         )?,
                                     )
@@ -8346,11 +8869,14 @@ pub mod definition {
                             }
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtActionGotoXElementTypeSerializerState::Dest(x) => {
@@ -8397,6 +8923,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtActionUriXElementType,
             pub(super) state: Box<CtActionUriXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8416,11 +8943,14 @@ pub mod definition {
                             *self.state = CtActionUriXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "URI", &self.value.uri)?;
                             helper.write_attrib_opt(&mut bytes, "Base", &self.value.base)?;
                             helper.write_attrib_opt(&mut bytes, "Target", &self.value.target)?;
@@ -8450,6 +8980,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtActionGotoAxElementType,
             pub(super) state: Box<CtActionGotoAxElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8469,11 +9000,14 @@ pub mod definition {
                             *self.state = CtActionGotoAxElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "AttachID", &self.value.attach_id)?;
                             helper.write_attrib(&mut bytes, "NewWindow", &self.value.new_window)?;
                             helper.end_ns_scope();
@@ -8502,6 +9036,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtActionSoundXElementType,
             pub(super) state: Box<CtActionSoundXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8521,11 +9056,14 @@ pub mod definition {
                             *self.state = CtActionSoundXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "ResourceID",
@@ -8564,6 +9102,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtActionMovieXElementType,
             pub(super) state: Box<CtActionMovieXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8583,11 +9122,14 @@ pub mod definition {
                             *self.state = CtActionMovieXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "ResourceID",
@@ -8620,6 +9162,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtRegionAreaXElementType,
             pub(super) state: Box<CtRegionAreaXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8649,11 +9192,14 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Start", &self.value.start)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -8720,20 +9266,31 @@ pub mod definition {
                         CtRegionAreaXElementTypeContentSerializerState::Init__ => match self.value {
                             super::CtRegionAreaXElementTypeContent::Move(x) => {
                                 *self.state = CtRegionAreaXElementTypeContentSerializerState::Move(
-                                    WithSerializer::serializer(x, Some("Move"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Move"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtRegionAreaXElementTypeContent::Line(x) => {
                                 *self.state = CtRegionAreaXElementTypeContentSerializerState::Line(
-                                    WithSerializer::serializer(x, Some("Line"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Line"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtRegionAreaXElementTypeContent::OuadraticBezier(x) => {
                                 *self.state =
                                     CtRegionAreaXElementTypeContentSerializerState::OuadraticBezier(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("OuadraticBezier"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -8741,17 +9298,32 @@ pub mod definition {
                             super::CtRegionAreaXElementTypeContent::CubicBezier(x) => {
                                 *self.state =
                                     CtRegionAreaXElementTypeContentSerializerState::CubicBezier(
-                                        WithSerializer::serializer(x, Some("CubicBezier"), false)?,
+                                        WithSerializer::serializer_with_namespace(
+                                            x,
+                                            Some("CubicBezier"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                            false,
+                                        )?,
                                     )
                             }
                             super::CtRegionAreaXElementTypeContent::Arc(x) => {
                                 *self.state = CtRegionAreaXElementTypeContentSerializerState::Arc(
-                                    WithSerializer::serializer(x, Some("Arc"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Arc"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtRegionAreaXElementTypeContent::Close(x) => {
                                 *self.state = CtRegionAreaXElementTypeContentSerializerState::Close(
-                                    WithSerializer::serializer(x, Some("Close"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Close"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -8834,6 +9406,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtActionGotoBookmarkXElementType,
             pub(super) state: Box<CtActionGotoBookmarkXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8853,11 +9426,14 @@ pub mod definition {
                             *self.state = CtActionGotoBookmarkXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
@@ -8887,6 +9463,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtRegionAreaLineXElementType,
             pub(super) state: Box<CtRegionAreaLineXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8906,11 +9483,14 @@ pub mod definition {
                             *self.state = CtRegionAreaLineXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
@@ -8938,6 +9518,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtRegionAreaOuadraticBezierXElementType,
             pub(super) state: Box<CtRegionAreaOuadraticBezierXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -8958,11 +9539,14 @@ pub mod definition {
                                 CtRegionAreaOuadraticBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
                             helper.write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
                             helper.end_ns_scope();
@@ -8996,6 +9580,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtRegionAreaCubicBezierXElementType,
             pub(super) state: Box<CtRegionAreaCubicBezierXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -9016,11 +9601,14 @@ pub mod definition {
                                 CtRegionAreaCubicBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
                             helper.write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
                             helper.write_attrib(&mut bytes, "Point3", &self.value.point_3)?;
@@ -9054,6 +9642,7 @@ pub mod definition {
             pub(super) value: &'ser super::CtRegionAreaArcXElementType,
             pub(super) state: Box<CtRegionAreaArcXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -9073,11 +9662,14 @@ pub mod definition {
                             *self.state = CtRegionAreaArcXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "SweepDirection",
@@ -9121,9 +9713,9 @@ pub mod definition {
 pub mod document {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtBookmarkXType {
@@ -9137,10 +9729,24 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtBookmarkXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtBookmarkXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Bookmark"),
+                namespace,
                 is_root,
             })
         }
@@ -9169,10 +9775,24 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtOutlineElemXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtOutlineElemXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_OutlineElem"),
+                namespace,
                 is_root,
             })
         }
@@ -9198,10 +9818,24 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtPermissionXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtPermissionXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Permission"),
+                namespace,
                 is_root,
             })
         }
@@ -9231,10 +9865,24 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtVPreferencesXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtVPreferencesXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_VPreferences"),
+                namespace,
                 is_root,
             })
         }
@@ -9246,7 +9894,21 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::CtVPreferencesXTypeContentSerializer {
                 value: self,
@@ -9284,10 +9946,24 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::DocumentXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::DocumentXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("Document"),
+                namespace,
                 is_root,
             })
         }
@@ -9313,6 +9989,19 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtPermissionPrintXElementTypeSerializer {
                     value: self,
@@ -9320,6 +10009,7 @@ pub mod document {
                         quick_xml_serialize::CtPermissionPrintXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtPermissionPrint"),
+                    namespace,
                     is_root,
                 },
             )
@@ -9341,7 +10031,20 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPermissionValidPeriod") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPermissionValidPeriod") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPermissionValidPeriodXElementType {
@@ -9515,6 +10218,19 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::DocumentCommonDataXElementTypeSerializer {
                     value: self,
@@ -9522,6 +10238,7 @@ pub mod document {
                         quick_xml_serialize::DocumentCommonDataXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("DocumentCommonData"),
+                    namespace,
                     is_root,
                 },
             )
@@ -9541,12 +10258,26 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::DocumentPagesXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::DocumentPagesXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("DocumentPages"),
+                namespace,
                 is_root,
             })
         }
@@ -9565,6 +10296,19 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::DocumentOutlinesXElementTypeSerializer {
                     value: self,
@@ -9572,6 +10316,7 @@ pub mod document {
                         quick_xml_serialize::DocumentOutlinesXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("DocumentOutlines"),
+                    namespace,
                     is_root,
                 },
             )
@@ -9591,6 +10336,19 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::DocumentBookmarksXElementTypeSerializer {
                     value: self,
@@ -9598,6 +10356,7 @@ pub mod document {
                         quick_xml_serialize::DocumentBookmarksXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("DocumentBookmarks"),
+                    namespace,
                     is_root,
                 },
             )
@@ -9621,7 +10380,20 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DocumentCommonDataTemplatePage") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DocumentCommonDataTemplatePage") , namespace , is_root , })
         }
     }
     impl WithDeserializer for DocumentCommonDataTemplatePageXElementType {
@@ -9640,6 +10412,19 @@ pub mod document {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::DocumentPagesPageXElementTypeSerializer {
                     value: self,
@@ -9647,6 +10432,7 @@ pub mod document {
                         quick_xml_serialize::DocumentPagesPageXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("DocumentPagesPage"),
+                    namespace,
                     is_root,
                 },
             )
@@ -14442,14 +15228,15 @@ pub mod document {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct CtBookmarkXTypeSerializer<'ser> {
             pub(super) value: &'ser super::CtBookmarkXType,
             pub(super) state: Box<CtBookmarkXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -14469,15 +15256,23 @@ pub mod document {
                     match &mut *self.state {
                         CtBookmarkXTypeSerializerState::Init__ => {
                             *self.state = CtBookmarkXTypeSerializerState::Dest(
-                                WithSerializer::serializer(&self.value.dest, Some("Dest"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.dest,
+                                    Some("Dest"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                    false,
+                                )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -14515,6 +15310,7 @@ pub mod document {
             pub(super) value: &'ser super::CtOutlineElemXType,
             pub(super) state: Box<CtOutlineElemXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -14542,19 +15338,26 @@ pub mod document {
                 loop {
                     match &mut *self.state {
                         CtOutlineElemXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtOutlineElemXTypeSerializerState::Actions(IterSerializer::new(
+                            *self.state = CtOutlineElemXTypeSerializerState::Actions(
+                                IterSerializer::new(
                                     self.value.actions.as_ref(),
                                     Some("Actions"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Title", &self.value.title)?;
                             helper.write_attrib_opt(&mut bytes, "Count", &self.value.count)?;
                             helper.write_attrib(&mut bytes, "Expanded", &self.value.expanded)?;
@@ -14569,6 +15372,9 @@ pub mod document {
                                             &self.value.outline_elem[..],
                                             Some("OutlineElem"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14608,6 +15414,7 @@ pub mod document {
             pub(super) value: &'ser super::CtPermissionXType,
             pub(super) state: Box<CtPermissionXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -14646,15 +15453,21 @@ pub mod document {
                     match &mut *self.state {
                         CtPermissionXTypeSerializerState::Init__ => {
                             *self.state = CtPermissionXTypeSerializerState::Edit(
-                                IterSerializer::new(self.value.edit.as_ref(), Some("Edit"), false),
+                                IterSerializer::new(self.value.edit.as_ref(), Some("Edit"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPermissionXTypeSerializerState::Edit(x) => {
@@ -14666,6 +15479,9 @@ pub mod document {
                                             self.value.annot.as_ref(),
                                             Some("Annot"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14680,6 +15496,9 @@ pub mod document {
                                             self.value.export.as_ref(),
                                             Some("Export"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14694,6 +15513,9 @@ pub mod document {
                                             self.value.signature.as_ref(),
                                             Some("Signature"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14708,6 +15530,9 @@ pub mod document {
                                             self.value.watermark.as_ref(),
                                             Some("Watermark"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14722,6 +15547,9 @@ pub mod document {
                                             self.value.print_screen.as_ref(),
                                             Some("PrintScreen"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14736,6 +15564,9 @@ pub mod document {
                                             self.value.print.as_ref(),
                                             Some("Print"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14750,6 +15581,9 @@ pub mod document {
                                             self.value.valid_period.as_ref(),
                                             Some("ValidPeriod"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -14789,6 +15623,7 @@ pub mod document {
             pub(super) value: &'ser super::CtVPreferencesXType,
             pub(super) state: Box<CtVPreferencesXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -14818,11 +15653,14 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtVPreferencesXTypeSerializerState::Content__(x) => {
@@ -14891,43 +15729,83 @@ pub mod document {
                         CtVPreferencesXTypeContentSerializerState::Init__ => match self.value {
                             super::CtVPreferencesXTypeContent::PageMode(x) => {
                                 *self.state = CtVPreferencesXTypeContentSerializerState::PageMode(
-                                    WithSerializer::serializer(x, Some("PageMode"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("PageMode"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtVPreferencesXTypeContent::PageLayout(x) => {
                                 *self.state = CtVPreferencesXTypeContentSerializerState::PageLayout(
-                                    WithSerializer::serializer(x, Some("PageLayout"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("PageLayout"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtVPreferencesXTypeContent::TabDisplay(x) => {
                                 *self.state = CtVPreferencesXTypeContentSerializerState::TabDisplay(
-                                    WithSerializer::serializer(x, Some("TabDisplay"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("TabDisplay"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtVPreferencesXTypeContent::HideToolbar(x) => {
                                 *self.state = CtVPreferencesXTypeContentSerializerState::HideToolbar(
-                                    WithSerializer::serializer(x, Some("HideToolbar"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("HideToolbar"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtVPreferencesXTypeContent::HideMenubar(x) => {
                                 *self.state = CtVPreferencesXTypeContentSerializerState::HideMenubar(
-                                    WithSerializer::serializer(x, Some("HideMenubar"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("HideMenubar"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtVPreferencesXTypeContent::HideWindowUi(x) => {
                                 *self.state =
                                     CtVPreferencesXTypeContentSerializerState::HideWindowUi(
-                                        WithSerializer::serializer(x, Some("HideWindowUI"), false)?,
+                                        WithSerializer::serializer_with_namespace(
+                                            x,
+                                            Some("HideWindowUI"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                            false,
+                                        )?,
                                     )
                             }
                             super::CtVPreferencesXTypeContent::ZoomMode(x) => {
                                 *self.state = CtVPreferencesXTypeContentSerializerState::ZoomMode(
-                                    WithSerializer::serializer(x, Some("ZoomMode"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("ZoomMode"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtVPreferencesXTypeContent::Zoom(x) => {
                                 *self.state = CtVPreferencesXTypeContentSerializerState::Zoom(
-                                    WithSerializer::serializer(x, Some("Zoom"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Zoom"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -15018,6 +15896,7 @@ pub mod document {
             pub(super) value: &'ser super::DocumentXElementType,
             pub(super) state: Box<DocumentXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15077,19 +15956,23 @@ pub mod document {
                     match &mut *self.state {
                         DocumentXElementTypeSerializerState::Init__ => {
                             *self.state = DocumentXElementTypeSerializerState::CommonData(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.common_data,
                                     Some("CommonData"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentXElementTypeSerializerState::CommonData(x) => {
@@ -15097,9 +15980,10 @@ pub mod document {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocumentXElementTypeSerializerState::Pages(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.pages,
                                             Some("Pages"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -15115,6 +15999,9 @@ pub mod document {
                                             self.value.outlines.as_ref(),
                                             Some("Outlines"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15129,6 +16016,9 @@ pub mod document {
                                             self.value.permissions.as_ref(),
                                             Some("Permissions"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15143,6 +16033,9 @@ pub mod document {
                                             self.value.actions.as_ref(),
                                             Some("Actions"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15157,6 +16050,9 @@ pub mod document {
                                             self.value.v_preferences.as_ref(),
                                             Some("VPreferences"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15171,6 +16067,9 @@ pub mod document {
                                             self.value.bookmarks.as_ref(),
                                             Some("Bookmarks"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15185,6 +16084,9 @@ pub mod document {
                                             self.value.annotations.as_ref(),
                                             Some("Annotations"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15199,6 +16101,9 @@ pub mod document {
                                             self.value.custom_tags.as_ref(),
                                             Some("CustomTags"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15213,6 +16118,9 @@ pub mod document {
                                             self.value.attachments.as_ref(),
                                             Some("Attachments"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15227,6 +16135,9 @@ pub mod document {
                                             self.value.extensions.as_ref(),
                                             Some("Extensions"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -15266,6 +16177,7 @@ pub mod document {
             pub(super) value: &'ser super::CtPermissionPrintXElementType,
             pub(super) state: Box<CtPermissionPrintXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15285,11 +16197,14 @@ pub mod document {
                             *self.state = CtPermissionPrintXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Printable", &self.value.printable)?;
                             helper.write_attrib(&mut bytes, "Copies", &self.value.copies)?;
                             helper.end_ns_scope();
@@ -15320,6 +16235,7 @@ pub mod document {
             pub(super) value: &'ser super::CtPermissionValidPeriodXElementType,
             pub(super) state: Box<CtPermissionValidPeriodXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15340,11 +16256,14 @@ pub mod document {
                                 CtPermissionValidPeriodXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "StartDate",
@@ -15381,6 +16300,7 @@ pub mod document {
             pub(super) value: &'ser super::DocumentCommonDataXElementType,
             pub(super) state: Box<DocumentCommonDataXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15413,36 +16333,42 @@ pub mod document {
                     match &mut *self.state {
                         DocumentCommonDataXElementTypeSerializerState::Init__ => {
                             *self.state = DocumentCommonDataXElementTypeSerializerState::MaxUnitId(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.max_unit_id,
                                     Some("MaxUnitID"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
-                        DocumentCommonDataXElementTypeSerializerState::MaxUnitId(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => {
-                                    *self.state =
-                                        DocumentCommonDataXElementTypeSerializerState::PageArea(
-                                            WithSerializer::serializer(
-                                                &self.value.page_area,
-                                                Some("PageArea"),
-                                                false,
-                                            )?,
-                                        )
-                                }
+                        DocumentCommonDataXElementTypeSerializerState::MaxUnitId(x) => match x
+                            .next(helper)
+                            .transpose()?
+                        {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    DocumentCommonDataXElementTypeSerializerState::PageArea(
+                                        WithSerializer::serializer_with_namespace(
+                                            &self.value.page_area,
+                                            Some("PageArea"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                            false,
+                                        )?,
+                                    )
                             }
-                        }
+                        },
                         DocumentCommonDataXElementTypeSerializerState::PageArea(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
@@ -15453,7 +16379,10 @@ pub mod document {
                                                 &self.value.public_res[..],
                                                 Some("PublicRes"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -15468,7 +16397,10 @@ pub mod document {
                                                 &self.value.document_res[..],
                                                 Some("DocumentRes"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -15483,7 +16415,10 @@ pub mod document {
                                                 &self.value.template_page[..],
                                                 Some("TemplatePage"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -15498,7 +16433,10 @@ pub mod document {
                                                 self.value.default_cs.as_ref(),
                                                 Some("DefaultCs"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -15542,6 +16480,7 @@ pub mod document {
             pub(super) value: &'ser super::DocumentPagesXElementType,
             pub(super) state: Box<DocumentPagesXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15567,15 +16506,21 @@ pub mod document {
                     match &mut *self.state {
                         DocumentPagesXElementTypeSerializerState::Init__ => {
                             *self.state = DocumentPagesXElementTypeSerializerState::Page(
-                                IterSerializer::new(&self.value.page[..], Some("Page"), false),
+                                IterSerializer::new(&self.value.page[..], Some("Page"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentPagesXElementTypeSerializerState::Page(x) => match x
@@ -15613,6 +16558,7 @@ pub mod document {
             pub(super) value: &'ser super::DocumentOutlinesXElementType,
             pub(super) state: Box<DocumentOutlinesXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15638,15 +16584,21 @@ pub mod document {
                                     &self.value.outline_elem[..],
                                     Some("OutlineElem"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentOutlinesXElementTypeSerializerState::OutlineElem(x) => {
@@ -15685,6 +16637,7 @@ pub mod document {
             pub(super) value: &'ser super::DocumentBookmarksXElementType,
             pub(super) state: Box<DocumentBookmarksXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15708,15 +16661,21 @@ pub mod document {
                                     &self.value.bookmark[..],
                                     Some("Bookmark"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocumentBookmarksXElementTypeSerializerState::Bookmark(x) => {
@@ -15758,6 +16717,7 @@ pub mod document {
             pub(super) value: &'ser super::DocumentCommonDataTemplatePageXElementType,
             pub(super) state: Box<DocumentCommonDataTemplatePageXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15778,11 +16738,14 @@ pub mod document {
                                 DocumentCommonDataTemplatePageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "ZOrder", &self.value.z_order)?;
@@ -15818,6 +16781,7 @@ pub mod document {
             pub(super) value: &'ser super::DocumentPagesPageXElementType,
             pub(super) state: Box<DocumentPagesPageXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -15837,11 +16801,14 @@ pub mod document {
                             *self.state = DocumentPagesPageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             helper.end_ns_scope();
@@ -15871,7 +16838,7 @@ pub mod document {
 }
 pub mod extensions {
     use xsd_parser_types::{
-        quick_xml::{Error, WithDeserializer, WithSerializer},
+        quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
         xml::AnyElement,
     };
     #[derive(Debug)]
@@ -15896,10 +16863,24 @@ pub mod extensions {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtExtensionXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtExtensionXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Extension"),
+                namespace,
                 is_root,
             })
         }
@@ -15911,7 +16892,21 @@ pub mod extensions {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::CtExtensionXTypeContentSerializer {
                 value: self,
@@ -15939,10 +16934,24 @@ pub mod extensions {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ExtensionsXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ExtensionsXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("Extensions"),
+                namespace,
                 is_root,
             })
         }
@@ -15963,6 +16972,19 @@ pub mod extensions {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtExtensionPropertyXElementTypeSerializer {
                     value: self,
@@ -15970,6 +16992,7 @@ pub mod extensions {
                         quick_xml_serialize::CtExtensionPropertyXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtExtensionProperty"),
+                    namespace,
                     is_root,
                 },
             )
@@ -16915,8 +17938,8 @@ pub mod extensions {
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
             quick_xml::{
-                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-                WithSerializer,
+                BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer,
+                SerializeHelper, Serializer, WithSerializer,
             },
             xml::AnyElement,
         };
@@ -16925,6 +17948,7 @@ pub mod extensions {
             pub(super) value: &'ser super::CtExtensionXType,
             pub(super) state: Box<CtExtensionXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -16954,11 +17978,14 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "AppName", &self.value.app_name)?;
                             helper.write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
                             helper.write_attrib_opt(
@@ -17023,17 +18050,32 @@ pub mod extensions {
                         CtExtensionXTypeContentSerializerState::Init__ => match self.value {
                             super::CtExtensionXTypeContent::Property(x) => {
                                 *self.state = CtExtensionXTypeContentSerializerState::Property(
-                                    WithSerializer::serializer(x, Some("Property"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Property"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtExtensionXTypeContent::Data(x) => {
                                 *self.state = CtExtensionXTypeContentSerializerState::Data(
-                                    WithSerializer::serializer(x, Some("Data"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Data"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtExtensionXTypeContent::ExtendData(x) => {
                                 *self.state = CtExtensionXTypeContentSerializerState::ExtendData(
-                                    WithSerializer::serializer(x, Some("ExtendData"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("ExtendData"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -17084,6 +18126,7 @@ pub mod extensions {
             pub(super) value: &'ser super::ExtensionsXElementType,
             pub(super) state: Box<ExtensionsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -17109,15 +18152,21 @@ pub mod extensions {
                                     &self.value.extension[..],
                                     Some("Extension"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ExtensionsXElementTypeSerializerState::Extension(x) => {
@@ -17154,6 +18203,7 @@ pub mod extensions {
             pub(super) value: &'ser super::CtExtensionPropertyXElementType,
             pub(super) state: Box<CtExtensionPropertyXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -17177,11 +18227,14 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -17225,9 +18278,9 @@ pub mod extensions {
 pub mod ofd {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtDocInfoXType {
@@ -17252,10 +18305,24 @@ pub mod ofd {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtDocInfoXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtDocInfoXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_DocInfo"),
+                namespace,
                 is_root,
             })
         }
@@ -17277,10 +18344,24 @@ pub mod ofd {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::OfdXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::OfdXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("OFD"),
+                namespace,
                 is_root,
             })
         }
@@ -17299,6 +18380,19 @@ pub mod ofd {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtDocInfoKeywordsXElementTypeSerializer {
                     value: self,
@@ -17306,6 +18400,7 @@ pub mod ofd {
                         quick_xml_serialize::CtDocInfoKeywordsXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtDocInfoKeywords"),
+                    namespace,
                     is_root,
                 },
             )
@@ -17325,7 +18420,20 @@ pub mod ofd {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtDocInfoCustomDatas") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtDocInfoCustomDatas") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtDocInfoCustomDatasXElementType {
@@ -17371,10 +18479,24 @@ pub mod ofd {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::OfdDocBodyXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::OfdDocBodyXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("OfdDocBody"),
+                namespace,
                 is_root,
             })
         }
@@ -17393,6 +18515,19 @@ pub mod ofd {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::OfdDocBodyVersionsXElementTypeSerializer {
                     value: self,
@@ -17400,6 +18535,7 @@ pub mod ofd {
                         quick_xml_serialize::OfdDocBodyVersionsXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("OfdDocBodyVersions"),
+                    namespace,
                     is_root,
                 },
             )
@@ -17429,7 +18565,20 @@ pub mod ofd {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("OfdDocBodyVersionsVersion") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("OfdDocBodyVersionsVersion") , namespace , is_root , })
         }
     }
     impl WithDeserializer for OfdDocBodyVersionsVersionXElementType {
@@ -19899,14 +21048,15 @@ pub mod ofd {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct CtDocInfoXTypeSerializer<'ser> {
             pub(super) value: &'ser super::CtDocInfoXType,
             pub(super) state: Box<CtDocInfoXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -19949,31 +21099,40 @@ pub mod ofd {
                 loop {
                     match &mut *self.state {
                         CtDocInfoXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtDocInfoXTypeSerializerState::DocId(WithSerializer::serializer(
+                            *self.state = CtDocInfoXTypeSerializerState::DocId(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.doc_id,
                                     Some("DocID"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
-                                )?);
+                                )?,
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoXTypeSerializerState::DocId(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtDocInfoXTypeSerializerState::Title(IterSerializer::new(
+                                    *self.state = CtDocInfoXTypeSerializerState::Title(
+                                        IterSerializer::new(
                                             self.value.title.as_ref(),
                                             Some("Title"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -19981,12 +21140,16 @@ pub mod ofd {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtDocInfoXTypeSerializerState::Author(IterSerializer::new(
+                                    *self.state = CtDocInfoXTypeSerializerState::Author(
+                                        IterSerializer::new(
                                             self.value.author.as_ref(),
                                             Some("Author"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -19994,12 +21157,16 @@ pub mod ofd {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtDocInfoXTypeSerializerState::Subject(IterSerializer::new(
+                                    *self.state = CtDocInfoXTypeSerializerState::Subject(
+                                        IterSerializer::new(
                                             self.value.subject.as_ref(),
                                             Some("Subject"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -20012,6 +21179,9 @@ pub mod ofd {
                                             self.value.abstract_.as_ref(),
                                             Some("Abstract"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20026,6 +21196,9 @@ pub mod ofd {
                                             self.value.creation_date.as_ref(),
                                             Some("CreationDate"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20035,12 +21208,16 @@ pub mod ofd {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtDocInfoXTypeSerializerState::ModDate(IterSerializer::new(
+                                    *self.state = CtDocInfoXTypeSerializerState::ModDate(
+                                        IterSerializer::new(
                                             self.value.mod_date.as_ref(),
                                             Some("ModDate"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -20053,6 +21230,9 @@ pub mod ofd {
                                             self.value.doc_usage.as_ref(),
                                             Some("DocUsage"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20062,12 +21242,16 @@ pub mod ofd {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtDocInfoXTypeSerializerState::Cover(IterSerializer::new(
+                                    *self.state = CtDocInfoXTypeSerializerState::Cover(
+                                        IterSerializer::new(
                                             self.value.cover.as_ref(),
                                             Some("Cover"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -20080,6 +21264,9 @@ pub mod ofd {
                                             self.value.keywords.as_ref(),
                                             Some("Keywords"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20089,12 +21276,16 @@ pub mod ofd {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtDocInfoXTypeSerializerState::Creator(IterSerializer::new(
+                                    *self.state = CtDocInfoXTypeSerializerState::Creator(
+                                        IterSerializer::new(
                                             self.value.creator.as_ref(),
                                             Some("Creator"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -20107,6 +21298,9 @@ pub mod ofd {
                                             self.value.creator_version.as_ref(),
                                             Some("CreatorVersion"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20121,6 +21315,9 @@ pub mod ofd {
                                             self.value.custom_datas.as_ref(),
                                             Some("CustomDatas"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20160,6 +21357,7 @@ pub mod ofd {
             pub(super) value: &'ser super::OfdXElementType,
             pub(super) state: Box<OfdXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -20184,19 +21382,26 @@ pub mod ofd {
                 loop {
                     match &mut *self.state {
                         OfdXElementTypeSerializerState::Init__ => {
-                            *self.state =
-                                OfdXElementTypeSerializerState::DocBody(IterSerializer::new(
+                            *self.state = OfdXElementTypeSerializerState::DocBody(
+                                IterSerializer::new(
                                     &self.value.doc_body[..],
                                     Some("DocBody"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Version", &self.value.version)?;
                             helper.write_attrib(&mut bytes, "DocType", &self.value.doc_type)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -20235,6 +21440,7 @@ pub mod ofd {
             pub(super) value: &'ser super::CtDocInfoKeywordsXElementType,
             pub(super) state: Box<CtDocInfoKeywordsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -20258,15 +21464,21 @@ pub mod ofd {
                                     &self.value.keyword[..],
                                     Some("Keyword"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoKeywordsXElementTypeSerializerState::Keyword(x) => {
@@ -20308,6 +21520,7 @@ pub mod ofd {
             pub(super) value: &'ser super::CtDocInfoCustomDatasXElementType,
             pub(super) state: Box<CtDocInfoCustomDatasXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -20338,15 +21551,21 @@ pub mod ofd {
                                         &self.value.custom_data[..],
                                         Some("CustomData"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtDocInfoCustomDatasXElementTypeSerializerState::CustomData(x) => {
@@ -20388,6 +21607,7 @@ pub mod ofd {
             pub(super) value: &'ser super::OfdDocBodyXElementType,
             pub(super) state: Box<OfdDocBodyXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -20416,19 +21636,23 @@ pub mod ofd {
                     match &mut *self.state {
                         OfdDocBodyXElementTypeSerializerState::Init__ => {
                             *self.state = OfdDocBodyXElementTypeSerializerState::DocInfo(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.doc_info,
                                     Some("DocInfo"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyXElementTypeSerializerState::DocInfo(x) => {
@@ -20436,9 +21660,10 @@ pub mod ofd {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = OfdDocBodyXElementTypeSerializerState::DocRoot(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.doc_root,
                                             Some("DocRoot"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -20454,6 +21679,9 @@ pub mod ofd {
                                             self.value.versions.as_ref(),
                                             Some("Versions"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20468,6 +21696,9 @@ pub mod ofd {
                                             self.value.signatures.as_ref(),
                                             Some("Signatures"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -20507,6 +21738,7 @@ pub mod ofd {
             pub(super) value: &'ser super::OfdDocBodyVersionsXElementType,
             pub(super) state: Box<OfdDocBodyVersionsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -20536,15 +21768,21 @@ pub mod ofd {
                                     &self.value.version[..],
                                     Some("Version"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OfdDocBodyVersionsXElementTypeSerializerState::Version(x) => {
@@ -20586,6 +21824,7 @@ pub mod ofd {
             pub(super) value: &'ser super::OfdDocBodyVersionsVersionXElementType,
             pub(super) state: Box<OfdDocBodyVersionsVersionXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -20606,11 +21845,14 @@ pub mod ofd {
                                 OfdDocBodyVersionsVersionXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Index", &self.value.index)?;
                             helper.write_attrib(&mut bytes, "Current", &self.value.current)?;
@@ -20645,9 +21887,9 @@ pub mod ofd {
 pub mod page {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtAxialShdXType {
@@ -20675,10 +21917,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtAxialShdXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtAxialShdXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_AxialShd"),
+                namespace,
                 is_root,
             })
         }
@@ -20710,10 +21966,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtCgTransformXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtCgTransformXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_CGTransform"),
+                namespace,
                 is_root,
             })
         }
@@ -20732,10 +22002,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtClipXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtClipXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Clip"),
+                namespace,
                 is_root,
             })
         }
@@ -20772,10 +22056,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtColorXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtColorXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Color"),
+                namespace,
                 is_root,
             })
         }
@@ -20787,7 +22085,21 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::CtColorXTypeContentSerializer {
                 value: self,
@@ -20856,10 +22168,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtCompositeXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtCompositeXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Composite"),
+                namespace,
                 is_root,
             })
         }
@@ -20880,10 +22206,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtGouraudShdXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtGouraudShdXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_GouraudShd"),
+                namespace,
                 is_root,
             })
         }
@@ -20909,10 +22249,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtGraphicUnitXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtGraphicUnitXTypeSerializerState::Init__),
                 name,
+                namespace,
                 is_root,
             })
         }
@@ -20974,10 +22328,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtGraphicUnitDynSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtGraphicUnitDynSerializerState::Init__),
                 name: name.unwrap_or("CT_GraphicUnit"),
+                namespace,
                 is_root,
             })
         }
@@ -21043,10 +22411,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtImageXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtImageXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Image"),
+                namespace,
                 is_root,
             })
         }
@@ -21068,10 +22450,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtLaGouraudShdXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtLaGouraudShdXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_LaGouraudShd"),
+                namespace,
                 is_root,
             })
         }
@@ -21098,10 +22494,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtLayerXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtLayerXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Layer"),
+                namespace,
                 is_root,
             })
         }
@@ -21120,10 +22530,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtPageBlockXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtPageBlockXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_PageBlock"),
+                namespace,
                 is_root,
             })
         }
@@ -21203,10 +22627,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtPathXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtPathXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Path"),
+                namespace,
                 is_root,
             })
         }
@@ -21242,10 +22680,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtPatternXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtPatternXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Pattern"),
+                namespace,
                 is_root,
             })
         }
@@ -21295,10 +22747,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtRadialShdXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtRadialShdXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_RadialShd"),
+                namespace,
                 is_root,
             })
         }
@@ -21396,10 +22862,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtTextXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtTextXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Text"),
+                namespace,
                 is_root,
             })
         }
@@ -21423,10 +22903,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PageXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::PageXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("Page"),
+                namespace,
                 is_root,
             })
         }
@@ -21513,6 +23007,19 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtAxialShdSegmentXElementTypeSerializer {
                     value: self,
@@ -21520,6 +23027,7 @@ pub mod page {
                         quick_xml_serialize::CtAxialShdSegmentXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtAxialShdSegment"),
+                    namespace,
                     is_root,
                 },
             )
@@ -21546,10 +23054,24 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtClipAreaXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtClipAreaXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("CtClipArea"),
+                namespace,
                 is_root,
             })
         }
@@ -21561,7 +23083,21 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(
                 quick_xml_serialize::CtClipAreaXElementTypeContentSerializer {
@@ -21654,7 +23190,20 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtGraphicUnitActions") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtGraphicUnitActions") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtGraphicUnitActionsXElementType {
@@ -21671,6 +23220,19 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtGraphicUnitClipsXElementTypeSerializer {
                     value: self,
@@ -21678,6 +23240,7 @@ pub mod page {
                         quick_xml_serialize::CtGraphicUnitClipsXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtGraphicUnitClips"),
+                    namespace,
                     is_root,
                 },
             )
@@ -21700,6 +23263,19 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtGouraudShdPointXElementTypeSerializer {
                     value: self,
@@ -21707,6 +23283,7 @@ pub mod page {
                         quick_xml_serialize::CtGouraudShdPointXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtGouraudShdPoint"),
+                    namespace,
                     is_root,
                 },
             )
@@ -21806,7 +23383,20 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockTextObject") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockTextObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockTextObjectXElementType {
@@ -21885,7 +23475,20 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockPathObject") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockPathObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockPathObjectXElementType {
@@ -21950,7 +23553,20 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockImageObject") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockImageObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockImageObjectXElementType {
@@ -22013,7 +23629,20 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockCompositeObject") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockCompositeObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockCompositeObjectXElementType {
@@ -22054,12 +23683,26 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtImageBorderXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtImageBorderXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtImageBorder"),
+                namespace,
                 is_root,
             })
         }
@@ -22080,6 +23723,19 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializer {
                     value: self,
@@ -22087,6 +23743,7 @@ pub mod page {
                         quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtLaGouraudShdPoint"),
+                    namespace,
                     is_root,
                 },
             )
@@ -22142,7 +23799,20 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockPageBlock") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockPageBlock") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockPageBlockXElementType {
@@ -22163,7 +23833,21 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             Ok(quick_xml_serialize::CtPageBlockContentXTypeSerializer {
                 value: self,
                 state: Box::new(
@@ -22281,7 +23965,20 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPatternCellContent") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPatternCellContent") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPatternCellContentXElementType {
@@ -22358,12 +24055,26 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtTextTextCodeXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::CtTextTextCodeXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("CtTextTextCode"),
+                namespace,
                 is_root,
             })
         }
@@ -22387,7 +24098,21 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             Ok(quick_xml_serialize::CtTextContentXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtTextContentXTypeSerializerState::Init__),
@@ -22416,12 +24141,26 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PageTemplateXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::PageTemplateXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("PageTemplate"),
+                namespace,
                 is_root,
             })
         }
@@ -22440,12 +24179,26 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::PageContentXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::PageContentXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("PageContent"),
+                namespace,
                 is_root,
             })
         }
@@ -22534,6 +24287,19 @@ pub mod page {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::PageContentLayerXElementTypeSerializer {
                     value: self,
@@ -22541,6 +24307,7 @@ pub mod page {
                         quick_xml_serialize::PageContentLayerXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("PageContentLayer"),
+                    namespace,
                     is_root,
                 },
             )
@@ -34910,14 +36677,15 @@ pub mod page {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer, XsiTypeSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer, XsiTypeSerializer,
         };
         #[derive(Debug)]
         pub struct CtAxialShdXTypeSerializer<'ser> {
             pub(super) value: &'ser super::CtAxialShdXType,
             pub(super) state: Box<CtAxialShdXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -34942,19 +36710,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtAxialShdXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtAxialShdXTypeSerializerState::Segment(IterSerializer::new(
+                            *self.state = CtAxialShdXTypeSerializerState::Segment(
+                                IterSerializer::new(
                                     &self.value.segment[..],
                                     Some("Segment"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
                             helper.write_attrib(&mut bytes, "Extend", &self.value.extend)?;
@@ -35000,6 +36775,7 @@ pub mod page {
             pub(super) value: &'ser super::CtCgTransformXType,
             pub(super) state: Box<CtCgTransformXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35018,19 +36794,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtCgTransformXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtCgTransformXTypeSerializerState::Glyphs(IterSerializer::new(
+                            *self.state = CtCgTransformXTypeSerializerState::Glyphs(
+                                IterSerializer::new(
                                     self.value.glyphs.as_ref(),
                                     Some("Glyphs"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "CodePosition",
@@ -35078,6 +36861,7 @@ pub mod page {
             pub(super) value: &'ser super::CtClipXType,
             pub(super) state: Box<CtClipXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35102,18 +36886,22 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtClipXTypeSerializerState::Init__ => {
-                            *self.state = CtClipXTypeSerializerState::Area(IterSerializer::new(
-                                &self.value.area[..],
-                                Some("Area"),
-                                false,
-                            ));
+                            *self.state = CtClipXTypeSerializerState::Area(
+                                IterSerializer::new(&self.value.area[..], Some("Area"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtClipXTypeSerializerState::Area(x) => match x.next(helper).transpose()? {
@@ -35148,6 +36936,7 @@ pub mod page {
             pub(super) value: &'ser super::CtColorXType,
             pub(super) state: Box<CtColorXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35177,11 +36966,14 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(&mut bytes, "Value", &self.value.value)?;
                             helper.write_attrib_opt(&mut bytes, "Index", &self.value.index)?;
                             helper.write_attrib_opt(
@@ -35247,27 +37039,52 @@ pub mod page {
                         CtColorXTypeContentSerializerState::Init__ => match self.value {
                             super::CtColorXTypeContent::Pattern(x) => {
                                 *self.state = CtColorXTypeContentSerializerState::Pattern(
-                                    WithSerializer::serializer(x, Some("Pattern"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Pattern"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtColorXTypeContent::AxialShd(x) => {
                                 *self.state = CtColorXTypeContentSerializerState::AxialShd(
-                                    WithSerializer::serializer(x, Some("AxialShd"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("AxialShd"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtColorXTypeContent::RadialShd(x) => {
                                 *self.state = CtColorXTypeContentSerializerState::RadialShd(
-                                    WithSerializer::serializer(x, Some("RadialShd"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("RadialShd"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtColorXTypeContent::GouraudShd(x) => {
                                 *self.state = CtColorXTypeContentSerializerState::GouraudShd(
-                                    WithSerializer::serializer(x, Some("GouraudShd"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("GouraudShd"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtColorXTypeContent::LaGourandShd(x) => {
                                 *self.state = CtColorXTypeContentSerializerState::LaGourandShd(
-                                    WithSerializer::serializer(x, Some("LaGourandShd"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("LaGourandShd"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -35324,6 +37141,7 @@ pub mod page {
             pub(super) value: &'ser super::CtCompositeXType,
             pub(super) state: Box<CtCompositeXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35355,19 +37173,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtCompositeXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtCompositeXTypeSerializerState::Actions(IterSerializer::new(
+                            *self.state = CtCompositeXTypeSerializerState::Actions(
+                                IterSerializer::new(
                                     self.value.actions.as_ref(),
                                     Some("Actions"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -35407,12 +37232,16 @@ pub mod page {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtCompositeXTypeSerializerState::Clips(IterSerializer::new(
+                                    *self.state = CtCompositeXTypeSerializerState::Clips(
+                                        IterSerializer::new(
                                             self.value.clips.as_ref(),
                                             Some("Clips"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -35450,6 +37279,7 @@ pub mod page {
             pub(super) value: &'ser super::CtGouraudShdXType,
             pub(super) state: Box<CtGouraudShdXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35476,15 +37306,21 @@ pub mod page {
                     match &mut *self.state {
                         CtGouraudShdXTypeSerializerState::Init__ => {
                             *self.state = CtGouraudShdXTypeSerializerState::Point(
-                                IterSerializer::new(&self.value.point[..], Some("Point"), false),
+                                IterSerializer::new(&self.value.point[..], Some("Point"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -35497,6 +37333,9 @@ pub mod page {
                                             self.value.back_color.as_deref(),
                                             Some("BackColor"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -35536,6 +37375,7 @@ pub mod page {
             pub(super) value: &'ser super::CtGraphicUnitXType,
             pub(super) state: Box<CtGraphicUnitXTypeSerializerState<'ser>>,
             pub(super) name: Option<&'ser str>,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35582,22 +37422,25 @@ pub mod page {
                             super::CtGraphicUnitXType::CtText(x) => {
                                 *self.state = CtGraphicUnitXTypeSerializerState::CtText(
                                     XsiTypeSerializer::new(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CT_Text"),
+                                            ElementNamespace::Unknown,
                                             self.is_root,
                                         )?,
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
-                                    ),
+                                    )
+                                    .with_namespace(self.namespace.clone()),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockTextObject(x) => {
                                 *self.state =
                                     CtGraphicUnitXTypeSerializerState::CtPageBlockTextObject(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CtPageBlockTextObject"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             self.is_root,
                                         )?,
                                     )
@@ -35605,22 +37448,25 @@ pub mod page {
                             super::CtGraphicUnitXType::CtPath(x) => {
                                 *self.state = CtGraphicUnitXTypeSerializerState::CtPath(
                                     XsiTypeSerializer::new(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CT_Path"),
+                                            ElementNamespace::Unknown,
                                             self.is_root,
                                         )?,
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
-                                    ),
+                                    )
+                                    .with_namespace(self.namespace.clone()),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockPathObject(x) => {
                                 *self.state =
                                     CtGraphicUnitXTypeSerializerState::CtPageBlockPathObject(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CtPageBlockPathObject"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             self.is_root,
                                         )?,
                                     )
@@ -35628,22 +37474,25 @@ pub mod page {
                             super::CtGraphicUnitXType::CtImage(x) => {
                                 *self.state = CtGraphicUnitXTypeSerializerState::CtImage(
                                     XsiTypeSerializer::new(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CT_Image"),
+                                            ElementNamespace::Unknown,
                                             self.is_root,
                                         )?,
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
-                                    ),
+                                    )
+                                    .with_namespace(self.namespace.clone()),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockImageObject(x) => {
                                 *self.state =
                                     CtGraphicUnitXTypeSerializerState::CtPageBlockImageObject(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CtPageBlockImageObject"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             self.is_root,
                                         )?,
                                     )
@@ -35651,22 +37500,25 @@ pub mod page {
                             super::CtGraphicUnitXType::CtComposite(x) => {
                                 *self.state = CtGraphicUnitXTypeSerializerState::CtComposite(
                                     XsiTypeSerializer::new(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CT_Composite"),
+                                            ElementNamespace::Unknown,
                                             self.is_root,
                                         )?,
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
-                                    ),
+                                    )
+                                    .with_namespace(self.namespace.clone()),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockCompositeObject(x) => {
                                 *self.state =
                                     CtGraphicUnitXTypeSerializerState::CtPageBlockCompositeObject(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CtPageBlockCompositeObject"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             self.is_root,
                                         )?,
                                     )
@@ -35743,6 +37595,7 @@ pub mod page {
             pub(super) value: &'ser super::CtGraphicUnitDyn,
             pub(super) state: Box<CtGraphicUnitDynSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35774,19 +37627,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtGraphicUnitDynSerializerState::Init__ => {
-                            *self.state =
-                                CtGraphicUnitDynSerializerState::Actions(IterSerializer::new(
+                            *self.state = CtGraphicUnitDynSerializerState::Actions(
+                                IterSerializer::new(
                                     self.value.actions.as_ref(),
                                     Some("Actions"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -35821,12 +37681,16 @@ pub mod page {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtGraphicUnitDynSerializerState::Clips(IterSerializer::new(
+                                    *self.state = CtGraphicUnitDynSerializerState::Clips(
+                                        IterSerializer::new(
                                             self.value.clips.as_ref(),
                                             Some("Clips"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -35864,6 +37728,7 @@ pub mod page {
             pub(super) value: &'ser super::CtImageXType,
             pub(super) state: Box<CtImageXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -35902,19 +37767,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtImageXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtImageXTypeSerializerState::Actions(IterSerializer::new(
+                            *self.state = CtImageXTypeSerializerState::Actions(
+                                IterSerializer::new(
                                     self.value.actions.as_ref(),
                                     Some("Actions"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -35964,12 +37836,16 @@ pub mod page {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtImageXTypeSerializerState::Clips(IterSerializer::new(
+                                    *self.state = CtImageXTypeSerializerState::Clips(
+                                        IterSerializer::new(
                                             self.value.clips.as_ref(),
                                             Some("Clips"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -35977,12 +37853,16 @@ pub mod page {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtImageXTypeSerializerState::Border(IterSerializer::new(
+                                    *self.state = CtImageXTypeSerializerState::Border(
+                                        IterSerializer::new(
                                             self.value.border.as_ref(),
                                             Some("Border"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -36020,6 +37900,7 @@ pub mod page {
             pub(super) value: &'ser super::CtLaGouraudShdXType,
             pub(super) state: Box<CtLaGouraudShdXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36046,15 +37927,21 @@ pub mod page {
                     match &mut *self.state {
                         CtLaGouraudShdXTypeSerializerState::Init__ => {
                             *self.state = CtLaGouraudShdXTypeSerializerState::Point(
-                                IterSerializer::new(&self.value.point[..], Some("Point"), false),
+                                IterSerializer::new(&self.value.point[..], Some("Point"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "VerticesPerRow",
@@ -36072,6 +37959,9 @@ pub mod page {
                                             self.value.back_color.as_deref(),
                                             Some("BackColor"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -36111,6 +38001,7 @@ pub mod page {
             pub(super) value: &'ser super::CtLayerXType,
             pub(super) state: Box<CtLayerXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36140,11 +38031,14 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -36187,6 +38081,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPageBlockXType,
             pub(super) state: Box<CtPageBlockXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36216,11 +38111,14 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtPageBlockXTypeSerializerState::Content__(x) => {
@@ -36257,6 +38155,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPathXType,
             pub(super) state: Box<CtPathXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36293,18 +38192,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtPathXTypeSerializerState::Init__ => {
-                            *self.state = CtPathXTypeSerializerState::Actions(IterSerializer::new(
-                                self.value.actions.as_ref(),
-                                Some("Actions"),
-                                false,
-                            ));
+                            *self.state = CtPathXTypeSerializerState::Actions(
+                                IterSerializer::new(
+                                    self.value.actions.as_ref(),
+                                    Some("Actions"),
+                                    false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -36342,36 +38249,48 @@ pub mod page {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtPathXTypeSerializerState::Clips(IterSerializer::new(
+                                    *self.state = CtPathXTypeSerializerState::Clips(
+                                        IterSerializer::new(
                                             self.value.clips.as_ref(),
                                             Some("Clips"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
                         CtPathXTypeSerializerState::Clips(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    CtPathXTypeSerializerState::StrokeColor(IterSerializer::new(
+                                *self.state = CtPathXTypeSerializerState::StrokeColor(
+                                    IterSerializer::new(
                                         self.value.stroke_color.as_ref(),
                                         Some("StrokeColor"),
                                         false,
-                                    ))
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                    ),
+                                )
                             }
                         },
                         CtPathXTypeSerializerState::StrokeColor(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        CtPathXTypeSerializerState::FillColor(IterSerializer::new(
+                                    *self.state = CtPathXTypeSerializerState::FillColor(
+                                        IterSerializer::new(
                                             self.value.fill_color.as_ref(),
                                             Some("FillColor"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -36380,9 +38299,10 @@ pub mod page {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtPathXTypeSerializerState::AbbreviatedData(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.abbreviated_data,
                                             Some("AbbreviatedData"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -36423,6 +38343,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPatternXType,
             pub(super) state: Box<CtPatternXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36444,19 +38365,23 @@ pub mod page {
                     match &mut *self.state {
                         CtPatternXTypeSerializerState::Init__ => {
                             *self.state = CtPatternXTypeSerializerState::CellContent(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.cell_content,
                                     Some("CellContent"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
                             helper.write_attrib_opt(&mut bytes, "XStep", &self.value.x_step)?;
@@ -36508,6 +38433,7 @@ pub mod page {
             pub(super) value: &'ser super::CtRadialShdXType,
             pub(super) state: Box<CtRadialShdXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36532,19 +38458,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         CtRadialShdXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtRadialShdXTypeSerializerState::Seqment(IterSerializer::new(
+                            *self.state = CtRadialShdXTypeSerializerState::Seqment(
+                                IterSerializer::new(
                                     &self.value.seqment[..],
                                     Some("Seqment"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             helper.write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
                             helper.write_attrib(
@@ -36602,6 +38535,7 @@ pub mod page {
             pub(super) value: &'ser super::CtTextXType,
             pub(super) state: Box<CtTextXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36627,11 +38561,14 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -36713,6 +38650,7 @@ pub mod page {
             pub(super) value: &'ser super::PageXElementType,
             pub(super) state: Box<PageXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36759,19 +38697,26 @@ pub mod page {
                 loop {
                     match &mut *self.state {
                         PageXElementTypeSerializerState::Init__ => {
-                            *self.state =
-                                PageXElementTypeSerializerState::Template(IterSerializer::new(
+                            *self.state = PageXElementTypeSerializerState::Template(
+                                IterSerializer::new(
                                     &self.value.template[..],
                                     Some("Template"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageXElementTypeSerializerState::Template(x) => {
@@ -36783,6 +38728,9 @@ pub mod page {
                                             &self.value.page_res[..],
                                             Some("PageRes"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -36792,12 +38740,16 @@ pub mod page {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        PageXElementTypeSerializerState::Area(IterSerializer::new(
+                                    *self.state = PageXElementTypeSerializerState::Area(
+                                        IterSerializer::new(
                                             self.value.area.as_ref(),
                                             Some("Area"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -36810,6 +38762,9 @@ pub mod page {
                                             self.value.content.as_ref(),
                                             Some("Content"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -36824,6 +38779,9 @@ pub mod page {
                                             self.value.actions.as_ref(),
                                             Some("Actions"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -36863,6 +38821,7 @@ pub mod page {
             pub(super) value: &'ser super::CtAxialShdSegmentXElementType,
             pub(super) state: Box<CtAxialShdSegmentXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36882,19 +38841,23 @@ pub mod page {
                     match &mut *self.state {
                         CtAxialShdSegmentXElementTypeSerializerState::Init__ => {
                             *self.state = CtAxialShdSegmentXElementTypeSerializerState::Color(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &*self.value.color,
                                     Some("Color"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Position",
@@ -36941,6 +38904,7 @@ pub mod page {
             pub(super) value: &'ser super::CtClipAreaXElementType,
             pub(super) state: Box<CtClipAreaXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -36964,11 +38928,14 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "DrawParam",
@@ -37029,12 +38996,22 @@ pub mod page {
                         CtClipAreaXElementTypeContentSerializerState::Init__ => match self.value {
                             super::CtClipAreaXElementTypeContent::Path(x) => {
                                 *self.state = CtClipAreaXElementTypeContentSerializerState::Path(
-                                    WithSerializer::serializer(x, Some("Path"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Path"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::CtClipAreaXElementTypeContent::Text(x) => {
                                 *self.state = CtClipAreaXElementTypeContentSerializerState::Text(
-                                    WithSerializer::serializer(x, Some("Text"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Text"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                         },
@@ -37081,6 +39058,7 @@ pub mod page {
             pub(super) value: &'ser super::CtGraphicUnitActionsXElementType,
             pub(super) state: Box<CtGraphicUnitActionsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37106,15 +39084,21 @@ pub mod page {
                     match &mut *self.state {
                         CtGraphicUnitActionsXElementTypeSerializerState::Init__ => {
                             *self.state = CtGraphicUnitActionsXElementTypeSerializerState::Action(
-                                IterSerializer::new(&self.value.action[..], Some("Action"), false),
+                                IterSerializer::new(&self.value.action[..], Some("Action"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitActionsXElementTypeSerializerState::Action(x) => {
@@ -37156,6 +39140,7 @@ pub mod page {
             pub(super) value: &'ser super::CtGraphicUnitClipsXElementType,
             pub(super) state: Box<CtGraphicUnitClipsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37175,15 +39160,21 @@ pub mod page {
                     match &mut *self.state {
                         CtGraphicUnitClipsXElementTypeSerializerState::Init__ => {
                             *self.state = CtGraphicUnitClipsXElementTypeSerializerState::Clip(
-                                IterSerializer::new(&self.value.clip[..], Some("Clip"), false),
+                                IterSerializer::new(&self.value.clip[..], Some("Clip"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtGraphicUnitClipsXElementTypeSerializerState::Clip(x) => {
@@ -37225,6 +39216,7 @@ pub mod page {
             pub(super) value: &'ser super::CtGouraudShdPointXElementType,
             pub(super) state: Box<CtGouraudShdPointXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37244,19 +39236,23 @@ pub mod page {
                     match &mut *self.state {
                         CtGouraudShdPointXElementTypeSerializerState::Init__ => {
                             *self.state = CtGouraudShdPointXElementTypeSerializerState::Color(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &*self.value.color,
                                     Some("Color"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib(&mut bytes, "y", &self.value.y)?;
                             helper.write_attrib_opt(
@@ -37305,6 +39301,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPageBlockTextObjectXElementType,
             pub(super) state: Box<CtPageBlockTextObjectXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37331,11 +39328,14 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -37425,6 +39425,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPageBlockPathObjectXElementType,
             pub(super) state: Box<CtPageBlockPathObjectXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37466,15 +39467,21 @@ pub mod page {
                                     self.value.actions.as_ref(),
                                     Some("Actions"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -37519,7 +39526,10 @@ pub mod page {
                                                 self.value.clips.as_ref(),
                                                 Some("Clips"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -37533,6 +39543,9 @@ pub mod page {
                                             self.value.stroke_color.as_ref(),
                                             Some("StrokeColor"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     ),
                             }
@@ -37547,7 +39560,10 @@ pub mod page {
                                                 self.value.fill_color.as_ref(),
                                                 Some("FillColor"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -37559,9 +39575,10 @@ pub mod page {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
                                 CtPageBlockPathObjectXElementTypeSerializerState::AbbreviatedData(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.abbreviated_data,
                                         Some("AbbreviatedData"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         false,
                                     )?,
                                 ),
@@ -37607,6 +39624,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPageBlockImageObjectXElementType,
             pub(super) state: Box<CtPageBlockImageObjectXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37651,15 +39669,21 @@ pub mod page {
                                         self.value.actions.as_ref(),
                                         Some("Actions"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -37716,7 +39740,10 @@ pub mod page {
                                                 self.value.clips.as_ref(),
                                                 Some("Clips"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -37731,7 +39758,10 @@ pub mod page {
                                                 self.value.border.as_ref(),
                                                 Some("Border"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -37777,6 +39807,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPageBlockCompositeObjectXElementType,
             pub(super) state: Box<CtPageBlockCompositeObjectXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37814,15 +39845,21 @@ pub mod page {
                                         self.value.actions.as_ref(),
                                         Some("Actions"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
                             helper.write_attrib(&mut bytes, "Visible", &self.value.visible)?;
@@ -37869,7 +39906,10 @@ pub mod page {
                                                 self.value.clips.as_ref(),
                                                 Some("Clips"),
                                                 false,
-                                            ),
+                                            )
+                                            .with_namespace(ElementNamespace::Namespace(
+                                                super::super::NS_UNNAMED_5,
+                                            )),
                                         )
                                 }
                             }
@@ -37916,6 +39956,7 @@ pub mod page {
             pub(super) value: &'ser super::CtImageBorderXElementType,
             pub(super) state: Box<CtImageBorderXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -37941,15 +39982,21 @@ pub mod page {
                                     self.value.border_color.as_ref(),
                                     Some("BorderColor"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -38008,6 +40055,7 @@ pub mod page {
             pub(super) value: &'ser super::CtLaGouraudShdPointXElementType,
             pub(super) state: Box<CtLaGouraudShdPointXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -38027,19 +40075,23 @@ pub mod page {
                     match &mut *self.state {
                         CtLaGouraudShdPointXElementTypeSerializerState::Init__ => {
                             *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Color(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &*self.value.color,
                                     Some("Color"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -38083,6 +40135,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPageBlockPageBlockXElementType,
             pub(super) state: Box<CtPageBlockPageBlockXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -38113,11 +40166,14 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -38192,27 +40248,30 @@ pub mod page {
                         CtPageBlockContentXTypeSerializerState::Init__ => match self.value {
                             super::CtPageBlockContentXType::TextObject(x) => {
                                 *self.state = CtPageBlockContentXTypeSerializerState::TextObject(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("TextObject"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         self.is_root,
                                     )?,
                                 )
                             }
                             super::CtPageBlockContentXType::PathObject(x) => {
                                 *self.state = CtPageBlockContentXTypeSerializerState::PathObject(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("PathObject"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         self.is_root,
                                     )?,
                                 )
                             }
                             super::CtPageBlockContentXType::ImageObject(x) => {
                                 *self.state = CtPageBlockContentXTypeSerializerState::ImageObject(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("ImageObject"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         self.is_root,
                                     )?,
                                 )
@@ -38220,16 +40279,22 @@ pub mod page {
                             super::CtPageBlockContentXType::CompositeObject(x) => {
                                 *self.state =
                                     CtPageBlockContentXTypeSerializerState::CompositeObject(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CompositeObject"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             self.is_root,
                                         )?,
                                     )
                             }
                             super::CtPageBlockContentXType::PageBlock(x) => {
                                 *self.state = CtPageBlockContentXTypeSerializerState::PageBlock(
-                                    WithSerializer::serializer(x, Some("PageBlock"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("PageBlock"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         },
@@ -38296,6 +40361,7 @@ pub mod page {
             pub(super) value: &'ser super::CtPatternCellContentXElementType,
             pub(super) state: Box<CtPatternCellContentXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -38326,11 +40392,14 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Thumbnail",
@@ -38377,6 +40446,7 @@ pub mod page {
             pub(super) value: &'ser super::CtTextTextCodeXElementType,
             pub(super) state: Box<CtTextTextCodeXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -38400,11 +40470,14 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             helper.write_attrib_opt(&mut bytes, "y", &self.value.y)?;
                             helper.write_attrib_opt(&mut bytes, "DeltaX", &self.value.delta_x)?;
@@ -38469,40 +40542,62 @@ pub mod page {
                         CtTextContentXTypeSerializerState::Init__ => match self.value {
                             super::CtTextContentXType::Actions(x) => {
                                 *self.state = CtTextContentXTypeSerializerState::Actions(
-                                    WithSerializer::serializer(x, Some("Actions"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Actions"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::CtTextContentXType::Clips(x) => {
                                 *self.state = CtTextContentXTypeSerializerState::Clips(
-                                    WithSerializer::serializer(x, Some("Clips"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Clips"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::CtTextContentXType::FillColor(x) => {
                                 *self.state = CtTextContentXTypeSerializerState::FillColor(
-                                    WithSerializer::serializer(x, Some("FillColor"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("FillColor"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::CtTextContentXType::StrokeColor(x) => {
                                 *self.state = CtTextContentXTypeSerializerState::StrokeColor(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("StrokeColor"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         self.is_root,
                                     )?,
                                 )
                             }
                             super::CtTextContentXType::CgTransform(x) => {
                                 *self.state = CtTextContentXTypeSerializerState::CgTransform(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("CGTransform"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         self.is_root,
                                     )?,
                                 )
                             }
                             super::CtTextContentXType::TextCode(x) => {
                                 *self.state = CtTextContentXTypeSerializerState::TextCode(
-                                    WithSerializer::serializer(x, Some("TextCode"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("TextCode"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         },
@@ -38565,6 +40660,7 @@ pub mod page {
             pub(super) value: &'ser super::PageTemplateXElementType,
             pub(super) state: Box<PageTemplateXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -38584,11 +40680,14 @@ pub mod page {
                             *self.state = PageTemplateXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "TemplateID",
@@ -38621,6 +40720,7 @@ pub mod page {
             pub(super) value: &'ser super::PageContentXElementType,
             pub(super) state: Box<PageContentXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -38646,15 +40746,21 @@ pub mod page {
                     match &mut *self.state {
                         PageContentXElementTypeSerializerState::Init__ => {
                             *self.state = PageContentXElementTypeSerializerState::Layer(
-                                IterSerializer::new(&self.value.layer[..], Some("Layer"), false),
+                                IterSerializer::new(&self.value.layer[..], Some("Layer"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PageContentXElementTypeSerializerState::Layer(x) => {
@@ -38691,6 +40797,7 @@ pub mod page {
             pub(super) value: &'ser super::PageContentLayerXElementType,
             pub(super) state: Box<PageContentLayerXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -38720,11 +40827,14 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -38770,9 +40880,9 @@ pub mod page {
 pub mod res {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CtColorSpaceXType {
@@ -38794,10 +40904,24 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtColorSpaceXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtColorSpaceXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_ColorSpace"),
+                namespace,
                 is_root,
             })
         }
@@ -38846,10 +40970,24 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtDrawParamXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtDrawParamXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_DrawParam"),
+                namespace,
                 is_root,
             })
         }
@@ -38897,10 +41035,24 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtFontXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtFontXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_Font"),
+                namespace,
                 is_root,
             })
         }
@@ -38921,10 +41073,24 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtMultiMediaXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtMultiMediaXTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_MultiMedia"),
+                namespace,
                 is_root,
             })
         }
@@ -38947,10 +41113,24 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::CtVectorGxTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtVectorGxTypeSerializerState::Init__),
                 name: name.unwrap_or("CT_VectorG"),
+                namespace,
                 is_root,
             })
         }
@@ -38979,10 +41159,24 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ResXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ResXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("Res"),
+                namespace,
                 is_root,
             })
         }
@@ -38994,7 +41188,21 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             let _name = name;
+            let _namespace = namespace;
             let _is_root = is_root;
             Ok(quick_xml_serialize::ResXElementTypeContentSerializer {
                 value: self,
@@ -39051,6 +41259,19 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::CtColorSpacePaletteXElementTypeSerializer {
                     value: self,
@@ -39058,6 +41279,7 @@ pub mod res {
                         quick_xml_serialize::CtColorSpacePaletteXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("CtColorSpacePalette"),
+                    namespace,
                     is_root,
                 },
             )
@@ -39153,12 +41375,26 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ResColorSpacesXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::ResColorSpacesXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("ResColorSpaces"),
+                namespace,
                 is_root,
             })
         }
@@ -39177,12 +41413,26 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ResDrawParamsXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::ResDrawParamsXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("ResDrawParams"),
+                namespace,
                 is_root,
             })
         }
@@ -39201,10 +41451,24 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ResFontsXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ResFontsXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("ResFonts"),
+                namespace,
                 is_root,
             })
         }
@@ -39223,12 +41487,26 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ResMultiMediasXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::ResMultiMediasXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("ResMultiMedias"),
+                namespace,
                 is_root,
             })
         }
@@ -39248,7 +41526,20 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResCompositeGraphicUnits") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResCompositeGraphicUnits") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResCompositeGraphicUnitsXElementType {
@@ -39276,7 +41567,20 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResColorSpacesColorSpace") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResColorSpacesColorSpace") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResColorSpacesColorSpaceXElementType {
@@ -39324,7 +41628,20 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResDrawParamsDrawParam") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResDrawParamsDrawParam") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResDrawParamsDrawParamXElementType {
@@ -39371,12 +41688,26 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::ResFontsFontXElementTypeSerializer {
                 value: self,
                 state: Box::new(
                     quick_xml_serialize::ResFontsFontXElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("ResFontsFont"),
+                namespace,
                 is_root,
             })
         }
@@ -39399,7 +41730,20 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResMultiMediasMultiMedia") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResMultiMediasMultiMedia") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResMultiMediasMultiMediaXElementType {
@@ -39424,7 +41768,20 @@ pub mod res {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResCompositeGraphicUnitsCompositeGraphicUnit") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResCompositeGraphicUnitsCompositeGraphicUnit") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResCompositeGraphicUnitsCompositeGraphicUnitXElementType {
@@ -44188,14 +46545,15 @@ pub mod res {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct CtColorSpaceXTypeSerializer<'ser> {
             pub(super) value: &'ser super::CtColorSpaceXType,
             pub(super) state: Box<CtColorSpaceXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44220,19 +46578,26 @@ pub mod res {
                 loop {
                     match &mut *self.state {
                         CtColorSpaceXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtColorSpaceXTypeSerializerState::Palette(IterSerializer::new(
+                            *self.state = CtColorSpaceXTypeSerializerState::Palette(
+                                IterSerializer::new(
                                     self.value.palette.as_ref(),
                                     Some("Palette"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -44276,6 +46641,7 @@ pub mod res {
             pub(super) value: &'ser super::CtDrawParamXType,
             pub(super) state: Box<CtDrawParamXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44307,19 +46673,26 @@ pub mod res {
                 loop {
                     match &mut *self.state {
                         CtDrawParamXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtDrawParamXTypeSerializerState::FillColor(IterSerializer::new(
+                            *self.state = CtDrawParamXTypeSerializerState::FillColor(
+                                IterSerializer::new(
                                     self.value.fill_color.as_ref(),
                                     Some("FillColor"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Relative",
@@ -44354,6 +46727,9 @@ pub mod res {
                                             self.value.stroke_color.as_ref(),
                                             Some("StrokeColor"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -44393,6 +46769,7 @@ pub mod res {
             pub(super) value: &'ser super::CtFontXType,
             pub(super) state: Box<CtFontXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44411,19 +46788,26 @@ pub mod res {
                 loop {
                     match &mut *self.state {
                         CtFontXTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtFontXTypeSerializerState::FontFile(IterSerializer::new(
+                            *self.state = CtFontXTypeSerializerState::FontFile(
+                                IterSerializer::new(
                                     self.value.font_file.as_ref(),
                                     Some("FontFile"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -44475,6 +46859,7 @@ pub mod res {
             pub(super) value: &'ser super::CtMultiMediaXType,
             pub(super) state: Box<CtMultiMediaXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44494,19 +46879,23 @@ pub mod res {
                     match &mut *self.state {
                         CtMultiMediaXTypeSerializerState::Init__ => {
                             *self.state = CtMultiMediaXTypeSerializerState::MediaFile(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.media_file,
                                     Some("MediaFile"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -44545,6 +46934,7 @@ pub mod res {
             pub(super) value: &'ser super::CtVectorGxType,
             pub(super) state: Box<CtVectorGxTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44565,19 +46955,26 @@ pub mod res {
                 loop {
                     match &mut *self.state {
                         CtVectorGxTypeSerializerState::Init__ => {
-                            *self.state =
-                                CtVectorGxTypeSerializerState::Thumbnail(IterSerializer::new(
+                            *self.state = CtVectorGxTypeSerializerState::Thumbnail(
+                                IterSerializer::new(
                                     self.value.thumbnail.as_ref(),
                                     Some("Thumbnail"),
                                     false,
-                                ));
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                ),
+                            );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Width", &self.value.width)?;
                             helper.write_attrib(&mut bytes, "Height", &self.value.height)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -44591,6 +46988,9 @@ pub mod res {
                                             self.value.substitution.as_ref(),
                                             Some("Substitution"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -44601,9 +47001,10 @@ pub mod res {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = CtVectorGxTypeSerializerState::Content(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.content,
                                             Some("Content"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -44644,6 +47045,7 @@ pub mod res {
             pub(super) value: &'ser super::ResXElementType,
             pub(super) state: Box<ResXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44673,11 +47075,14 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -44738,30 +47143,51 @@ pub mod res {
                         ResXElementTypeContentSerializerState::Init__ => match self.value {
                             super::ResXElementTypeContent::ColorSpaces(x) => {
                                 *self.state = ResXElementTypeContentSerializerState::ColorSpaces(
-                                    WithSerializer::serializer(x, Some("ColorSpaces"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("ColorSpaces"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ResXElementTypeContent::DrawParams(x) => {
                                 *self.state = ResXElementTypeContentSerializerState::DrawParams(
-                                    WithSerializer::serializer(x, Some("DrawParams"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("DrawParams"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ResXElementTypeContent::Fonts(x) => {
                                 *self.state = ResXElementTypeContentSerializerState::Fonts(
-                                    WithSerializer::serializer(x, Some("Fonts"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Fonts"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ResXElementTypeContent::MultiMedias(x) => {
                                 *self.state = ResXElementTypeContentSerializerState::MultiMedias(
-                                    WithSerializer::serializer(x, Some("MultiMedias"), false)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("MultiMedias"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
+                                        false,
+                                    )?,
                                 )
                             }
                             super::ResXElementTypeContent::CompositeGraphicUnits(x) => {
                                 *self.state =
                                     ResXElementTypeContentSerializerState::CompositeGraphicUnits(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             x,
                                             Some("CompositeGraphicUnits"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -44820,6 +47246,7 @@ pub mod res {
             pub(super) value: &'ser super::CtColorSpacePaletteXElementType,
             pub(super) state: Box<CtColorSpacePaletteXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44839,15 +47266,21 @@ pub mod res {
                     match &mut *self.state {
                         CtColorSpacePaletteXElementTypeSerializerState::Init__ => {
                             *self.state = CtColorSpacePaletteXElementTypeSerializerState::Cv(
-                                IterSerializer::new(&self.value.cv[..], Some("CV"), false),
+                                IterSerializer::new(&self.value.cv[..], Some("CV"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CtColorSpacePaletteXElementTypeSerializerState::Cv(x) => {
@@ -44889,6 +47322,7 @@ pub mod res {
             pub(super) value: &'ser super::ResColorSpacesXElementType,
             pub(super) state: Box<ResColorSpacesXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44918,15 +47352,21 @@ pub mod res {
                                     &self.value.color_space[..],
                                     Some("ColorSpace"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResColorSpacesXElementTypeSerializerState::ColorSpace(x) => match x
@@ -44964,6 +47404,7 @@ pub mod res {
             pub(super) value: &'ser super::ResDrawParamsXElementType,
             pub(super) state: Box<ResDrawParamsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -44993,15 +47434,21 @@ pub mod res {
                                     &self.value.draw_param[..],
                                     Some("DrawParam"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResDrawParamsXElementTypeSerializerState::DrawParam(x) => match x
@@ -45039,6 +47486,7 @@ pub mod res {
             pub(super) value: &'ser super::ResFontsXElementType,
             pub(super) state: Box<ResFontsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45064,15 +47512,21 @@ pub mod res {
                     match &mut *self.state {
                         ResFontsXElementTypeSerializerState::Init__ => {
                             *self.state = ResFontsXElementTypeSerializerState::Font(
-                                IterSerializer::new(&self.value.font[..], Some("Font"), false),
+                                IterSerializer::new(&self.value.font[..], Some("Font"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResFontsXElementTypeSerializerState::Font(x) => {
@@ -45109,6 +47563,7 @@ pub mod res {
             pub(super) value: &'ser super::ResMultiMediasXElementType,
             pub(super) state: Box<ResMultiMediasXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45138,15 +47593,21 @@ pub mod res {
                                     &self.value.multi_media[..],
                                     Some("MultiMedia"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ResMultiMediasXElementTypeSerializerState::MultiMedia(x) => match x
@@ -45184,6 +47645,7 @@ pub mod res {
             pub(super) value: &'ser super::ResCompositeGraphicUnitsXElementType,
             pub(super) state: Box<ResCompositeGraphicUnitsXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45206,7 +47668,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -45227,6 +47689,7 @@ pub mod res {
             pub(super) value: &'ser super::ResColorSpacesColorSpaceXElementType,
             pub(super) state: Box<ResColorSpacesColorSpaceXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45257,15 +47720,21 @@ pub mod res {
                                         self.value.palette.as_ref(),
                                         Some("Palette"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(
                                 &mut bytes,
@@ -45318,6 +47787,7 @@ pub mod res {
             pub(super) value: &'ser super::ResDrawParamsDrawParamXElementType,
             pub(super) state: Box<ResDrawParamsDrawParamXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45355,15 +47825,21 @@ pub mod res {
                                         self.value.fill_color.as_ref(),
                                         Some("FillColor"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib_opt(
                                 &mut bytes,
                                 "Relative",
@@ -45399,6 +47875,9 @@ pub mod res {
                                             self.value.stroke_color.as_ref(),
                                             Some("StrokeColor"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     ),
                             }
@@ -45444,6 +47923,7 @@ pub mod res {
             pub(super) value: &'ser super::ResFontsFontXElementType,
             pub(super) state: Box<ResFontsFontXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45467,15 +47947,21 @@ pub mod res {
                                     self.value.font_file.as_ref(),
                                     Some("FontFile"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             helper.write_attrib_opt(
                                 &mut bytes,
@@ -45529,6 +48015,7 @@ pub mod res {
             pub(super) value: &'ser super::ResMultiMediasMultiMediaXElementType,
             pub(super) state: Box<ResMultiMediasMultiMediaXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45549,19 +48036,23 @@ pub mod res {
                         ResMultiMediasMultiMediaXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 ResMultiMediasMultiMediaXElementTypeSerializerState::MediaFile(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.media_file,
                                         Some("MediaFile"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         false,
                                     )?,
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
@@ -45610,6 +48101,7 @@ pub mod res {
             pub(super) state:
                 Box<ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -45630,7 +48122,7 @@ pub mod res {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "Width" , & self . value . width) ? ; helper . write_attrib (& mut bytes , "Height" , & self . value . height) ? ; helper . write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer_with_namespace (& self . value . content , Some ("Content") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -45654,9 +48146,9 @@ pub mod signature {
     use std::borrow::Cow;
     use xsd_parser_types::{
         quick_xml::{
-            DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-            SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-            WithSerializer,
+            DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+            SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+            WithSerializeToBytes, WithSerializer,
         },
         xml::Base64String,
     };
@@ -45673,10 +48165,24 @@ pub mod signature {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SianatureXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SianatureXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("Sianature"),
+                namespace,
                 is_root,
             })
         }
@@ -45700,6 +48206,19 @@ pub mod signature {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::SianatureSiqnedInfoXElementTypeSerializer {
                     value: self,
@@ -45707,6 +48226,7 @@ pub mod signature {
                         quick_xml_serialize::SianatureSiqnedInfoXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("SianatureSiqnedInfo"),
+                    namespace,
                     is_root,
                 },
             )
@@ -45729,7 +48249,20 @@ pub mod signature {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoProvider") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoProvider") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoProviderXElementType {
@@ -45755,7 +48288,20 @@ pub mod signature {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoReferences") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoReferences") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoReferencesXElementType {
@@ -45777,7 +48323,20 @@ pub mod signature {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoStampAnnot") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoStampAnnot") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoStampAnnotXElementType {
@@ -45796,7 +48355,20 @@ pub mod signature {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoSeal") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoSeal") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoSealXElementType {
@@ -45844,7 +48416,20 @@ pub mod signature {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoReferencesReference") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoReferencesReference") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoReferencesReferenceXElementType {
@@ -47537,8 +50122,8 @@ pub mod signature {
     pub mod quick_xml_serialize {
         use xsd_parser_types::{
             quick_xml::{
-                BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-                WithSerializer,
+                BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer,
+                SerializeHelper, Serializer, WithSerializer,
             },
             xml::Base64String,
         };
@@ -47547,6 +50132,7 @@ pub mod signature {
             pub(super) value: &'ser super::SianatureXElementType,
             pub(super) state: Box<SianatureXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -47569,19 +50155,23 @@ pub mod signature {
                     match &mut *self.state {
                         SianatureXElementTypeSerializerState::Init__ => {
                             *self.state = SianatureXElementTypeSerializerState::SiqnedInfo(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.siqned_info,
                                     Some("SiqnedInfo"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureXElementTypeSerializerState::SiqnedInfo(x) => {
@@ -47589,9 +50179,10 @@ pub mod signature {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = SianatureXElementTypeSerializerState::SignedValue(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.signed_value,
                                             Some("SignedValue"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -47632,6 +50223,7 @@ pub mod signature {
             pub(super) value: &'ser super::SianatureSiqnedInfoXElementType,
             pub(super) state: Box<SianatureSiqnedInfoXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -47673,7 +50265,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer_with_namespace (& self . value . provider , Some ("Provider") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer_with_namespace (& self . value . references , Some ("References") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5))) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -47694,6 +50286,7 @@ pub mod signature {
             pub(super) value: &'ser super::SianatureSiqnedInfoProviderXElementType,
             pub(super) state: Box<SianatureSiqnedInfoProviderXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -47714,11 +50307,14 @@ pub mod signature {
                                 SianatureSiqnedInfoProviderXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "ProviderName",
@@ -47757,6 +50353,7 @@ pub mod signature {
             pub(super) value: &'ser super::SianatureSiqnedInfoReferencesXElementType,
             pub(super) state: Box<SianatureSiqnedInfoReferencesXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -47787,15 +50384,21 @@ pub mod signature {
                                         &self.value.reference[..],
                                         Some("Reference"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     ),
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(
                                 &mut bytes,
                                 "CheckMethod",
@@ -47844,6 +50447,7 @@ pub mod signature {
             pub(super) value: &'ser super::SianatureSiqnedInfoStampAnnotXElementType,
             pub(super) state: Box<SianatureSiqnedInfoStampAnnotXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -47864,11 +50468,14 @@ pub mod signature {
                                 SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "PageRef", &self.value.page_ref)?;
                             helper.write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
@@ -47904,6 +50511,7 @@ pub mod signature {
             pub(super) value: &'ser super::SianatureSiqnedInfoSealXElementType,
             pub(super) state: Box<SianatureSiqnedInfoSealXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -47924,19 +50532,23 @@ pub mod signature {
                         SianatureSiqnedInfoSealXElementTypeSerializerState::Init__ => {
                             *self.state =
                                 SianatureSiqnedInfoSealXElementTypeSerializerState::BaseLoc(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.base_loc,
                                         Some("BaseLoc"),
+                                        ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         false,
                                     )?,
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SianatureSiqnedInfoSealXElementTypeSerializerState::BaseLoc(x) => {
@@ -47982,6 +50594,7 @@ pub mod signature {
             pub(super) state:
                 Box<SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -47998,7 +50611,7 @@ pub mod signature {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer_with_namespace (& self . value . check_value , Some ("CheckValue") , ElementNamespace :: Namespace (super :: super :: NS_UNNAMED_5) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: NS_UNNAMED_5) ; } helper . write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -48019,9 +50632,9 @@ pub mod signature {
 pub mod signatures {
     use std::borrow::Cow;
     use xsd_parser_types::quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     };
     pub type Siqnatures = SiqnaturesXElementType;
     #[derive(Debug)]
@@ -48036,10 +50649,24 @@ pub mod signatures {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::SiqnaturesXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::SiqnaturesXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("Siqnatures"),
+                namespace,
                 is_root,
             })
         }
@@ -48066,6 +50693,19 @@ pub mod signatures {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::SiqnaturesSignatureXElementTypeSerializer {
                     value: self,
@@ -48073,6 +50713,7 @@ pub mod signatures {
                         quick_xml_serialize::SiqnaturesSignatureXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("SiqnaturesSignature"),
+                    namespace,
                     is_root,
                 },
             )
@@ -48481,13 +51122,15 @@ pub mod signatures {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer,
         };
         #[derive(Debug)]
         pub struct SiqnaturesXElementTypeSerializer<'ser> {
             pub(super) value: &'ser super::SiqnaturesXElementType,
             pub(super) state: Box<SiqnaturesXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -48518,15 +51161,21 @@ pub mod signatures {
                                     self.value.max_sign_id.as_ref(),
                                     Some("MaxSignId"),
                                     false,
+                                )
+                                .with_namespace(
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                 ),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SiqnaturesXElementTypeSerializerState::MaxSignId(x) => {
@@ -48538,6 +51187,9 @@ pub mod signatures {
                                             &self.value.signature[..],
                                             Some("Signature"),
                                             false,
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                         ),
                                     )
                                 }
@@ -48577,6 +51229,7 @@ pub mod signatures {
             pub(super) value: &'ser super::SiqnaturesSignatureXElementType,
             pub(super) state: Box<SiqnaturesSignatureXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -48596,11 +51249,14 @@ pub mod signatures {
                             *self.state = SiqnaturesSignatureXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             helper.write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
@@ -48630,7 +51286,7 @@ pub mod signatures {
     }
 }
 pub mod version {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     pub type DocVersion = DocVersionXElementType;
     #[derive(Debug)]
     pub struct DocVersionXElementType {
@@ -48648,10 +51304,24 @@ pub mod version {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::DocVersionXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::DocVersionXElementTypeSerializerState::Init__),
                 name: name.unwrap_or("DocVersion"),
+                namespace,
                 is_root,
             })
         }
@@ -48670,6 +51340,19 @@ pub mod version {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(
                 quick_xml_serialize::DocVersionFileListXElementTypeSerializer {
                     value: self,
@@ -48677,6 +51360,7 @@ pub mod version {
                         quick_xml_serialize::DocVersionFileListXElementTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("DocVersionFileList"),
+                    namespace,
                     is_root,
                 },
             )
@@ -48697,7 +51381,20 @@ pub mod version {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DocVersionFileListFile") , is_root , })
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
+            Ok (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DocVersionFileListFile") , namespace , is_root , })
         }
     }
     impl WithDeserializer for DocVersionFileListFileXElementType {
@@ -49358,14 +52055,15 @@ pub mod version {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct DocVersionXElementTypeSerializer<'ser> {
             pub(super) value: &'ser super::DocVersionXElementType,
             pub(super) state: Box<DocVersionXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -49386,19 +52084,23 @@ pub mod version {
                     match &mut *self.state {
                         DocVersionXElementTypeSerializerState::Init__ => {
                             *self.state = DocVersionXElementTypeSerializerState::FileList(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.file_list,
                                     Some("FileList"),
+                                    ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                     false,
                                 )?,
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             helper.write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
                             helper.write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -49414,9 +52116,10 @@ pub mod version {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
                                     *self.state = DocVersionXElementTypeSerializerState::DocRoot(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.doc_root,
                                             Some("DocRoot"),
+                                            ElementNamespace::Namespace(super::super::NS_UNNAMED_5),
                                             false,
                                         )?,
                                     )
@@ -49457,6 +52160,7 @@ pub mod version {
             pub(super) value: &'ser super::DocVersionFileListXElementType,
             pub(super) state: Box<DocVersionFileListXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -49482,15 +52186,21 @@ pub mod version {
                     match &mut *self.state {
                         DocVersionFileListXElementTypeSerializerState::Init__ => {
                             *self.state = DocVersionFileListXElementTypeSerializerState::File(
-                                IterSerializer::new(&self.value.file[..], Some("File"), false),
+                                IterSerializer::new(&self.value.file[..], Some("File"), false)
+                                    .with_namespace(ElementNamespace::Namespace(
+                                        super::super::NS_UNNAMED_5,
+                                    )),
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             return Ok(Some(Event::Start(bytes)));
                         }
                         DocVersionFileListXElementTypeSerializerState::File(x) => {
@@ -49532,6 +52242,7 @@ pub mod version {
             pub(super) value: &'ser super::DocVersionFileListFileXElementType,
             pub(super) state: Box<DocVersionFileListFileXElementTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -49556,11 +52267,14 @@ pub mod version {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
-                            helper.write_xmlns_for_tag(
-                                &mut bytes,
-                                self.name,
-                                &super::super::NS_UNNAMED_5,
-                            );
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                            if self.is_root {
+                                helper.write_xmlns_for_tag(
+                                    &mut bytes,
+                                    self.name,
+                                    &super::super::NS_UNNAMED_5,
+                                );
+                            }
                             helper.write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -49608,8 +52322,9 @@ pub mod xs {
     use std::borrow::Cow;
     use xsd_parser_types::{
         quick_xml::{
-            DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-            WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
+            DeserializeBytes, DeserializeHelper, ElementNamespace, Error, SerializeBytes,
+            SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+            WithSerializer,
         },
         xml::{Base64String, HexString},
     };
@@ -49664,10 +52379,24 @@ pub mod xs {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::AnySimpleTypeXTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::AnySimpleTypeXTypeSerializerState::Init__),
                 name: name.unwrap_or("anySimpleType"),
+                namespace,
                 is_root,
             })
         }
@@ -49854,13 +52583,15 @@ pub mod xs {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+            WithSerializer,
         };
         #[derive(Debug)]
         pub struct AnySimpleTypeXTypeSerializer<'ser> {
             pub(super) value: &'ser super::AnySimpleTypeXType,
             pub(super) state: Box<AnySimpleTypeXTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -49884,6 +52615,7 @@ pub mod xs {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                             if self.is_root {
                                 helper.write_xmlns_for_tag(
                                     &mut bytes,

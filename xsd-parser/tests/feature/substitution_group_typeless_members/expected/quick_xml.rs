@@ -1,7 +1,10 @@
 use core::fmt::Debug;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{BoxedSerializer, Error, WithBoxedSerializer, WithDeserializer, WithSerializer},
+    quick_xml::{
+        BoxedSerializer, ElementNamespace, Error, WithBoxedSerializer, WithDeserializer,
+        WithSerializer,
+    },
     AsAny,
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -24,10 +27,19 @@ impl WithSerializer for RootType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::RootTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::RootTypeSerializerState::Init__),
             name: name.unwrap_or("tns:Root"),
+            namespace,
             is_root,
         })
     }
@@ -50,13 +62,29 @@ impl WithSerializer for Head {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         if (*self.0).as_any().is::<HeadType>() {
-            return self.0.serializer(Some("tns:A"), is_root);
+            return self.0.serializer_with_namespace(
+                Some("tns:A"),
+                ElementNamespace::Namespace(NS_TNS),
+                is_root,
+            );
         }
         if (*self.0).as_any().is::<HeadType>() {
-            return self.0.serializer(Some("tns:B"), is_root);
+            return self.0.serializer_with_namespace(
+                Some("tns:B"),
+                ElementNamespace::Namespace(NS_TNS),
+                is_root,
+            );
         }
-        self.0.serializer(name, is_root)
+        self.0.serializer_with_namespace(name, namespace, is_root)
     }
 }
 impl WithDeserializer for Head {
@@ -74,10 +102,19 @@ impl WithSerializer for HeadType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::HeadTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::HeadTypeSerializerState::Init__),
             name: name.unwrap_or("tns:Head"),
+            namespace,
             is_root,
         })
     }
@@ -434,13 +471,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer,
     };
     #[derive(Debug)]
     pub struct RootTypeSerializer<'ser> {
         pub(super) value: &'ser super::RootType,
         pub(super) state: Box<RootTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -459,13 +498,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     RootTypeSerializerState::Init__ => {
-                        *self.state = RootTypeSerializerState::Head(IterSerializer::new(
-                            &self.value.head[..],
-                            Some("tns:Head"),
-                            false,
-                        ));
+                        *self.state = RootTypeSerializerState::Head(
+                            IterSerializer::new(&self.value.head[..], Some("tns:Head"), false)
+                                .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -508,6 +547,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::HeadType,
         pub(super) state: Box<HeadTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -527,6 +567,7 @@ pub mod quick_xml_serialize {
                         *self.state = HeadTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(

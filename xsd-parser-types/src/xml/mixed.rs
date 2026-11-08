@@ -7,8 +7,8 @@ use quick_xml::events::Event;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, IterSerializer, SerializeHelper, Serializer, WithDeserializer,
-    WithSerializer,
+    DeserializerResult, ElementNamespace, Error, IterSerializer, SerializeHelper, Serializer,
+    WithDeserializer, WithSerializer,
 };
 
 use super::text::Text;
@@ -73,7 +73,18 @@ where
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        let serializer = self.value.serializer(name, is_root)?;
+        self.serializer_with_namespace(name, ElementNamespace::Unknown, is_root)
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        let serializer = self
+            .value
+            .serializer_with_namespace(name, namespace, is_root)?;
 
         Ok(MixedSerializer::Inner {
             value: self,

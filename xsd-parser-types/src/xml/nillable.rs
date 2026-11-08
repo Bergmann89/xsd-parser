@@ -10,8 +10,8 @@ use crate::traits::WithNamespace;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     CollectNamespaces, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-    DeserializerOutput, DeserializerResult, Error, ErrorKind, SerializeHelper, Serializer,
-    WithDeserializer, WithSerializer,
+    DeserializerOutput, DeserializerResult, ElementNamespace, Error, ErrorKind, SerializeHelper,
+    Serializer, WithDeserializer, WithSerializer,
 };
 
 /// Implements a nillable XML element.
@@ -139,13 +139,23 @@ where
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        self.serializer_with_namespace(name, ElementNamespace::Unknown, is_root)
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         if let Some(inner) = &self.0 {
             Ok(NillableSerializer::Some {
-                inner: inner.serializer(name, is_root)?,
+                inner: inner.serializer_with_namespace(name, namespace, is_root)?,
             })
         } else {
             Ok(NillableSerializer::Nil {
                 name: name.unwrap_or("Nillable"),
+                namespace,
             })
         }
     }
@@ -175,6 +185,9 @@ where
     Nil {
         /// Name of the emitted XML tag.
         name: &'ser str,
+
+        /// Namespace of the emitted XML tag.
+        namespace: ElementNamespace,
     },
 
     /// Serialization is done.
@@ -189,7 +202,11 @@ where
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Some { inner } => f.debug_struct("Some").field("inner", inner).finish(),
-            Self::Nil { name } => f.debug_struct("Nil").field("name", name).finish(),
+            Self::Nil { name, namespace } => f
+                .debug_struct("Nil")
+                .field("name", name)
+                .field("namespace", namespace)
+                .finish(),
             Self::Done => write!(f, "Done"),
         }
     }
@@ -211,12 +228,13 @@ where
 
                 item
             }
-            Self::Nil { name } => {
+            Self::Nil { name, namespace } => {
                 use crate::misc::NamespacePrefix;
 
                 let mut bytes = BytesStart::new(*name);
 
                 helper.begin_ns_scope();
+                helper.write_xmlns_for_element(&mut bytes, name, namespace);
                 helper.write_xmlns(&mut bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
                 bytes.push_attribute(("xsi:nil", "true"));
                 helper.end_ns_scope();

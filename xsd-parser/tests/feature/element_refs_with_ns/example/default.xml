@@ -1,5 +1,5 @@
 <Outer xmlns="Foo" xmlns:bar="Bar" xmlns:baz="Baz" xmlns:biz="Biz">
-    <bar:Inner><A>Text in A</A></bar:Inner>
-    <baz:Inner><B>Text in B</B></baz:Inner>
-    <biz:Inner><C>Text in C</C></biz:Inner>
+    <bar:Inner><A xmlns="">Text in A</A></bar:Inner>
+    <baz:Inner><B xmlns="">Text in B</B></baz:Inner>
+    <biz:Inner><C xmlns="">Text in C</C></biz:Inner>
 </Outer>

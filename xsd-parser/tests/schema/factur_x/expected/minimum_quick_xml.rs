@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -35,10 +35,19 @@ impl WithSerializer for CrossIndustryInvoiceType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::CrossIndustryInvoiceTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::CrossIndustryInvoiceTypeSerializerState::Init__),
             name: name.unwrap_or("rsm:CrossIndustryInvoiceType"),
+            namespace,
             is_root,
         })
     }
@@ -58,6 +67,14 @@ impl WithSerializer for ExchangedDocumentContextType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
             quick_xml_serialize::ExchangedDocumentContextTypeSerializer {
                 value: self,
@@ -65,6 +82,7 @@ impl WithSerializer for ExchangedDocumentContextType {
                     quick_xml_serialize::ExchangedDocumentContextTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("ram:ExchangedDocumentContextType"),
+                namespace,
                 is_root,
             },
         )
@@ -86,10 +104,19 @@ impl WithSerializer for ExchangedDocumentType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ExchangedDocumentTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ExchangedDocumentTypeSerializerState::Init__),
             name: name.unwrap_or("ram:ExchangedDocumentType"),
+            namespace,
             is_root,
         })
     }
@@ -110,6 +137,14 @@ impl WithSerializer for SupplyChainTradeTransactionType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
             quick_xml_serialize::SupplyChainTradeTransactionTypeSerializer {
                 value: self,
@@ -117,6 +152,7 @@ impl WithSerializer for SupplyChainTradeTransactionType {
                     quick_xml_serialize::SupplyChainTradeTransactionTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("ram:SupplyChainTradeTransactionType"),
+                namespace,
                 is_root,
             },
         )
@@ -136,6 +172,14 @@ impl WithSerializer for DocumentContextParameterType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
             quick_xml_serialize::DocumentContextParameterTypeSerializer {
                 value: self,
@@ -143,6 +187,7 @@ impl WithSerializer for DocumentContextParameterType {
                     quick_xml_serialize::DocumentContextParameterTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("ram:DocumentContextParameterType"),
+                namespace,
                 is_root,
             },
         )
@@ -163,10 +208,19 @@ impl WithSerializer for IdType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::IdTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::IdTypeSerializerState::Init__),
             name: name.unwrap_or("udt:IDType"),
+            namespace,
             is_root,
         })
     }
@@ -185,10 +239,19 @@ impl WithSerializer for DocumentCodeType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::DocumentCodeTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::DocumentCodeTypeSerializerState::Init__),
             name: name.unwrap_or("qdt:DocumentCodeType"),
+            namespace,
             is_root,
         })
     }
@@ -211,10 +274,19 @@ impl WithSerializer for DateTimeType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::DateTimeTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::DateTimeTypeSerializerState::Init__),
             name: name.unwrap_or("udt:DateTimeType"),
+            namespace,
             is_root,
         })
     }
@@ -226,7 +298,16 @@ impl WithSerializer for DateTimeTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::DateTimeTypeContentSerializer {
             value: self,
@@ -254,10 +335,19 @@ impl WithSerializer for HeaderTradeAgreementType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::HeaderTradeAgreementTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::HeaderTradeAgreementTypeSerializerState::Init__),
             name: name.unwrap_or("ram:HeaderTradeAgreementType"),
+            namespace,
             is_root,
         })
     }
@@ -274,10 +364,19 @@ impl WithSerializer for HeaderTradeDeliveryType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::HeaderTradeDeliveryTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::HeaderTradeDeliveryTypeSerializerState::Init__),
             name: name.unwrap_or("ram:HeaderTradeDeliveryType"),
+            namespace,
             is_root,
         })
     }
@@ -298,10 +397,19 @@ impl WithSerializer for HeaderTradeSettlementType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::HeaderTradeSettlementTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::HeaderTradeSettlementTypeSerializerState::Init__),
             name: name.unwrap_or("ram:HeaderTradeSettlementType"),
+            namespace,
             is_root,
         })
     }
@@ -321,6 +429,14 @@ impl WithSerializer for DateTimeTypeDateTimeStringType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
             quick_xml_serialize::DateTimeTypeDateTimeStringTypeSerializer {
                 value: self,
@@ -328,6 +444,7 @@ impl WithSerializer for DateTimeTypeDateTimeStringType {
                     quick_xml_serialize::DateTimeTypeDateTimeStringTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("udt:DateTimeTypeDateTimeString"),
+                namespace,
                 is_root,
             },
         )
@@ -347,10 +464,19 @@ impl WithSerializer for TextType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::TextTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::TextTypeSerializerState::Init__),
             name: name.unwrap_or("udt:TextType"),
+            namespace,
             is_root,
         })
     }
@@ -372,10 +498,19 @@ impl WithSerializer for TradePartyType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::TradePartyTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::TradePartyTypeSerializerState::Init__),
             name: name.unwrap_or("ram:TradePartyType"),
+            namespace,
             is_root,
         })
     }
@@ -394,10 +529,19 @@ impl WithSerializer for ReferencedDocumentType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ReferencedDocumentTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ReferencedDocumentTypeSerializerState::Init__),
             name: name.unwrap_or("ram:ReferencedDocumentType"),
+            namespace,
             is_root,
         })
     }
@@ -416,10 +560,19 @@ impl WithSerializer for CurrencyCodeType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::CurrencyCodeTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::CurrencyCodeTypeSerializerState::Init__),
             name: name.unwrap_or("qdt:CurrencyCodeType"),
+            namespace,
             is_root,
         })
     }
@@ -442,7 +595,15 @@ impl WithSerializer for TradeSettlementHeaderMonetarySummationType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok (quick_xml_serialize :: TradeSettlementHeaderMonetarySummationTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: TradeSettlementHeaderMonetarySummationTypeSerializerState :: Init__) , name : name . unwrap_or ("ram:TradeSettlementHeaderMonetarySummationType") , is_root , })
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok (quick_xml_serialize :: TradeSettlementHeaderMonetarySummationTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: TradeSettlementHeaderMonetarySummationTypeSerializerState :: Init__) , name : name . unwrap_or ("ram:TradeSettlementHeaderMonetarySummationType") , namespace , is_root , })
     }
 }
 impl WithDeserializer for TradeSettlementHeaderMonetarySummationType {
@@ -460,10 +621,19 @@ impl WithSerializer for LegalOrganizationType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::LegalOrganizationTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::LegalOrganizationTypeSerializerState::Init__),
             name: name.unwrap_or("ram:LegalOrganizationType"),
+            namespace,
             is_root,
         })
     }
@@ -482,10 +652,19 @@ impl WithSerializer for TradeAddressType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::TradeAddressTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::TradeAddressTypeSerializerState::Init__),
             name: name.unwrap_or("ram:TradeAddressType"),
+            namespace,
             is_root,
         })
     }
@@ -504,10 +683,19 @@ impl WithSerializer for TaxRegistrationType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::TaxRegistrationTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::TaxRegistrationTypeSerializerState::Init__),
             name: name.unwrap_or("ram:TaxRegistrationType"),
+            namespace,
             is_root,
         })
     }
@@ -527,10 +715,19 @@ impl WithSerializer for AmountType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::AmountTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::AmountTypeSerializerState::Init__),
             name: name.unwrap_or("udt:AmountType"),
+            namespace,
             is_root,
         })
     }
@@ -549,10 +746,19 @@ impl WithSerializer for CountryIdType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::CountryIdTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::CountryIdTypeSerializerState::Init__),
             name: name.unwrap_or("qdt:CountryIDType"),
+            namespace,
             is_root,
         })
     }
@@ -5875,14 +6081,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct CrossIndustryInvoiceTypeSerializer<'ser> {
         pub(super) value: &'ser super::CrossIndustryInvoiceType,
         pub(super) state: Box<CrossIndustryInvoiceTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -5909,14 +6116,16 @@ pub mod quick_xml_serialize {
                     CrossIndustryInvoiceTypeSerializerState::Init__ => {
                         *self.state =
                             CrossIndustryInvoiceTypeSerializerState::ExchangedDocumentContext(
-                                WithSerializer::serializer(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.exchanged_document_context,
                                     Some("rsm:ExchangedDocumentContext"),
+                                    ElementNamespace::Namespace(super::NS_RSM),
                                     false,
                                 )?,
                             );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RSM);
                             helper.write_xmlns(
@@ -5948,9 +6157,10 @@ pub mod quick_xml_serialize {
                             None => {
                                 *self.state =
                                     CrossIndustryInvoiceTypeSerializerState::ExchangedDocument(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.exchanged_document,
                                             Some("rsm:ExchangedDocument"),
+                                            ElementNamespace::Namespace(super::NS_RSM),
                                             false,
                                         )?,
                                     )
@@ -5965,9 +6175,10 @@ pub mod quick_xml_serialize {
                         None => {
                             *self.state =
                                 CrossIndustryInvoiceTypeSerializerState::SupplyChainTradeTransaction(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.supply_chain_trade_transaction,
                                         Some("rsm:SupplyChainTradeTransaction"),
+                                        ElementNamespace::Namespace(super::NS_RSM),
                                         false,
                                     )?,
                                 )
@@ -6007,6 +6218,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ExchangedDocumentContextType,
         pub(super) state: Box<ExchangedDocumentContextTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6032,7 +6244,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { ExchangedDocumentContextTypeSerializerState :: Init__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (IterSerializer :: new (self . value . business_process_specified_document_context_parameter . as_ref () , Some ("ram:BusinessProcessSpecifiedDocumentContextParameter") , false)) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (WithSerializer :: serializer (& self . value . guideline_specified_document_context_parameter , Some ("ram:GuidelineSpecifiedDocumentContextParameter") , false) ?) , } ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: End__ , } ExchangedDocumentContextTypeSerializerState :: End__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ExchangedDocumentContextTypeSerializerState :: Done__ => return Ok (None) , ExchangedDocumentContextTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { ExchangedDocumentContextTypeSerializerState :: Init__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (IterSerializer :: new (self . value . business_process_specified_document_context_parameter . as_ref () , Some ("ram:BusinessProcessSpecifiedDocumentContextParameter") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_RAM))) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } ExchangedDocumentContextTypeSerializerState :: BusinessProcessSpecifiedDocumentContextParameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (WithSerializer :: serializer_with_namespace (& self . value . guideline_specified_document_context_parameter , Some ("ram:GuidelineSpecifiedDocumentContextParameter") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) , } ExchangedDocumentContextTypeSerializerState :: GuidelineSpecifiedDocumentContextParameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ExchangedDocumentContextTypeSerializerState :: End__ , } ExchangedDocumentContextTypeSerializerState :: End__ => { * self . state = ExchangedDocumentContextTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ExchangedDocumentContextTypeSerializerState :: Done__ => return Ok (None) , ExchangedDocumentContextTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -6053,6 +6265,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ExchangedDocumentType,
         pub(super) state: Box<ExchangedDocumentTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6074,10 +6287,16 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ExchangedDocumentTypeSerializerState::Init__ => {
                         *self.state = ExchangedDocumentTypeSerializerState::Id(
-                            WithSerializer::serializer(&self.value.id, Some("ram:ID"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.id,
+                                Some("ram:ID"),
+                                ElementNamespace::Namespace(super::NS_RAM),
+                                false,
+                            )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -6103,9 +6322,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ExchangedDocumentTypeSerializerState::TypeCode(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.type_code,
                                         Some("ram:TypeCode"),
+                                        ElementNamespace::Namespace(super::NS_RAM),
                                         false,
                                     )?,
                                 )
@@ -6117,9 +6337,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ExchangedDocumentTypeSerializerState::IssueDateTime(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.issue_date_time,
                                         Some("ram:IssueDateTime"),
+                                        ElementNamespace::Namespace(super::NS_RAM),
                                         false,
                                     )?,
                                 )
@@ -6160,6 +6381,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::SupplyChainTradeTransactionType,
         pub(super) state: Box<SupplyChainTradeTransactionTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6184,7 +6406,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { SupplyChainTradeTransactionTypeSerializerState :: Init__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (WithSerializer :: serializer (& self . value . applicable_header_trade_agreement , Some ("ram:ApplicableHeaderTradeAgreement") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_QDT) , & super :: NS_QDT) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (WithSerializer :: serializer (& self . value . applicable_header_trade_delivery , Some ("ram:ApplicableHeaderTradeDelivery") , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (WithSerializer :: serializer (& self . value . applicable_header_trade_settlement , Some ("ram:ApplicableHeaderTradeSettlement") , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: End__ , } SupplyChainTradeTransactionTypeSerializerState :: End__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SupplyChainTradeTransactionTypeSerializerState :: Done__ => return Ok (None) , SupplyChainTradeTransactionTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { SupplyChainTradeTransactionTypeSerializerState :: Init__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (WithSerializer :: serializer_with_namespace (& self . value . applicable_header_trade_agreement , Some ("ram:ApplicableHeaderTradeAgreement") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_QDT) , & super :: NS_QDT) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeAgreement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (WithSerializer :: serializer_with_namespace (& self . value . applicable_header_trade_delivery , Some ("ram:ApplicableHeaderTradeDelivery") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeDelivery (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (WithSerializer :: serializer_with_namespace (& self . value . applicable_header_trade_settlement , Some ("ram:ApplicableHeaderTradeSettlement") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) , } SupplyChainTradeTransactionTypeSerializerState :: ApplicableHeaderTradeSettlement (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SupplyChainTradeTransactionTypeSerializerState :: End__ , } SupplyChainTradeTransactionTypeSerializerState :: End__ => { * self . state = SupplyChainTradeTransactionTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SupplyChainTradeTransactionTypeSerializerState :: Done__ => return Ok (None) , SupplyChainTradeTransactionTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -6205,6 +6427,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::DocumentContextParameterType,
         pub(super) state: Box<DocumentContextParameterTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6224,10 +6447,16 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     DocumentContextParameterTypeSerializerState::Init__ => {
                         *self.state = DocumentContextParameterTypeSerializerState::Id(
-                            WithSerializer::serializer(&self.value.id, Some("ram:ID"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.id,
+                                Some("ram:ID"),
+                                ElementNamespace::Namespace(super::NS_RAM),
+                                false,
+                            )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -6278,6 +6507,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::IdType,
         pub(super) state: Box<IdTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6303,6 +6533,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UDT);
                             helper.write_xmlns(
@@ -6346,6 +6577,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::DocumentCodeType,
         pub(super) state: Box<DocumentCodeTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6369,6 +6601,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_QDT);
                             helper.write_xmlns(
@@ -6413,6 +6646,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::DateTimeType,
         pub(super) state: Box<DateTimeTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6436,6 +6670,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UDT);
                             helper.write_xmlns(
@@ -6497,7 +6732,12 @@ pub mod quick_xml_serialize {
                     DateTimeTypeContentSerializerState::Init__ => match self.value {
                         super::DateTimeTypeContent::DateTimeString(x) => {
                             *self.state = DateTimeTypeContentSerializerState::DateTimeString(
-                                WithSerializer::serializer(x, Some("udt:DateTimeString"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("udt:DateTimeString"),
+                                    ElementNamespace::Namespace(super::NS_UDT),
+                                    false,
+                                )?,
                             )
                         }
                     },
@@ -6530,6 +6770,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::HeaderTradeAgreementType,
         pub(super) state: Box<HeaderTradeAgreementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6562,10 +6803,12 @@ pub mod quick_xml_serialize {
                                 self.value.buyer_reference.as_ref(),
                                 Some("ram:BuyerReference"),
                                 false,
-                            ),
+                            )
+                            .with_namespace(ElementNamespace::Namespace(super::NS_RAM)),
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -6592,9 +6835,10 @@ pub mod quick_xml_serialize {
                             None => {
                                 *self.state =
                                     HeaderTradeAgreementTypeSerializerState::SellerTradeParty(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.seller_trade_party,
                                             Some("ram:SellerTradeParty"),
+                                            ElementNamespace::Namespace(super::NS_RAM),
                                             false,
                                         )?,
                                     )
@@ -6607,9 +6851,10 @@ pub mod quick_xml_serialize {
                             None => {
                                 *self.state =
                                     HeaderTradeAgreementTypeSerializerState::BuyerTradeParty(
-                                        WithSerializer::serializer(
+                                        WithSerializer::serializer_with_namespace(
                                             &self.value.buyer_trade_party,
                                             Some("ram:BuyerTradeParty"),
+                                            ElementNamespace::Namespace(super::NS_RAM),
                                             false,
                                         )?,
                                     )
@@ -6627,7 +6872,8 @@ pub mod quick_xml_serialize {
                                     self.value.buyer_order_referenced_document.as_ref(),
                                     Some("ram:BuyerOrderReferencedDocument"),
                                     false,
-                                ),
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_RAM)),
                             ),
                     },
                     HeaderTradeAgreementTypeSerializerState::BuyerOrderReferencedDocument(x) => {
@@ -6664,6 +6910,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::HeaderTradeDeliveryType,
         pub(super) state: Box<HeaderTradeDeliveryTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6683,6 +6930,7 @@ pub mod quick_xml_serialize {
                         *self.state = HeaderTradeDeliveryTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -6717,6 +6965,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::HeaderTradeSettlementType,
         pub(super) state: Box<HeaderTradeSettlementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6736,7 +6985,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { HeaderTradeSettlementTypeSerializerState :: Init__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (WithSerializer :: serializer (& self . value . invoice_currency_code , Some ("ram:InvoiceCurrencyCode") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_QDT) , & super :: NS_QDT) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (WithSerializer :: serializer (& self . value . specified_trade_settlement_header_monetary_summation , Some ("ram:SpecifiedTradeSettlementHeaderMonetarySummation") , false) ?) , } HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: End__ , } HeaderTradeSettlementTypeSerializerState :: End__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } HeaderTradeSettlementTypeSerializerState :: Done__ => return Ok (None) , HeaderTradeSettlementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { HeaderTradeSettlementTypeSerializerState :: Init__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (WithSerializer :: serializer_with_namespace (& self . value . invoice_currency_code , Some ("ram:InvoiceCurrencyCode") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_QDT) , & super :: NS_QDT) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } HeaderTradeSettlementTypeSerializerState :: InvoiceCurrencyCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (WithSerializer :: serializer_with_namespace (& self . value . specified_trade_settlement_header_monetary_summation , Some ("ram:SpecifiedTradeSettlementHeaderMonetarySummation") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) , } HeaderTradeSettlementTypeSerializerState :: SpecifiedTradeSettlementHeaderMonetarySummation (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = HeaderTradeSettlementTypeSerializerState :: End__ , } HeaderTradeSettlementTypeSerializerState :: End__ => { * self . state = HeaderTradeSettlementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } HeaderTradeSettlementTypeSerializerState :: Done__ => return Ok (None) , HeaderTradeSettlementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -6757,6 +7006,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::DateTimeTypeDateTimeStringType,
         pub(super) state: Box<DateTimeTypeDateTimeStringTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6780,6 +7030,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UDT);
                             helper.write_xmlns(
@@ -6826,6 +7077,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::TextType,
         pub(super) state: Box<TextTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6849,6 +7101,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UDT);
                             helper.write_xmlns(
@@ -6891,6 +7144,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::TradePartyType,
         pub(super) state: Box<TradePartyTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -6923,10 +7177,16 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     TradePartyTypeSerializerState::Init__ => {
                         *self.state = TradePartyTypeSerializerState::Name(
-                            WithSerializer::serializer(&self.value.name, Some("ram:Name"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.name,
+                                Some("ram:Name"),
+                                ElementNamespace::Namespace(super::NS_RAM),
+                                false,
+                            )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -6955,7 +7215,8 @@ pub mod quick_xml_serialize {
                                     self.value.specified_legal_organization.as_ref(),
                                     Some("ram:SpecifiedLegalOrganization"),
                                     false,
-                                ),
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_RAM)),
                             )
                         }
                     },
@@ -6968,7 +7229,8 @@ pub mod quick_xml_serialize {
                                         self.value.postal_trade_address.as_ref(),
                                         Some("ram:PostalTradeAddress"),
                                         false,
-                                    ),
+                                    )
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_RAM)),
                                 )
                             }
                         }
@@ -6983,7 +7245,8 @@ pub mod quick_xml_serialize {
                                             &self.value.specified_tax_registration[..],
                                             Some("ram:SpecifiedTaxRegistration"),
                                             false,
-                                        ),
+                                        )
+                                        .with_namespace(ElementNamespace::Namespace(super::NS_RAM)),
                                     )
                             }
                         }
@@ -7022,6 +7285,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ReferencedDocumentType,
         pub(super) state: Box<ReferencedDocumentTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7041,14 +7305,16 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ReferencedDocumentTypeSerializerState::Init__ => {
                         *self.state = ReferencedDocumentTypeSerializerState::IssuerAssignedId(
-                            WithSerializer::serializer(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.issuer_assigned_id,
                                 Some("ram:IssuerAssignedID"),
+                                ElementNamespace::Namespace(super::NS_RAM),
                                 false,
                             )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -7098,6 +7364,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::CurrencyCodeType,
         pub(super) state: Box<CurrencyCodeTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7121,6 +7388,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_QDT);
                             helper.write_xmlns(
@@ -7165,6 +7433,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::TradeSettlementHeaderMonetarySummationType,
         pub(super) state: Box<TradeSettlementHeaderMonetarySummationTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7184,7 +7453,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TradeSettlementHeaderMonetarySummationTypeSerializerState :: Init__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (WithSerializer :: serializer (& self . value . tax_basis_total_amount , Some ("ram:TaxBasisTotalAmount") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (IterSerializer :: new (& self . value . tax_total_amount [..] , Some ("ram:TaxTotalAmount") , false)) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (WithSerializer :: serializer (& self . value . grand_total_amount , Some ("ram:GrandTotalAmount") , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (WithSerializer :: serializer (& self . value . due_payable_amount , Some ("ram:DuePayableAmount") , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ => return Ok (None) , TradeSettlementHeaderMonetarySummationTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TradeSettlementHeaderMonetarySummationTypeSerializerState :: Init__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (WithSerializer :: serializer_with_namespace (& self . value . tax_basis_total_amount , Some ("ram:TaxBasisTotalAmount") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_RAM) , & super :: NS_RAM) ; helper . write_xmlns (& mut bytes , Some (& super :: PREFIX_UDT) , & super :: NS_UDT) ; } return Ok (Some (Event :: Start (bytes))) } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxBasisTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (IterSerializer :: new (& self . value . tax_total_amount [..] , Some ("ram:TaxTotalAmount") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_RAM))) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: TaxTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (WithSerializer :: serializer_with_namespace (& self . value . grand_total_amount , Some ("ram:GrandTotalAmount") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: GrandTotalAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (WithSerializer :: serializer_with_namespace (& self . value . due_payable_amount , Some ("ram:DuePayableAmount") , ElementNamespace :: Namespace (super :: NS_RAM) , false) ?) , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: DuePayableAmount (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ , } TradeSettlementHeaderMonetarySummationTypeSerializerState :: End__ => { * self . state = TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TradeSettlementHeaderMonetarySummationTypeSerializerState :: Done__ => return Ok (None) , TradeSettlementHeaderMonetarySummationTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
@@ -7205,6 +7474,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::LegalOrganizationType,
         pub(super) state: Box<LegalOrganizationTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7224,10 +7494,12 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     LegalOrganizationTypeSerializerState::Init__ => {
                         *self.state = LegalOrganizationTypeSerializerState::Id(
-                            IterSerializer::new(self.value.id.as_ref(), Some("ram:ID"), false),
+                            IterSerializer::new(self.value.id.as_ref(), Some("ram:ID"), false)
+                                .with_namespace(ElementNamespace::Namespace(super::NS_RAM)),
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -7277,6 +7549,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::TradeAddressType,
         pub(super) state: Box<TradeAddressTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7295,14 +7568,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     TradeAddressTypeSerializerState::Init__ => {
-                        *self.state =
-                            TradeAddressTypeSerializerState::CountryId(WithSerializer::serializer(
+                        *self.state = TradeAddressTypeSerializerState::CountryId(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.country_id,
                                 Some("ram:CountryID"),
+                                ElementNamespace::Namespace(super::NS_RAM),
                                 false,
-                            )?);
+                            )?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -7352,6 +7628,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::TaxRegistrationType,
         pub(super) state: Box<TaxRegistrationTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7371,10 +7648,16 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     TaxRegistrationTypeSerializerState::Init__ => {
                         *self.state = TaxRegistrationTypeSerializerState::Id(
-                            WithSerializer::serializer(&self.value.id, Some("ram:ID"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.id,
+                                Some("ram:ID"),
+                                ElementNamespace::Namespace(super::NS_RAM),
+                                false,
+                            )?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_RAM);
                             helper.write_xmlns(
@@ -7424,6 +7707,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::AmountType,
         pub(super) state: Box<AmountTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7447,6 +7731,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UDT);
                             helper.write_xmlns(
@@ -7494,6 +7779,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::CountryIdType,
         pub(super) state: Box<CountryIdTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -7517,6 +7803,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_QDT);
                             helper.write_xmlns(

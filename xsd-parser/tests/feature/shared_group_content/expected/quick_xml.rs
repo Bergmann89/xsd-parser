@@ -2,8 +2,9 @@ use std::borrow::Cow;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, SerializeBytes,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     },
     xml::{Base64String, HexString},
 };
@@ -97,10 +98,19 @@ impl WithSerializer for ElementAType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ElementATypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ElementATypeSerializerState::Init__),
             name: name.unwrap_or("ElementAType"),
+            namespace,
             is_root,
         })
     }
@@ -120,10 +130,19 @@ impl WithSerializer for ElementBType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ElementBTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ElementBTypeSerializerState::Init__),
             name: name.unwrap_or("ElementBType"),
+            namespace,
             is_root,
         })
     }
@@ -143,7 +162,16 @@ impl WithSerializer for ChoiceGroupType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         Ok(quick_xml_serialize::ChoiceGroupTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ChoiceGroupTypeSerializerState::Init__),
@@ -757,14 +785,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct ElementATypeSerializer<'ser> {
         pub(super) value: &'ser super::ElementAType,
         pub(super) state: Box<ElementATypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -790,6 +819,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                         }
@@ -830,6 +860,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ElementBType,
         pub(super) state: Box<ElementBTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -855,6 +886,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                         }
@@ -914,12 +946,22 @@ pub mod quick_xml_serialize {
                     ChoiceGroupTypeSerializerState::Init__ => match self.value {
                         super::ChoiceGroupType::ElementA(x) => {
                             *self.state = ChoiceGroupTypeSerializerState::ElementA(
-                                WithSerializer::serializer(x, Some("ElementA"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("ElementA"),
+                                    ElementNamespace::None,
+                                    self.is_root,
+                                )?,
                             )
                         }
                         super::ChoiceGroupType::ElementB(x) => {
                             *self.state = ChoiceGroupTypeSerializerState::ElementB(
-                                WithSerializer::serializer(x, Some("ElementB"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("ElementB"),
+                                    ElementNamespace::None,
+                                    self.is_root,
+                                )?,
                             )
                         }
                     },

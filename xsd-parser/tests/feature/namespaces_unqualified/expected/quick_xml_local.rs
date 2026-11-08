@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
@@ -25,10 +25,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("FooType"),
+            namespace,
             is_root,
         })
     }
@@ -296,13 +305,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -322,24 +333,32 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::Bar(WithSerializer::serializer(
-                            &self.value.bar,
-                            Some("Bar"),
-                            false,
-                        )?);
+                        *self.state =
+                            FooTypeSerializerState::Bar(WithSerializer::serializer_with_namespace(
+                                &self.value.bar,
+                                Some("Bar"),
+                                ElementNamespace::None,
+                                false,
+                            )?);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
+                        if self.is_root {
+                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Bar(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::Baz(WithSerializer::serializer(
-                                &self.value.baz,
-                                Some("Baz"),
-                                false,
-                            )?)
+                            *self.state = FooTypeSerializerState::Baz(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.baz,
+                                    Some("Baz"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
+                            )
                         }
                     },
                     FooTypeSerializerState::Baz(x) => match x.next(helper).transpose()? {

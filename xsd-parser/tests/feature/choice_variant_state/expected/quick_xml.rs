@@ -1,7 +1,10 @@
 use core::fmt::Debug;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{BoxedSerializer, Error, WithBoxedSerializer, WithDeserializer, WithSerializer},
+    quick_xml::{
+        BoxedSerializer, ElementNamespace, Error, WithBoxedSerializer, WithDeserializer,
+        WithSerializer,
+    },
     AsAny,
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -25,10 +28,19 @@ impl WithSerializer for GroupPickType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::GroupPickTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::GroupPickTypeSerializerState::Init__),
             name: name.unwrap_or("tns:GroupPick"),
+            namespace,
             is_root,
         })
     }
@@ -48,7 +60,16 @@ impl WithSerializer for GroupPickPqType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::GroupPickPqTypeSerializer {
             value: self,
@@ -72,10 +93,19 @@ impl WithSerializer for ChoiceGroupPickType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ChoiceGroupPickTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ChoiceGroupPickTypeSerializerState::Init__),
             name: name.unwrap_or("tns:ChoiceGroupPick"),
+            namespace,
             is_root,
         })
     }
@@ -95,7 +125,16 @@ impl WithSerializer for ChoiceGroupPickUvType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         Ok(quick_xml_serialize::ChoiceGroupPickUvTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ChoiceGroupPickUvTypeSerializerState::Init__),
@@ -119,10 +158,19 @@ impl WithSerializer for DynPickType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::DynPickTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::DynPickTypeSerializerState::Init__),
             name: name.unwrap_or("tns:DynPick"),
+            namespace,
             is_root,
         })
     }
@@ -145,7 +193,15 @@ impl WithSerializer for AnimalType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        self.0.serializer(name, is_root)
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        self.0.serializer_with_namespace(name, namespace, is_root)
     }
 }
 impl WithDeserializer for AnimalType {
@@ -163,10 +219,19 @@ impl WithSerializer for AnimalDyn {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::AnimalDynSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::AnimalDynSerializerState::Init__),
             name: name.unwrap_or("tns:animal"),
+            namespace,
             is_root,
         })
     }
@@ -187,10 +252,19 @@ impl WithSerializer for MixedPickType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::MixedPickTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::MixedPickTypeSerializerState::Init__),
             name: name.unwrap_or("tns:MixedPick"),
+            namespace,
             is_root,
         })
     }
@@ -2031,13 +2105,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct GroupPickTypeSerializer<'ser> {
         pub(super) value: &'ser super::GroupPickType,
         pub(super) state: Box<GroupPickTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2060,17 +2136,28 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::GroupPickType::Pq(x) => {
                                 *self.state = GroupPickTypeSerializerState::Pq(
-                                    WithSerializer::serializer(x, Some("PQ"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("PQ"),
+                                        ElementNamespace::None,
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::GroupPickType::Y(x) => {
                                 *self.state = GroupPickTypeSerializerState::Y(
-                                    WithSerializer::serializer(x, Some("tns:Y"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("tns:Y"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         }
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -2134,14 +2221,24 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     GroupPickPqTypeSerializerState::Init__ => {
                         *self.state = GroupPickPqTypeSerializerState::P(
-                            WithSerializer::serializer(&self.value.p, Some("tns:P"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.p,
+                                Some("tns:P"),
+                                ElementNamespace::Namespace(super::NS_TNS),
+                                false,
+                            )?,
                         );
                     }
                     GroupPickPqTypeSerializerState::P(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = GroupPickPqTypeSerializerState::Q(
-                                WithSerializer::serializer(&self.value.q, Some("tns:Q"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.q,
+                                    Some("tns:Q"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    false,
+                                )?,
                             )
                         }
                     },
@@ -2172,6 +2269,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ChoiceGroupPickType,
         pub(super) state: Box<ChoiceGroupPickTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2194,17 +2292,28 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::ChoiceGroupPickType::Uv(x) => {
                                 *self.state = ChoiceGroupPickTypeSerializerState::Uv(
-                                    WithSerializer::serializer(x, Some("UV"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("UV"),
+                                        ElementNamespace::None,
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::ChoiceGroupPickType::Y(x) => {
                                 *self.state = ChoiceGroupPickTypeSerializerState::Y(
-                                    WithSerializer::serializer(x, Some("tns:Y"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("tns:Y"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         }
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -2274,12 +2383,22 @@ pub mod quick_xml_serialize {
                     ChoiceGroupPickUvTypeSerializerState::Init__ => match self.value {
                         super::ChoiceGroupPickUvType::U(x) => {
                             *self.state = ChoiceGroupPickUvTypeSerializerState::U(
-                                WithSerializer::serializer(x, Some("tns:U"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("tns:U"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    self.is_root,
+                                )?,
                             )
                         }
                         super::ChoiceGroupPickUvType::V(x) => {
                             *self.state = ChoiceGroupPickUvTypeSerializerState::V(
-                                WithSerializer::serializer(x, Some("tns:V"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("tns:V"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    self.is_root,
+                                )?,
                             )
                         }
                     },
@@ -2318,6 +2437,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::DynPickType,
         pub(super) state: Box<DynPickTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2339,21 +2459,29 @@ pub mod quick_xml_serialize {
                     DynPickTypeSerializerState::Init__ => {
                         match self.value {
                             super::DynPickType::Animal(x) => {
-                                *self.state =
-                                    DynPickTypeSerializerState::Animal(WithSerializer::serializer(
+                                *self.state = DynPickTypeSerializerState::Animal(
+                                    WithSerializer::serializer_with_namespace(
                                         x,
                                         Some("tns:animal"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         self.is_root,
-                                    )?)
+                                    )?,
+                                )
                             }
                             super::DynPickType::Y(x) => {
                                 *self.state = DynPickTypeSerializerState::Y(
-                                    WithSerializer::serializer(x, Some("tns:Y"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("tns:Y"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         }
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -2400,6 +2528,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::AnimalDyn,
         pub(super) state: Box<AnimalDynSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2419,6 +2548,7 @@ pub mod quick_xml_serialize {
                         *self.state = AnimalDynSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -2454,6 +2584,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::MixedPickType,
         pub(super) state: Box<MixedPickTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2476,17 +2607,28 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::MixedPickType::A(x) => {
                                 *self.state = MixedPickTypeSerializerState::A(
-                                    WithSerializer::serializer(x, Some("tns:A"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("tns:A"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::MixedPickType::B(x) => {
                                 *self.state = MixedPickTypeSerializerState::B(
-                                    WithSerializer::serializer(x, Some("tns:B"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("tns:B"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         }
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(

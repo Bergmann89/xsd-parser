@@ -14,9 +14,9 @@ use crate::misc::{format_utf8_slice, Namespace, NamespacePrefix};
 
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
-    DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, Event, SerializeHelper, Serializer, WithDeserializer,
-    WithSerializer,
+    CollectNamespaces, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
+    DeserializerOutput, DeserializerResult, Error, Event, SerializeHelper, Serializer,
+    WithDeserializer, WithSerializer,
 };
 
 use super::{Attributes, NamespacesShared, Value};
@@ -162,6 +162,12 @@ impl<'el> WithSerializer for Element<'el> {
     }
 }
 
+/// The element declares its own namespaces when it is serialized.
+#[cfg(feature = "quick-xml")]
+impl CollectNamespaces for Element<'_> {
+    fn collect_namespaces(&self, _: &mut SerializeHelper, _: &mut BytesStart<'_>) {}
+}
+
 #[cfg(feature = "quick-xml")]
 impl WithDeserializer for Element<'static> {
     type Deserializer = ElementDeserializer;
@@ -217,6 +223,18 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                         helper.write_xmlns(&mut start, prefix.as_ref(), &ns);
                     }
 
+                    // Unprefixed without own default namespace means no namespace; the
+                    // reader keeps `xmlns=""` only as attribute, so it counts as one.
+                    let default_attrib = element.attributes.get(&b"xmlns"[..]);
+                    let in_no_namespace = !element_name.contains(':')
+                        && match element.namespaces.get(&b""[..]) {
+                            Some(ns) => ns.0.is_empty(),
+                            None => default_attrib.is_none_or(|ns| ns.0.is_empty()),
+                        };
+                    if in_no_namespace {
+                        helper.write_xmlns(&mut start, None, &Namespace::EMPTY);
+                    }
+
                     // Skip xmlns attributes that already have a corresponding
                     // namespaces entry (emitted above via write_xmlns) to avoid
                     // duplicates.
@@ -225,7 +243,8 @@ impl<'ser, 'el> ElementSerializer<'ser, 'el> {
                         .iter()
                         .filter(|(k, _)| {
                             if *k.0 == b"xmlns"[..] {
-                                !element.namespaces.contains_key(&b""[..])
+                                !(element.namespaces.contains_key(&b""[..])
+                                    || (in_no_namespace && default_attrib.is_some()))
                             } else if let Some(prefix) = k.0.strip_prefix(b"xmlns:") {
                                 !element.namespaces.contains_key(prefix)
                             } else {

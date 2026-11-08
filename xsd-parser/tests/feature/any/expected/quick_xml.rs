@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
     xml::{AnyAttributes, AnyElement},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -27,10 +27,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
+            namespace,
             is_root,
         })
     }
@@ -55,10 +64,19 @@ impl WithSerializer for ChoiceType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ChoiceTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ChoiceTypeSerializerState::Init__),
             name: name.unwrap_or("tns:ChoiceType"),
+            namespace,
             is_root,
         })
     }
@@ -70,7 +88,16 @@ impl WithSerializer for ChoiceTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::ChoiceTypeContentSerializer {
             value: self,
@@ -924,8 +951,8 @@ pub mod quick_xml_deserialize {
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
         quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         },
         xml::AnyElement,
     };
@@ -934,6 +961,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -955,13 +983,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::Name(WithSerializer::serializer(
-                            &self.value.name,
-                            Some("tns:Name"),
-                            false,
-                        )?);
+                        *self.state = FooTypeSerializerState::Name(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.name,
+                                Some("tns:Name"),
+                                ElementNamespace::Namespace(super::NS_TNS),
+                                false,
+                            )?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -976,31 +1008,32 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::Name(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::Any0(IterSerializer::new(
-                                &self.value.any_0[..],
-                                None,
-                                false,
-                            ))
+                            *self.state = FooTypeSerializerState::Any0(
+                                IterSerializer::new(&self.value.any_0[..], None, false)
+                                    .with_namespace(ElementNamespace::Unknown),
+                            )
                         }
                     },
                     FooTypeSerializerState::Any0(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::Choice(IterSerializer::new(
-                                &self.value.choice[..],
-                                Some("tns:Choice"),
-                                false,
-                            ))
+                            *self.state = FooTypeSerializerState::Choice(
+                                IterSerializer::new(
+                                    &self.value.choice[..],
+                                    Some("tns:Choice"),
+                                    false,
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
                     },
                     FooTypeSerializerState::Choice(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::Any1(IterSerializer::new(
-                                &self.value.any_1[..],
-                                None,
-                                false,
-                            ))
+                            *self.state = FooTypeSerializerState::Any1(
+                                IterSerializer::new(&self.value.any_1[..], None, false)
+                                    .with_namespace(ElementNamespace::Unknown),
+                            )
                         }
                     },
                     FooTypeSerializerState::Any1(x) => match x.next(helper).transpose()? {
@@ -1035,6 +1068,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ChoiceType,
         pub(super) state: Box<ChoiceTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1058,6 +1092,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -1119,12 +1154,22 @@ pub mod quick_xml_serialize {
                     ChoiceTypeContentSerializerState::Init__ => match self.value {
                         super::ChoiceTypeContent::Name(x) => {
                             *self.state = ChoiceTypeContentSerializerState::Name(
-                                WithSerializer::serializer(x, Some("tns:Name"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("tns:Name"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    false,
+                                )?,
                             )
                         }
                         super::ChoiceTypeContent::Any(x) => {
                             *self.state = ChoiceTypeContentSerializerState::Any(
-                                WithSerializer::serializer(x, None, false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    None,
+                                    ElementNamespace::Unknown,
+                                    false,
+                                )?,
                             )
                         }
                     },

@@ -2,6 +2,6 @@
     text before
     <tns:BaseElement>base element content</tns:BaseElement>
     text in the middle
-    <unknown-element />
+    <unknown-element xmlns="" />
     text after
 </AttributeValue>

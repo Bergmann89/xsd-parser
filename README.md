@@ -165,12 +165,16 @@ Below you can find a short list of the most important changes for each released 
 - **Imports without Namespace**
   A schema without `targetNamespace` that was imported by `xs:import` without `namespace` got the namespace of the importing schema. Only `xs:include`, `xs:redefine` and `xs:override` do that (chameleon schemas). The components of such an import are now in no namespace. Unprefixed references that cannot be resolved in the namespace of the referencing schema are resolved in no namespace.
 
+- **Element Namespaces from the Parent**
+  The namespace of an element was derived from its type, but the type is shared by all elements that use it, and a name without prefix can mean the default namespace or no namespace. Unqualified elements below an active default namespace (e.g. a root name without prefix like `Foo`, which declares `xmlns="..."`) therefore ended up in that namespace. The parent now passes the namespace of each element to the serializer of the child (`WithSerializer::serializer_with_namespace`), which writes `xmlns=""` for elements in no namespace below a default namespace and declares the namespace of the element instead of the namespace of its type in `NamespaceSerialization::Local` mode.
+
 - **Breaking Changes**
   - The generated code changes for schemas with merged content types, see above.
   - `GroupMeta` has the new field `group`.
   - The generated serializers write referenced elements and attributes with their namespace prefix (e.g. `tns:id` instead of `id`), also if they are in the namespace of the referencing schema.
   - For schemas with `elementFormDefault="unqualified"` the default root name of a global element is qualified (`tns:list` instead of `list`), and `xsi:type` values get the prefix of the type (`tns:dog` instead of `dog`). Reading documents in the old form still works.
   - The generated code of elements and types of an `xs:import` without `namespace` moves from the namespace of the importing schema to no namespace.
+  - The generated serializers implement `WithSerializer::serializer_with_namespace` and pass the namespace of each element. Hand-written `WithSerializer` implementations that write elements should override `serializer_with_namespace` and forward the namespace, otherwise their elements keep the old behavior.
 
 ## xsd-parser-types 0.3.1
 
@@ -179,6 +183,9 @@ Below you can find a short list of the most important changes for each released 
 
 - **Balanced Namespace Scopes**
   The `SerializeHelper` lost track of the declared namespaces in some cases: `AnySimpleType` never closed its namespace scope, the `XsiTypeSerializer` left its scope open for empty elements and dropped the `xmlns:xsi` declared by the wrapped serializer, and a nil `Nillable` declared `xmlns:xsi` without a scope of its own. A following element then omitted declarations it needed. The helper now also checks the binding of a prefix instead of only the namespace, so a re-bound prefix is not used for the old namespace anymore, and it never declares the same prefix twice on one element. A prefix of a QName value (e.g. `xsi:type`) that is bound to a different namespace is replaced by a generated prefix (`ns0`, `ns1`, ...).
+
+- **Element Namespaces**
+  `WithSerializer` and `WithBoxedSerializer` have the new provided method `serializer_with_namespace`, which also takes the `ElementNamespace` of the element. Its default calls `serializer`. `SerializeHelper::write_xmlns_for_element` writes the declaration the element needs (`xmlns=""` for an element in no namespace below a default namespace), `ContentSerializer`, `IterSerializer` and `XsiTypeSerializer` have a `with_namespace` builder, and `Element` and `AnySimpleType` implement `CollectNamespaces`. Breaking: the public variants of `ContentSerializer`, `AnySimpleTypeSerializer` and `NillableSerializer` have a new `namespace` field.
 
 ## Version 1.6.0
 

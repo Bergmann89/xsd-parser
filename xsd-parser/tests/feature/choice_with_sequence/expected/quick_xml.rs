@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -23,10 +23,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
+            namespace,
             is_root,
         })
     }
@@ -46,7 +55,16 @@ impl WithSerializer for FooContent2Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::FooContent2TypeSerializer {
             value: self,
@@ -69,7 +87,16 @@ impl WithSerializer for FooContent3Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::FooContent3TypeSerializer {
             value: self,
@@ -927,13 +954,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -956,17 +985,28 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::FooType::Content2(x) => {
                                 *self.state = FooTypeSerializerState::Content2(
-                                    WithSerializer::serializer(x, Some("Content2"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Content2"),
+                                        ElementNamespace::None,
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::FooType::Content3(x) => {
                                 *self.state = FooTypeSerializerState::Content3(
-                                    WithSerializer::serializer(x, Some("Content3"), self.is_root)?,
+                                    WithSerializer::serializer_with_namespace(
+                                        x,
+                                        Some("Content3"),
+                                        ElementNamespace::None,
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                         }
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -1029,21 +1069,24 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooContent2TypeSerializerState::Init__ => {
-                        *self.state =
-                            FooContent2TypeSerializerState::Element1(WithSerializer::serializer(
+                        *self.state = FooContent2TypeSerializerState::Element1(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.element_1,
                                 Some("tns:Element1"),
+                                ElementNamespace::Namespace(super::NS_TNS),
                                 false,
-                            )?);
+                            )?,
+                        );
                     }
                     FooContent2TypeSerializerState::Element1(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = FooContent2TypeSerializerState::Element2(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.element_2,
                                         Some("tns:Element2"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
                                     )?,
                                 )
@@ -1095,21 +1138,24 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooContent3TypeSerializerState::Init__ => {
-                        *self.state =
-                            FooContent3TypeSerializerState::Element3(WithSerializer::serializer(
+                        *self.state = FooContent3TypeSerializerState::Element3(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.element_3,
                                 Some("tns:Element3"),
+                                ElementNamespace::Namespace(super::NS_TNS),
                                 false,
-                            )?);
+                            )?,
+                        );
                     }
                     FooContent3TypeSerializerState::Element3(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = FooContent3TypeSerializerState::Element4(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.element_4,
                                         Some("tns:Element4"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
                                     )?,
                                 )

@@ -10,15 +10,16 @@ use crate::xml::NamespacesShared;
 use num::{BigInt, BigRational, BigUint};
 
 #[cfg(feature = "quick-xml")]
-use quick_xml::events::Event;
+use quick_xml::events::{BytesStart, Event};
 
 #[cfg(feature = "quick-xml")]
 use crate::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        ContentDeserializer, DeserializeBytes, DeserializeHelper, Deserializer,
-        DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult, Error,
-        ErrorKind, SerializeBytes, SerializeHelper, Serializer, WithDeserializer, WithSerializer,
+        CollectNamespaces, ContentDeserializer, DeserializeBytes, DeserializeHelper, Deserializer,
+        DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
+        ElementNamespace, Error, ErrorKind, SerializeBytes, SerializeHelper, Serializer,
+        WithDeserializer, WithSerializer,
     },
 };
 
@@ -189,6 +190,12 @@ impl AnySimpleType {
     }
 }
 
+/// The value declares the namespaces of its `xsi:type` when it is serialized.
+#[cfg(feature = "quick-xml")]
+impl CollectNamespaces for AnySimpleType {
+    fn collect_namespaces(&self, _: &mut SerializeHelper, _: &mut BytesStart<'_>) {}
+}
+
 #[cfg(feature = "quick-xml")]
 impl WithSerializer for AnySimpleType {
     type Serializer<'x>
@@ -201,10 +208,20 @@ impl WithSerializer for AnySimpleType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, crate::quick_xml::Error> {
+        self.serializer_with_namespace(name, ElementNamespace::Unknown, is_root)
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, crate::quick_xml::Error> {
         let _is_root = is_root;
 
         Ok(AnySimpleTypeSerializer::Begin {
             name: name.unwrap_or("Value"),
+            namespace,
             value: self,
         })
     }
@@ -244,6 +261,7 @@ impl DeserializeBytes for AnySimpleType {
 pub enum AnySimpleTypeSerializer<'ser> {
     Begin {
         name: &'ser str,
+        namespace: ElementNamespace,
         value: &'ser AnySimpleType,
     },
     Content {
@@ -263,13 +281,17 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
         use core::mem::replace;
         use quick_xml::{
             escape::escape,
-            events::{BytesEnd, BytesStart, BytesText},
+            events::{BytesEnd, BytesText},
         };
 
         let mut fixed_ns = false;
 
         match replace(self, Self::Done) {
-            Self::Begin { name, value } => {
+            Self::Begin {
+                name,
+                namespace,
+                value,
+            } => {
                 use AnySimpleType as S;
 
                 let (type_, content): (Option<QName>, String) = match value {
@@ -373,6 +395,7 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                 let mut bytes = BytesStart::new(name);
 
                 helper.begin_ns_scope();
+                helper.write_xmlns_for_element(&mut bytes, name, &namespace);
 
                 if let Some(mut type_) = type_ {
                     if !fixed_ns && type_.namespace().is_none() {

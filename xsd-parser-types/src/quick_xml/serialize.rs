@@ -21,6 +21,20 @@ use crate::xml::QName;
 
 use super::{Error, ErrorKind, RawByteStr};
 
+/// Namespace of an element as determined by the parent of the element.
+#[derive(Default, Debug, Clone, Eq, PartialEq)]
+pub enum ElementNamespace {
+    /// Not known (root element, or a caller that uses `serializer`).
+    #[default]
+    Unknown,
+
+    /// The element is in no namespace (unqualified local element).
+    None,
+
+    /// The element is in the passed namespace.
+    Namespace(Namespace),
+}
+
 /// Trait that defines the [`Serializer`] for a type.
 pub trait WithSerializer {
     /// The serializer to use for this type.
@@ -38,6 +52,25 @@ pub trait WithSerializer {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error>;
+
+    /// Like [`serializer`](Self::serializer), but also passes the `namespace`
+    /// of the element, as determined by the parent.
+    ///
+    /// The default implementation ignores the namespace.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] is the serializer could not be initialized.
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        let _namespace = namespace;
+
+        self.serializer(name, is_root)
+    }
 }
 
 /// Trait that defines a serializer that can be used to destruct a type to
@@ -91,6 +124,25 @@ pub trait WithBoxedSerializer {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<BoxedSerializer<'ser>, Error>;
+
+    /// Like [`serializer`](Self::serializer), but also passes the `namespace`
+    /// of the element, as determined by the parent.
+    ///
+    /// The default implementation ignores the namespace.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] is the serializer could not be initialized.
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<BoxedSerializer<'ser>, Error> {
+        let _namespace = namespace;
+
+        WithBoxedSerializer::serializer(self, name, is_root)
+    }
 }
 
 impl<X> WithBoxedSerializer for X
@@ -103,6 +155,17 @@ where
         is_root: bool,
     ) -> Result<BoxedSerializer<'ser>, Error> {
         Ok(Box::new(WithSerializer::serializer(self, name, is_root)?))
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<BoxedSerializer<'ser>, Error> {
+        Ok(Box::new(WithSerializer::serializer_with_namespace(
+            self, name, namespace, is_root,
+        )?))
     }
 }
 
@@ -272,6 +335,15 @@ where
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(ContentSerializer::new(self, name, is_root))
     }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(ContentSerializer::new(self, name, is_root).with_namespace(namespace))
+    }
 }
 
 /// Implements a [`Serializer`] for any type that implements [`SerializeBytes`].
@@ -281,6 +353,7 @@ where
 pub enum ContentSerializer<'ser, T> {
     Begin {
         name: Option<&'ser str>,
+        namespace: ElementNamespace,
         value: &'ser T,
     },
     Data {
@@ -310,7 +383,21 @@ where
     pub fn new(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Self {
         let _is_root = is_root;
 
-        Self::Begin { name, value }
+        Self::Begin {
+            name,
+            namespace: ElementNamespace::Unknown,
+            value,
+        }
+    }
+
+    /// Set the `namespace` of the element that is emitted by this serializer.
+    #[must_use]
+    pub fn with_namespace(mut self, namespace: ElementNamespace) -> Self {
+        if let Self::Begin { namespace: ns, .. } = &mut self {
+            *ns = namespace;
+        }
+
+        self
     }
 }
 
@@ -321,8 +408,21 @@ where
     fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         loop {
             match replace(self, Self::Done) {
-                Self::Begin { name, value } => match value.serialize_bytes(helper) {
-                    Ok(None) => return name.map(|name| Ok(Event::Empty(BytesStart::new(name)))),
+                Self::Begin {
+                    name,
+                    namespace,
+                    value,
+                } => match value.serialize_bytes(helper) {
+                    Ok(None) => {
+                        return name.map(|name| {
+                            let mut bytes = BytesStart::new(name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, name, &namespace);
+                            helper.end_ns_scope();
+
+                            Ok(Event::Empty(bytes))
+                        })
+                    }
                     Ok(Some(data)) => {
                         if data.contains("]]>") {
                             return Some(Err(ErrorKind::InvalidData(RawByteStr::from_slice(
@@ -334,7 +434,11 @@ where
                         *self = Self::Data { name, data };
 
                         if let Some(name) = name {
-                            return Some(Ok(Event::Start(BytesStart::new(name))));
+                            let mut bytes = BytesStart::new(name);
+                            helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, name, &namespace);
+
+                            return Some(Ok(Event::Start(bytes)));
                         }
                     }
                     Err(error) => return Some(Err(error)),
@@ -350,7 +454,11 @@ where
 
                     return Some(Ok(Event::Text(BytesText::from_escaped(escape(data)))));
                 }
-                Self::End { name } => return Some(Ok(Event::End(BytesEnd::new(name)))),
+                Self::End { name } => {
+                    helper.end_ns_scope();
+
+                    return Some(Ok(Event::End(BytesEnd::new(name))));
+                }
                 Self::Done => return None,
             }
         }
@@ -369,10 +477,12 @@ where
 {
     Pending {
         name: Option<&'ser str>,
+        namespace: ElementNamespace,
         iter: <T as IntoIterator>::IntoIter,
     },
     Emitting {
         name: Option<&'ser str>,
+        namespace: ElementNamespace,
         iter: <T as IntoIterator>::IntoIter,
         serializer: TItem::Serializer<'ser>,
     },
@@ -388,13 +498,18 @@ where
     fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
         loop {
             match replace(self, Self::Done) {
-                Self::Pending { name, mut iter } => {
+                Self::Pending {
+                    name,
+                    namespace,
+                    mut iter,
+                } => {
                     let item = iter.next()?;
 
-                    match item.serializer(name, false) {
+                    match item.serializer_with_namespace(name, namespace.clone(), false) {
                         Ok(serializer) => {
                             *self = Self::Emitting {
                                 name,
+                                namespace,
                                 iter,
                                 serializer,
                             }
@@ -404,12 +519,14 @@ where
                 }
                 Self::Emitting {
                     name,
+                    namespace,
                     iter,
                     mut serializer,
                 } => {
                     if let Some(ret) = serializer.next(helper) {
                         *self = Self::Emitting {
                             name,
+                            namespace,
                             iter,
                             serializer,
                         };
@@ -417,7 +534,11 @@ where
                         return Some(ret);
                     }
 
-                    *self = Self::Pending { name, iter };
+                    *self = Self::Pending {
+                        name,
+                        namespace,
+                        iter,
+                    };
                 }
                 Self::Done => return None,
             }
@@ -437,8 +558,19 @@ where
 
         Self::Pending {
             name,
+            namespace: ElementNamespace::Unknown,
             iter: value.into_iter(),
         }
+    }
+
+    /// Set the `namespace` that is passed to the serializer of every item.
+    #[must_use]
+    pub fn with_namespace(mut self, namespace: ElementNamespace) -> Self {
+        if let Self::Pending { namespace: ns, .. } = &mut self {
+            *ns = namespace;
+        }
+
+        self
     }
 }
 
@@ -528,6 +660,7 @@ where
 pub struct XsiTypeSerializer<'ser, T> {
     inner: T,
     name: &'ser str,
+    namespace: ElementNamespace,
     is_root: bool,
     state: XsiTypeState,
 }
@@ -557,9 +690,18 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
         Self {
             inner,
             name,
+            namespace: ElementNamespace::Unknown,
             is_root,
             state: XsiTypeState::Init,
         }
+    }
+
+    /// Set the `namespace` of the rewritten element.
+    #[must_use]
+    pub fn with_namespace(mut self, namespace: ElementNamespace) -> Self {
+        self.namespace = namespace;
+
+        self
     }
 
     /// Rewrite the opening element so that it uses the base element name and
@@ -574,6 +716,7 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
         let type_name = bytes.name().0.to_owned();
 
         let mut new = BytesStart::new(self.name);
+        helper.write_xmlns_for_element(&mut new, self.name, &self.namespace);
 
         // An empty inner element has already ended its scope, so the helper does
         // not know about its `xmlns:xsi` anymore.
@@ -897,6 +1040,33 @@ impl SerializeHelper {
         }
     }
 
+    /// Write the `xmlns` attribute needed by the start tag of an element with
+    /// the passed `name` and `namespace`.
+    ///
+    /// - [`ElementNamespace::Unknown`]: nothing is written.
+    /// - [`ElementNamespace::Namespace`]: like [`write_xmlns_for_tag`](Self::write_xmlns_for_tag).
+    /// - [`ElementNamespace::None`]: an unprefixed `name` undeclares an active
+    ///   default namespace (`xmlns=""`). A prefixed `name` can not be in no
+    ///   namespace, nothing is written.
+    pub fn write_xmlns_for_element(
+        &mut self,
+        bytes: &mut BytesStart<'_>,
+        name: &str,
+        namespace: &ElementNamespace,
+    ) {
+        match namespace {
+            ElementNamespace::Unknown => (),
+            ElementNamespace::Namespace(ns) => self.write_xmlns_for_tag(bytes, name, ns),
+            ElementNamespace::None => {
+                debug_assert!(!name.contains(':'), "prefixed element without namespace");
+
+                if !name.contains(':') {
+                    self.write_xmlns(bytes, None, &Namespace::EMPTY);
+                }
+            }
+        }
+    }
+
     /// Write the passed `attrib` to the passed `bytes` object.
     ///
     /// # Errors
@@ -960,11 +1130,16 @@ impl SerializeHelper {
 
     /// Returns `true` if `prefix` is currently bound to `namespace`.
     fn is_bound(&self, prefix: Option<&NamespacePrefix>, namespace: &Namespace) -> bool {
-        self.namespaces
+        let entry = self
+            .namespaces
             .iter()
             .rev()
-            .find(|entry| entry.prefix.as_ref() == prefix)
-            .is_some_and(|entry| &entry.namespace == namespace)
+            .find(|entry| entry.prefix.as_ref() == prefix);
+
+        match entry {
+            Some(entry) => &entry.namespace == namespace,
+            None => prefix.is_none() && namespace.is_empty(),
+        }
     }
 
     /// Returns `true` if `prefix` is bound to any namespace in the current scope.
@@ -1082,12 +1257,16 @@ where
 
 #[cfg(test)]
 mod tests {
+    use std::cell::Cell;
+
     use quick_xml::events::{BytesEnd, BytesStart, Event};
 
     use crate::misc::{Namespace, NamespacePrefix};
-    use crate::xml::{AnySimpleType, Nillable, QName};
+    use crate::xml::{AnySimpleType, Element, Nillable, QName};
 
-    use super::{Error, SerializeHelper, Serializer, WithSerializer, XsiTypeSerializer};
+    use super::{
+        ElementNamespace, Error, SerializeHelper, Serializer, WithSerializer, XsiTypeSerializer,
+    };
 
     const NS_X: Namespace = Namespace::new_const(b"X");
     const NS_Y: Namespace = Namespace::new_const(b"Y");
@@ -1382,5 +1561,194 @@ mod tests {
         helper.write_xmlns(&mut bytes, None, &NS_X);
         helper.write_xmlns_for_tag(&mut bytes, "el", &NS_Y);
         assert_eq!(attribs(&bytes, "xmlns"), ["X"]);
+    }
+
+    type Case<'a> = (
+        &'a str,
+        &'a ElementNamespace,
+        bool,
+        &'a [&'a str],
+        &'a [&'a str],
+    );
+
+    /// A helper, optionally with the default namespace `X` active on the
+    /// (open) root element.
+    fn helper(default_namespace: bool) -> SerializeHelper {
+        let mut helper = SerializeHelper::default();
+        if default_namespace {
+            helper.begin_ns_scope();
+            helper.write_xmlns(&mut BytesStart::new("root"), None, &NS_X);
+        }
+
+        helper
+    }
+
+    #[test]
+    fn write_xmlns_for_element_writes_expected_declarations() {
+        let ns_x = ElementNamespace::Namespace(NS_X);
+        let ns_y = ElementNamespace::Namespace(NS_Y);
+
+        // name, namespace, default namespace `X` active, expected `xmlns`, expected `xmlns:a`
+        let cases: [Case<'_>; 14] = [
+            ("e", &ElementNamespace::Unknown, false, &[], &[]),
+            ("e", &ElementNamespace::Unknown, true, &[], &[]),
+            ("a:e", &ElementNamespace::Unknown, false, &[], &[]),
+            ("a:e", &ElementNamespace::Unknown, true, &[], &[]),
+            ("e", &ns_y, false, &["Y"], &[]),
+            ("e", &ns_y, true, &["Y"], &[]),
+            ("e", &ns_x, false, &["X"], &[]),
+            ("e", &ns_x, true, &[], &[]),
+            ("a:e", &ns_y, false, &[], &["Y"]),
+            ("a:e", &ns_y, true, &[], &["Y"]),
+            ("e", &ElementNamespace::None, false, &[], &[]),
+            ("e", &ElementNamespace::None, true, &[""], &[]),
+            ("a:e", &ns_x, false, &[], &["X"]),
+            ("a:e", &ns_x, true, &[], &["X"]),
+        ];
+
+        for (name, namespace, default_namespace, xmlns, xmlns_a) in cases {
+            let mut helper = helper(default_namespace);
+            let mut bytes = BytesStart::new(name);
+
+            helper.begin_ns_scope();
+            helper.write_xmlns_for_element(&mut bytes, name, namespace);
+
+            let case = format!("{name} {namespace:?} {default_namespace}");
+            assert_eq!(attribs(&bytes, "xmlns"), xmlns, "{case}");
+            assert_eq!(attribs(&bytes, "xmlns:a"), xmlns_a, "{case}");
+        }
+    }
+
+    #[test]
+    fn content_serializer_undeclares_default_namespace() {
+        for default_namespace in [false, true] {
+            let mut helper = helper(default_namespace);
+            let level = helper.level;
+            let value = String::from("a");
+
+            let serializer = value
+                .serializer_with_namespace(Some("v"), ElementNamespace::None, false)
+                .unwrap();
+            let events = events(serializer, &mut helper);
+
+            let expected: &[&str] = if default_namespace { &[""] } else { &[] };
+            assert_eq!(attribs(first_tag(&events), "xmlns"), expected);
+            assert_eq!(events.len(), 3);
+            assert_eq!(helper.level, level);
+        }
+    }
+
+    #[test]
+    fn nillable_nil_undeclares_default_namespace() {
+        let mut helper = helper(true);
+        let value = Nillable::<String>::nil();
+
+        let serializer = value
+            .serializer_with_namespace(Some("v"), ElementNamespace::None, false)
+            .unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(attribs(first_tag(&events), "xmlns"), [""]);
+        assert_eq!(helper.level, 1);
+    }
+
+    #[test]
+    fn any_simple_type_undeclares_default_namespace() {
+        let mut helper = helper(true);
+        let value = AnySimpleType::String("a".into());
+
+        let serializer = value
+            .serializer_with_namespace(Some("v"), ElementNamespace::None, false)
+            .unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(attribs(first_tag(&events), "xmlns"), [""]);
+        assert_eq!(helper.level, 1);
+    }
+
+    #[test]
+    fn xsi_type_serializer_writes_namespace_of_element() {
+        for kind in [StubKind::Empty, StubKind::StartEnd] {
+            let mut helper = helper(true);
+            let serializer = XsiTypeSerializer::new(Stub::new(kind, true, false), "Animal", true)
+                .with_namespace(ElementNamespace::None);
+
+            let events = events(serializer, &mut helper);
+
+            assert_eq!(attribs(first_tag(&events), "xmlns"), [""], "{kind:?}");
+            assert_eq!(helper.level, 1, "{kind:?}");
+        }
+    }
+
+    #[test]
+    fn element_replay_without_default_namespace_is_in_no_namespace() {
+        let mut helper = helper(true);
+        let element = Element::new().name(b"e".to_vec());
+
+        let serializer = element.serializer(None, false).unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(attribs(first_tag(&events), "xmlns"), [""]);
+        assert_eq!(helper.level, 1);
+    }
+
+    #[test]
+    fn element_replay_keeps_inherited_default_namespace() {
+        let mut helper = helper(true);
+        let element = Element::new()
+            .name(b"e".to_vec())
+            .namespace(b"".to_vec(), b"X".to_vec());
+
+        let serializer = element.serializer(None, false).unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert!(attribs(first_tag(&events), "xmlns").is_empty());
+        assert_eq!(helper.level, 1);
+    }
+
+    #[test]
+    fn element_replay_with_empty_default_namespace_writes_one_declaration() {
+        let mut helper = helper(true);
+        let element = Element::new()
+            .name(b"e".to_vec())
+            .namespace(b"".to_vec(), b"".to_vec());
+
+        let serializer = element.serializer(None, false).unwrap();
+        let events = events(serializer, &mut helper);
+
+        assert_eq!(attribs(first_tag(&events), "xmlns"), [""]);
+        assert_eq!(helper.level, 1);
+    }
+
+    #[test]
+    fn serializer_with_namespace_defaults_to_serializer() {
+        #[derive(Debug, Default)]
+        struct Plain {
+            calls: Cell<usize>,
+        }
+
+        impl WithSerializer for Plain {
+            type Serializer<'x> = Stub;
+
+            fn serializer<'ser>(
+                &'ser self,
+                name: Option<&'ser str>,
+                is_root: bool,
+            ) -> Result<Stub, Error> {
+                let _args = (name, is_root);
+                self.calls.set(self.calls.get() + 1);
+
+                Ok(Stub::new(StubKind::Empty, false, false))
+            }
+        }
+
+        let value = Plain::default();
+        let serializer = value
+            .serializer_with_namespace(Some("v"), ElementNamespace::None, false)
+            .unwrap();
+        let events = events(serializer, &mut SerializeHelper::default());
+
+        assert_eq!(value.calls.get(), 1);
+        assert!(attribs(first_tag(&events), "xmlns").is_empty());
     }
 }

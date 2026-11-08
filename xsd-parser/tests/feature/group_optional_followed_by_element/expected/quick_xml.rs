@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -23,10 +23,19 @@ impl WithSerializer for ItemType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ItemTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ItemTypeSerializerState::Init__),
             name: name.unwrap_or("tns:Item"),
+            namespace,
             is_root,
         })
     }
@@ -46,7 +55,16 @@ impl WithSerializer for ItemMetadataType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::ItemMetadataTypeSerializer {
             value: self,
@@ -581,14 +599,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct ItemTypeSerializer<'ser> {
         pub(super) value: &'ser super::ItemType,
         pub(super) state: Box<ItemTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -610,13 +629,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     ItemTypeSerializerState::Init__ => {
-                        *self.state = ItemTypeSerializerState::Metadata(IterSerializer::new(
-                            self.value.metadata.as_ref(),
-                            Some("Metadata"),
-                            false,
-                        ));
+                        *self.state = ItemTypeSerializerState::Metadata(
+                            IterSerializer::new(
+                                self.value.metadata.as_ref(),
+                                Some("Metadata"),
+                                false,
+                            )
+                            .with_namespace(ElementNamespace::None),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -630,11 +653,14 @@ pub mod quick_xml_serialize {
                     ItemTypeSerializerState::Metadata(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = ItemTypeSerializerState::Name(WithSerializer::serializer(
-                                &self.value.name,
-                                Some("tns:Name"),
-                                false,
-                            )?)
+                            *self.state = ItemTypeSerializerState::Name(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.name,
+                                    Some("tns:Name"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    false,
+                                )?,
+                            )
                         }
                     },
                     ItemTypeSerializerState::Name(x) => match x.next(helper).transpose()? {
@@ -685,11 +711,14 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     ItemMetadataTypeSerializerState::Init__ => {
-                        *self.state = ItemMetadataTypeSerializerState::Label(IterSerializer::new(
-                            self.value.label.as_ref(),
-                            Some("tns:Label"),
-                            false,
-                        ));
+                        *self.state = ItemMetadataTypeSerializerState::Label(
+                            IterSerializer::new(
+                                self.value.label.as_ref(),
+                                Some("tns:Label"),
+                                false,
+                            )
+                            .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                        );
                     }
                     ItemMetadataTypeSerializerState::Label(x) => {
                         match x.next(helper).transpose()? {
@@ -700,7 +729,8 @@ pub mod quick_xml_serialize {
                                         self.value.description.as_ref(),
                                         Some("tns:Description"),
                                         false,
-                                    ),
+                                    )
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
                                 )
                             }
                         }

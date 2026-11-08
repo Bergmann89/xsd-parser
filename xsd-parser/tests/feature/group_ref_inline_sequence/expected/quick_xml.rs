@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -24,10 +24,19 @@ impl WithSerializer for WidgetType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::WidgetTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::WidgetTypeSerializerState::Init__),
             name: name.unwrap_or("tns:Widget"),
+            namespace,
             is_root,
         })
     }
@@ -47,7 +56,16 @@ impl WithSerializer for WidgetIdentityType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::WidgetIdentityTypeSerializer {
             value: self,
@@ -71,10 +89,19 @@ impl WithSerializer for ContainerType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ContainerTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ContainerTypeSerializerState::Init__),
             name: name.unwrap_or("tns:Container"),
+            namespace,
             is_root,
         })
     }
@@ -94,7 +121,16 @@ impl WithSerializer for ContainerIdentityType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::ContainerIdentityTypeSerializer {
             value: self,
@@ -1215,14 +1251,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct WidgetTypeSerializer<'ser> {
         pub(super) value: &'ser super::WidgetType,
         pub(super) state: Box<WidgetTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1243,14 +1280,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     WidgetTypeSerializerState::Init__ => {
-                        *self.state =
-                            WidgetTypeSerializerState::Identity(WithSerializer::serializer(
+                        *self.state = WidgetTypeSerializerState::Identity(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.identity,
                                 Some("Identity"),
+                                ElementNamespace::None,
                                 false,
-                            )?);
+                            )?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -1264,23 +1304,27 @@ pub mod quick_xml_serialize {
                     WidgetTypeSerializerState::Identity(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                WidgetTypeSerializerState::Name(WithSerializer::serializer(
+                            *self.state = WidgetTypeSerializerState::Name(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.name,
                                     Some("tns:Name"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     WidgetTypeSerializerState::Name(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                WidgetTypeSerializerState::Description(IterSerializer::new(
+                            *self.state = WidgetTypeSerializerState::Description(
+                                IterSerializer::new(
                                     self.value.description.as_ref(),
                                     Some("tns:Description"),
                                     false,
-                                ))
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
                     },
                     WidgetTypeSerializerState::Description(x) => {
@@ -1334,9 +1378,10 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     WidgetIdentityTypeSerializerState::Init__ => {
                         *self.state = WidgetIdentityTypeSerializerState::Identifier(
-                            WithSerializer::serializer(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.identifier,
                                 Some("tns:Identifier"),
+                                ElementNamespace::Namespace(super::NS_TNS),
                                 false,
                             )?,
                         );
@@ -1348,7 +1393,8 @@ pub mod quick_xml_serialize {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = WidgetIdentityTypeSerializerState::Tag(
-                                IterSerializer::new(&self.value.tag[..], Some("tns:Tag"), false),
+                                IterSerializer::new(&self.value.tag[..], Some("tns:Tag"), false)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
                             )
                         }
                     },
@@ -1381,6 +1427,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ContainerType,
         pub(super) state: Box<ContainerTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1406,13 +1453,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     ContainerTypeSerializerState::Init__ => {
-                        *self.state = ContainerTypeSerializerState::Identity(IterSerializer::new(
-                            &self.value.identity[..],
-                            Some("Identity"),
-                            false,
-                        ));
+                        *self.state = ContainerTypeSerializerState::Identity(
+                            IterSerializer::new(&self.value.identity[..], Some("Identity"), false)
+                                .with_namespace(ElementNamespace::None),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -1427,12 +1474,14 @@ pub mod quick_xml_serialize {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    ContainerTypeSerializerState::Name(WithSerializer::serializer(
+                                *self.state = ContainerTypeSerializerState::Name(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.name,
                                         Some("tns:Name"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
-                                    )?)
+                                    )?,
+                                )
                             }
                         }
                     }
@@ -1485,9 +1534,10 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ContainerIdentityTypeSerializerState::Init__ => {
                         *self.state = ContainerIdentityTypeSerializerState::Identifier(
-                            WithSerializer::serializer(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.identifier,
                                 Some("tns:Identifier"),
+                                ElementNamespace::Namespace(super::NS_TNS),
                                 false,
                             )?,
                         );
@@ -1499,7 +1549,8 @@ pub mod quick_xml_serialize {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = ContainerIdentityTypeSerializerState::Tag(
-                                IterSerializer::new(&self.value.tag[..], Some("tns:Tag"), false),
+                                IterSerializer::new(&self.value.tag[..], Some("tns:Tag"), false)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
                             )
                         }
                     },

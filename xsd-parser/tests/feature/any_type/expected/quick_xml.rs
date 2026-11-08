@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
     xml::{AnyAttributes, AnyElement, Mixed, Text},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -21,10 +21,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("Foo"),
+            namespace,
             is_root,
         })
     }
@@ -45,10 +54,19 @@ impl WithSerializer for AnyType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::AnyTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::AnyTypeSerializerState::Init__),
             name: name.unwrap_or("anyType"),
+            namespace,
             is_root,
         })
     }
@@ -504,8 +522,8 @@ pub mod quick_xml_deserialize {
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
         quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         },
         xml::{AnyElement, Mixed, Text},
     };
@@ -514,6 +532,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -532,12 +551,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::Anything(WithSerializer::serializer(
-                            &self.value.anything,
-                            Some("Anything"),
-                            false,
-                        )?);
-                        let bytes = BytesStart::new(self.name);
+                        *self.state = FooTypeSerializerState::Anything(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.anything,
+                                Some("Anything"),
+                                ElementNamespace::None,
+                                false,
+                            )?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Anything(x) => match x.next(helper).transpose()? {
@@ -546,6 +570,7 @@ pub mod quick_xml_serialize {
                     },
                     FooTypeSerializerState::End__ => {
                         *self.state = FooTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),
@@ -571,6 +596,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::AnyType,
         pub(super) state: Box<AnyTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -590,13 +616,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     AnyTypeSerializerState::Init__ => {
-                        *self.state = AnyTypeSerializerState::TextBefore(IterSerializer::new(
-                            self.value.text_before.as_ref(),
-                            Some(""),
-                            false,
-                        ));
+                        *self.state = AnyTypeSerializerState::TextBefore(
+                            IterSerializer::new(self.value.text_before.as_ref(), Some(""), false)
+                                .with_namespace(ElementNamespace::None),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_XS);
                         }
@@ -606,11 +632,10 @@ pub mod quick_xml_serialize {
                     AnyTypeSerializerState::TextBefore(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = AnyTypeSerializerState::Any(IterSerializer::new(
-                                &self.value.any[..],
-                                None,
-                                false,
-                            ))
+                            *self.state = AnyTypeSerializerState::Any(
+                                IterSerializer::new(&self.value.any[..], None, false)
+                                    .with_namespace(ElementNamespace::Unknown),
+                            )
                         }
                     },
                     AnyTypeSerializerState::Any(x) => match x.next(helper).transpose()? {

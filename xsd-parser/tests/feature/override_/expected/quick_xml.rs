@@ -29,12 +29,27 @@ pub mod tns {
                 is_root: ::core::primitive::bool,
             ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
             {
+                ::xsd_parser_types::quick_xml::WithSerializer::serializer_with_namespace(
+                    self,
+                    name,
+                    ::xsd_parser_types::quick_xml::ElementNamespace::Unknown,
+                    is_root,
+                )
+            }
+            fn serializer_with_namespace<'ser>(
+                &'ser self,
+                name: ::core::option::Option<&'ser ::core::primitive::str>,
+                namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
+                is_root: ::core::primitive::bool,
+            ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
+            {
                 Ok(quick_xml_serialize::PersonTypeSerializer {
                     value: self,
                     state: ::std::boxed::Box::new(
                         quick_xml_serialize::PersonTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("PersonType"),
+                    namespace,
                     is_root,
                 })
             }
@@ -403,6 +418,7 @@ pub mod tns {
                 pub(super) value: &'ser super::PersonType,
                 pub(super) state: ::std::boxed::Box<PersonTypeSerializerState<'ser>>,
                 pub(super) name: &'ser ::core::primitive::str,
+                pub(super) namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
                 pub(super) is_root: ::core::primitive::bool,
             }
             #[derive(Debug)]
@@ -417,57 +433,7 @@ pub mod tns {
                     ::xsd_parser_types::quick_xml::Error,
                 > {
                     loop {
-                        match &mut *self.state {
-                            PersonTypeSerializerState::Init__ => {
-                                *self.state = PersonTypeSerializerState::Name(
-                                    ::xsd_parser_types::quick_xml::WithSerializer::serializer(
-                                        &self.value.name,
-                                        Some("name"),
-                                        false,
-                                    )?,
-                                );
-                                let mut bytes =
-                                    ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
-                                helper.begin_ns_scope();
-                                if self.is_root {
-                                    helper.write_xmlns_for_tag(
-                                        &mut bytes,
-                                        self.name,
-                                        &super::super::super::NS_TNS,
-                                    );
-                                }
-                                return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(
-                                    bytes,
-                                )));
-                            }
-                            PersonTypeSerializerState::Name(x) => {
-                                match x.next(helper).transpose()? {
-                                    Some(event) => return Ok(Some(event)),
-                                    None => *self.state = PersonTypeSerializerState::Gender(
-                                        ::xsd_parser_types::quick_xml::WithSerializer::serializer(
-                                            &self.value.gender,
-                                            Some("gender"),
-                                            false,
-                                        )?,
-                                    ),
-                                }
-                            }
-                            PersonTypeSerializerState::Gender(x) => {
-                                match x.next(helper).transpose()? {
-                                    Some(event) => return Ok(Some(event)),
-                                    None => *self.state = PersonTypeSerializerState::End__,
-                                }
-                            }
-                            PersonTypeSerializerState::End__ => {
-                                *self.state = PersonTypeSerializerState::Done__;
-                                helper.end_ns_scope();
-                                return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
-                                    ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
-                                )));
-                            }
-                            PersonTypeSerializerState::Done__ => return Ok(None),
-                            PersonTypeSerializerState::Phantom__(_) => unreachable!(),
-                        }
+                        match & mut * self . state { PersonTypeSerializerState :: Init__ => { * self . state = PersonTypeSerializerState :: Name (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . name , Some ("name") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) ; let mut bytes = :: xsd_parser_types :: quick_xml :: BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: super :: NS_TNS) ; } return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: Start (bytes))) } PersonTypeSerializerState :: Name (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Gender (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . gender , Some ("gender") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Gender (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: End__ , } PersonTypeSerializerState :: End__ => { * self . state = PersonTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: End (:: xsd_parser_types :: quick_xml :: BytesEnd :: new (self . name)))) ; } PersonTypeSerializerState :: Done__ => return Ok (None) , PersonTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                     }
                 }
             }
@@ -507,12 +473,27 @@ pub mod tns {
                 is_root: ::core::primitive::bool,
             ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
             {
+                ::xsd_parser_types::quick_xml::WithSerializer::serializer_with_namespace(
+                    self,
+                    name,
+                    ::xsd_parser_types::quick_xml::ElementNamespace::Unknown,
+                    is_root,
+                )
+            }
+            fn serializer_with_namespace<'ser>(
+                &'ser self,
+                name: ::core::option::Option<&'ser ::core::primitive::str>,
+                namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
+                is_root: ::core::primitive::bool,
+            ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
+            {
                 Ok(quick_xml_serialize::PersonsTypeSerializer {
                     value: self,
                     state: ::std::boxed::Box::new(
                         quick_xml_serialize::PersonsTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("PersonsType"),
+                    namespace,
                     is_root,
                 })
             }
@@ -734,6 +715,7 @@ pub mod tns {
                 pub(super) value: &'ser super::PersonsType,
                 pub(super) state: ::std::boxed::Box<PersonsTypeSerializerState<'ser>>,
                 pub(super) name: &'ser ::core::primitive::str,
+                pub(super) namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
                 pub(super) is_root: ::core::primitive::bool,
             }
             #[derive(Debug)]
@@ -766,11 +748,21 @@ pub mod tns {
                                         &self.value.person[..],
                                         Some("tns:Person"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ::xsd_parser_types::quick_xml::ElementNamespace::Namespace(
+                                            super::super::super::NS_TNS,
+                                        ),
                                     ),
                                 );
                                 let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                                 helper.begin_ns_scope();
+                                helper.write_xmlns_for_element(
+                                    &mut bytes,
+                                    self.name,
+                                    &self.namespace,
+                                );
                                 if self.is_root {
                                     helper.write_xmlns_for_tag(
                                         &mut bytes,
@@ -842,12 +834,27 @@ pub mod tns {
                 is_root: ::core::primitive::bool,
             ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
             {
+                ::xsd_parser_types::quick_xml::WithSerializer::serializer_with_namespace(
+                    self,
+                    name,
+                    ::xsd_parser_types::quick_xml::ElementNamespace::Unknown,
+                    is_root,
+                )
+            }
+            fn serializer_with_namespace<'ser>(
+                &'ser self,
+                name: ::core::option::Option<&'ser ::core::primitive::str>,
+                namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
+                is_root: ::core::primitive::bool,
+            ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
+            {
                 Ok(quick_xml_serialize::AdvancedPersonsTypeSerializer {
                     value: self,
                     state: ::std::boxed::Box::new(
                         quick_xml_serialize::AdvancedPersonsTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("AdvancedPersonsType"),
+                    namespace,
                     is_root,
                 })
             }
@@ -870,12 +877,27 @@ pub mod tns {
                 is_root: ::core::primitive::bool,
             ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
             {
+                ::xsd_parser_types::quick_xml::WithSerializer::serializer_with_namespace(
+                    self,
+                    name,
+                    ::xsd_parser_types::quick_xml::ElementNamespace::Unknown,
+                    is_root,
+                )
+            }
+            fn serializer_with_namespace<'ser>(
+                &'ser self,
+                name: ::core::option::Option<&'ser ::core::primitive::str>,
+                namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
+                is_root: ::core::primitive::bool,
+            ) -> ::core::result::Result<Self::Serializer<'ser>, ::xsd_parser_types::quick_xml::Error>
+            {
                 Ok(quick_xml_serialize::PersonTypeSerializer {
                     value: self,
                     state: ::std::boxed::Box::new(
                         quick_xml_serialize::PersonTypeSerializerState::Init__,
                     ),
                     name: name.unwrap_or("PersonType"),
+                    namespace,
                     is_root,
                 })
             }
@@ -1613,6 +1635,7 @@ pub mod tns {
                 pub(super) value: &'ser super::AdvancedPersonsType,
                 pub(super) state: ::std::boxed::Box<AdvancedPersonsTypeSerializerState<'ser>>,
                 pub(super) name: &'ser ::core::primitive::str,
+                pub(super) namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
                 pub(super) is_root: ::core::primitive::bool,
             }
             #[derive(Debug)]
@@ -1645,11 +1668,21 @@ pub mod tns {
                                         &self.value.person[..],
                                         Some("tns:Person"),
                                         false,
+                                    )
+                                    .with_namespace(
+                                        ::xsd_parser_types::quick_xml::ElementNamespace::Namespace(
+                                            super::super::super::NS_TNS,
+                                        ),
                                     ),
                                 );
                                 let mut bytes =
                                     ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
                                 helper.begin_ns_scope();
+                                helper.write_xmlns_for_element(
+                                    &mut bytes,
+                                    self.name,
+                                    &self.namespace,
+                                );
                                 if self.is_root {
                                     helper.write_xmlns_for_tag(
                                         &mut bytes,
@@ -1710,6 +1743,7 @@ pub mod tns {
                 pub(super) value: &'ser super::PersonType,
                 pub(super) state: ::std::boxed::Box<PersonTypeSerializerState<'ser>>,
                 pub(super) name: &'ser ::core::primitive::str,
+                pub(super) namespace: ::xsd_parser_types::quick_xml::ElementNamespace,
                 pub(super) is_root: ::core::primitive::bool,
             }
             #[derive(Debug)]
@@ -1724,81 +1758,7 @@ pub mod tns {
                     ::xsd_parser_types::quick_xml::Error,
                 > {
                     loop {
-                        match &mut *self.state {
-                            PersonTypeSerializerState::Init__ => {
-                                *self.state = PersonTypeSerializerState::Name(
-                                    ::xsd_parser_types::quick_xml::WithSerializer::serializer(
-                                        &self.value.name,
-                                        Some("name"),
-                                        false,
-                                    )?,
-                                );
-                                let mut bytes =
-                                    ::xsd_parser_types::quick_xml::BytesStart::new(self.name);
-                                helper.begin_ns_scope();
-                                if self.is_root {
-                                    helper.write_xmlns_for_tag(
-                                        &mut bytes,
-                                        self.name,
-                                        &super::super::super::NS_TNS,
-                                    );
-                                }
-                                return Ok(Some(::xsd_parser_types::quick_xml::Event::Start(
-                                    bytes,
-                                )));
-                            }
-                            PersonTypeSerializerState::Name(x) => {
-                                match x.next(helper).transpose()? {
-                                    Some(event) => return Ok(Some(event)),
-                                    None => *self.state = PersonTypeSerializerState::LastName(
-                                        ::xsd_parser_types::quick_xml::WithSerializer::serializer(
-                                            &self.value.last_name,
-                                            Some("lastName"),
-                                            false,
-                                        )?,
-                                    ),
-                                }
-                            }
-                            PersonTypeSerializerState::LastName(x) => {
-                                match x.next(helper).transpose()? {
-                                    Some(event) => return Ok(Some(event)),
-                                    None => *self.state = PersonTypeSerializerState::Age(
-                                        ::xsd_parser_types::quick_xml::WithSerializer::serializer(
-                                            &self.value.age,
-                                            Some("age"),
-                                            false,
-                                        )?,
-                                    ),
-                                }
-                            }
-                            PersonTypeSerializerState::Age(x) => {
-                                match x.next(helper).transpose()? {
-                                    Some(event) => return Ok(Some(event)),
-                                    None => *self.state = PersonTypeSerializerState::Gender(
-                                        ::xsd_parser_types::quick_xml::WithSerializer::serializer(
-                                            &self.value.gender,
-                                            Some("gender"),
-                                            false,
-                                        )?,
-                                    ),
-                                }
-                            }
-                            PersonTypeSerializerState::Gender(x) => {
-                                match x.next(helper).transpose()? {
-                                    Some(event) => return Ok(Some(event)),
-                                    None => *self.state = PersonTypeSerializerState::End__,
-                                }
-                            }
-                            PersonTypeSerializerState::End__ => {
-                                *self.state = PersonTypeSerializerState::Done__;
-                                helper.end_ns_scope();
-                                return Ok(Some(::xsd_parser_types::quick_xml::Event::End(
-                                    ::xsd_parser_types::quick_xml::BytesEnd::new(self.name),
-                                )));
-                            }
-                            PersonTypeSerializerState::Done__ => return Ok(None),
-                            PersonTypeSerializerState::Phantom__(_) => unreachable!(),
-                        }
+                        match & mut * self . state { PersonTypeSerializerState :: Init__ => { * self . state = PersonTypeSerializerState :: Name (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . name , Some ("name") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) ; let mut bytes = :: xsd_parser_types :: quick_xml :: BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & self . namespace) ; if self . is_root { helper . write_xmlns_for_tag (& mut bytes , self . name , & super :: super :: super :: NS_TNS) ; } return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: Start (bytes))) } PersonTypeSerializerState :: Name (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: LastName (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . last_name , Some ("lastName") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: LastName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Age (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . age , Some ("age") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Age (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: Gender (:: xsd_parser_types :: quick_xml :: WithSerializer :: serializer_with_namespace (& self . value . gender , Some ("gender") , :: xsd_parser_types :: quick_xml :: ElementNamespace :: None , false) ?) , } PersonTypeSerializerState :: Gender (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PersonTypeSerializerState :: End__ , } PersonTypeSerializerState :: End__ => { * self . state = PersonTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (:: xsd_parser_types :: quick_xml :: Event :: End (:: xsd_parser_types :: quick_xml :: BytesEnd :: new (self . name)))) ; } PersonTypeSerializerState :: Done__ => return Ok (None) , PersonTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                     }
                 }
             }

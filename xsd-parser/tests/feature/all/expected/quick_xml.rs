@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -25,10 +25,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
+            namespace,
             is_root,
         })
     }
@@ -395,14 +404,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -424,13 +434,17 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::Once(WithSerializer::serializer(
-                            &self.value.once,
-                            Some("tns:Once"),
-                            false,
-                        )?);
+                        *self.state = FooTypeSerializerState::Once(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.once,
+                                Some("tns:Once"),
+                                ElementNamespace::Namespace(super::NS_TNS),
+                                false,
+                            )?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -444,32 +458,40 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::Once(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::Optional(IterSerializer::new(
-                                self.value.optional.as_ref(),
-                                Some("tns:Optional"),
-                                false,
-                            ))
+                            *self.state = FooTypeSerializerState::Optional(
+                                IterSerializer::new(
+                                    self.value.optional.as_ref(),
+                                    Some("tns:Optional"),
+                                    false,
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
                     },
                     FooTypeSerializerState::Optional(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                FooTypeSerializerState::OnceSpecify(WithSerializer::serializer(
+                            *self.state = FooTypeSerializerState::OnceSpecify(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.once_specify,
                                     Some("tns:OnceSpecify"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     FooTypeSerializerState::OnceSpecify(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::TwiceOrMore(IterSerializer::new(
-                                &self.value.twice_or_more[..],
-                                Some("tns:TwiceOrMore"),
-                                false,
-                            ))
+                            *self.state = FooTypeSerializerState::TwiceOrMore(
+                                IterSerializer::new(
+                                    &self.value.twice_or_more[..],
+                                    Some("tns:TwiceOrMore"),
+                                    false,
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
                     },
                     FooTypeSerializerState::TwiceOrMore(x) => match x.next(helper).transpose()? {

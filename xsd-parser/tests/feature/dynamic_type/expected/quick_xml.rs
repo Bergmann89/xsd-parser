@@ -2,8 +2,8 @@ use core::fmt::Debug;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        BoxedSerializer, Error, WithBoxedSerializer, WithDeserializer, WithSerializer,
-        XsiTypeSerializer,
+        BoxedSerializer, ElementNamespace, Error, WithBoxedSerializer, WithDeserializer,
+        WithSerializer, XsiTypeSerializer,
     },
     AsAny,
 };
@@ -27,10 +27,19 @@ impl WithSerializer for ListType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ListTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ListTypeSerializerState::Init__),
             name: name.unwrap_or("tns:list"),
+            namespace,
             is_root,
         })
     }
@@ -53,21 +62,35 @@ impl WithSerializer for AnimalType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         if (*self.0).as_any().is::<DogType>() {
-            return Ok(Box::new(XsiTypeSerializer::new(
-                self.0.serializer(Some("tns:dog"), is_root)?,
-                name.unwrap_or("animal"),
-                is_root,
-            )));
+            return Ok(Box::new(
+                XsiTypeSerializer::new(
+                    self.0.serializer(Some("tns:dog"), is_root)?,
+                    name.unwrap_or("animal"),
+                    is_root,
+                )
+                .with_namespace(namespace),
+            ));
         }
         if (*self.0).as_any().is::<LabradorType>() {
-            return Ok(Box::new(XsiTypeSerializer::new(
-                self.0.serializer(Some("tns:labrador"), is_root)?,
-                name.unwrap_or("animal"),
-                is_root,
-            )));
+            return Ok(Box::new(
+                XsiTypeSerializer::new(
+                    self.0.serializer(Some("tns:labrador"), is_root)?,
+                    name.unwrap_or("animal"),
+                    is_root,
+                )
+                .with_namespace(namespace),
+            ));
         }
-        self.0.serializer(name, is_root)
+        self.0.serializer_with_namespace(name, namespace, is_root)
     }
 }
 impl WithDeserializer for AnimalType {
@@ -85,10 +108,19 @@ impl WithSerializer for AnimalDyn {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::AnimalDynSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::AnimalDynSerializerState::Init__),
             name: name.unwrap_or("animal"),
+            namespace,
             is_root,
         })
     }
@@ -109,10 +141,19 @@ impl WithSerializer for DogType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::DogTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::DogTypeSerializerState::Init__),
             name: name.unwrap_or("dog"),
+            namespace,
             is_root,
         })
     }
@@ -134,10 +175,19 @@ impl WithSerializer for LabradorType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::LabradorTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::LabradorTypeSerializerState::Init__),
             name: name.unwrap_or("labrador"),
+            namespace,
             is_root,
         })
     }
@@ -703,13 +753,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer,
     };
     #[derive(Debug)]
     pub struct ListTypeSerializer<'ser> {
         pub(super) value: &'ser super::ListType,
         pub(super) state: Box<ListTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -728,13 +780,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     ListTypeSerializerState::Init__ => {
-                        *self.state = ListTypeSerializerState::Animal(IterSerializer::new(
-                            &self.value.animal[..],
-                            Some("tns:animal"),
-                            false,
-                        ));
+                        *self.state = ListTypeSerializerState::Animal(
+                            IterSerializer::new(&self.value.animal[..], Some("tns:animal"), false)
+                                .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                             helper.write_xmlns(
@@ -782,6 +834,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::AnimalDyn,
         pub(super) state: Box<AnimalDynSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -801,6 +854,7 @@ pub mod quick_xml_serialize {
                         *self.state = AnimalDynSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                         }
@@ -831,6 +885,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::DogType,
         pub(super) state: Box<DogTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -850,6 +905,7 @@ pub mod quick_xml_serialize {
                         *self.state = DogTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                         }
@@ -881,6 +937,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::LabradorType,
         pub(super) state: Box<LabradorTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -900,6 +957,7 @@ pub mod quick_xml_serialize {
                         *self.state = LabradorTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &self.namespace);
                         if self.is_root {
                             helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
                         }
