@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Foo xmlns:tns="T"><tns:bar tns:a="1">b</tns:bar><tns:baz>z</tns:baz><q><tns:inner>i</tns:inner></q><tns:animal xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tns:Dog"><tns:name>d</tns:name></tns:animal></tns:Foo>

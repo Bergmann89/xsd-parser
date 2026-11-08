@@ -274,7 +274,8 @@ impl WithSerializer for AnimalType {
                     name.unwrap_or("tns:animal"),
                     is_root,
                 )
-                .with_namespace(namespace),
+                .with_namespace(namespace)
+                .with_type_namespace(NS_TNS),
             ));
         }
         self.0.serializer_with_namespace(name, namespace, is_root)

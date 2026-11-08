@@ -37541,7 +37541,8 @@ pub mod page {
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     )
-                                    .with_namespace(self.namespace.clone()),
+                                    .with_namespace(self.namespace.clone())
+                                    .with_type_namespace(super::super::NS_UNNAMED_5),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockTextObject(x) => {
@@ -37567,7 +37568,8 @@ pub mod page {
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     )
-                                    .with_namespace(self.namespace.clone()),
+                                    .with_namespace(self.namespace.clone())
+                                    .with_type_namespace(super::super::NS_UNNAMED_5),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockPathObject(x) => {
@@ -37593,7 +37595,8 @@ pub mod page {
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     )
-                                    .with_namespace(self.namespace.clone()),
+                                    .with_namespace(self.namespace.clone())
+                                    .with_type_namespace(super::super::NS_UNNAMED_5),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockImageObject(x) => {
@@ -37619,7 +37622,8 @@ pub mod page {
                                         self.name.unwrap_or("CT_GraphicUnit"),
                                         self.is_root,
                                     )
-                                    .with_namespace(self.namespace.clone()),
+                                    .with_namespace(self.namespace.clone())
+                                    .with_type_namespace(super::super::NS_UNNAMED_5),
                                 )
                             }
                             super::CtGraphicUnitXType::CtPageBlockCompositeObject(x) => {

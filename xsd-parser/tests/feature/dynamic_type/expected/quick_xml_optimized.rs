@@ -1115,7 +1115,8 @@ pub mod quick_xml_serialize {
                                     self.name.unwrap_or("animal"),
                                     self.is_root,
                                 )
-                                .with_namespace(self.namespace.clone()),
+                                .with_namespace(self.namespace.clone())
+                                .with_type_namespace(super::NS_TNS),
                             )
                         }
                         super::AnimalType::Labrador(x) => {
@@ -1130,7 +1131,8 @@ pub mod quick_xml_serialize {
                                     self.name.unwrap_or("animal"),
                                     self.is_root,
                                 )
-                                .with_namespace(self.namespace.clone()),
+                                .with_namespace(self.namespace.clone())
+                                .with_type_namespace(super::NS_TNS),
                             )
                         }
                     },

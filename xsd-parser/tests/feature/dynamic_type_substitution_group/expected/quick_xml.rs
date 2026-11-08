@@ -154,7 +154,8 @@ impl WithSerializer for DogType {
                     name.unwrap_or("dog"),
                     is_root,
                 )
-                .with_namespace(namespace),
+                .with_namespace(namespace)
+                .with_type_namespace(NS_TNS),
             ));
         }
         if (*self.0).as_any().is::<BeagleType>() {
@@ -164,7 +165,8 @@ impl WithSerializer for DogType {
                     name.unwrap_or("dog"),
                     is_root,
                 )
-                .with_namespace(namespace),
+                .with_namespace(namespace)
+                .with_type_namespace(NS_TNS),
             ));
         }
         self.0.serializer_with_namespace(name, namespace, is_root)

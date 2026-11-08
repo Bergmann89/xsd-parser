@@ -309,6 +309,10 @@ impl DynamicData<'_> {
                 .get_for_default_namespace(&config.default_namespace);
 
             let with_namespace = use_namespaces(ctx).then(|| quote!(.with_namespace(namespace)));
+            let with_type_namespace = use_namespaces(ctx)
+                .then(|| x.tag_name.render_type_namespace(ctx, false))
+                .flatten()
+                .map(|ns| quote!(.with_type_namespace(#ns)));
 
             quote! {
                 if (*self.0).as_any().is::<#target_type>() {
@@ -316,7 +320,7 @@ impl DynamicData<'_> {
                         self.0.serializer(Some(#derived_tag), is_root)?,
                         name.unwrap_or(#tag_name),
                         is_root,
-                    )#with_namespace));
+                    )#with_namespace #with_type_namespace));
                 }
             }
         })
@@ -1721,7 +1725,12 @@ impl ComplexDataElement<'_> {
                 let with_namespace = (namespaces && forward_name)
                     .then(|| quote!(.with_namespace(self.namespace.clone())));
 
-                serializer = quote!(#xsi_type_serializer::new(#serializer, #dynamic_type, #is_root)#with_namespace);
+                let with_type_namespace = namespaces
+                    .then(|| self.tag_name.render_type_namespace(ctx, true))
+                    .flatten()
+                    .map(|ns| quote!(.with_type_namespace(#ns)));
+
+                serializer = quote!(#xsi_type_serializer::new(#serializer, #dynamic_type, #is_root)#with_namespace #with_type_namespace);
             }
         }
 
@@ -1802,21 +1811,29 @@ impl TagName<'_> {
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
 
         let ns = (self.form == FormChoiceType::Qualified)
-            .then(|| self.module?.make_ns_const())
+            .then(|| self.render_type_namespace(ctx, serialize_module))
             .flatten();
 
         match ns {
-            Some(ns) => {
-                let ns_const = if serialize_module {
-                    ctx.resolve_type_for_serialize_module(&ns)
-                } else {
-                    ctx.resolve_type_for_module(&ns)
-                };
-
-                quote!(#element_namespace::Namespace(#ns_const))
-            }
+            Some(ns) => quote!(#element_namespace::Namespace(#ns)),
             None => quote!(#element_namespace::None),
         }
+    }
+
+    /// Generates the namespace of the type name of this tag, which is always
+    /// the namespace of its module.
+    fn render_type_namespace(
+        &self,
+        ctx: &Context<'_, '_>,
+        serialize_module: bool,
+    ) -> Option<TokenStream> {
+        let ns = self.module?.make_ns_const()?;
+
+        Some(if serialize_module {
+            ctx.resolve_type_for_serialize_module(&ns)
+        } else {
+            ctx.resolve_type_for_module(&ns)
+        })
     }
 
     /// Generates the [`ElementNamespace`](xsd_parser_types::quick_xml::ElementNamespace)

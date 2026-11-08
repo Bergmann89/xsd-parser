@@ -35,6 +35,7 @@
     <xs:complexType name="QType">
         <xs:sequence>
             <xs:element name="inner" type="xs:string" />
+            <xs:element name="pet" type="tns:Animal" form="unqualified" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 

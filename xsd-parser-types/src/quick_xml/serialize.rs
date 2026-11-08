@@ -720,6 +720,7 @@ pub struct XsiTypeSerializer<'ser, T> {
     inner: T,
     name: &'ser str,
     namespace: ElementNamespace,
+    type_namespace: Option<Namespace>,
     state: XsiTypeState,
 }
 
@@ -754,6 +755,7 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
             inner,
             name,
             namespace: ElementNamespace::Unknown,
+            type_namespace: None,
             state: XsiTypeState::Init,
         }
     }
@@ -762,6 +764,14 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
     #[must_use]
     pub fn with_namespace(mut self, namespace: ElementNamespace) -> Self {
         self.namespace = namespace;
+
+        self
+    }
+
+    /// Set the namespace of the `xsi:type` value (the inner element name).
+    #[must_use]
+    pub fn with_type_namespace(mut self, namespace: Namespace) -> Self {
+        self.type_namespace = Some(namespace);
 
         self
     }
@@ -790,22 +800,36 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
         helper.write_xmlns_for_element(&mut new, name, &self.namespace);
 
         if !is_base {
-            // An empty inner element has already ended its scope, so the helper
-            // does not know about its `xmlns:xsi` anymore.
-            let has_xmlns_xsi = bytes
-                .attributes()
-                .any(|attr| matches!(attr, Ok(attr) if attr.key.0 == "xmlns:xsi"));
-            if !has_xmlns_xsi {
-                helper.write_xmlns(&mut new, Some(&NamespacePrefix::XSI), &Namespace::XSI);
-            }
+            helper.write_xmlns(&mut new, Some(&NamespacePrefix::XSI), &Namespace::XSI);
 
-            new.push_attribute(("xsi:type", &type_name[..]));
+            let value = match &self.type_namespace {
+                Some(ns) => {
+                    let qname =
+                        QName::from_bytes(type_name.into_bytes()).with_namespace(ns.clone());
+
+                    let prefix = qname.prefix().map(|p| NamespacePrefix::new(p.to_vec()));
+
+                    if helper.is_bound(prefix.as_ref(), ns) {
+                        qname.to_string()
+                    } else if helper.active_default_namespace() == Some(ns) {
+                        String::from_utf8_lossy(qname.local_name()).into_owned()
+                    } else {
+                        helper.add_qname_namespace(&mut new, qname).to_string()
+                    }
+                }
+                None => type_name,
+            };
+            new.push_attribute(("xsi:type", &value[..]));
         }
 
+        let keys = new
+            .attributes()
+            .filter_map(|attr| Some(attr.ok()?.key.0.to_owned()))
+            .collect::<Vec<_>>();
         new.extend_attributes(bytes.attributes().filter_map(|attr| {
             let attr = attr.ok()?;
 
-            if !is_base && attr.key.0 == "xsi:type" {
+            if keys.iter().any(|k| k == attr.key.0) {
                 None
             } else {
                 Some(attr)
@@ -1430,6 +1454,7 @@ mod tests {
     const NS_Y: Namespace = Namespace::new_const(b"Y");
     const PREFIX_A: NamespacePrefix = NamespacePrefix::new_const(b"a");
     const PREFIX_B: NamespacePrefix = NamespacePrefix::new_const(b"b");
+    const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
     const XSI: &str = "http://www.w3.org/2001/XMLSchema-instance";
 
     fn events<'ser, S: Serializer<'ser>>(
@@ -1474,6 +1499,7 @@ mod tests {
         kind: StubKind,
         scope: bool,
         xsi: bool,
+        tns: bool,
         step: usize,
     }
 
@@ -1484,8 +1510,16 @@ mod tests {
                 kind,
                 scope,
                 xsi,
+                tns: false,
                 step: 0,
             }
+        }
+
+        /// Let the element declare `xmlns:tns="X"` itself.
+        fn declares_tns(mut self) -> Self {
+            self.tns = true;
+
+            self
         }
 
         fn named(mut self, name: &'static str) -> Self {
@@ -1505,6 +1539,9 @@ mod tests {
                     let mut bytes = BytesStart::new(self.name);
                     if self.scope {
                         helper.begin_ns_scope();
+                    }
+                    if self.tns {
+                        helper.write_xmlns(&mut bytes, Some(&PREFIX_TNS), &NS_X);
                     }
                     if self.xsi {
                         helper.write_xmlns(
@@ -2173,6 +2210,173 @@ mod tests {
                 );
                 assert_eq!(helper.level, 0, "{kind:?} {inner}");
             }
+        }
+    }
+
+    /// Serialize `stub` below the bindings of `helper` with the type namespace
+    /// `X` (if requested) and return the first tag.
+    fn type_namespace_tag(
+        helper: &mut SerializeHelper,
+        stub: Stub,
+        base: &'static str,
+        with_type_namespace: bool,
+    ) -> BytesStart<'static> {
+        let mut serializer = XsiTypeSerializer::new(stub, base, true);
+        if with_type_namespace {
+            serializer = serializer.with_type_namespace(NS_X);
+        }
+
+        first_tag(&events(serializer, helper)).clone().into_owned()
+    }
+
+    /// Bindings that exist before the rewritten element.
+    #[derive(Clone, Copy)]
+    enum Outer {
+        Nothing,
+        Bound(&'static NamespacePrefix, &'static Namespace),
+        DefaultX,
+    }
+
+    struct TypeNamespaceCase {
+        name: &'static str,
+        outer: Outer,
+        stub_name: Option<&'static str>,
+        stub_declares_tns_and_xsi: bool,
+        base: &'static str,
+        type_namespace: bool,
+        xsi_type: &'static str,
+        xmlns_tns: &'static [&'static str],
+        xmlns_ns0: &'static [&'static str],
+    }
+
+    fn type_namespace_cases() -> Vec<TypeNamespaceCase> {
+        static TNS: NamespacePrefix = PREFIX_TNS;
+        static X: Namespace = NS_X;
+        static Y: Namespace = NS_Y;
+
+        let case = |name, outer, base, xsi_type, xmlns_tns, xmlns_ns0| TypeNamespaceCase {
+            name,
+            outer,
+            stub_name: None,
+            stub_declares_tns_and_xsi: false,
+            base,
+            type_namespace: true,
+            xsi_type,
+            xmlns_tns,
+            xmlns_ns0,
+        };
+        vec![
+            case(
+                "unbound",
+                Outer::Nothing,
+                "tns:Animal",
+                "tns:Dog",
+                &["X"],
+                &[],
+            ),
+            case(
+                "bound",
+                Outer::Bound(&TNS, &X),
+                "tns:Animal",
+                "tns:Dog",
+                &[],
+                &[],
+            ),
+            case("default", Outer::DefaultX, "Animal", "Dog", &[], &[]),
+            case(
+                "own prefix of another namespace",
+                Outer::Bound(&TNS, &Y),
+                "tns:Animal",
+                "ns0:Dog",
+                &[],
+                &["X"],
+            ),
+            TypeNamespaceCase {
+                stub_name: Some("Dog"),
+                ..case(
+                    "unprefixed",
+                    Outer::Nothing,
+                    "Animal",
+                    "ns0:Dog",
+                    &[],
+                    &["X"],
+                )
+            },
+            TypeNamespaceCase {
+                stub_declares_tns_and_xsi: true,
+                ..case(
+                    "declared once",
+                    Outer::Nothing,
+                    "tns:Animal",
+                    "tns:Dog",
+                    &["X"],
+                    &[],
+                )
+            },
+            TypeNamespaceCase {
+                type_namespace: false,
+                ..case(
+                    "without type namespace",
+                    Outer::Nothing,
+                    "tns:Animal",
+                    "tns:Dog",
+                    &[],
+                    &[],
+                )
+            },
+        ]
+    }
+
+    #[test]
+    fn type_namespace_writes_expected_declarations() {
+        let cases = type_namespace_cases();
+
+        for kind in [StubKind::Empty, StubKind::StartEnd] {
+            for c in &cases {
+                let mut helper = SerializeHelper::default();
+                match c.outer {
+                    Outer::Nothing => {}
+                    Outer::Bound(prefix, ns) => {
+                        helper.begin_ns_scope();
+                        helper.write_xmlns(&mut BytesStart::new("root"), Some(prefix), ns);
+                    }
+                    Outer::DefaultX => helper = helper.with_default_namespace(NS_X),
+                }
+                let mut stub = Stub::new(kind, true, c.stub_declares_tns_and_xsi);
+                if c.stub_declares_tns_and_xsi {
+                    stub = stub.declares_tns();
+                }
+                if let Some(name) = c.stub_name {
+                    stub = stub.named(name);
+                }
+
+                let bytes = type_namespace_tag(&mut helper, stub, c.base, c.type_namespace);
+
+                let case = format!("{} {kind:?}", c.name);
+                assert_eq!(attribs(&bytes, "xsi:type"), [c.xsi_type], "{case}");
+                assert_eq!(attribs(&bytes, "xmlns:tns"), c.xmlns_tns, "{case}");
+                assert_eq!(attribs(&bytes, "xmlns:ns0"), c.xmlns_ns0, "{case}");
+                assert_eq!(attribs(&bytes, "xmlns:xsi"), [XSI], "{case}");
+                assert!(attribs(&bytes, "xmlns").is_empty(), "{case}");
+            }
+        }
+    }
+
+    #[test]
+    fn type_namespace_is_not_declared_for_base_type() {
+        for kind in [StubKind::Empty, StubKind::StartEnd] {
+            let mut helper = SerializeHelper::default().with_default_namespace(NS_X);
+            let stub = Stub::new(kind, true, false).named("tns:Animal");
+            let serializer = XsiTypeSerializer::new(stub, "tns:Animal", true)
+                .with_namespace(ElementNamespace::Namespace(NS_X))
+                .with_type_namespace(NS_X);
+
+            let events = events(serializer, &mut helper);
+            let bytes = first_tag(&events);
+
+            assert!(attribs(bytes, "xsi:type").is_empty(), "{kind:?}");
+            assert!(attribs(bytes, "xmlns:tns").is_empty(), "{kind:?}");
+            assert!(attribs(bytes, "xmlns:ns0").is_empty(), "{kind:?}");
         }
     }
 }

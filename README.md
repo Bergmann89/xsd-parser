@@ -194,6 +194,9 @@ Below you can find a short list of the most important changes for each released 
 - **Default Namespace at Runtime**
   `SerializeHelper::with_default_namespace` / `set_default_namespace` set the default namespace of the root element (`write_default_namespace`), `SerializeHelper::element_name` omits the prefix of an element whose namespace is the active default namespace and `write_xmlns_unless_default` skips a declaration of the active default namespace. `SerializeSync::serialize_with`, `SerializeAsync::serialize_async_with` and `EncodingWriter::write_document_with` take a prepared helper (custom implementations of the traits must override the new methods to honor it). The `XsiTypeSerializer` declares `xmlns:xsi` on the rewritten element if it is not bound yet.
 
+- **Namespace of `xsi:type` Values**
+  `XsiTypeSerializer::with_type_namespace` sets the namespace of the inner element name. The serializer then declares a prefix for the value (its own, or a generated one if that is taken) on the rewritten element if it is not bound to that namespace yet, or omits the prefix if the default namespace fits.
+
 ## Version 1.6.0
 
 This release adds proper support for dynamic and abstract types, opt-in skipping of unknown elements and dedicated types for binary data. It also upgrades `quick-xml` to 0.42 and fixes a long list of issues found with real-world schemas. Because `xsd-parser-types` re-exports `quick-xml` types, it gets a new minor version (`0.3.0`). Please have a look at the breaking changes at the end of this section before upgrading.

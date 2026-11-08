@@ -417,6 +417,7 @@ pub mod tns {
     #[derive(Debug)]
     pub struct QType {
         pub inner: String,
+        pub pet: Option<AnimalType>,
     }
     impl WithSerializer for QType {
         type Serializer<'x> = quick_xml_serialize::QTypeSerializer<'x>;
@@ -485,7 +486,8 @@ pub mod tns {
                         name.unwrap_or("tns:Animal"),
                         is_root,
                     )
-                    .with_namespace(namespace),
+                    .with_namespace(namespace)
+                    .with_type_namespace(super::NS_TNS),
                 ));
             }
             self.0.serializer_with_namespace(name, namespace, is_root)
@@ -1113,12 +1115,14 @@ pub mod tns {
         #[derive(Debug)]
         pub struct QTypeDeserializer {
             inner: Option<String>,
+            pet: Option<super::AnimalType>,
             state__: Box<QTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum QTypeDeserializerState {
             Init__,
             Inner(Option<<String as WithDeserializer>::Deserializer>),
+            Pet(Option<<super::AnimalType as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -1133,6 +1137,7 @@ pub mod tns {
                 }
                 Ok(Self {
                     inner: None,
+                    pet: None,
                     state__: Box::new(QTypeDeserializerState::Init__),
                 })
             }
@@ -1146,6 +1151,7 @@ pub mod tns {
                     S::Inner(Some(deserializer)) => {
                         self.store_inner(deserializer.finish(helper)?)?
                     }
+                    S::Pet(Some(deserializer)) => self.store_pet(deserializer.finish(helper)?)?,
                     _ => (),
                 }
                 Ok(())
@@ -1157,6 +1163,13 @@ pub mod tns {
                     )))?;
                 }
                 self.inner = Some(value);
+                Ok(())
+            }
+            fn store_pet(&mut self, value: super::AnimalType) -> Result<(), Error> {
+                if self.pet.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"pet")))?;
+                }
+                self.pet = Some(value);
                 Ok(())
             }
             fn handle_inner<'de>(
@@ -1186,11 +1199,44 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_inner(data)?;
-                        *self.state__ = S::Done__;
+                        *self.state__ = S::Pet(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         fallback.get_or_insert(S::Inner(Some(deserializer)));
+                        *self.state__ = S::Pet(None);
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
+                    }
+                }
+            }
+            fn handle_pet<'de>(
+                &mut self,
+                helper: &mut DeserializeHelper,
+                output: DeserializerOutput<'de, super::AnimalType>,
+                fallback: &mut Option<QTypeDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error> {
+                use QTypeDeserializerState as S;
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    *self.state__ = S::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
+                if let Some(fallback) = fallback.take() {
+                    self.finish_state(helper, fallback)?;
+                }
+                match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        self.store_pet(data)?;
+                        *self.state__ = S::Done__;
+                        Ok(ElementHandlerOutput::from_event(event, allow_any))
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        fallback.get_or_insert(S::Pet(Some(deserializer)));
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -1220,6 +1266,18 @@ pub mod tns {
                         (S::Inner(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
                             match self.handle_inner(helper, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
+                        (S::Pet(Some(deserializer)), event) => {
+                            let output = deserializer.next(helper, event)?;
+                            match self.handle_pet(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -1261,6 +1319,19 @@ pub mod tns {
                                 }
                             }
                         }
+                        (S::Pet(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                            let output =
+                                <super::AnimalType as WithDeserializer>::init(helper, event)?;
+                            match self.handle_pet(helper, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        }
                         (S::Done__, event) => {
                             *self.state__ = S::Done__;
                             break (DeserializerEvent::Continue(event), allow_any_element);
@@ -1286,6 +1357,7 @@ pub mod tns {
                 self.finish_state(helper, state)?;
                 Ok(super::QType {
                     inner: helper.finish_element("inner", self.inner)?,
+                    pet: self.pet,
                 })
             }
         }
@@ -1936,6 +2008,7 @@ pub mod tns {
         pub(super) enum QTypeSerializerState<'ser> {
             Init__,
             Inner(<String as WithSerializer>::Serializer<'ser>),
+            Pet(IterSerializer<'ser, Option<&'ser super::AnimalType>, super::AnimalType>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -1969,7 +2042,12 @@ pub mod tns {
                                 helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             if self.is_root {
-                                helper.write_xmlns_unless_default(
+                                helper.write_xmlns(
+                                    &mut bytes,
+                                    Some(&super::super::PREFIX_XSI),
+                                    &super::super::NS_XSI,
+                                );
+                                helper.write_xmlns(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_TNS),
                                     &super::super::NS_TNS,
@@ -1978,6 +2056,19 @@ pub mod tns {
                             return Ok(Some(Event::Start(bytes)));
                         }
                         QTypeSerializerState::Inner(x) => match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = QTypeSerializerState::Pet(
+                                    IterSerializer::new(
+                                        self.value.pet.as_ref(),
+                                        Some("pet"),
+                                        false,
+                                    )
+                                    .with_namespace(ElementNamespace::None),
+                                )
+                            }
+                        },
+                        QTypeSerializerState::Pet(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = QTypeSerializerState::End__,
                         },

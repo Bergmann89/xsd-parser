@@ -54,9 +54,9 @@ macro_rules! check_foo {
 #[cfg(not(feature = "update-expectations"))]
 macro_rules! foo_obj {
     () => {{
-        foo_obj!(true)
+        foo_obj!(true, false)
     }};
-    ($with_animal:expr) => {{
+    ($with_animal:expr, $with_pet:expr) => {{
         use generated::tns::{AnimalType, BarType, DogType, FooType, QType};
 
         FooType {
@@ -65,7 +65,10 @@ macro_rules! foo_obj {
                 a: 1,
             },
             baz: "z".into(),
-            q: QType { inner: "i".into() },
+            q: QType {
+                inner: "i".into(),
+                pet: $with_pet.then(|| AnimalType::new(DogType { name: "d".into() })),
+            },
             animal: $with_animal.then(|| AnimalType::new(DogType { name: "d".into() })),
         }
     }};
@@ -75,7 +78,7 @@ macro_rules! foo_obj {
 /// of `$read` back, and write the objects with the runtime default namespace
 /// of the given case and compare them to the XML files.
 macro_rules! case {
-    ($module:ident, $expected:literal, $mode:expr, [$($read:literal),+], [$($name:ident: $root:literal, $default:expr, $xml:literal, $animal:literal;)+]) => {
+    ($module:ident, $expected:literal, $mode:expr, [$($read:literal),+], [$($name:ident: $root:literal, $default:expr, $xml:literal, $animal:literal, $pet:literal;)+]) => {
         mod $module {
             use super::*;
 
@@ -113,7 +116,7 @@ macro_rules! case {
                     }
 
                     crate::utils::quick_xml_write_test_with_helper(
-                        &foo_obj!($animal),
+                        &foo_obj!($animal, $pet),
                         $root,
                         helper,
                         concat!("tests/feature/default_namespace_runtime/example/", $xml),
@@ -138,9 +141,9 @@ case!(
     NamespaceSerialization::Dynamic,
     ["local.xml"],
     [
-        write_prefixed_root: "tns:Foo", Some(NS_T), "runtime_dynamic.xml", true;
-        write_unprefixed_root: "Foo", Some(NS_T), "runtime_dynamic.xml", true;
-        write_no_default: "tns:Foo", None, "none_dynamic.xml", true;
+        write_prefixed_root: "tns:Foo", Some(NS_T), "runtime_dynamic.xml", true, false;
+        write_unprefixed_root: "Foo", Some(NS_T), "runtime_dynamic.xml", true, false;
+        write_no_default: "tns:Foo", None, "none_dynamic.xml", true, false;
     ]
 );
 case!(
@@ -149,9 +152,9 @@ case!(
     NamespaceSerialization::Global,
     ["local.xml"],
     [
-        write_prefixed_root: "tns:Foo", Some(NS_T), "runtime.xml", true;
-        write_unprefixed_root: "Foo", Some(NS_T), "runtime.xml", true;
-        write_no_default: "tns:Foo", None, "none.xml", true;
+        write_prefixed_root: "tns:Foo", Some(NS_T), "runtime.xml", true, false;
+        write_unprefixed_root: "Foo", Some(NS_T), "runtime.xml", true, false;
+        write_no_default: "tns:Foo", None, "none.xml", true, false;
     ]
 );
 case!(
@@ -160,7 +163,10 @@ case!(
     NamespaceSerialization::Local,
     ["local.xml"],
     [
-        write_prefixed_root: "tns:Foo", Some(NS_T), "local.xml", false;
+        write_prefixed_root: "tns:Foo", Some(NS_T), "local.xml", false, false;
+        write_animal: "tns:Foo", Some(NS_T), "local_animal.xml", true, false;
+        write_pet: "tns:Foo", Some(NS_T), "local_pet.xml", false, true;
+        write_animal_prefixed: "tns:Foo", None, "local_animal_prefixed.xml", true, false;
     ]
 );
 
