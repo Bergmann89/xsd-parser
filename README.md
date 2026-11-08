@@ -121,26 +121,26 @@ Below you can find a list of some benchmarks for serializing and deserializing d
 
 | Schema                                | Document              | Engine              | Op          | Min        | Avg        | Mdn        | Max        | Stack     |
 |---------------------------------------|-----------------------|---------------------|-------------|------------|------------|------------|------------|-----------|
-| XMLSchema                             | XMLSchema             | quick_xml           | serialize   | 303.71 µs  | 349.34 µs  | 327.66 µs  | 528.52 µs  |   9.4 KiB |
-| XMLSchema                             | XMLSchema             | quick_xml           | deserialize |   1.70 ms  |   1.77 ms  |   1.76 ms  |   1.95 ms  | 142.8 KiB |
-| XMLSchema (boxed)                     | XMLSchema             | quick_xml           | deserialize |   1.62 ms  |   1.70 ms  |   1.69 ms  |   1.89 ms  |  74.8 KiB |
-| XMLSchema                             | ONIX_BookProduct_3.1  | quick_xml           | serialize   |   3.03 ms  |   3.15 ms  |   3.14 ms  |   3.31 ms  |   7.4 KiB |
-| XMLSchema                             | ONIX_BookProduct_3.1  | quick_xml           | deserialize |  18.38 ms  |  18.85 ms  |  18.84 ms  |  20.02 ms  | 118.0 KiB |
-| XMLSchema (boxed)                     | ONIX_BookProduct_3.1  | quick_xml           | deserialize |  16.57 ms  |  16.84 ms  |  16.81 ms  |  17.41 ms  |  68.3 KiB |
-| XMLSchema                             | XJustiz 3.4.1 (dabag) | quick_xml           | serialize   |   1.08 ms  |   1.14 ms  |   1.13 ms  |   1.23 ms  |  39.4 KiB |
-| XMLSchema                             | XJustiz 3.4.1 (dabag) | quick_xml           | deserialize |   8.45 ms  |   8.61 ms  |   8.60 ms  |   8.84 ms  | 520.7 KiB |
-| XMLSchema (boxed)                     | XJustiz 3.4.1 (dabag) | quick_xml           | deserialize |   7.15 ms  |   7.32 ms  |   7.32 ms  |   7.53 ms  | 263.0 KiB |
-| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | quick_xml           | serialize   |   3.38 µs  |   3.65 µs  |   3.57 µs  |   8.05 µs  |       0 B |
-| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (quick_xml)   | serialize   |   4.06 µs  |   4.24 µs  |   4.21 µs  |   5.35 µs  |       0 B |
-| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (xml_rs)      | serialize   |   4.55 µs  |   4.75 µs  |   4.72 µs  |   6.05 µs  |   1.1 KiB |
-| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | quick_xml           | deserialize |  14.26 µs  |  14.99 µs  |  14.64 µs  |  21.14 µs  |  15.4 KiB |
-| iDEAL 3.3.1 Merchant-Acquirer (boxed) | merchant-acquirer.xml | quick_xml           | deserialize |  12.07 µs  |  12.39 µs  |  12.29 µs  |  17.11 µs  |  10.9 KiB |
-| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (quick_xml)   | deserialize |  10.99 µs  |  11.68 µs  |  11.58 µs  |  16.60 µs  |   4.7 KiB |
-| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (xml_rs v0.7) | deserialize |  36.52 µs  |  39.67 µs  |  39.45 µs  |  50.80 µs  |   8.9 KiB |
+| XMLSchema                             | XMLSchema             | quick_xml           | serialize   | 347.99 µs  | 364.60 µs  | 363.11 µs  | 408.55 µs  |  12.8 KiB |
+| XMLSchema                             | XMLSchema             | quick_xml           | deserialize |   1.70 ms  |   1.79 ms  |   1.78 ms  |   1.94 ms  | 141.6 KiB |
+| XMLSchema (boxed)                     | XMLSchema             | quick_xml           | deserialize |   1.64 ms  |   1.71 ms  |   1.70 ms  |   1.83 ms  |  73.8 KiB |
+| XMLSchema                             | ONIX_BookProduct_3.1  | quick_xml           | serialize   |   3.42 ms  |   3.58 ms  |   3.57 ms  |   3.91 ms  |  10.7 KiB |
+| XMLSchema                             | ONIX_BookProduct_3.1  | quick_xml           | deserialize |  17.79 ms  |  18.22 ms  |  18.17 ms  |  19.85 ms  | 117.3 KiB |
+| XMLSchema (boxed)                     | ONIX_BookProduct_3.1  | quick_xml           | deserialize |  16.46 ms  |  16.89 ms  |  16.83 ms  |  17.77 ms  |  67.6 KiB |
+| XMLSchema                             | XJustiz 3.4.1 (dabag) | quick_xml           | serialize   |   1.18 ms  |   1.22 ms  |   1.21 ms  |   1.36 ms  |  50.4 KiB |
+| XMLSchema                             | XJustiz 3.4.1 (dabag) | quick_xml           | deserialize |   8.38 ms  |   8.56 ms  |   8.49 ms  |   9.74 ms  | 520.1 KiB |
+| XMLSchema (boxed)                     | XJustiz 3.4.1 (dabag) | quick_xml           | deserialize |   6.96 ms  |   7.15 ms  |   7.12 ms  |   7.89 ms  | 262.3 KiB |
+| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | quick_xml           | serialize   |   3.66 µs  |   3.96 µs  |   3.88 µs  |   9.73 µs  |     214 B |
+| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (quick_xml)   | serialize   |   3.05 µs  |   3.18 µs  |   3.18 µs  |   3.39 µs  |       0 B |
+| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (xml_rs)      | serialize   |   4.30 µs  |   4.47 µs  |   4.45 µs  |   5.35 µs  |    1014 B |
+| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | quick_xml           | deserialize |  14.10 µs  |  14.62 µs  |  14.36 µs  |  17.53 µs  |  14.5 KiB |
+| iDEAL 3.3.1 Merchant-Acquirer (boxed) | merchant-acquirer.xml | quick_xml           | deserialize |  12.29 µs  |  12.83 µs  |  12.79 µs  |  15.81 µs  |   9.9 KiB |
+| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (quick_xml)   | deserialize |   8.95 µs  |   9.47 µs  |   9.33 µs  |  14.60 µs  |   4.7 KiB |
+| iDEAL 3.3.1 Merchant-Acquirer         | merchant-acquirer.xml | serde (xml_rs v0.7) | deserialize |  37.04 µs  |  38.34 µs  |  38.03 µs  |  42.19 µs  |   8.9 KiB |
 
 The benchmarks were created on the following system:
 - OS:                  Linux (Ubuntu 24.04)
-- Kernel:              Linux 7.0.0-42-generic
+- Kernel:              Linux 7.0.0-43-generic
 - CPU Arch:            x86_64
 - CPU Brand:           12th Gen Intel(R) Core(TM) i9-12900H
 - CPU Vendor:          GenuineIntel
