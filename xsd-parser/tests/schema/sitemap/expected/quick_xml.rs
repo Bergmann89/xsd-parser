@@ -2,9 +2,9 @@ use std::borrow::Cow;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -27,10 +27,19 @@ impl WithSerializer for UrlsetType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::UrlsetTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::UrlsetTypeSerializerState::Init__),
             name: name.unwrap_or("urlset"),
+            namespace,
             is_root,
         })
     }
@@ -52,10 +61,19 @@ impl WithSerializer for TUrlType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::TUrlTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::TUrlTypeSerializerState::Init__),
             name: name.unwrap_or("tUrl"),
+            namespace,
             is_root,
         })
     }
@@ -704,14 +722,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct UrlsetTypeSerializer<'ser> {
         pub(super) value: &'ser super::UrlsetType,
         pub(super) state: Box<UrlsetTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -730,14 +749,22 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     UrlsetTypeSerializerState::Init__ => {
-                        *self.state = UrlsetTypeSerializerState::Url(IterSerializer::new(
-                            &self.value.url[..],
-                            Some("url"),
-                            false,
-                        ));
+                        *self.state = UrlsetTypeSerializerState::Url(
+                            IterSerializer::new(&self.value.url[..], Some("url"), false)
+                                .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     UrlsetTypeSerializerState::Url(x) => match x.next(helper).transpose()? {
@@ -772,6 +799,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::TUrlType,
         pub(super) state: Box<TUrlTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -795,44 +823,65 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     TUrlTypeSerializerState::Init__ => {
-                        *self.state = TUrlTypeSerializerState::Loc(WithSerializer::serializer(
-                            &self.value.loc,
-                            Some("loc"),
-                            false,
-                        )?);
+                        *self.state = TUrlTypeSerializerState::Loc(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.loc,
+                                Some("loc"),
+                                ElementNamespace::Namespace(super::NS_UNNAMED_5),
+                                false,
+                            )?,
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TUrlTypeSerializerState::Loc(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = TUrlTypeSerializerState::Lastmod(IterSerializer::new(
-                                self.value.lastmod.as_ref(),
-                                Some("lastmod"),
-                                false,
-                            ))
+                            *self.state = TUrlTypeSerializerState::Lastmod(
+                                IterSerializer::new(
+                                    self.value.lastmod.as_ref(),
+                                    Some("lastmod"),
+                                    false,
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
+                            )
                         }
                     },
                     TUrlTypeSerializerState::Lastmod(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = TUrlTypeSerializerState::Changefreq(IterSerializer::new(
-                                self.value.changefreq.as_ref(),
-                                Some("changefreq"),
-                                false,
-                            ))
+                            *self.state = TUrlTypeSerializerState::Changefreq(
+                                IterSerializer::new(
+                                    self.value.changefreq.as_ref(),
+                                    Some("changefreq"),
+                                    false,
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
+                            )
                         }
                     },
                     TUrlTypeSerializerState::Changefreq(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = TUrlTypeSerializerState::Priority(IterSerializer::new(
-                                self.value.priority.as_ref(),
-                                Some("priority"),
-                                false,
-                            ))
+                            *self.state = TUrlTypeSerializerState::Priority(
+                                IterSerializer::new(
+                                    self.value.priority.as_ref(),
+                                    Some("priority"),
+                                    false,
+                                )
+                                .with_namespace(ElementNamespace::Namespace(super::NS_UNNAMED_5)),
+                            )
                         }
                     },
                     TUrlTypeSerializerState::Priority(x) => match x.next(helper).transpose()? {

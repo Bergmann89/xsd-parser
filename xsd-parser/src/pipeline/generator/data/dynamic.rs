@@ -6,6 +6,7 @@ use quote::format_ident;
 use crate::models::{
     data::{DerivedType, DynamicData, TagName},
     meta::{DerivedTypeMeta, DynamicMeta},
+    schema::xs::FormChoiceType,
     TypeIdent,
 };
 
@@ -52,8 +53,10 @@ fn make_derived_type_data<'types>(
 ) -> Result<DerivedType<'types>, Error> {
     let s_name = key.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());
-    let form = ctx.types.get_form(key);
-    let tag_name = TagName::new(ctx.types, key.ns, &key.name, form);
+
+    // Substitution group members are global elements and `xsi:type` values are type names,
+    // both are always namespace-qualified.
+    let tag_name = TagName::new(ctx.types, key.ns, &key.name, FormChoiceType::Qualified);
 
     let key = key.clone();
     let target_ref = ctx.get_or_create_type_ref(&meta.type_)?;

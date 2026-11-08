@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xml="http://www.w3.org/XML/1998/namespace"
+    xmlns:tns="T"
+    targetNamespace="T"
+    elementFormDefault="unqualified"
+    attributeFormDefault="unqualified">
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd" />
+
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="child" type="tns:ChildType" />
+                <xs:element name="item" type="xs:string" />
+                <xs:element name="q" type="xs:string" form="qualified" />
+                <xs:element ref="tns:Ref" />
+                <xs:element name="Ref2">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="v" type="xs:string" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute ref="xml:lang" />
+            <xs:attribute name="attr" type="xs:int" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="ChildType">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Ref">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="v" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

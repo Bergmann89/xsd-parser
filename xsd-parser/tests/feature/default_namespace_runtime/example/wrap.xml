@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<o:Wrap xmlns:o="O" xmlns="T" xmlns:tns="T"><Foo><bar tns:a="1">b</bar><baz>z</baz><q xmlns=""><tns:inner>i</tns:inner></q><animal xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="tns:Dog"><name>d</name></animal></Foo></o:Wrap>

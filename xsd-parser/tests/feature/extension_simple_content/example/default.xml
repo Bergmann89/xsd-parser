@@ -1,5 +1,4 @@
-<Foo
-    xmlns:tns="http://example.com"
+<Foo xmlns="http://example.com"
     value="an attribute value"
     anotherValue="more attribute data">
     AUTO

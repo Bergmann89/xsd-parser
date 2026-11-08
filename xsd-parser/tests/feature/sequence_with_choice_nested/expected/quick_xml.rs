@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -20,10 +20,19 @@ impl WithSerializer for ContainerType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ContainerTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ContainerTypeSerializerState::Init__),
             name: name.unwrap_or("Container"),
+            namespace,
             is_root,
         })
     }
@@ -43,7 +52,16 @@ impl WithSerializer for ContainerContent2Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         Ok(quick_xml_serialize::ContainerContent2TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ContainerContent2TypeSerializerState::Init__),
@@ -65,7 +83,16 @@ impl WithSerializer for ContainerContent3Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::ContainerContent3TypeSerializer {
             value: self,
@@ -87,7 +114,16 @@ impl WithSerializer for ContainerContent4Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         Ok(quick_xml_serialize::ContainerContent4TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ContainerContent4TypeSerializerState::Init__),
@@ -952,14 +988,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct ContainerTypeSerializer<'ser> {
         pub(super) value: &'ser super::ContainerType,
         pub(super) state: Box<ContainerTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -984,12 +1021,22 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     ContainerTypeSerializerState::Init__ => {
-                        *self.state = ContainerTypeSerializerState::Content2(IterSerializer::new(
-                            &self.value.content_2[..],
-                            Some("Content2"),
-                            false,
-                        ));
-                        let bytes = BytesStart::new(self.name);
+                        *self.state = ContainerTypeSerializerState::Content2(
+                            IterSerializer::new(&self.value.content_2[..], Some("Content2"), false)
+                                .with_namespace(ElementNamespace::None),
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ContainerTypeSerializerState::Content2(x) => {
@@ -1000,6 +1047,7 @@ pub mod quick_xml_serialize {
                     }
                     ContainerTypeSerializerState::End__ => {
                         *self.state = ContainerTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ContainerTypeSerializerState::Done__ => return Ok(None),
@@ -1044,12 +1092,22 @@ pub mod quick_xml_serialize {
                     ContainerContent2TypeSerializerState::Init__ => match self.value {
                         super::ContainerContent2Type::Foo(x) => {
                             *self.state = ContainerContent2TypeSerializerState::Foo(
-                                WithSerializer::serializer(x, Some("Foo"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("Foo"),
+                                    ElementNamespace::None,
+                                    self.is_root,
+                                )?,
                             )
                         }
                         super::ContainerContent2Type::Content3(x) => {
                             *self.state = ContainerContent2TypeSerializerState::Content3(
-                                WithSerializer::serializer(x, Some("Content3"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("Content3"),
+                                    ElementNamespace::None,
+                                    self.is_root,
+                                )?,
                             )
                         }
                     },
@@ -1110,7 +1168,8 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ContainerContent3TypeSerializerState::Init__ => {
                         *self.state = ContainerContent3TypeSerializerState::Content4(
-                            IterSerializer::new(&self.value.content_4[..], Some("Content4"), false),
+                            IterSerializer::new(&self.value.content_4[..], Some("Content4"), false)
+                                .with_namespace(ElementNamespace::None),
                         );
                     }
                     ContainerContent3TypeSerializerState::Content4(x) => {
@@ -1160,7 +1219,12 @@ pub mod quick_xml_serialize {
                     ContainerContent4TypeSerializerState::Init__ => match self.value {
                         super::ContainerContent4Type::Bar(x) => {
                             *self.state = ContainerContent4TypeSerializerState::Bar(
-                                WithSerializer::serializer(x, Some("Bar"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("Bar"),
+                                    ElementNamespace::None,
+                                    self.is_root,
+                                )?,
                             )
                         }
                     },

@@ -4,8 +4,8 @@ use std::{borrow::Cow, sync::LazyLock};
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        fraction_digits, whitespace_collapse, DeserializeBytes, DeserializeHelper, Error,
-        SerializeBytes, SerializeHelper, ValidateError, WithDeserializer,
+        fraction_digits, whitespace_collapse, DeserializeBytes, DeserializeHelper,
+        ElementNamespace, Error, SerializeBytes, SerializeHelper, ValidateError, WithDeserializer,
         WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
     },
     xml::{Base64String, HexString},
@@ -38,10 +38,19 @@ impl WithSerializer for RootType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::RootTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::RootTypeSerializerState::Init__),
-            name: name.unwrap_or("Root"),
+            name: name.unwrap_or("tns:Root"),
+            namespace,
             is_root,
         })
     }
@@ -53,7 +62,16 @@ impl WithSerializer for RootTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::RootTypeContentSerializer {
             value: self,
@@ -543,7 +561,7 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"NegativeDecimal")
                 ) {
                     let output =
@@ -551,7 +569,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_negative_decimal(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"PositiveDecimal")
                 ) {
                     let output =
@@ -559,7 +577,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_positive_decimal(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"RestrictedString")
                 ) {
                     let output =
@@ -567,14 +585,14 @@ pub mod quick_xml_deserialize {
                     return self.handle_restricted_string(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"HexType")
                 ) {
                     let output = <super::HexType as WithDeserializer>::init(helper, event)?;
                     return self.handle_hex_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Base64Type")
                 ) {
                     let output = <super::Base64Type as WithDeserializer>::init(helper, event)?;
@@ -1074,14 +1092,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct RootTypeSerializer<'ser> {
         pub(super) value: &'ser super::RootType,
         pub(super) state: Box<RootTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1105,10 +1124,24 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
+                                &mut bytes,
+                                Some(&super::PREFIX_TNS),
+                                &super::NS_TNS,
+                            );
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -1165,27 +1198,52 @@ pub mod quick_xml_serialize {
                     RootTypeContentSerializerState::Init__ => match self.value {
                         super::RootTypeContent::NegativeDecimal(x) => {
                             *self.state = RootTypeContentSerializerState::NegativeDecimal(
-                                WithSerializer::serializer(x, Some("NegativeDecimal"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("NegativeDecimal"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
                             )
                         }
                         super::RootTypeContent::PositiveDecimal(x) => {
                             *self.state = RootTypeContentSerializerState::PositiveDecimal(
-                                WithSerializer::serializer(x, Some("PositiveDecimal"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("PositiveDecimal"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
                             )
                         }
                         super::RootTypeContent::RestrictedString(x) => {
                             *self.state = RootTypeContentSerializerState::RestrictedString(
-                                WithSerializer::serializer(x, Some("RestrictedString"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("RestrictedString"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
                             )
                         }
                         super::RootTypeContent::HexType(x) => {
                             *self.state = RootTypeContentSerializerState::HexType(
-                                WithSerializer::serializer(x, Some("HexType"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("HexType"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
                             )
                         }
                         super::RootTypeContent::Base64Type(x) => {
                             *self.state = RootTypeContentSerializerState::Base64Type(
-                                WithSerializer::serializer(x, Some("Base64Type"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("Base64Type"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
                             )
                         }
                     },

@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -22,10 +22,19 @@ impl WithSerializer for CurrencyAmountType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::CurrencyAmountTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::CurrencyAmountTypeSerializerState::Init__),
             name: name.unwrap_or("CurrencyAmount"),
+            namespace,
             is_root,
         })
     }
@@ -62,7 +71,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_UNNAMED_5),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_UNNAMED_5),
                     Some(b"Ccy")
                 ) {
                     helper.read_attrib(&mut ccy, b"Ccy", &attrib.value)?;
@@ -180,13 +189,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct CurrencyAmountTypeSerializer<'ser> {
         pub(super) value: &'ser super::CurrencyAmountType,
         pub(super) state: Box<CurrencyAmountTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -208,9 +219,18 @@ pub mod quick_xml_serialize {
                         *self.state = CurrencyAmountTypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "Ccy", &self.value.ccy)?;
                         return Ok(Some(Event::Start(bytes)));
                     }

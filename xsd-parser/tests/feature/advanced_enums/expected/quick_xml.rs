@@ -2,9 +2,9 @@ use std::borrow::Cow;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, ErrorKind, RawByteStr, SerializeBytes,
-        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
-        WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, ErrorKind, RawByteStr,
+        SerializeBytes, SerializeHelper, WithDeserializer, WithDeserializerFromBytes,
+        WithSerializeToBytes, WithSerializer,
     },
     xml::QName,
 };
@@ -30,10 +30,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("test:FooType"),
+            namespace,
             is_root,
         })
     }
@@ -487,7 +496,8 @@ pub mod quick_xml_deserialize {
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
         quick_xml::{
-            BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+            WithSerializer,
         },
         xml::QName,
     };
@@ -496,6 +506,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -516,14 +527,26 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state =
-                            FooTypeSerializerState::StringEnum(WithSerializer::serializer(
+                        *self.state = FooTypeSerializerState::StringEnum(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.string_enum,
                                 Some("test:StringEnum"),
+                                ElementNamespace::Namespace(super::NS_TEST),
                                 false,
-                            )?);
+                            )?,
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TEST)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         if self.is_root {
                             helper.write_xmlns(&mut bytes, Some(&super::PREFIX_XS), &super::NS_XS);
                             helper.write_xmlns(
@@ -537,22 +560,27 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::StringEnum(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                FooTypeSerializerState::QNameEnum(WithSerializer::serializer(
+                            *self.state = FooTypeSerializerState::QNameEnum(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.q_name_enum,
                                     Some("test:QNameEnum"),
+                                    ElementNamespace::Namespace(super::NS_TEST),
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     FooTypeSerializerState::QNameEnum(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::QName(WithSerializer::serializer(
-                                &self.value.q_name,
-                                Some("test:QName"),
-                                false,
-                            )?)
+                            *self.state = FooTypeSerializerState::QName(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.q_name,
+                                    Some("test:QName"),
+                                    ElementNamespace::Namespace(super::NS_TEST),
+                                    false,
+                                )?,
+                            )
                         }
                     },
                     FooTypeSerializerState::QName(x) => match x.next(helper).transpose()? {

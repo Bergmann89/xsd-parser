@@ -113,7 +113,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "list",
+        "tns:list",
         "tests/feature/substitution_group/example/default.xml",
     );
 }
@@ -195,7 +195,7 @@ fn write_quick_xml_optimized() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "list",
+        "tns:list",
         "tests/feature/substitution_group/example/default.xml",
     );
 }

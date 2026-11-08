@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="T"
+    targetNamespace="T"
+    elementFormDefault="qualified">
+
+    <xs:element name="Foo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="bar" type="tns:BarType" />
+                <xs:element name="baz" type="xs:string" />
+                <xs:element name="q" type="tns:QType" form="unqualified" />
+                <xs:element name="animal" type="tns:Animal" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Zoo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="animal" type="tns:Animal" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="BarType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="a" type="xs:int" use="required" form="qualified" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="QType">
+        <xs:sequence>
+            <xs:element name="inner" type="xs:string" />
+            <xs:element name="pet" type="tns:Animal" form="unqualified" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Animal" abstract="true">
+        <xs:sequence />
+    </xs:complexType>
+
+    <xs:complexType name="Dog">
+        <xs:complexContent>
+            <xs:extension base="tns:Animal">
+                <xs:sequence>
+                    <xs:element name="name" type="xs:string" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

@@ -7,8 +7,8 @@ use quick_xml::events::Event;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput,
-    DeserializerResult, Error, IterSerializer, SerializeHelper, Serializer, WithDeserializer,
-    WithSerializer,
+    DeserializerResult, ElementNamespace, Error, IterSerializer, SerializeHelper, Serializer,
+    WithDeserializer, WithSerializer,
 };
 
 use super::text::Text;
@@ -73,7 +73,18 @@ where
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        let serializer = self.value.serializer(name, is_root)?;
+        self.serializer_with_namespace(name, ElementNamespace::Unknown, is_root)
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        let serializer = self
+            .value
+            .serializer_with_namespace(name, namespace, is_root)?;
 
         Ok(MixedSerializer::Inner {
             value: self,
@@ -225,28 +236,29 @@ where
 }
 
 #[cfg(feature = "quick-xml")]
-impl<'de, T> Deserializer<'de, Mixed<T>> for MixedDeserializer<T>
+impl<T> MixedDeserializer<T>
 where
     T: WithDeserializer,
 {
-    fn init(
-        helper: &mut DeserializeHelper,
-        event: Event<'de>,
-    ) -> DeserializerResult<'de, Mixed<T>> {
-        Self::Init.next(helper, event)
-    }
-
+    /// Does the same as `next`, but the first `init` of the inner deserializer
+    /// gets the name of the element the parent expects (if any).
     #[allow(clippy::too_many_lines)]
-    fn next(
+    fn next_with_name<'de>(
         mut self,
         helper: &mut DeserializeHelper,
         mut event: Event<'de>,
+        name: Option<(Option<&[u8]>, &[u8])>,
     ) -> DeserializerResult<'de, Mixed<T>> {
         loop {
             let (next_event, next_state) = match self {
                 x @ (Self::Init | Self::Inner { .. }) => {
                     let output = match x {
-                        Self::Init => T::Deserializer::init(helper, event),
+                        Self::Init => match name {
+                            Some((ns, name)) => {
+                                T::Deserializer::init_with_name(helper, event, ns, name)
+                            }
+                            None => T::Deserializer::init(helper, event),
+                        },
                         Self::Inner { deserializer } => deserializer.next(helper, event),
                         Self::TextAfter { .. } => unreachable!(),
                     }?;
@@ -354,6 +366,36 @@ where
             self = next_state;
             event = next_event;
         }
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl<'de, T> Deserializer<'de, Mixed<T>> for MixedDeserializer<T>
+where
+    T: WithDeserializer,
+{
+    fn init(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Mixed<T>> {
+        Self::Init.next_with_name(helper, event, None)
+    }
+
+    fn init_with_name(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, Mixed<T>> {
+        Self::Init.next_with_name(helper, event, Some((ns, name)))
+    }
+
+    fn next(
+        self,
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Mixed<T>> {
+        self.next_with_name(helper, event, None)
     }
 
     fn finish(self, helper: &mut DeserializeHelper) -> Result<Mixed<T>, Error> {

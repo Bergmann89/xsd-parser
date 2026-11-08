@@ -82,8 +82,7 @@ impl Optimizer {
         let content_ident = TypeIdent::new(content_name).with_ns(ident.ns);
 
         let mut si = GroupMeta::default();
-        let ty = self.types.items.get(&ident).unwrap();
-        add_elements(&mut si, ty.form(), dm);
+        add_elements(&mut si, dm);
 
         let ty = self.types.items.get_mut(&ident).unwrap();
         ty.variant = MetaTypeVariant::ComplexType(ComplexMeta {
@@ -107,13 +106,19 @@ impl Optimizer {
     }
 }
 
-fn add_elements(group: &mut GroupMeta, form: FormChoiceType, meta: &DynamicMeta) {
+fn add_elements(group: &mut GroupMeta, meta: &DynamicMeta) {
     for (key, meta) in &meta.derived_types {
         let el = group
             .elements
             .find_or_insert(key.to_property_ident(), |ident| {
-                let mut el =
-                    ElementMeta::new(ident, meta.type_.clone(), ElementMode::Element, form);
+                // Substitution group members are global elements and `xsi:type` values are
+                // type names, both are always namespace-qualified.
+                let mut el = ElementMeta::new(
+                    ident,
+                    meta.type_.clone(),
+                    ElementMode::Element,
+                    FormChoiceType::Qualified,
+                );
 
                 el.flags.clear();
 

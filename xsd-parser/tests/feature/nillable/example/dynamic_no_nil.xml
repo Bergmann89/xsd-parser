@@ -1,5 +1,5 @@
 <Foo xmlns="http://example.com">
-    <A>42</A>
-    <B>100</B>
-    <C>200</C>
+    <A xmlns="">42</A>
+    <B xmlns="">100</B>
+    <C xmlns="">200</C>
 </Foo>

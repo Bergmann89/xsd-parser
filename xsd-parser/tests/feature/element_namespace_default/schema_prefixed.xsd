@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="T"
+    xmlns:o="O"
+    targetNamespace="T"
+    elementFormDefault="unqualified">
+
+    <xs:import namespace="O" schemaLocation="other_prefixed.xsd" />
+
+    <xs:element name="Foo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="child" type="tns:ChildType" minOccurs="0" />
+                <xs:element name="item" type="xs:string" maxOccurs="2" />
+                <xs:element ref="tns:Ref" />
+                <xs:element ref="tns:Shape" />
+                <xs:element name="n" type="xs:string" nillable="true" />
+                <xs:element name="anyValue" type="xs:anySimpleType" />
+                <xs:element name="node" type="tns:NodeType" />
+                <xs:any processContents="lax" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Ref" type="xs:string" />
+    <xs:element name="Shape" type="tns:Shape" abstract="true" />
+
+    <xs:complexType name="Shape" />
+
+    <xs:complexType name="ChildType">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="NodeType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" />
+            <xs:element name="node" type="tns:NodeType" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

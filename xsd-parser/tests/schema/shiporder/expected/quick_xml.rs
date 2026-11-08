@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -23,10 +23,19 @@ impl WithSerializer for ShiporderType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ShiporderTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ShiporderTypeSerializerState::Init__),
             name: name.unwrap_or("shiporder"),
+            namespace,
             is_root,
         })
     }
@@ -48,10 +57,19 @@ impl WithSerializer for ShiporderShiptoType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ShiporderShiptoTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ShiporderShiptoTypeSerializerState::Init__),
             name: name.unwrap_or("ShiporderShipto"),
+            namespace,
             is_root,
         })
     }
@@ -73,10 +91,19 @@ impl WithSerializer for ShiporderItemType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ShiporderItemTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ShiporderItemTypeSerializerState::Init__),
             name: name.unwrap_or("ShiporderItem"),
+            namespace,
             is_root,
         })
     }
@@ -1248,14 +1275,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct ShiporderTypeSerializer<'ser> {
         pub(super) value: &'ser super::ShiporderType,
         pub(super) state: Box<ShiporderTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1276,13 +1304,26 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     ShiporderTypeSerializerState::Init__ => {
-                        *self.state =
-                            ShiporderTypeSerializerState::Orderperson(WithSerializer::serializer(
+                        *self.state = ShiporderTypeSerializerState::Orderperson(
+                            WithSerializer::serializer_with_namespace(
                                 &self.value.orderperson,
                                 Some("orderperson"),
+                                ElementNamespace::None,
                                 false,
-                            )?);
+                            )?,
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         helper.write_attrib(&mut bytes, "orderid", &self.value.orderid)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -1291,31 +1332,32 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ShiporderTypeSerializerState::Shipto(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.shipto,
                                         Some("shipto"),
+                                        ElementNamespace::None,
                                         false,
                                     )?,
                                 )
                             }
                         }
                     }
-                    ShiporderTypeSerializerState::Shipto(x) => {
-                        match x.next(helper).transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = ShiporderTypeSerializerState::Item(
-                                    IterSerializer::new(&self.value.item[..], Some("item"), false),
-                                )
-                            }
+                    ShiporderTypeSerializerState::Shipto(x) => match x.next(helper).transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = ShiporderTypeSerializerState::Item(
+                                IterSerializer::new(&self.value.item[..], Some("item"), false)
+                                    .with_namespace(ElementNamespace::None),
+                            )
                         }
-                    }
+                    },
                     ShiporderTypeSerializerState::Item(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = ShiporderTypeSerializerState::End__,
                     },
                     ShiporderTypeSerializerState::End__ => {
                         *self.state = ShiporderTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ShiporderTypeSerializerState::Done__ => return Ok(None),
@@ -1341,6 +1383,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ShiporderShiptoType,
         pub(super) state: Box<ShiporderShiptoTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1363,9 +1406,25 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ShiporderShiptoTypeSerializerState::Init__ => {
                         *self.state = ShiporderShiptoTypeSerializerState::Name(
-                            WithSerializer::serializer(&self.value.name, Some("name"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.name,
+                                Some("name"),
+                                ElementNamespace::None,
+                                false,
+                            )?,
                         );
-                        let bytes = BytesStart::new(self.name);
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ShiporderShiptoTypeSerializerState::Name(x) => {
@@ -1373,34 +1432,40 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ShiporderShiptoTypeSerializerState::Address(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.address,
                                         Some("address"),
+                                        ElementNamespace::None,
                                         false,
                                     )?,
                                 )
                             }
                         }
                     }
-                    ShiporderShiptoTypeSerializerState::Address(x) => match x
-                        .next(helper)
-                        .transpose()?
-                    {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ShiporderShiptoTypeSerializerState::City(
-                                WithSerializer::serializer(&self.value.city, Some("city"), false)?,
-                            )
+                    ShiporderShiptoTypeSerializerState::Address(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = ShiporderShiptoTypeSerializerState::City(
+                                    WithSerializer::serializer_with_namespace(
+                                        &self.value.city,
+                                        Some("city"),
+                                        ElementNamespace::None,
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
+                    }
                     ShiporderShiptoTypeSerializerState::City(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ShiporderShiptoTypeSerializerState::Country(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.country,
                                         Some("country"),
+                                        ElementNamespace::None,
                                         false,
                                     )?,
                                 )
@@ -1415,6 +1480,7 @@ pub mod quick_xml_serialize {
                     }
                     ShiporderShiptoTypeSerializerState::End__ => {
                         *self.state = ShiporderShiptoTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ShiporderShiptoTypeSerializerState::Done__ => return Ok(None),
@@ -1440,6 +1506,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ShiporderItemType,
         pub(super) state: Box<ShiporderItemTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1462,9 +1529,25 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     ShiporderItemTypeSerializerState::Init__ => {
                         *self.state = ShiporderItemTypeSerializerState::Title(
-                            WithSerializer::serializer(&self.value.title, Some("title"), false)?,
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.title,
+                                Some("title"),
+                                ElementNamespace::None,
+                                false,
+                            )?,
                         );
-                        let bytes = BytesStart::new(self.name);
+                        let namespace = if self.is_root {
+                            ElementNamespace::Unknown
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
+                        let mut bytes = BytesStart::new(self.name);
+                        helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ShiporderItemTypeSerializerState::Title(x) => match x
@@ -1474,7 +1557,8 @@ pub mod quick_xml_serialize {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state = ShiporderItemTypeSerializerState::Note(
-                                IterSerializer::new(self.value.note.as_ref(), Some("note"), false),
+                                IterSerializer::new(self.value.note.as_ref(), Some("note"), false)
+                                    .with_namespace(ElementNamespace::None),
                             )
                         }
                     },
@@ -1483,9 +1567,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ShiporderItemTypeSerializerState::Quantity(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.quantity,
                                         Some("quantity"),
+                                        ElementNamespace::None,
                                         false,
                                     )?,
                                 )
@@ -1497,9 +1582,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = ShiporderItemTypeSerializerState::Price(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.price,
                                         Some("price"),
+                                        ElementNamespace::None,
                                         false,
                                     )?,
                                 )
@@ -1514,6 +1600,7 @@ pub mod quick_xml_serialize {
                     }
                     ShiporderItemTypeSerializerState::End__ => {
                         *self.state = ShiporderItemTypeSerializerState::Done__;
+                        helper.end_ns_scope();
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ShiporderItemTypeSerializerState::Done__ => return Ok(None),

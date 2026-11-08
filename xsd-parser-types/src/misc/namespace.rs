@@ -9,6 +9,9 @@ use crate::misc::format_utf8_slice;
 pub struct Namespace(pub Cow<'static, [u8]>);
 
 impl Namespace {
+    /// The empty namespace (no namespace).
+    pub const EMPTY: Self = Self(Cow::Borrowed(b""));
+
     /// The XML schema namespace
     pub const XS: Self = Self(Cow::Borrowed(b"http://www.w3.org/2001/XMLSchema"));
 

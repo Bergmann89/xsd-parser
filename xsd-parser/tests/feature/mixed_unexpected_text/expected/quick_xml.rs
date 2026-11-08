@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -23,10 +23,19 @@ impl WithSerializer for MixedType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::MixedTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::MixedTypeSerializerState::Init__),
             name: name.unwrap_or("tns:MixedType"),
+            namespace,
             is_root,
         })
     }
@@ -46,7 +55,16 @@ impl WithSerializer for MixedGroupType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         Ok(quick_xml_serialize::MixedGroupTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::MixedGroupTypeSerializerState::Init__),
@@ -70,10 +88,19 @@ impl WithSerializer for NormalType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::NormalTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::NormalTypeSerializerState::Init__),
             name: name.unwrap_or("tns:NormalType"),
+            namespace,
             is_root,
         })
     }
@@ -93,7 +120,16 @@ impl WithSerializer for NormalGroupType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         Ok(quick_xml_serialize::NormalGroupTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::NormalGroupTypeSerializerState::Init__),
@@ -400,14 +436,14 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
@@ -960,14 +996,14 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
@@ -1234,13 +1270,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer,
     };
     #[derive(Debug)]
     pub struct MixedTypeSerializer<'ser> {
         pub(super) value: &'ser super::MixedType,
         pub(super) state: Box<MixedTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1260,15 +1298,24 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     MixedTypeSerializerState::Init__ => {
-                        *self.state = MixedTypeSerializerState::Group(IterSerializer::new(
-                            &self.value.group[..],
-                            Some("Group"),
-                            false,
-                        ));
+                        *self.state = MixedTypeSerializerState::Group(
+                            IterSerializer::new(&self.value.group[..], Some("Group"), false)
+                                .with_namespace(ElementNamespace::None),
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns(
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
                                 &super::NS_TNS,
@@ -1279,11 +1326,10 @@ pub mod quick_xml_serialize {
                     MixedTypeSerializerState::Group(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = MixedTypeSerializerState::Baz(IterSerializer::new(
-                                &self.value.baz[..],
-                                Some("tns:Baz"),
-                                false,
-                            ))
+                            *self.state = MixedTypeSerializerState::Baz(
+                                IterSerializer::new(&self.value.baz[..], Some("tns:Baz"), false)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
                     },
                     MixedTypeSerializerState::Baz(x) => match x.next(helper).transpose()? {
@@ -1334,20 +1380,20 @@ pub mod quick_xml_serialize {
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    MixedGroupTypeSerializerState::Init__ => {
-                        match self.value {
-                            super::MixedGroupType::Fuu(x) => {
-                                *self.state = MixedGroupTypeSerializerState::Fuu(
-                                    IterSerializer::new(&x[..], Some("tns:Fuu"), self.is_root),
-                                )
-                            }
-                            super::MixedGroupType::Bar(x) => {
-                                *self.state = MixedGroupTypeSerializerState::Bar(
-                                    IterSerializer::new(&x[..], Some("tns:Bar"), self.is_root),
-                                )
-                            }
+                    MixedGroupTypeSerializerState::Init__ => match self.value {
+                        super::MixedGroupType::Fuu(x) => {
+                            *self.state = MixedGroupTypeSerializerState::Fuu(
+                                IterSerializer::new(&x[..], Some("tns:Fuu"), self.is_root)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
-                    }
+                        super::MixedGroupType::Bar(x) => {
+                            *self.state = MixedGroupTypeSerializerState::Bar(
+                                IterSerializer::new(&x[..], Some("tns:Bar"), self.is_root)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
+                        }
+                    },
                     MixedGroupTypeSerializerState::Fuu(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = MixedGroupTypeSerializerState::Done__,
@@ -1379,6 +1425,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::NormalType,
         pub(super) state: Box<NormalTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -1398,15 +1445,24 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     NormalTypeSerializerState::Init__ => {
-                        *self.state = NormalTypeSerializerState::Group(IterSerializer::new(
-                            &self.value.group[..],
-                            Some("Group"),
-                            false,
-                        ));
+                        *self.state = NormalTypeSerializerState::Group(
+                            IterSerializer::new(&self.value.group[..], Some("Group"), false)
+                                .with_namespace(ElementNamespace::None),
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns(
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
                                 &super::NS_TNS,
@@ -1417,11 +1473,10 @@ pub mod quick_xml_serialize {
                     NormalTypeSerializerState::Group(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = NormalTypeSerializerState::Baz(IterSerializer::new(
-                                &self.value.baz[..],
-                                Some("tns:Baz"),
-                                false,
-                            ))
+                            *self.state = NormalTypeSerializerState::Baz(
+                                IterSerializer::new(&self.value.baz[..], Some("tns:Baz"), false)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
                     },
                     NormalTypeSerializerState::Baz(x) => match x.next(helper).transpose()? {
@@ -1472,20 +1527,20 @@ pub mod quick_xml_serialize {
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    NormalGroupTypeSerializerState::Init__ => {
-                        match self.value {
-                            super::NormalGroupType::Fuu(x) => {
-                                *self.state = NormalGroupTypeSerializerState::Fuu(
-                                    IterSerializer::new(&x[..], Some("tns:Fuu"), self.is_root),
-                                )
-                            }
-                            super::NormalGroupType::Bar(x) => {
-                                *self.state = NormalGroupTypeSerializerState::Bar(
-                                    IterSerializer::new(&x[..], Some("tns:Bar"), self.is_root),
-                                )
-                            }
+                    NormalGroupTypeSerializerState::Init__ => match self.value {
+                        super::NormalGroupType::Fuu(x) => {
+                            *self.state = NormalGroupTypeSerializerState::Fuu(
+                                IterSerializer::new(&x[..], Some("tns:Fuu"), self.is_root)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
                         }
-                    }
+                        super::NormalGroupType::Bar(x) => {
+                            *self.state = NormalGroupTypeSerializerState::Bar(
+                                IterSerializer::new(&x[..], Some("tns:Bar"), self.is_root)
+                                    .with_namespace(ElementNamespace::Namespace(super::NS_TNS)),
+                            )
+                        }
+                    },
                     NormalGroupTypeSerializerState::Fuu(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = NormalGroupTypeSerializerState::Done__,

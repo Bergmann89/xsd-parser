@@ -1,7 +1,8 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        BytesStart, CollectNamespaces, Error, SerializeHelper, WithDeserializer, WithSerializer,
+        BytesStart, CollectNamespaces, ElementNamespace, Error, SerializeHelper, WithDeserializer,
+        WithSerializer,
     },
     xml::Nillable,
 };
@@ -40,10 +41,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("FooType"),
+            namespace,
             is_root,
         })
     }
@@ -71,10 +81,19 @@ impl WithSerializer for BarType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::BarTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::BarTypeSerializerState::Init__),
             name: name.unwrap_or("BarType"),
+            namespace,
             is_root,
         })
     }
@@ -750,8 +769,8 @@ pub mod quick_xml_deserialize {
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
         quick_xml::{
-            BytesEnd, BytesStart, CollectNamespaces, Error, Event, IterSerializer, SerializeHelper,
-            Serializer, WithSerializer,
+            BytesEnd, BytesStart, CollectNamespaces, ElementNamespace, Error, Event,
+            IterSerializer, SerializeHelper, Serializer, WithSerializer,
         },
         xml::Nillable,
     };
@@ -760,6 +779,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -781,15 +801,26 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::A(WithSerializer::serializer(
-                            &self.value.a,
-                            Some("A"),
-                            false,
-                        )?);
+                        *self.state =
+                            FooTypeSerializerState::A(WithSerializer::serializer_with_namespace(
+                                &self.value.a,
+                                Some("A"),
+                                ElementNamespace::None,
+                                false,
+                            )?);
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
                             CollectNamespaces::collect_namespaces(self.value, helper, &mut bytes);
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -797,31 +828,32 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::A(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::B(WithSerializer::serializer(
-                                &self.value.b,
-                                Some("B"),
-                                false,
-                            )?)
+                            *self.state = FooTypeSerializerState::B(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.b,
+                                    Some("B"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
+                            )
                         }
                     },
                     FooTypeSerializerState::B(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::C(IterSerializer::new(
-                                self.value.c.as_ref(),
-                                Some("C"),
-                                false,
-                            ))
+                            *self.state = FooTypeSerializerState::C(
+                                IterSerializer::new(self.value.c.as_ref(), Some("C"), false)
+                                    .with_namespace(ElementNamespace::None),
+                            )
                         }
                     },
                     FooTypeSerializerState::C(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooTypeSerializerState::D(IterSerializer::new(
-                                self.value.d.as_ref(),
-                                Some("D"),
-                                false,
-                            ))
+                            *self.state = FooTypeSerializerState::D(
+                                IterSerializer::new(self.value.d.as_ref(), Some("D"), false)
+                                    .with_namespace(ElementNamespace::None),
+                            )
                         }
                     },
                     FooTypeSerializerState::D(x) => match x.next(helper).transpose()? {
@@ -856,6 +888,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::BarType,
         pub(super) state: Box<BarTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -875,15 +908,26 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     BarTypeSerializerState::Init__ => {
-                        *self.state = BarTypeSerializerState::X(WithSerializer::serializer(
-                            &self.value.x,
-                            Some("X"),
-                            false,
-                        )?);
+                        *self.state =
+                            BarTypeSerializerState::X(WithSerializer::serializer_with_namespace(
+                                &self.value.x,
+                                Some("X"),
+                                ElementNamespace::None,
+                                false,
+                            )?);
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
                             CollectNamespaces::collect_namespaces(self.value, helper, &mut bytes);
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -891,11 +935,14 @@ pub mod quick_xml_serialize {
                     BarTypeSerializerState::X(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = BarTypeSerializerState::Y(WithSerializer::serializer(
-                                &self.value.y,
-                                Some("Y"),
-                                false,
-                            )?)
+                            *self.state = BarTypeSerializerState::Y(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.y,
+                                    Some("Y"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
+                            )
                         }
                     },
                     BarTypeSerializerState::Y(x) => match x.next(helper).transpose()? {

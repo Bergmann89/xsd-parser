@@ -752,7 +752,7 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
     where
         F: FnOnce(&mut Self) -> Result<(), Error>,
     {
-        let entry = NodeCacheEntry::new(node);
+        let entry = NodeCacheEntry::new(node, true);
         let ident = TypeIdent {
             ns: self.current_ns(),
             schema: self.current_schema(),
@@ -783,7 +783,7 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
     where
         F: FnOnce(&mut Self) -> Result<(), Error>,
     {
-        let entry = NodeCacheEntry::new(node);
+        let entry = NodeCacheEntry::new(node, false);
         let ident = TypeIdent {
             ns: self.current_ns(),
             schema: self.current_schema(),
@@ -937,12 +937,26 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
             }
         }
 
-        let ident = self
-            .ident_cache
-            .resolve_for_schema(self.current_schema(), ident.clone())
-            .or(self.ident_cache.resolve(ident))?;
+        let qname_has_ns = qname.namespace().is_some();
+        match self.resolve_ident(ident.clone()) {
+            // Fall back to no namespace for an unprefixed QName without default
+            // namespace (e.g. a component of an `xs:import` without `namespace`).
+            Err(error @ Error::UnknownType(_)) if !qname_has_ns => {
+                match self.schemas.resolve_namespace(&None) {
+                    Some(ns) => self
+                        .resolve_ident(TypeIdent { ns, ..ident })
+                        .map_err(|_| error),
+                    None => Err(error),
+                }
+            }
+            result => result,
+        }
+    }
 
-        Ok(ident)
+    fn resolve_ident(&self, ident: TypeIdent) -> Result<TypeIdent, Error> {
+        self.ident_cache
+            .resolve_for_schema(self.current_schema(), ident.clone())
+            .or(self.ident_cache.resolve(ident))
     }
 
     fn parse_type_ident(&self, qname: &QName, type_: IdentType) -> Result<TypeIdent, Error> {
@@ -974,11 +988,12 @@ impl<'schema> NodeCacheProcessor<'_, 'schema> {
 }
 
 impl<'schema> NodeCacheEntry<'schema> {
-    fn new(node: Node<'schema>) -> Self {
+    fn new(node: Node<'schema>, global: bool) -> Self {
         Self {
             node,
             dependencies: BTreeMap::new(),
             redefine_base: None,
+            global,
         }
     }
 

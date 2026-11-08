@@ -21,8 +21,8 @@ use crate::models::{
         SimpleData, TagName, UnionData, UnionTypeVariant,
     },
     meta::{
-        CustomMetaNamespace, DeriveRelationship, DerivedTypeMeta, ElementMeta, ElementMetaFlags,
-        ElementMetaVariant, MetaTypeVariant, MetaTypes,
+        AttributeMetaVariant, CustomMetaNamespace, DeriveRelationship, DerivedTypeMeta,
+        ElementMeta, ElementMetaFlags, ElementMetaVariant, MetaTypeVariant, MetaTypes,
     },
     schema::{xs::FormChoiceType, NamespaceId},
     IdentType, TypeIdent,
@@ -113,14 +113,18 @@ impl ValueKey for SerializerConfig {
 #[derive(Default, Debug)]
 struct NamespaceCollector {
     cache: HashMap<TypeIdent, Option<SharedGlobalNamespaces>>,
+    tainted: HashMap<TypeIdent, bool>,
     xsi_namespace: Option<NamespaceId>,
     nillable_type_support: bool,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
 enum NamespaceKey {
+    /// Prefix needed by attributes, `xsi:type` values or custom types.
     Normal(NamespaceId),
     Default(NamespaceId),
+    /// Prefix only needed by the names of elements.
+    ElementOnly(NamespaceId),
 }
 
 type GlobalNamespaces = BTreeMap<NamespaceKey, (Option<PathData>, PathData)>;
@@ -230,19 +234,55 @@ impl DynamicData<'_> {
         let dynamic_type_serializer = self.render_dynamic_type_serializer(ctx);
         let dynamic_element_serializer = self.render_dynamic_element_serializer(ctx);
 
-        let code = quote! {
-            impl #with_serializer for #type_ident {
-                type Serializer<'x> = #boxed_serializer<'x>;
+        let code = if use_namespaces(ctx) {
+            let element_namespace =
+                resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
 
-                fn serializer<'ser>(
-                    &'ser self,
-                    name: #option<&'ser #str_>,
-                    is_root: #bool_
-                ) -> #result<Self::Serializer<'ser>, #error> {
-                    #dynamic_type_serializer
-                    #( #dynamic_element_serializer )*
+            quote! {
+                impl #with_serializer for #type_ident {
+                    type Serializer<'x> = #boxed_serializer<'x>;
 
-                    self.0.serializer(None, is_root)
+                    fn serializer<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        is_root: #bool_
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #with_serializer::serializer_with_namespace(
+                            self,
+                            name,
+                            #element_namespace::Unknown,
+                            is_root,
+                        )
+                    }
+
+                    fn serializer_with_namespace<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        namespace: #element_namespace,
+                        is_root: #bool_
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #( #dynamic_type_serializer )*
+                        #( #dynamic_element_serializer )*
+
+                        self.0.serializer_with_namespace(name, namespace, is_root)
+                    }
+                }
+            }
+        } else {
+            quote! {
+                impl #with_serializer for #type_ident {
+                    type Serializer<'x> = #boxed_serializer<'x>;
+
+                    fn serializer<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        is_root: #bool_
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #( #dynamic_type_serializer )*
+                        #( #dynamic_element_serializer )*
+
+                        self.0.serializer(name, is_root)
+                    }
                 }
             }
         };
@@ -250,39 +290,40 @@ impl DynamicData<'_> {
         ctx.current_module().append(code);
     }
 
-    fn render_dynamic_type_serializer(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
-        filter_dynamic_types(&self.derived_types, |x| (&x.key, &x.meta))
-            .map(|x| {
-                let target_type = ctx.resolve_type_for_module(&x.target_type);
+    fn render_dynamic_type_serializer<'x, 'a>(
+        &'x self,
+        ctx: &'x Context<'a, '_>,
+    ) -> impl Iterator<Item = TokenStream> + use<'x, 'a> {
+        let config = ctx.get_ref::<SerializerConfig>();
+        let tag_name = self
+            .tag_name
+            .get_for_default_namespace(&config.default_namespace);
 
-                quote!((*self.0).as_any().is::<#target_type>())
-            })
-            .fold(None, |acc, condition| {
-                Some(if let Some(acc) = acc {
-                    quote!(#acc || #condition)
-                } else {
-                    condition
-                })
-            })
-            .map(|condition| {
-                let config = ctx.get_ref::<SerializerConfig>();
-                let tag_name = self
-                    .tag_name
-                    .get_for_default_namespace(&config.default_namespace);
-                let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
-                let xsi_type_serializer =
-                    resolve_ident!(ctx, "::xsd_parser_types::quick_xml::XsiTypeSerializer");
+        filter_dynamic_types(&self.derived_types, |x| (&x.key, &x.meta)).map(move |x| {
+            let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+            let xsi_type_serializer =
+                resolve_ident!(ctx, "::xsd_parser_types::quick_xml::XsiTypeSerializer");
+            let target_type = ctx.resolve_type_for_module(&x.target_type);
+            let derived_tag = x
+                .tag_name
+                .get_for_default_namespace(&config.default_namespace);
 
-                quote! {
-                    if #condition {
-                        return Ok(#box_::new(#xsi_type_serializer::new(
-                            self.0.serializer(None, is_root)?,
-                            name.unwrap_or(#tag_name),
-                            is_root,
-                        )));
-                    }
+            let with_namespace = use_namespaces(ctx).then(|| quote!(.with_namespace(namespace)));
+            let with_type_namespace = use_namespaces(ctx)
+                .then(|| x.tag_name.render_type_namespace(ctx, false))
+                .flatten()
+                .map(|ns| quote!(.with_type_namespace(#ns)));
+
+            quote! {
+                if (*self.0).as_any().is::<#target_type>() {
+                    return Ok(#box_::new(#xsi_type_serializer::new(
+                        self.0.serializer(Some(#derived_tag), is_root)?,
+                        name.unwrap_or(#tag_name),
+                        is_root,
+                    )#with_namespace #with_type_namespace));
                 }
-            })
+            }
+        })
     }
 
     fn render_dynamic_element_serializer<'x, 'a>(
@@ -300,11 +341,21 @@ impl DynamicData<'_> {
                 .tag_name
                 .get_for_default_namespace(&config.default_namespace);
 
-            Some(quote! {
-                if (*self.0).as_any().is::<#target_type>() {
-                    return self.0.serializer(Some(#tag_name), is_root);
-                }
-            })
+            if use_namespaces(ctx) {
+                let namespace = x.tag_name.render_element_namespace(ctx, false);
+
+                Some(quote! {
+                    if (*self.0).as_any().is::<#target_type>() {
+                        return self.0.serializer_with_namespace(Some(#tag_name), #namespace, is_root);
+                    }
+                })
+            } else {
+                Some(quote! {
+                    if (*self.0).as_any().is::<#target_type>() {
+                        return self.0.serializer(Some(#tag_name), is_root);
+                    }
+                })
+            }
         })
     }
 }
@@ -405,6 +456,23 @@ impl ReferenceData<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
+        // The new type of a global element is the element itself, so it passes the
+        // element's (always qualified) tag if no name is given.
+        let name = if ctx.ident.type_ == IdentType::Element {
+            let config = ctx.get_ref::<SerializerConfig>();
+            let tag_name = TagName::new(
+                ctx.types,
+                ctx.ident.ns,
+                &ctx.ident.name,
+                FormChoiceType::Qualified,
+            )
+            .get_for_default_namespace(&config.default_namespace);
+
+            quote!(Some(name.unwrap_or(#tag_name)))
+        } else {
+            quote!(name)
+        };
+
         let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
         let result = resolve_build_in!(ctx, "::core::result::Result");
@@ -413,16 +481,49 @@ impl ReferenceData<'_> {
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let with_serializer = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::WithSerializer");
 
-        let code = quote! {
-            impl #with_serializer for #type_ident {
-                type Serializer<'x> = <#target_type as #with_serializer>::Serializer<'x>;
+        let code = if use_namespaces(ctx) {
+            let element_namespace =
+                resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
 
-                fn serializer<'ser>(
-                    &'ser self,
-                    name: #option<&'ser #str_>,
-                    is_root: #bool_,
-                ) -> #result<Self::Serializer<'ser>, #error> {
-                    #with_serializer::serializer(&self.0, name, is_root)
+            quote! {
+                impl #with_serializer for #type_ident {
+                    type Serializer<'x> = <#target_type as #with_serializer>::Serializer<'x>;
+
+                    fn serializer<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        is_root: #bool_,
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #with_serializer::serializer_with_namespace(
+                            self,
+                            name,
+                            #element_namespace::Unknown,
+                            is_root,
+                        )
+                    }
+
+                    fn serializer_with_namespace<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        namespace: #element_namespace,
+                        is_root: #bool_,
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #with_serializer::serializer_with_namespace(&self.0, #name, namespace, is_root)
+                    }
+                }
+            }
+        } else {
+            quote! {
+                impl #with_serializer for #type_ident {
+                    type Serializer<'x> = <#target_type as #with_serializer>::Serializer<'x>;
+
+                    fn serializer<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        is_root: #bool_,
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #with_serializer::serializer(&self.0, #name, is_root)
+                    }
                 }
             }
         };
@@ -605,7 +706,12 @@ impl ComplexData<'_> {
 }
 
 impl ComplexBase<'_> {
-    fn render_with_serializer(&self, ctx: &mut Context<'_, '_>, forward_root: bool) {
+    fn render_with_serializer(
+        &self,
+        ctx: &mut Context<'_, '_>,
+        forward_root: bool,
+        forward_name: bool,
+    ) {
         let Self {
             type_ident,
             serializer_ident,
@@ -618,7 +724,7 @@ impl ComplexBase<'_> {
 
             self.render_with_serializer_for_element(ctx, &tag_name)
         } else {
-            self.render_with_serializer_for_content(ctx, forward_root)
+            self.render_with_serializer_for_content(ctx, forward_root, forward_name)
         };
 
         let str_ = resolve_build_in!(ctx, "::core::primitive::str");
@@ -629,16 +735,49 @@ impl ComplexBase<'_> {
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let with_serializer = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::WithSerializer");
 
-        let code = quote! {
-            impl #with_serializer for #type_ident {
-                type Serializer<'x> = quick_xml_serialize::#serializer_ident<'x>;
+        let code = if use_namespaces(ctx) {
+            let element_namespace =
+                resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
 
-                fn serializer<'ser>(
-                    &'ser self,
-                    name: #option<&'ser #str_>,
-                    is_root: #bool_,
-                ) -> #result<Self::Serializer<'ser>, #error> {
-                    #body
+            quote! {
+                impl #with_serializer for #type_ident {
+                    type Serializer<'x> = quick_xml_serialize::#serializer_ident<'x>;
+
+                    fn serializer<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        is_root: #bool_,
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #with_serializer::serializer_with_namespace(
+                            self,
+                            name,
+                            #element_namespace::Unknown,
+                            is_root,
+                        )
+                    }
+
+                    fn serializer_with_namespace<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        namespace: #element_namespace,
+                        is_root: #bool_,
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #body
+                    }
+                }
+            }
+        } else {
+            quote! {
+                impl #with_serializer for #type_ident {
+                    type Serializer<'x> = quick_xml_serialize::#serializer_ident<'x>;
+
+                    fn serializer<'ser>(
+                        &'ser self,
+                        name: #option<&'ser #str_>,
+                        is_root: #bool_,
+                    ) -> #result<Self::Serializer<'ser>, #error> {
+                        #body
+                    }
                 }
             }
         };
@@ -658,12 +797,14 @@ impl ComplexBase<'_> {
         } = self;
 
         let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+        let namespace = use_namespaces(ctx).then(|| quote!(namespace,));
 
         quote! {
             Ok(quick_xml_serialize::#serializer_ident {
                 value: self,
                 state: #box_::new(quick_xml_serialize::#serializer_state_ident::Init__),
                 name: name.unwrap_or(#tag_name),
+                #namespace
                 is_root,
             })
         }
@@ -673,6 +814,7 @@ impl ComplexBase<'_> {
         &self,
         ctx: &Context<'_, '_>,
         forward_root: bool,
+        forward_name: bool,
     ) -> TokenStream {
         let Self {
             serializer_ident,
@@ -682,22 +824,42 @@ impl ComplexBase<'_> {
 
         let drop_root = (!forward_root).then(|| quote!(let _is_root = is_root;));
         let forward_root = forward_root.then(|| quote!(is_root,));
+        let (drop_name, forward_name) = if forward_name {
+            (None, Some(quote!(name,)))
+        } else {
+            (Some(quote!(let _name = name;)), None)
+        };
+        let (drop_namespace, forward_namespace) = if !use_namespaces(ctx) {
+            (None, None)
+        } else if forward_name.is_some() {
+            (None, Some(quote!(namespace,)))
+        } else {
+            (Some(quote!(let _namespace = namespace;)), None)
+        };
 
         let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
 
         quote! {
-            let _name = name;
+            #drop_name
+            #drop_namespace
             #drop_root
 
             Ok(quick_xml_serialize::#serializer_ident {
                 value: self,
                 state: #box_::new(quick_xml_serialize::#serializer_state_ident::Init__),
+                #forward_name
+                #forward_namespace
                 #forward_root
             })
         }
     }
 
-    fn render_serializer_type(&self, ctx: &mut Context<'_, '_>, forward_root: bool) {
+    fn render_serializer_type(
+        &self,
+        ctx: &mut Context<'_, '_>,
+        forward_root: bool,
+        forward_name: bool,
+    ) {
         let Self {
             type_ident,
             serializer_ident,
@@ -709,11 +871,30 @@ impl ComplexBase<'_> {
         let str_ = resolve_build_in!(ctx, "::core::primitive::str");
         let bool_ = resolve_build_in!(ctx, "::core::primitive::bool");
 
-        let name = self.represents_element().then(|| {
-            quote! {
+        let option = resolve_build_in!(ctx, "::core::option::Option");
+
+        let name = if self.represents_element() {
+            Some(quote! {
                 pub(super) name: &'ser #str_,
-            }
-        });
+            })
+        } else if forward_name {
+            Some(quote! {
+                pub(super) name: #option<&'ser #str_>,
+            })
+        } else {
+            None
+        };
+        let namespace =
+            (use_namespaces(ctx) && (self.represents_element() || forward_name)).then(|| {
+                let element_namespace = resolve_quick_xml_ident!(
+                    ctx,
+                    "::xsd_parser_types::quick_xml::ElementNamespace"
+                );
+
+                quote! {
+                    pub(super) namespace: #element_namespace,
+                }
+            });
         let is_root = forward_root.then(|| {
             quote! {
                 pub(super) is_root: #bool_,
@@ -726,6 +907,7 @@ impl ComplexBase<'_> {
                 pub(super) value: &'ser super::#type_ident,
                 pub(super) state: #box_<#serializer_state_ident<'ser>>,
                 #name
+                #namespace
                 #is_root
             }
         };
@@ -794,29 +976,6 @@ impl ComplexBase<'_> {
                 let mut xmlns = Vec::new();
                 let mut cache = HashSet::new();
 
-                // Emit the element's own namespace using write_xmlns_for_tag so
-                // the prefix is derived from the tag name at runtime.
-                if let Some(module) = self.tag_name.as_ref().and_then(|tag| {
-                    let module = tag.module?;
-                    let dominated_by_default = matches!(
-                        (&default_namespace, &module.namespace),
-                        (Some(a), Some(b)) if a == b
-                    );
-
-                    (!dominated_by_default || tag.form == FormChoiceType::Qualified)
-                        .then_some(module)
-                }) {
-                    cache.insert(module.namespace_id);
-
-                    if let Some(path) = module.make_ns_const() {
-                        let ns_const = ctx.resolve_type_for_serialize_module(&path);
-
-                        xmlns.push(quote! {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &#ns_const);
-                        });
-                    }
-                }
-
                 // Emit attribute namespaces with their own fixed prefix.
                 let attribute_modules = attributes.iter().filter_map(|attrib| {
                     (attrib.tag_name.form == FormChoiceType::Qualified)
@@ -860,16 +1019,29 @@ impl ComplexBase<'_> {
                     .clone();
                 let mut collector = collector.borrow_mut();
 
-                let xmlns = self.tag_name.as_ref().and_then(|x| x.render_xmlns(ctx));
-                let root_xmlns = self
-                    .tag_name
-                    .as_ref()
-                    .and_then(|x| x.render_root_xmlns(ctx));
-
-                let global_xmlns = collector
+                let skip_default = !collector.is_tainted(ctx.types, ctx.ident);
+                let namespaces = collector
                     .get_namespaces(ctx.types, ctx.ident, default_namespace.as_ref())
+                    .clone();
+
+                // A namespace is declared with `write_xmlns` if it is needed by
+                // more than the names of elements.
+                let mut global = BTreeMap::new();
+                for (key, (prefix, namespace)) in &*namespaces {
+                    let (key, element_only) = match *key {
+                        NamespaceKey::ElementOnly(id) => (NamespaceKey::Normal(id), skip_default),
+                        key => (key, false),
+                    };
+
+                    global
+                        .entry(key)
+                        .and_modify(|(_, _, only)| *only &= element_only)
+                        .or_insert((prefix, namespace, element_only));
+                }
+
+                let global_xmlns = global
                     .values()
-                    .map(|(prefix, namespace)| {
+                    .map(|&(prefix, namespace, element_only)| {
                         let ns_const = ctx.resolve_type_for_serialize_module(namespace);
                         let prefix_const = prefix.as_ref().map_or_else(
                             || quote!(None),
@@ -880,58 +1052,71 @@ impl ComplexBase<'_> {
                             },
                         );
 
+                        let write_xmlns = if element_only {
+                            quote!(write_xmlns_unless_default)
+                        } else {
+                            quote!(write_xmlns)
+                        };
+
                         quote! {
-                            helper.write_xmlns(&mut bytes, #prefix_const, &#ns_const);
+                            helper.#write_xmlns(&mut bytes, #prefix_const, &#ns_const);
                         }
                     })
                     .collect::<Vec<_>>();
-                let global_xmlns = (root_xmlns.is_some() || !global_xmlns.is_empty()).then(|| {
+                global_xmlns.is_empty().not().then(|| {
                     quote! {
                         if self.is_root {
-                            #root_xmlns
                             #( #global_xmlns )*
                         }
-                    }
-                });
-
-                (xmlns.is_some() || global_xmlns.is_some()).then(|| {
-                    quote! {
-                        #xmlns
-                        #global_xmlns
                     }
                 })
             }
             NamespaceSerialization::Dynamic => {
-                let xmlns = self.tag_name.as_ref().and_then(|x| x.render_xmlns(ctx));
-                let root_xmlns = self
-                    .tag_name
-                    .as_ref()
-                    .and_then(|x| x.render_root_xmlns(ctx));
-
                 let collect_namespaces = resolve_quick_xml_ident!(
                     ctx,
                     "::xsd_parser_types::quick_xml::CollectNamespaces"
                 );
 
                 Some(quote! {
-                    #xmlns
                     if self.is_root {
-                        #root_xmlns
                         #collect_namespaces::collect_namespaces(self.value, helper, &mut bytes);
                     }
                 })
             }
         };
 
-        let mut_ = xmlns.is_some() || !attributes.is_empty();
+        let need_ns_scope = namespaces.is_some();
+        let mut_ = need_ns_scope || !attributes.is_empty();
         let mut_ = mut_.then(|| quote!(mut));
 
         let bytes_start =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::BytesStart");
 
-        let need_ns_scope = xmlns.is_some();
-        let begin_ns_scope = need_ns_scope.then(|| quote!(helper.begin_ns_scope();));
+        let element_name = need_ns_scope.then(|| {
+            let element_namespace =
+                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
+            let root_namespace = self
+                .tag_name
+                .as_ref()
+                .and_then(|x| x.render_root_namespace(ctx))
+                .unwrap_or_else(|| quote!(#element_namespace::Unknown));
+
+            quote! {
+                let namespace = if self.is_root { #root_namespace } else { self.namespace.clone() };
+                self.name = helper.element_name(self.name, &namespace);
+            }
+        });
+        let begin_ns_scope = need_ns_scope.then(|| {
+            quote! {
+                helper.begin_ns_scope();
+                helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                if self.is_root {
+                    helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                }
+            }
+        });
         let code = quote! {
+            #element_name
             let #mut_ bytes = #bytes_start::new(self.name);
             #begin_ns_scope
             #xmlns
@@ -947,9 +1132,19 @@ impl ComplexDataEnum<'_> {
         self.represents_element()
     }
 
+    /// A dynamic choice uses the name of the referencing element for the
+    /// variants that are identified by their type (`xsi:type`).
+    fn forward_name(&self) -> bool {
+        self.is_dynamic()
+            && self
+                .elements
+                .iter()
+                .any(|x| x.meta().flags.contains(ElementMetaFlags::IDENTIFY_BY_TYPE))
+    }
+
     fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
-        self.render_with_serializer(ctx, !self.is_content());
-        self.render_serializer_type(ctx, !self.is_content());
+        self.render_with_serializer(ctx, !self.is_content(), self.forward_name());
+        self.render_serializer_type(ctx, !self.is_content(), self.forward_name());
         self.render_serializer_state_type(ctx);
         self.render_serializer_impl(ctx);
     }
@@ -988,6 +1183,12 @@ impl ComplexDataEnum<'_> {
             |x| x.get_for_default_namespace(&config.default_namespace),
         );
 
+        let element_name = if self.forward_name() {
+            quote!(self.name.unwrap_or(#element_name))
+        } else {
+            quote!(#element_name)
+        };
+
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
 
@@ -1015,6 +1216,7 @@ impl ComplexDataEnum<'_> {
                 ctx,
                 &self.serializer_state_ident,
                 !self.is_content(),
+                self.forward_name(),
                 &element_name,
             );
 
@@ -1109,8 +1311,8 @@ impl ComplexDataStruct<'_> {
     }
 
     fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
-        self.render_with_serializer(ctx, self.represents_element());
-        self.render_serializer_type(ctx, self.represents_element());
+        self.render_with_serializer(ctx, self.represents_element(), false);
+        self.render_serializer_type(ctx, self.represents_element(), false);
         self.render_serializer_state_type(ctx);
         self.render_serializer_impl(ctx);
     }
@@ -1376,7 +1578,8 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         state_ident: &Ident2,
         forward_root: bool,
-        dynamic_type: &str,
+        forward_name: bool,
+        dynamic_type: &TokenStream,
     ) -> TokenStream {
         let value = match self.occurs {
             Occurs::None => unreachable!(),
@@ -1392,6 +1595,7 @@ impl ComplexDataElement<'_> {
             state_ident,
             &value,
             forward_root,
+            forward_name,
             Some(dynamic_type),
         )
     }
@@ -1414,7 +1618,7 @@ impl ComplexDataElement<'_> {
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(&self.value.#field_ident[..]),
         };
 
-        self.render_serializer_state_init(ctx, state_ident, &value, false, None)
+        self.render_serializer_state_init(ctx, state_ident, &value, false, false, None)
     }
 
     fn render_serializer_state_init(
@@ -1423,7 +1627,8 @@ impl ComplexDataElement<'_> {
         state_ident: &Ident2,
         value: &TokenStream,
         forward_root: bool,
-        dynamic_type: Option<&str>,
+        forward_name: bool,
+        dynamic_type: Option<&TokenStream>,
     ) -> TokenStream {
         let config = ctx.get_ref::<SerializerConfig>();
         let field_name = self
@@ -1437,8 +1642,22 @@ impl ComplexDataElement<'_> {
             quote!(false)
         };
 
+        let namespaces = use_namespaces(ctx);
+        let element_namespace =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
+        let identify_by_type = dynamic_type.is_some() && self.meta().use_dynamic_type_serializer();
+        let namespace = if self.meta().is_any() || identify_by_type {
+            quote!(#element_namespace::Unknown)
+        } else if forward_name && self.meta().is_default_element_of_dynamic_type() {
+            quote!(self.namespace.clone())
+        } else {
+            self.tag_name.render_element_namespace(ctx, true)
+        };
+
         let element_name = if self.meta().is_any() {
             quote!(None)
+        } else if forward_name && self.meta().is_default_element_of_dynamic_type() {
+            quote!(Some(self.name.unwrap_or(#field_name)))
         } else {
             quote!(Some(#field_name))
         };
@@ -1449,8 +1668,19 @@ impl ComplexDataElement<'_> {
                 let with_serializer =
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::WithSerializer");
 
-                quote! {
-                    #with_serializer::serializer(#value, #element_name, #is_root)?
+                if namespaces {
+                    quote! {
+                        #with_serializer::serializer_with_namespace(
+                            #value,
+                            #element_name,
+                            #namespace,
+                            #is_root
+                        )?
+                    }
+                } else {
+                    quote! {
+                        #with_serializer::serializer(#value, #element_name, #is_root)?
+                    }
                 }
             }
             Occurs::StaticList(_) if self.need_indirection => {
@@ -1459,24 +1689,28 @@ impl ComplexDataElement<'_> {
                 let iter_serializer =
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::IterSerializer");
 
+                let with_namespace = namespaces.then(|| quote!(.with_namespace(#namespace)));
+
                 quote! {
                     #iter_serializer::new(
                         #deref_iter::new(#value),
                         #element_name,
                         #is_root
-                    )
+                    )#with_namespace
                 }
             }
             Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => {
                 let iter_serializer =
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::IterSerializer");
 
+                let with_namespace = namespaces.then(|| quote!(.with_namespace(#namespace)));
+
                 quote! {
                     #iter_serializer::new(
                         #value,
                         #element_name,
                         #is_root
-                    )
+                    )#with_namespace
                 }
             }
         };
@@ -1488,8 +1722,15 @@ impl ComplexDataElement<'_> {
                     "::xsd_parser_types::quick_xml::XsiTypeSerializer"
                 );
 
-                serializer =
-                    quote!(#xsi_type_serializer::new(#serializer, #dynamic_type, #is_root));
+                let with_namespace = (namespaces && forward_name)
+                    .then(|| quote!(.with_namespace(self.namespace.clone())));
+
+                let with_type_namespace = namespaces
+                    .then(|| self.tag_name.render_type_namespace(ctx, true))
+                    .flatten()
+                    .map(|ns| quote!(.with_type_namespace(#ns)));
+
+                serializer = quote!(#xsi_type_serializer::new(#serializer, #dynamic_type, #is_root)#with_namespace #with_type_namespace);
             }
         }
 
@@ -1498,6 +1739,11 @@ impl ComplexDataElement<'_> {
 }
 
 impl ElementMeta {
+    fn is_default_element_of_dynamic_type(&self) -> bool {
+        self.flags.contains(ElementMetaFlags::IDENTIFY_BY_TYPE)
+            && self.flags.contains(ElementMetaFlags::DEFAULT_ELEMENT)
+    }
+
     fn use_dynamic_type_serializer(&self) -> bool {
         self.flags.contains(ElementMetaFlags::IDENTIFY_BY_TYPE)
             && !self.flags.contains(ElementMetaFlags::DEFAULT_ELEMENT)
@@ -1554,35 +1800,56 @@ impl Occurs {
 }
 
 impl TagName<'_> {
-    fn render_xmlns(&self, ctx: &mut Context<'_, '_>) -> Option<TokenStream> {
-        let module = self.module?;
-        if self.form != FormChoiceType::Qualified || module.prefix().is_some() {
-            return None;
+    /// Generates the [`ElementNamespace`](xsd_parser_types::quick_xml::ElementNamespace)
+    /// that the parent passes to the serializer of an element with this tag.
+    fn render_element_namespace(
+        &self,
+        ctx: &Context<'_, '_>,
+        serialize_module: bool,
+    ) -> TokenStream {
+        let element_namespace =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
+
+        let ns = (self.form == FormChoiceType::Qualified)
+            .then(|| self.render_type_namespace(ctx, serialize_module))
+            .flatten();
+
+        match ns {
+            Some(ns) => quote!(#element_namespace::Namespace(#ns)),
+            None => quote!(#element_namespace::None),
         }
-
-        let ns = module.make_ns_const()?;
-        let ns_const = ctx.resolve_type_for_serialize_module(&ns);
-
-        Some(quote!(helper.write_xmlns_for_tag(&mut bytes, self.name, &#ns_const);))
     }
 
-    /// Generates a namespace declaration for unqualified elements that should
-    /// only be emitted on the root element.
-    ///
-    /// In XSD, global (root) elements are always namespace-qualified regardless
-    /// of `elementFormDefault`. This method returns a token stream that writes
-    /// the default namespace (`xmlns="..."`) when the element has an unqualified
-    /// form but still needs to declare its namespace on the root element.
-    fn render_root_xmlns(&self, ctx: &mut Context<'_, '_>) -> Option<TokenStream> {
-        if self.form == FormChoiceType::Qualified {
-            return None;
-        }
+    /// Generates the namespace of the type name of this tag, which is always
+    /// the namespace of its module.
+    fn render_type_namespace(
+        &self,
+        ctx: &Context<'_, '_>,
+        serialize_module: bool,
+    ) -> Option<TokenStream> {
+        let ns = self.module?.make_ns_const()?;
 
+        Some(if serialize_module {
+            ctx.resolve_type_for_serialize_module(&ns)
+        } else {
+            ctx.resolve_type_for_module(&ns)
+        })
+    }
+
+    /// Generates the [`ElementNamespace`](xsd_parser_types::quick_xml::ElementNamespace)
+    /// of the root element.
+    ///
+    /// The root element is always namespace-qualified, but its name is chosen by
+    /// the caller. Depending on that name the namespace is declared with the
+    /// prefix of the name or as default namespace (`xmlns="..."`).
+    fn render_root_namespace(&self, ctx: &mut Context<'_, '_>) -> Option<TokenStream> {
         let module = self.module?;
         let ns = module.make_ns_const()?;
         let ns_const = ctx.resolve_type_for_serialize_module(&ns);
+        let element_namespace =
+            resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementNamespace");
 
-        Some(quote!(helper.write_xmlns_for_tag(&mut bytes, self.name, &#ns_const);))
+        Some(quote!(#element_namespace::Namespace(#ns_const)))
     }
 }
 
@@ -1610,9 +1877,74 @@ impl NamespaceCollector {
 
         Rc::new(RefCell::new(Self {
             cache: HashMap::new(),
+            tainted: HashMap::new(),
             xsi_namespace,
             nillable_type_support,
         }))
+    }
+
+    /// Returns `true` if the type tree of `ident` contains an `xs:QName` or
+    /// `xs:any`, so the prefixes used by values and replayed names are unknown
+    /// and no namespace declaration may be skipped.
+    fn is_tainted(&mut self, types: &MetaTypes, ident: &TypeIdent) -> bool {
+        if let Some(tainted) = self.tainted.get(ident) {
+            return *tainted;
+        }
+
+        let tainted = Self::visit_tainted(types, ident, &mut HashSet::new());
+        self.tainted.insert(ident.clone(), tainted);
+
+        tainted
+    }
+
+    fn visit_tainted(
+        types: &MetaTypes,
+        ident: &TypeIdent,
+        visited: &mut HashSet<TypeIdent>,
+    ) -> bool {
+        if !visited.insert(ident.clone()) {
+            return false;
+        }
+
+        let is_xs = types
+            .modules
+            .get(&ident.ns)
+            .is_some_and(|module| module.namespace.as_ref() == Some(&Namespace::XS));
+        if is_xs && ident.name.as_str() == "QName" {
+            return true;
+        }
+
+        let Some(ty) = types.items.get(ident) else {
+            return false;
+        };
+
+        let mut any = |ident: &TypeIdent| Self::visit_tainted(types, ident, visited);
+
+        match &ty.variant {
+            MetaTypeVariant::BuildIn(_) => false,
+            MetaTypeVariant::Custom(x) => x.allow_any(),
+            MetaTypeVariant::Union(x) => x.types.iter().any(|x| any(&x.type_)),
+            MetaTypeVariant::Reference(x) => any(&x.type_),
+            MetaTypeVariant::SimpleType(x) => any(&x.base),
+            MetaTypeVariant::Enumeration(x) => {
+                x.variants.iter().filter_map(|x| x.type_.as_ref()).any(any)
+            }
+            MetaTypeVariant::Dynamic(x) => x.derived_types.values().any(|x| any(&x.type_)),
+            MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
+                x.elements.iter().any(|el| match &el.variant {
+                    ElementMetaVariant::Any { .. } => true,
+                    ElementMetaVariant::Type { type_, .. } => any(type_),
+                    ElementMetaVariant::Text => false,
+                })
+            }
+            MetaTypeVariant::ComplexType(x) => {
+                x.content.as_ref().is_some_and(&mut any)
+                    || x.attributes.iter().any(|attrib| match &attrib.variant {
+                        AttributeMetaVariant::Any(_) => true,
+                        AttributeMetaVariant::Type(ident) => any(ident),
+                    })
+            }
+        }
     }
 
     fn get_namespaces(
@@ -1670,6 +2002,11 @@ impl NamespaceCollector {
                         self.merge(&mut state, types, &meta.type_, default_ns);
                     }
 
+                    // The prefix of a derived type is used as `xsi:type` value.
+                    for (_, meta) in filter_dynamic_types(&x.derived_types, |x| *x) {
+                        Self::add_ns(&mut state, types, NamespaceKey::Normal(meta.type_.ns));
+                    }
+
                     let has_dynamic_types = filter_dynamic_types(&x.derived_types, |x| *x)
                         .next()
                         .is_some();
@@ -1686,6 +2023,10 @@ impl NamespaceCollector {
                     for el in &*x.elements {
                         if let ElementMetaVariant::Type { type_, .. } = &el.variant {
                             self.merge(&mut state, types, type_, default_ns);
+                        }
+
+                        if el.form == FormChoiceType::Qualified {
+                            Self::add_element_ns(&mut state, types, el.ident.ns, default_ns);
                         }
 
                         if self.nillable_type_support && el.is_nillable() {
@@ -1738,18 +2079,7 @@ impl NamespaceCollector {
             }
 
             if ty.form() == FormChoiceType::Qualified {
-                let ns = types
-                    .modules
-                    .get(&ident.ns)
-                    .and_then(|module| module.namespace.as_ref());
-
-                let key = if matches!((ns, default_ns), (Some(a), Some(b)) if a == b) {
-                    NamespaceKey::Default(ident.ns)
-                } else {
-                    NamespaceKey::Normal(ident.ns)
-                };
-
-                Self::add_ns(&mut state, types, key);
+                Self::add_element_ns(&mut state, types, ident.ns, default_ns);
             }
 
             let value = match state {
@@ -1808,6 +2138,27 @@ impl NamespaceCollector {
         }
     }
 
+    /// Adds the namespace of a qualified element, unprefixed if it equals `default_ns`.
+    fn add_element_ns(
+        state: &mut GetNamespaceState,
+        types: &MetaTypes,
+        ns: NamespaceId,
+        default_ns: Option<&Namespace>,
+    ) {
+        let module_ns = types
+            .modules
+            .get(&ns)
+            .and_then(|module| module.namespace.as_ref());
+
+        let key = if matches!((module_ns, default_ns), (Some(a), Some(b)) if a == b) {
+            NamespaceKey::Default(ns)
+        } else {
+            NamespaceKey::ElementOnly(ns)
+        };
+
+        Self::add_ns(state, types, key);
+    }
+
     fn add_ns(state: &mut GetNamespaceState, types: &MetaTypes, key: NamespaceKey) {
         match state {
             GetNamespaceState::Empty => {
@@ -1840,8 +2191,12 @@ impl NamespaceCollector {
 
     fn make_value(types: &MetaTypes, key: NamespaceKey) -> Option<(Option<PathData>, PathData)> {
         match key {
-            NamespaceKey::Normal(id) => {
+            NamespaceKey::Normal(id) | NamespaceKey::ElementOnly(id) => {
                 let module = types.modules.get(&id)?;
+                if module.namespace.as_ref() == Some(&Namespace::XML) {
+                    // The `xml` prefix is bound by definition and is never declared.
+                    return None;
+                }
 
                 let prefix = Some(module.make_prefix_const()?);
                 let namespace = module.make_ns_const()?;
@@ -1859,6 +2214,25 @@ impl NamespaceCollector {
 }
 
 /* Helper */
+
+/// Returns `true` if a namespace that is only used by element names of the type
+/// `ctx.ident` may be declared with `write_xmlns_unless_default`.
+pub(super) fn skip_default_namespace(ctx: &mut Context<'_, '_>) -> bool {
+    let nillable_type_support = ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
+    let types: &MetaTypes = ctx.types;
+    let collector = ctx
+        .get_or_create_with::<NamespaceCollector, _>(|| {
+            NamespaceCollector::new(types, nillable_type_support)
+        })
+        .clone();
+    let tainted = collector.borrow_mut().is_tainted(ctx.types, ctx.ident);
+
+    !tainted
+}
+
+fn use_namespaces(ctx: &Context<'_, '_>) -> bool {
+    ctx.get_ref::<SerializerConfig>().namespaces.is_some()
+}
 
 fn filter_dynamic_types<'a, I, F>(
     iter: &'a I,

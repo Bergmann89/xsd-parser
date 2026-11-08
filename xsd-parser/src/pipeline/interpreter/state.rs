@@ -58,6 +58,10 @@ struct NodeCacheEntry<'schema> {
     node: Node<'schema>,
     dependencies: BTreeMap<NodeDependencyKey, NodeDependency>,
     redefine_base: Option<TypeIdent>,
+
+    /// `true` if the node is a global declaration (a child of `xs:schema`,
+    /// `xs:redefine` or `xs:override`), `false` if it is declared inline.
+    global: bool,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]

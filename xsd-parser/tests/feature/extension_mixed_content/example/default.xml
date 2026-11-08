@@ -1,7 +1,7 @@
-<AttributeValue xmlns:tns="http://example.com" BaseAttrib="base attrib content" DataType="data type attrib content" unknown-attrib="unknown content">
+<AttributeValue xmlns="http://example.com" xmlns:tns="http://example.com" BaseAttrib="base attrib content" DataType="data type attrib content" unknown-attrib="unknown content">
     text before
-    <tns:BaseElement>base element content</tns:BaseElement>
+    <BaseElement>base element content</BaseElement>
     text in the middle
-    <unknown-element />
+    <unknown-element xmlns="" />
     text after
 </AttributeValue>

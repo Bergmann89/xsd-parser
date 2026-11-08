@@ -519,7 +519,12 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Head(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = <super::Head as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Head as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Head",
+                        )?;
                         match self.handle_head(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
@@ -576,7 +581,7 @@ pub mod quick_xml_deserialize {
             };
             let type_name = type_name.into_owned();
             if matches!(
-                helper.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                helper.resolve_element_local_name(QName(&type_name), &super::NS_TNS),
                 Some(b"Member")
             ) {
                 let DeserializerOutput {
@@ -595,7 +600,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: DeserializerEvent::Break(event),
+                event: DeserializerEvent::Continue(event),
                 allow_any: false,
             })
         }

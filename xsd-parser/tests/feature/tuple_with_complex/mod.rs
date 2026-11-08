@@ -85,6 +85,22 @@ fn write_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+fn write_quick_xml_default_root() {
+    use quick_xml::{Foo, FooType};
+
+    let obj = Foo(FooType {
+        name: "abc".into(),
+        value: 42,
+    });
+
+    crate::utils::quick_xml_write_test_default_root(
+        &obj,
+        "tests/feature/tuple_with_complex/example/default.xml",
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml_holder() {
     use quick_xml::{Head, Holder, HolderType, MemberType};
 

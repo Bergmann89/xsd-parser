@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="T"
+    targetNamespace="O"
+    elementFormDefault="unqualified">
+
+    <xs:import namespace="T" schemaLocation="schema.xsd" />
+
+    <xs:element name="Circle" substitutionGroup="Shape">
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="Shape">
+                    <xs:sequence>
+                        <xs:element name="radius" type="xs:int" />
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

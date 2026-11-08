@@ -135,6 +135,30 @@ impl MetaTypes {
     pub fn get_variant_mut(&mut self, ident: &TypeIdent) -> Option<&mut MetaTypeVariant> {
         self.items.get_mut(ident).map(|ty| &mut ty.variant)
     }
+
+    /// Returns `true` if the passed type is a dynamic type, or a plain
+    /// (single) reference to one.
+    pub(crate) fn is_dynamic(&self, ident: &TypeIdent) -> bool {
+        let mut visited = Vec::new();
+        let mut ident = ident;
+
+        while !visited.contains(&ident) {
+            visited.push(ident);
+
+            let Some(ty) = self.items.get(ident) else {
+                return false;
+            };
+
+            match &ty.variant {
+                MetaTypeVariant::Dynamic(_) => return true,
+                MetaTypeVariant::ComplexType(ci) => return ci.is_dynamic,
+                MetaTypeVariant::Reference(x) if x.is_single() => ident = &x.type_,
+                _ => return false,
+            }
+        }
+
+        false
+    }
 }
 
 impl Default for MetaTypes {

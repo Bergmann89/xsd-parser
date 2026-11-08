@@ -1,4 +1,4 @@
 <Foo xmlns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <A>42</A>
-    <B xsi:nil="true" />
+    <A xmlns="">42</A>
+    <B xmlns="" xsi:nil="true" />
 </Foo>

@@ -1075,27 +1075,27 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"targetNamespace")
                 ) {
                     helper.read_attrib(&mut target_namespace, b"targetNamespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"version")
                 ) {
                     helper.read_attrib(&mut version, b"version", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"finalDefault")
                 ) {
                     helper.read_attrib(&mut final_default, b"finalDefault", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"blockDefault")
                 ) {
                     helper.read_attrib(&mut block_default, b"blockDefault", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"attributeFormDefault")
                 ) {
                     helper.read_attrib(
@@ -1104,7 +1104,7 @@ pub mod quick_xml_deserialize {
                         &attrib.value,
                     )?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"elementFormDefault")
                 ) {
                     helper.read_attrib(
@@ -1113,7 +1113,7 @@ pub mod quick_xml_deserialize {
                         &attrib.value,
                     )?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"defaultAttributes")
                 ) {
                     helper.read_attrib(
@@ -1122,7 +1122,7 @@ pub mod quick_xml_deserialize {
                         &attrib.value,
                     )?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"xpathDefaultNamespace")
                 ) {
                     helper.read_attrib(
@@ -1131,12 +1131,12 @@ pub mod quick_xml_deserialize {
                         &attrib.value,
                     )?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XML),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XML),
                     Some(b"lang")
                 ) {
                     helper.read_attrib(&mut lang, b"lang", &attrib.value)?;
@@ -1367,42 +1367,42 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"include")
                 ) {
                     let output = <super::Include as WithDeserializer>::init(helper, event)?;
                     return self.handle_include(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"import")
                 ) {
                     let output = <super::Import as WithDeserializer>::init(helper, event)?;
                     return self.handle_import(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"redefine")
                 ) {
                     let output = <super::Redefine as WithDeserializer>::init(helper, event)?;
                     return self.handle_redefine(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"override")
                 ) {
                     let output = <super::Override as WithDeserializer>::init(helper, event)?;
                     return self.handle_override_(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"defaultOpenContent")
                 ) {
                     let output =
@@ -1415,28 +1415,28 @@ pub mod quick_xml_deserialize {
                     );
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
                     let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
                     let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attributeGroup")
                 ) {
                     let output =
@@ -1444,21 +1444,21 @@ pub mod quick_xml_deserialize {
                     return self.handle_attribute_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"element")
                 ) {
                     let output = <super::ElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_element(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
                     let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"notation")
                 ) {
                     let output = <super::Notation as WithDeserializer>::init(helper, event)?;
@@ -2666,12 +2666,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"schemaLocation")
                 ) {
                     helper.read_attrib(&mut schema_location, b"schemaLocation", &attrib.value)?;
@@ -2861,17 +2861,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"namespace")
                 ) {
                     helper.read_attrib(&mut namespace, b"namespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"schemaLocation")
                 ) {
                     helper.read_attrib(&mut schema_location, b"schemaLocation", &attrib.value)?;
@@ -3060,12 +3060,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"schemaLocation")
                 ) {
                     helper.read_attrib(&mut schema_location, b"schemaLocation", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -3238,35 +3238,35 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
                     let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
                     let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attributeGroup")
                 ) {
                     let output =
@@ -3803,12 +3803,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"schemaLocation")
                 ) {
                     helper.read_attrib(&mut schema_location, b"schemaLocation", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -3996,35 +3996,35 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
                     let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
                     let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attributeGroup")
                 ) {
                     let output =
@@ -4032,21 +4032,21 @@ pub mod quick_xml_deserialize {
                     return self.handle_attribute_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"element")
                 ) {
                     let output = <super::ElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_element(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
                     let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"notation")
                 ) {
                     let output = <super::Notation as WithDeserializer>::init(helper, event)?;
@@ -4832,7 +4832,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -4988,14 +4988,14 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"appinfo")
                 ) {
                     let output = <AnyElement as WithDeserializer>::init(helper, event)?;
                     return self.handle_appinfo(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"documentation")
                 ) {
                     let output = <AnyElement as WithDeserializer>::init(helper, event)?;
@@ -5280,17 +5280,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"appliesToEmpty")
                 ) {
                     helper.read_attrib(&mut applies_to_empty, b"appliesToEmpty", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -5567,17 +5567,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"final")
                 ) {
                     helper.read_attrib(&mut final_, b"final", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
@@ -5761,28 +5761,28 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"restriction")
                 ) {
                     let output = <super::Restriction as WithDeserializer>::init(helper, event)?;
                     return self.handle_restriction(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"list")
                 ) {
                     let output = <super::List as WithDeserializer>::init(helper, event)?;
                     return self.handle_list(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"union")
                 ) {
                     let output = <super::Union as WithDeserializer>::init(helper, event)?;
@@ -6244,37 +6244,37 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"mixed")
                 ) {
                     helper.read_attrib(&mut mixed, b"mixed", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"abstract")
                 ) {
                     helper.read_attrib(&mut abstract_, b"abstract", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"final")
                 ) {
                     helper.read_attrib(&mut final_, b"final", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"block")
                 ) {
                     helper.read_attrib(&mut block, b"block", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"defaultAttributesApply")
                 ) {
                     helper.read_attrib(
@@ -6506,70 +6506,70 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleContent")
                 ) {
                     let output = <super::SimpleContent as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_content(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"complexContent")
                 ) {
                     let output = <super::ComplexContent as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_content(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"openContent")
                 ) {
                     let output = <super::OpenContent as WithDeserializer>::init(helper, event)?;
                     return self.handle_open_content(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
                     let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attributeGroup")
                 ) {
                     let output =
@@ -6577,14 +6577,14 @@ pub mod quick_xml_deserialize {
                     return self.handle_attribute_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"anyAttribute")
                 ) {
                     let output = <super::AnyAttribute as WithDeserializer>::init(helper, event)?;
                     return self.handle_any_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"assert")
                 ) {
                     let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
@@ -7729,27 +7729,27 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"ref")
                 ) {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"minOccurs")
                 ) {
                     helper.read_attrib(&mut min_occurs, b"minOccurs", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"maxOccurs")
                 ) {
                     helper.read_attrib(&mut max_occurs, b"maxOccurs", &attrib.value)?;
@@ -7938,49 +7938,49 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"element")
                 ) {
                     let output = <super::ElementType as WithDeserializer>::init(helper, event)?;
                     return self.handle_element(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"any")
                 ) {
                     let output = <super::Any as WithDeserializer>::init(helper, event)?;
@@ -8679,17 +8679,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"ref")
                 ) {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
@@ -8868,21 +8868,21 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
                     let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attributeGroup")
                 ) {
                     let output =
@@ -8890,7 +8890,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_attribute_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"anyAttribute")
                 ) {
                     let output = <super::AnyAttribute as WithDeserializer>::init(helper, event)?;
@@ -9388,27 +9388,27 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"ref")
                 ) {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"substitutionGroup")
                 ) {
                     helper.read_attrib(
@@ -9417,52 +9417,52 @@ pub mod quick_xml_deserialize {
                         &attrib.value,
                     )?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"minOccurs")
                 ) {
                     helper.read_attrib(&mut min_occurs, b"minOccurs", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"maxOccurs")
                 ) {
                     helper.read_attrib(&mut max_occurs, b"maxOccurs", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"default")
                 ) {
                     helper.read_attrib(&mut default, b"default", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"fixed")
                 ) {
                     helper.read_attrib(&mut fixed, b"fixed", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"nillable")
                 ) {
                     helper.read_attrib(&mut nillable, b"nillable", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"abstract")
                 ) {
                     helper.read_attrib(&mut abstract_, b"abstract", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"final")
                 ) {
                     helper.read_attrib(&mut final_, b"final", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"block")
                 ) {
                     helper.read_attrib(&mut block, b"block", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"form")
                 ) {
                     helper.read_attrib(&mut form, b"form", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"targetNamespace")
                 ) {
                     helper.read_attrib(&mut target_namespace, b"targetNamespace", &attrib.value)?;
@@ -9673,49 +9673,49 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
                     let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
                     let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_complex_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"alternative")
                 ) {
                     let output = <super::AltType as WithDeserializer>::init(helper, event)?;
                     return self.handle_alternative(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"unique")
                 ) {
                     let output = <super::KeybaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_unique(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"key")
                 ) {
                     let output = <super::KeybaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_key(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"keyref")
                 ) {
                     let output = <super::Keyref as WithDeserializer>::init(helper, event)?;
@@ -10438,52 +10438,52 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"ref")
                 ) {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"use")
                 ) {
                     helper.read_attrib(&mut use_, b"use", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"default")
                 ) {
                     helper.read_attrib(&mut default, b"default", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"fixed")
                 ) {
                     helper.read_attrib(&mut fixed, b"fixed", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"form")
                 ) {
                     helper.read_attrib(&mut form, b"form", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"targetNamespace")
                 ) {
                     helper.read_attrib(&mut target_namespace, b"targetNamespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"inheritable")
                 ) {
                     helper.read_attrib(&mut inheritable, b"inheritable", &attrib.value)?;
@@ -10775,22 +10775,22 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"public")
                 ) {
                     helper.read_attrib(&mut public, b"public", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"system")
                 ) {
                     helper.read_attrib(&mut system, b"system", &attrib.value)?;
@@ -10985,22 +10985,22 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"namespace")
                 ) {
                     helper.read_attrib(&mut namespace, b"namespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"notNamespace")
                 ) {
                     helper.read_attrib(&mut not_namespace, b"notNamespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"processContents")
                 ) {
                     helper.read_attrib(&mut process_contents, b"processContents", &attrib.value)?;
@@ -11195,12 +11195,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"base")
                 ) {
                     helper.read_attrib(&mut base, b"base", &attrib.value)?;
@@ -11366,21 +11366,26 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
                     let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 event = {
-                    let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                    let output = <super::Facet as WithDeserializer>::init_with_name(
+                        helper,
+                        event,
+                        Some(&super::NS_XS),
+                        b"facet",
+                    )?;
                     match self.handle_facet(helper, Default::default(), None, output)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -11693,7 +11698,12 @@ pub mod quick_xml_deserialize {
                         S::Facet(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Facet as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_XS),
+                            b"facet",
+                        )?;
                         match self.handle_facet(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -11755,12 +11765,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"itemType")
                 ) {
                     helper.read_attrib(&mut item_type, b"itemType", &attrib.value)?;
@@ -12025,12 +12035,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"memberTypes")
                 ) {
                     helper.read_attrib(&mut member_types, b"memberTypes", &attrib.value)?;
@@ -12286,7 +12296,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
@@ -12457,21 +12467,21 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"restriction")
                 ) {
                     let output = <super::RestrictionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_restriction(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"extension")
                 ) {
                     let output = <super::ExtensionType as WithDeserializer>::init(helper, event)?;
@@ -12842,12 +12852,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"mixed")
                 ) {
                     helper.read_attrib(&mut mixed, b"mixed", &attrib.value)?;
@@ -13024,21 +13034,21 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"restriction")
                 ) {
                     let output = <super::RestrictionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_restriction(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"extension")
                 ) {
                     let output = <super::ExtensionType as WithDeserializer>::init(helper, event)?;
@@ -13413,12 +13423,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"mode")
                 ) {
                     helper.read_attrib(&mut mode, b"mode", &attrib.value)?;
@@ -13686,27 +13696,27 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"namespace")
                 ) {
                     helper.read_attrib(&mut namespace, b"namespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"notNamespace")
                 ) {
                     helper.read_attrib(&mut not_namespace, b"notNamespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"processContents")
                 ) {
                     helper.read_attrib(&mut process_contents, b"processContents", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"notQName")
                 ) {
                     helper.read_attrib(&mut not_q_name, b"notQName", &attrib.value)?;
@@ -13905,17 +13915,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"test")
                 ) {
                     helper.read_attrib(&mut test, b"test", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"xpathDefaultNamespace")
                 ) {
                     helper.read_attrib(
@@ -14124,37 +14134,37 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"namespace")
                 ) {
                     helper.read_attrib(&mut namespace, b"namespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"notNamespace")
                 ) {
                     helper.read_attrib(&mut not_namespace, b"notNamespace", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"processContents")
                 ) {
                     helper.read_attrib(&mut process_contents, b"processContents", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"notQName")
                 ) {
                     helper.read_attrib(&mut not_q_name, b"notQName", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"minOccurs")
                 ) {
                     helper.read_attrib(&mut min_occurs, b"minOccurs", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"maxOccurs")
                 ) {
                     helper.read_attrib(&mut max_occurs, b"maxOccurs", &attrib.value)?;
@@ -14356,22 +14366,22 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"test")
                 ) {
                     helper.read_attrib(&mut test, b"test", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"type")
                 ) {
                     helper.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"xpathDefaultNamespace")
                 ) {
                     helper.read_attrib(
@@ -14546,21 +14556,21 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
                     let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"complexType")
                 ) {
                     let output = <super::ComplexBaseType as WithDeserializer>::init(helper, event)?;
@@ -14930,17 +14940,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"ref")
                 ) {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
@@ -15104,22 +15114,22 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"name")
                 ) {
                     helper.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"ref")
                 ) {
                     helper.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"refer")
                 ) {
                     helper.read_attrib(&mut refer, b"refer", &attrib.value)?;
@@ -15342,98 +15352,98 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"minExclusive")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_min_exclusive(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"minInclusive")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_min_inclusive(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"maxExclusive")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_max_exclusive(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"maxInclusive")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_max_inclusive(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"totalDigits")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_total_digits(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"fractionDigits")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_fraction_digits(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"length")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_length(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"minLength")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_min_length(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"maxLength")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_max_length(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"enumeration")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_enumeration(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"whiteSpace")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_white_space(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"pattern")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
                     return self.handle_pattern(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"assertion")
                 ) {
                     let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_assertion(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"explicitTimezone")
                 ) {
                     let output = <super::FacetType as WithDeserializer>::init(helper, event)?;
@@ -16713,12 +16723,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"base")
                 ) {
                     helper.read_attrib(&mut base, b"base", &attrib.value)?;
@@ -16936,63 +16946,63 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"openContent")
                 ) {
                     let output = <super::OpenContent as WithDeserializer>::init(helper, event)?;
                     return self.handle_open_content(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"simpleType")
                 ) {
                     let output = <super::SimpleBaseType as WithDeserializer>::init(helper, event)?;
                     return self.handle_simple_type(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
                     let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attributeGroup")
                 ) {
                     let output =
@@ -17000,21 +17010,26 @@ pub mod quick_xml_deserialize {
                     return self.handle_attribute_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"anyAttribute")
                 ) {
                     let output = <super::AnyAttribute as WithDeserializer>::init(helper, event)?;
                     return self.handle_any_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"assert")
                 ) {
                     let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
                     return self.handle_assert(helper, Default::default(), None, output);
                 }
                 event = {
-                    let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                    let output = <super::Facet as WithDeserializer>::init_with_name(
+                        helper,
+                        event,
+                        Some(&super::NS_XS),
+                        b"facet",
+                    )?;
                     match self.handle_facet(helper, Default::default(), None, output)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -18021,7 +18036,12 @@ pub mod quick_xml_deserialize {
                         S::Facet(values, fallback, None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        let output = <super::Facet as WithDeserializer>::init(helper, event)?;
+                        let output = <super::Facet as WithDeserializer>::init_with_name(
+                            helper,
+                            event,
+                            Some(&super::NS_XS),
+                            b"facet",
+                        )?;
                         match self.handle_facet(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -18149,12 +18169,12 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"base")
                 ) {
                     helper.read_attrib(&mut base, b"base", &attrib.value)?;
@@ -18357,56 +18377,56 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"annotation")
                 ) {
                     let output = <super::Annotation as WithDeserializer>::init(helper, event)?;
                     return self.handle_annotation(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"openContent")
                 ) {
                     let output = <super::OpenContent as WithDeserializer>::init(helper, event)?;
                     return self.handle_open_content(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"group")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"all")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_all(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"choice")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_choice(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"sequence")
                 ) {
                     let output = <super::GroupType as WithDeserializer>::init(helper, event)?;
                     return self.handle_sequence(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attribute")
                 ) {
                     let output = <super::AttributeType as WithDeserializer>::init(helper, event)?;
                     return self.handle_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"attributeGroup")
                 ) {
                     let output =
@@ -18414,14 +18434,14 @@ pub mod quick_xml_deserialize {
                     return self.handle_attribute_group(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"anyAttribute")
                 ) {
                     let output = <super::AnyAttribute as WithDeserializer>::init(helper, event)?;
                     return self.handle_any_attribute(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_XS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_XS),
                     Some(b"assert")
                 ) {
                     let output = <super::AssertionType as WithDeserializer>::init(helper, event)?;
@@ -19383,17 +19403,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"xpath")
                 ) {
                     helper.read_attrib(&mut xpath, b"xpath", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"xpathDefaultNamespace")
                 ) {
                     helper.read_attrib(
@@ -19932,17 +19952,17 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"id")
                 ) {
                     helper.read_attrib(&mut id, b"id", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"value")
                 ) {
                     helper.read_attrib(&mut value, b"value", &attrib.value)?;
                 } else if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_XS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_XS),
                     Some(b"fixed")
                 ) {
                     helper.read_attrib(&mut fixed, b"fixed", &attrib.value)?;

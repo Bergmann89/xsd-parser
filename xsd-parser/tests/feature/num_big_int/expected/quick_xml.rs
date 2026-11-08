@@ -10,7 +10,7 @@ pub const PREFIX_TNS: NamespacePrefix = NamespacePrefix::new_const(b"tns");
 pub mod tns {
     use core::str::FromStr;
     use num::BigInt;
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     pub type Foo = FooType;
     #[derive(Debug)]
     pub struct FooType {
@@ -34,10 +34,24 @@ pub mod tns {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::FooTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
                 name: name.unwrap_or("tns:FooType"),
+                namespace,
                 is_root,
             })
         }
@@ -73,12 +87,12 @@ pub mod tns {
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_TNS),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_TNS),
                         Some(b"a-int")
                     ) {
                         helper.read_attrib(&mut a_int, b"a-int", &attrib.value)?;
                     } else if matches!(
-                        helper.resolve_local_name(attrib.key, &super::super::NS_TNS),
+                        helper.resolve_attrib_local_name(attrib.key, &super::super::NS_TNS),
                         Some(b"b-int")
                     ) {
                         helper.read_attrib(&mut b_int, b"b-int", &attrib.value)?;
@@ -137,12 +151,15 @@ pub mod tns {
         }
     }
     pub mod quick_xml_serialize {
-        use xsd_parser_types::quick_xml::{BytesStart, Error, Event, SerializeHelper, Serializer};
+        use xsd_parser_types::quick_xml::{
+            BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        };
         #[derive(Debug)]
         pub struct FooTypeSerializer<'ser> {
             pub(super) value: &'ser super::FooType,
             pub(super) state: Box<FooTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -160,10 +177,20 @@ pub mod tns {
                     match &mut *self.state {
                         FooTypeSerializerState::Init__ => {
                             *self.state = FooTypeSerializerState::Done__;
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_TNS)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns(
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
+                                helper.write_xmlns_unless_default(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_TNS),
                                     &super::super::NS_TNS,

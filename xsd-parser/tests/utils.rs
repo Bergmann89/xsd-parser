@@ -14,8 +14,8 @@ use xsd_parser::{
     generate,
 };
 use xsd_parser_types::quick_xml::{
-    DeserializeAsync, DeserializeSync, ErrorReader, Event, IoReader, Serializer, WithSerializer,
-    Writer, XmlReader,
+    DeserializeAsync, DeserializeSync, ErrorReader, Event, IoReader, SerializeHelper, Serializer,
+    WithSerializer, Writer, XmlReader,
 };
 
 pub trait ConfigEx {
@@ -204,14 +204,42 @@ where
     P: AsRef<Path>,
     T: WithSerializer,
 {
+    quick_xml_write_test_impl(value, Some(root), SerializeHelper::default(), path);
+}
+
+pub fn quick_xml_write_test_with_helper<T, P>(
+    value: &T,
+    root: &str,
+    helper: SerializeHelper,
+    path: P,
+) where
+    P: AsRef<Path>,
+    T: WithSerializer,
+{
+    quick_xml_write_test_impl(value, Some(root), helper, path);
+}
+
+pub fn quick_xml_write_test_default_root<T, P>(value: &T, path: P)
+where
+    P: AsRef<Path>,
+    T: WithSerializer,
+{
+    quick_xml_write_test_impl(value, None, SerializeHelper::default(), path);
+}
+
+fn quick_xml_write_test_impl<T, P>(value: &T, root: Option<&str>, helper: SerializeHelper, path: P)
+where
+    P: AsRef<Path>,
+    T: WithSerializer,
+{
     let mut content = Vec::new();
     let mut writer = Writer::new(&mut content);
 
     let mut actual = FilteredIter::new(
         value
-            .serializer(Some(root), true)
+            .serializer(root, true)
             .unwrap()
-            .into_iter()
+            .into_iter_with(helper)
             .map(|ret| ret.unwrap()),
     );
     let mut expected = FilteredIter::new(IterReader::from_file(path));

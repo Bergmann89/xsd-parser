@@ -76,7 +76,10 @@ pub enum ResolveRequestType {
     /// Schema was added directly by the user
     #[default]
     UserDefined,
-    /// Schema has been included
+    /// Schema has been included (also used for redefine and override)
+    ///
+    /// An included schema without target namespace takes the namespace of the
+    /// including schema, an imported one does not.
     IncludeRequest,
     /// Schema has been imported
     ImportRequest,

@@ -675,7 +675,7 @@ impl<'types> ComplexDataElement<'types> {
                 let target_type = ctx.path_data_mixed(mixed, target_type);
                 let target_type = ctx.path_data_nillable(nillable, target_type);
 
-                let target_is_dynamic = is_dynamic(type_, ctx.types);
+                let target_is_dynamic = ctx.types.is_dynamic(type_);
 
                 (target_type, target_is_dynamic, need_box)
             }
@@ -863,19 +863,6 @@ impl<'types> ComplexDataAttribute<'types> {
             default_value,
             extra_attributes: Vec::new(),
         }))
-    }
-}
-
-fn is_dynamic(ident: &TypeIdent, types: &MetaTypes) -> bool {
-    let Some(ty) = types.items.get(ident) else {
-        return false;
-    };
-
-    match &ty.variant {
-        MetaTypeVariant::Dynamic(_) => true,
-        MetaTypeVariant::ComplexType(ci) => ci.is_dynamic,
-        MetaTypeVariant::Reference(x) if x.is_simple() => is_dynamic(&x.type_, types),
-        _ => false,
     }
 }
 

@@ -2,8 +2,9 @@ use std::borrow::Cow;
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
     quick_xml::{
-        DeserializeBytes, DeserializeHelper, Error, SerializeBytes, SerializeHelper,
-        WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
+        DeserializeBytes, DeserializeHelper, ElementNamespace, Error, SerializeBytes,
+        SerializeHelper, WithDeserializer, WithDeserializerFromBytes, WithSerializeToBytes,
+        WithSerializer,
     },
     xml::{Base64String, HexString},
 };
@@ -97,10 +98,19 @@ impl WithSerializer for ElementAType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ElementATypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ElementATypeSerializerState::Init__),
             name: name.unwrap_or("ElementAType"),
+            namespace,
             is_root,
         })
     }
@@ -120,10 +130,19 @@ impl WithSerializer for ElementBType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ElementBTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ElementBTypeSerializerState::Init__),
             name: name.unwrap_or("ElementBType"),
+            namespace,
             is_root,
         })
     }
@@ -143,7 +162,16 @@ impl WithSerializer for ChoiceGroupType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         Ok(quick_xml_serialize::ChoiceGroupTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ChoiceGroupTypeSerializerState::Init__),
@@ -183,7 +211,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"attr1")
                 ) {
                     helper.read_attrib(&mut attr_1, b"attr1", &attrib.value)?;
@@ -335,7 +363,7 @@ pub mod quick_xml_deserialize {
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    helper.resolve_local_name(attrib.key, &super::NS_TNS),
+                    helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"attr2")
                 ) {
                     helper.read_attrib(&mut attr_2, b"attr2", &attrib.value)?;
@@ -493,14 +521,14 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"ElementA")
                 ) {
                     let output = <super::ElementAType as WithDeserializer>::init(helper, event)?;
                     return self.handle_element_a(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"ElementB")
                 ) {
                     let output = <super::ElementBType as WithDeserializer>::init(helper, event)?;
@@ -757,14 +785,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-        WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+        Serializer, WithSerializer,
     };
     #[derive(Debug)]
     pub struct ElementATypeSerializer<'ser> {
         pub(super) value: &'ser super::ElementAType,
         pub(super) state: Box<ElementATypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -788,10 +817,17 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib_opt(&mut bytes, "attr1", &self.value.attr_1)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -830,6 +866,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::ElementBType,
         pub(super) state: Box<ElementBTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -853,10 +890,17 @@ pub mod quick_xml_serialize {
                             None,
                             false,
                         ));
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_TNS);
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
                         helper.write_attrib_opt(&mut bytes, "attr2", &self.value.attr_2)?;
                         return Ok(Some(Event::Start(bytes)));
@@ -914,12 +958,22 @@ pub mod quick_xml_serialize {
                     ChoiceGroupTypeSerializerState::Init__ => match self.value {
                         super::ChoiceGroupType::ElementA(x) => {
                             *self.state = ChoiceGroupTypeSerializerState::ElementA(
-                                WithSerializer::serializer(x, Some("ElementA"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("ElementA"),
+                                    ElementNamespace::None,
+                                    self.is_root,
+                                )?,
                             )
                         }
                         super::ChoiceGroupType::ElementB(x) => {
                             *self.state = ChoiceGroupTypeSerializerState::ElementB(
-                                WithSerializer::serializer(x, Some("ElementB"), self.is_root)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("ElementB"),
+                                    ElementNamespace::None,
+                                    self.is_root,
+                                )?,
                             )
                         }
                     },

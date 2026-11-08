@@ -10,8 +10,8 @@ use crate::traits::WithNamespace;
 #[cfg(feature = "quick-xml")]
 use crate::quick_xml::{
     CollectNamespaces, DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-    DeserializerOutput, DeserializerResult, Error, ErrorKind, SerializeHelper, Serializer,
-    WithDeserializer, WithSerializer,
+    DeserializerOutput, DeserializerResult, ElementNamespace, Error, ErrorKind, SerializeHelper,
+    Serializer, WithDeserializer, WithSerializer,
 };
 
 /// Implements a nillable XML element.
@@ -139,13 +139,23 @@ where
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        self.serializer_with_namespace(name, ElementNamespace::Unknown, is_root)
+    }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         if let Some(inner) = &self.0 {
             Ok(NillableSerializer::Some {
-                inner: inner.serializer(name, is_root)?,
+                inner: inner.serializer_with_namespace(name, namespace, is_root)?,
             })
         } else {
             Ok(NillableSerializer::Nil {
                 name: name.unwrap_or("Nillable"),
+                namespace,
             })
         }
     }
@@ -175,6 +185,9 @@ where
     Nil {
         /// Name of the emitted XML tag.
         name: &'ser str,
+
+        /// Namespace of the emitted XML tag.
+        namespace: ElementNamespace,
     },
 
     /// Serialization is done.
@@ -189,7 +202,11 @@ where
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Some { inner } => f.debug_struct("Some").field("inner", inner).finish(),
-            Self::Nil { name } => f.debug_struct("Nil").field("name", name).finish(),
+            Self::Nil { name, namespace } => f
+                .debug_struct("Nil")
+                .field("name", name)
+                .field("namespace", namespace)
+                .finish(),
             Self::Done => write!(f, "Done"),
         }
     }
@@ -211,13 +228,17 @@ where
 
                 item
             }
-            Self::Nil { name } => {
+            Self::Nil { name, namespace } => {
                 use crate::misc::NamespacePrefix;
 
-                let mut bytes = BytesStart::new(*name);
+                let name = helper.element_name(name, namespace);
+                let mut bytes = BytesStart::new(name);
 
+                helper.begin_ns_scope();
+                helper.write_xmlns_for_element(&mut bytes, name, namespace);
                 helper.write_xmlns(&mut bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
                 bytes.push_attribute(("xsi:nil", "true"));
+                helper.end_ns_scope();
 
                 *self = Self::Done;
 
@@ -258,13 +279,16 @@ where
 }
 
 #[cfg(feature = "quick-xml")]
-impl<'de, T> Deserializer<'de, Nillable<T>> for NillableDeserializer<T>
+impl<T> NillableDeserializer<T>
 where
     T: WithDeserializer,
 {
-    fn init(
+    /// Does the same as `init`, but hands the name of the element the parent
+    /// expects (if any) to the inner deserializer.
+    fn init_with_name_opt<'de>(
         helper: &mut DeserializeHelper,
         event: Event<'de>,
+        name: Option<(Option<&[u8]>, &[u8])>,
     ) -> DeserializerResult<'de, Nillable<T>> {
         let (Event::Start(bytes) | Event::Empty(bytes)) = &event else {
             return Ok(DeserializerOutput {
@@ -274,10 +298,20 @@ where
             });
         };
 
+        if let Some((ns, name)) = name {
+            if !helper.check_start_tag_name(&event, ns, name) {
+                return Ok(DeserializerOutput {
+                    event: DeserializerEvent::Continue(event),
+                    artifact: DeserializerArtifact::None,
+                    allow_any: false,
+                });
+            }
+        }
+
         for attrib in bytes.attributes() {
             let attrib = attrib?;
             if matches!(
-                helper.resolve_local_name(attrib.key, &Namespace::XSI),
+                helper.resolve_attrib_local_name(attrib.key, &Namespace::XSI),
                 Some(b"nil")
             ) && matches!(
                 &*attrib.value,
@@ -301,7 +335,10 @@ where
             artifact,
             event,
             allow_any,
-        } = T::Deserializer::init(helper, event)?;
+        } = match name {
+            Some((ns, name)) => T::Deserializer::init_with_name(helper, event, ns, name)?,
+            None => T::Deserializer::init(helper, event)?,
+        };
 
         let artifact = match artifact {
             DeserializerArtifact::Deserializer(inner) => {
@@ -316,6 +353,28 @@ where
             event,
             allow_any,
         })
+    }
+}
+
+#[cfg(feature = "quick-xml")]
+impl<'de, T> Deserializer<'de, Nillable<T>> for NillableDeserializer<T>
+where
+    T: WithDeserializer,
+{
+    fn init(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+    ) -> DeserializerResult<'de, Nillable<T>> {
+        Self::init_with_name_opt(helper, event, None)
+    }
+
+    fn init_with_name(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, Nillable<T>> {
+        Self::init_with_name_opt(helper, event, Some((ns, name)))
     }
 
     fn next(

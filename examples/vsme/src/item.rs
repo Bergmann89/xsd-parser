@@ -19,8 +19,8 @@ use xsd_parser_types::{
     misc::Namespace,
     quick_xml::{
         DeserializeHelper, Deserializer, DeserializerArtifact, DeserializerEvent,
-        DeserializerOutput, DeserializerResult, Error, Event, ResolveResult, WithDeserializer,
-        WithSerializer,
+        DeserializerOutput, DeserializerResult, ElementNamespace, Error, Event, ResolveResult,
+        WithDeserializer, WithSerializer,
     },
 };
 
@@ -141,6 +141,24 @@ where
 
         self.inner.serializer(Some(self.tag().tag), is_root)
     }
+
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        // Like the name, the namespace is determined by the wrapped value.
+        let _name = name;
+        let _namespace = namespace;
+        let tag = self.tag();
+
+        self.inner.serializer_with_namespace(
+            Some(tag.tag),
+            ElementNamespace::Namespace(tag.namespace.clone()),
+            is_root,
+        )
+    }
 }
 
 /* Deserialize */
@@ -193,7 +211,7 @@ where
         // variant of the choice can try it).
         let index = match &event {
             Event::Start(bytes) | Event::Empty(bytes) => {
-                let (resolved, local) = helper.resolve(bytes.name(), true);
+                let (resolved, local) = helper.resolve(bytes.name(), false);
                 let local = local.into_inner();
                 let namespace = match resolved {
                     ResolveResult::Bound(namespace) => Some(namespace.0),

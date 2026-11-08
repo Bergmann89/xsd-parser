@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
     xml::{Mixed, Text},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -25,10 +25,19 @@ impl WithSerializer for MixedAllType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::MixedAllTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::MixedAllTypeSerializerState::Init__),
             name: name.unwrap_or("tns:MixedAllType"),
+            namespace,
             is_root,
         })
     }
@@ -54,10 +63,19 @@ impl WithSerializer for MixedChoiceType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::MixedChoiceTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::MixedChoiceTypeSerializerState::Init__),
             name: name.unwrap_or("tns:MixedChoiceType"),
+            namespace,
             is_root,
         })
     }
@@ -69,7 +87,16 @@ impl WithSerializer for MixedChoiceTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::MixedChoiceTypeContentSerializer {
             value: self,
@@ -101,10 +128,19 @@ impl WithSerializer for MixedChoiceListType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::MixedChoiceListTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::MixedChoiceListTypeSerializerState::Init__),
             name: name.unwrap_or("tns:MixedChoiceListType"),
+            namespace,
             is_root,
         })
     }
@@ -116,7 +152,16 @@ impl WithSerializer for MixedChoiceListTypeContent {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
+        let _namespace = namespace;
         let _is_root = is_root;
         Ok(quick_xml_serialize::MixedChoiceListTypeContentSerializer {
             value: self,
@@ -146,10 +191,19 @@ impl WithSerializer for MixedSequenceType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::MixedSequenceTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::MixedSequenceTypeSerializerState::Init__),
             name: name.unwrap_or("tns:MixedSequenceType"),
+            namespace,
             is_root,
         })
     }
@@ -192,14 +246,14 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
                     let output = <Mixed<i32> as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, output, &mut *fallback);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
                     let output = <Mixed<String> as WithDeserializer>::init(helper, event)?;
@@ -734,14 +788,14 @@ pub mod quick_xml_deserialize {
         ) -> Result<ElementHandlerOutput<'de>, Error> {
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
                     let output = <Mixed<i32> as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
                     let output = <Mixed<String> as WithDeserializer>::init(helper, event)?;
@@ -1177,14 +1231,14 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             if let Event::Start(x) | Event::Empty(x) = &event {
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Fuu")
                 ) {
                     let output = <i32 as WithDeserializer>::init(helper, event)?;
                     return self.handle_fuu(helper, Default::default(), None, output);
                 }
                 if matches!(
-                    helper.resolve_local_name(x.name(), &super::NS_TNS),
+                    helper.resolve_element_local_name(x.name(), &super::NS_TNS),
                     Some(b"Bar")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
@@ -2003,8 +2057,8 @@ pub mod quick_xml_deserialize {
 pub mod quick_xml_serialize {
     use xsd_parser_types::{
         quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         },
         xml::{Mixed, Text},
     };
@@ -2013,6 +2067,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::MixedAllType,
         pub(super) state: Box<MixedAllTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2033,15 +2088,24 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     MixedAllTypeSerializerState::Init__ => {
-                        *self.state = MixedAllTypeSerializerState::TextBefore(IterSerializer::new(
-                            self.value.text_before.as_ref(),
-                            Some(""),
-                            false,
-                        ));
+                        *self.state = MixedAllTypeSerializerState::TextBefore(
+                            IterSerializer::new(self.value.text_before.as_ref(), Some(""), false)
+                                .with_namespace(ElementNamespace::None),
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns(
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
                                 &super::NS_TNS,
@@ -2053,24 +2117,28 @@ pub mod quick_xml_serialize {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    MixedAllTypeSerializerState::Fuu(WithSerializer::serializer(
+                                *self.state = MixedAllTypeSerializerState::Fuu(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.fuu,
                                         Some("tns:Fuu"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
-                                    )?)
+                                    )?,
+                                )
                             }
                         }
                     }
                     MixedAllTypeSerializerState::Fuu(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                MixedAllTypeSerializerState::Bar(WithSerializer::serializer(
+                            *self.state = MixedAllTypeSerializerState::Bar(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.bar,
                                     Some("tns:Bar"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     MixedAllTypeSerializerState::Bar(x) => match x.next(helper).transpose()? {
@@ -2105,6 +2173,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::MixedChoiceType,
         pub(super) state: Box<MixedChoiceTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2125,12 +2194,23 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     MixedChoiceTypeSerializerState::Init__ => {
                         *self.state = MixedChoiceTypeSerializerState::TextBefore(
-                            IterSerializer::new(self.value.text_before.as_ref(), Some(""), false),
+                            IterSerializer::new(self.value.text_before.as_ref(), Some(""), false)
+                                .with_namespace(ElementNamespace::None),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns(
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
                                 &super::NS_TNS,
@@ -2138,17 +2218,21 @@ pub mod quick_xml_serialize {
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    MixedChoiceTypeSerializerState::TextBefore(x) => match x
-                        .next(helper)
-                        .transpose()?
-                    {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = MixedChoiceTypeSerializerState::Content(
-                                WithSerializer::serializer(&self.value.content, Some(""), false)?,
-                            )
+                    MixedChoiceTypeSerializerState::TextBefore(x) => {
+                        match x.next(helper).transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = MixedChoiceTypeSerializerState::Content(
+                                    WithSerializer::serializer_with_namespace(
+                                        &self.value.content,
+                                        Some(""),
+                                        ElementNamespace::None,
+                                        false,
+                                    )?,
+                                )
+                            }
                         }
-                    },
+                    }
                     MixedChoiceTypeSerializerState::Content(x) => {
                         match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
@@ -2201,12 +2285,22 @@ pub mod quick_xml_serialize {
                     MixedChoiceTypeContentSerializerState::Init__ => match self.value {
                         super::MixedChoiceTypeContent::Fuu(x) => {
                             *self.state = MixedChoiceTypeContentSerializerState::Fuu(
-                                WithSerializer::serializer(x, Some("tns:Fuu"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("tns:Fuu"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    false,
+                                )?,
                             )
                         }
                         super::MixedChoiceTypeContent::Bar(x) => {
                             *self.state = MixedChoiceTypeContentSerializerState::Bar(
-                                WithSerializer::serializer(x, Some("tns:Bar"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("tns:Bar"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    false,
+                                )?,
                             )
                         }
                     },
@@ -2245,6 +2339,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::MixedChoiceListType,
         pub(super) state: Box<MixedChoiceListTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2272,10 +2367,20 @@ pub mod quick_xml_serialize {
                         *self.state = MixedChoiceListTypeSerializerState::Content__(
                             IterSerializer::new(&self.value.content[..], None, false),
                         );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns(
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
                                 &super::NS_TNS,
@@ -2336,17 +2441,32 @@ pub mod quick_xml_serialize {
                     MixedChoiceListTypeContentSerializerState::Init__ => match self.value {
                         super::MixedChoiceListTypeContent::Fuu(x) => {
                             *self.state = MixedChoiceListTypeContentSerializerState::Fuu(
-                                WithSerializer::serializer(x, Some("tns:Fuu"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("tns:Fuu"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    false,
+                                )?,
                             )
                         }
                         super::MixedChoiceListTypeContent::Bar(x) => {
                             *self.state = MixedChoiceListTypeContentSerializerState::Bar(
-                                WithSerializer::serializer(x, Some("tns:Bar"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("tns:Bar"),
+                                    ElementNamespace::Namespace(super::NS_TNS),
+                                    false,
+                                )?,
                             )
                         }
                         super::MixedChoiceListTypeContent::Text(x) => {
                             *self.state = MixedChoiceListTypeContentSerializerState::Text(
-                                WithSerializer::serializer(x, Some("text"), false)?,
+                                WithSerializer::serializer_with_namespace(
+                                    x,
+                                    Some("text"),
+                                    ElementNamespace::None,
+                                    false,
+                                )?,
                             )
                         }
                     },
@@ -2391,6 +2511,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::MixedSequenceType,
         pub(super) state: Box<MixedSequenceTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -2413,16 +2534,28 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     MixedSequenceTypeSerializerState::Init__ => {
-                        *self.state =
-                            MixedSequenceTypeSerializerState::TextBefore(IterSerializer::new(
+                        *self.state = MixedSequenceTypeSerializerState::TextBefore(
+                            IterSerializer::new(
                                 self.value.text_before.as_ref(),
                                 Some("text_before"),
                                 false,
-                            ));
+                            )
+                            .with_namespace(ElementNamespace::None),
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_TNS)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                         if self.is_root {
-                            helper.write_xmlns(
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
+                        if self.is_root {
+                            helper.write_xmlns_unless_default(
                                 &mut bytes,
                                 Some(&super::PREFIX_TNS),
                                 &super::NS_TNS,
@@ -2435,9 +2568,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = MixedSequenceTypeSerializerState::Fuu(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.fuu,
                                         Some("tns:Fuu"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
                                     )?,
                                 )
@@ -2447,12 +2581,14 @@ pub mod quick_xml_serialize {
                     MixedSequenceTypeSerializerState::Fuu(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                MixedSequenceTypeSerializerState::TextAfterFuu(IterSerializer::new(
+                            *self.state = MixedSequenceTypeSerializerState::TextAfterFuu(
+                                IterSerializer::new(
                                     self.value.text_after_fuu.as_ref(),
                                     Some("text_after_Fuu"),
                                     false,
-                                ))
+                                )
+                                .with_namespace(ElementNamespace::None),
+                            )
                         }
                     },
                     MixedSequenceTypeSerializerState::TextAfterFuu(x) => {
@@ -2460,9 +2596,10 @@ pub mod quick_xml_serialize {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state = MixedSequenceTypeSerializerState::Bar(
-                                    WithSerializer::serializer(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.bar,
                                         Some("tns:Bar"),
+                                        ElementNamespace::Namespace(super::NS_TNS),
                                         false,
                                     )?,
                                 )
@@ -2472,12 +2609,14 @@ pub mod quick_xml_serialize {
                     MixedSequenceTypeSerializerState::Bar(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                MixedSequenceTypeSerializerState::TextAfterBar(IterSerializer::new(
+                            *self.state = MixedSequenceTypeSerializerState::TextAfterBar(
+                                IterSerializer::new(
                                     self.value.text_after_bar.as_ref(),
                                     Some("text_after_Bar"),
                                     false,
-                                ))
+                                )
+                                .with_namespace(ElementNamespace::None),
+                            )
                         }
                     },
                     MixedSequenceTypeSerializerState::TextAfterBar(x) => {

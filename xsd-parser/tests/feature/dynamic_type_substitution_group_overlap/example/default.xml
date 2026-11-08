@@ -1,8 +1,8 @@
-<list xmlns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <animal id="1" />
-    <animal xsi:type="dog" id="2" name="Max" />
-    <animal xsi:type="labrador" id="3" name="Charlie" color="yellow" />
+<tns:list xmlns:tns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <tns:animal id="1" />
+    <tns:animal xsi:type="tns:dog" id="2" name="Max" />
+    <tns:animal xsi:type="tns:labrador" id="3" name="Charlie" color="yellow" />
 
-    <dog id="4" name="Rex" />
-    <labrador id="5" name="Buddy" color="black" />
-</list>
+    <tns:dog id="4" name="Rex" />
+    <tns:labrador id="5" name="Buddy" color="black" />
+</tns:list>

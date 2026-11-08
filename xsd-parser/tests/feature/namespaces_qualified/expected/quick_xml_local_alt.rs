@@ -1,6 +1,6 @@
 use xsd_parser_types::{
     misc::{Namespace, NamespacePrefix},
-    quick_xml::{Error, WithDeserializer, WithSerializer},
+    quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer},
 };
 pub const PREFIX_XS: NamespacePrefix = NamespacePrefix::new_const(b"xs");
 pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
@@ -29,10 +29,19 @@ impl WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("Foo"),
+            namespace,
             is_root,
         })
     }
@@ -51,10 +60,19 @@ impl WithSerializer for Inner1Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::Inner1TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::Inner1TypeSerializerState::Init__),
             name: name.unwrap_or("bar:Inner1"),
+            namespace,
             is_root,
         })
     }
@@ -73,10 +91,19 @@ impl WithSerializer for Inner2Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
+        WithSerializer::serializer_with_namespace(self, name, ElementNamespace::Unknown, is_root)
+    }
+    fn serializer_with_namespace<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        namespace: ElementNamespace,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::Inner2TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::Inner2TypeSerializerState::Init__),
             name: name.unwrap_or("baz:Inner2"),
+            namespace,
             is_root,
         })
     }
@@ -702,13 +729,15 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use xsd_parser_types::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, SerializeHelper, Serializer, WithSerializer,
+        BytesEnd, BytesStart, ElementNamespace, Error, Event, SerializeHelper, Serializer,
+        WithSerializer,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
         pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -728,25 +757,39 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::Inner1(WithSerializer::serializer(
-                            &self.value.inner_1,
-                            Some("bar:Inner1"),
-                            false,
-                        )?);
+                        *self.state = FooTypeSerializerState::Inner1(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.inner_1,
+                                Some("bar:Inner1"),
+                                ElementNamespace::Namespace(super::NS_BAR),
+                                false,
+                            )?,
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_UNNAMED_5)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_UNNAMED_5);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Inner1(x) => match x.next(helper).transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                FooTypeSerializerState::Inner2(WithSerializer::serializer(
+                            *self.state = FooTypeSerializerState::Inner2(
+                                WithSerializer::serializer_with_namespace(
                                     &self.value.inner_2,
                                     Some("baz:Inner2"),
+                                    ElementNamespace::Namespace(super::NS_BAZ),
                                     false,
-                                )?)
+                                )?,
+                            )
                         }
                     },
                     FooTypeSerializerState::Inner2(x) => match x.next(helper).transpose()? {
@@ -781,6 +824,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::Inner1Type,
         pub(super) state: Box<Inner1TypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -799,14 +843,26 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     Inner1TypeSerializerState::Init__ => {
-                        *self.state = Inner1TypeSerializerState::A(WithSerializer::serializer(
-                            &self.value.a,
-                            Some("bar:A"),
-                            false,
-                        )?);
+                        *self.state = Inner1TypeSerializerState::A(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.a,
+                                Some("bar:A"),
+                                ElementNamespace::Namespace(super::NS_BAR),
+                                false,
+                            )?,
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_BAR)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_BAR);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     Inner1TypeSerializerState::A(x) => match x.next(helper).transpose()? {
@@ -841,6 +897,7 @@ pub mod quick_xml_serialize {
         pub(super) value: &'ser super::Inner2Type,
         pub(super) state: Box<Inner2TypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
+        pub(super) namespace: ElementNamespace,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
@@ -859,14 +916,26 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     Inner2TypeSerializerState::Init__ => {
-                        *self.state = Inner2TypeSerializerState::B(WithSerializer::serializer(
-                            &self.value.b,
-                            Some("baz:B"),
-                            false,
-                        )?);
+                        *self.state = Inner2TypeSerializerState::B(
+                            WithSerializer::serializer_with_namespace(
+                                &self.value.b,
+                                Some("baz:B"),
+                                ElementNamespace::Namespace(super::NS_BAZ),
+                                false,
+                            )?,
+                        );
+                        let namespace = if self.is_root {
+                            ElementNamespace::Namespace(super::NS_BAZ)
+                        } else {
+                            self.namespace.clone()
+                        };
+                        self.name = helper.element_name(self.name, &namespace);
                         let mut bytes = BytesStart::new(self.name);
                         helper.begin_ns_scope();
-                        helper.write_xmlns_for_tag(&mut bytes, self.name, &super::NS_BAZ);
+                        helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
+                        if self.is_root {
+                            helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                        }
                         return Ok(Some(Event::Start(bytes)));
                     }
                     Inner2TypeSerializerState::B(x) => match x.next(helper).transpose()? {

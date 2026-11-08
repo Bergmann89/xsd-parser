@@ -8,7 +8,7 @@ pub const PREFIX_XML: NamespacePrefix = NamespacePrefix::new_const(b"xml");
 pub const PREFIX_XSI: NamespacePrefix = NamespacePrefix::new_const(b"xsi");
 pub const PREFIX_EXAMPLE: NamespacePrefix = NamespacePrefix::new_const(b"example");
 pub mod example {
-    use xsd_parser_types::quick_xml::{Error, WithDeserializer, WithSerializer};
+    use xsd_parser_types::quick_xml::{ElementNamespace, Error, WithDeserializer, WithSerializer};
     pub type Foo = FooType;
     #[derive(Debug)]
     pub struct FooType {
@@ -24,10 +24,24 @@ pub mod example {
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
+            WithSerializer::serializer_with_namespace(
+                self,
+                name,
+                ElementNamespace::Unknown,
+                is_root,
+            )
+        }
+        fn serializer_with_namespace<'ser>(
+            &'ser self,
+            name: Option<&'ser str>,
+            namespace: ElementNamespace,
+            is_root: bool,
+        ) -> Result<Self::Serializer<'ser>, Error> {
             Ok(quick_xml_serialize::FooTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
                 name: name.unwrap_or("example:FooType"),
+                namespace,
                 is_root,
             })
         }
@@ -464,14 +478,15 @@ pub mod example {
     }
     pub mod quick_xml_serialize {
         use xsd_parser_types::quick_xml::{
-            BytesEnd, BytesStart, Error, Event, IterSerializer, SerializeHelper, Serializer,
-            WithSerializer,
+            BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer, SerializeHelper,
+            Serializer, WithSerializer,
         };
         #[derive(Debug)]
         pub struct FooTypeSerializer<'ser> {
             pub(super) value: &'ser super::FooType,
             pub(super) state: Box<FooTypeSerializerState<'ser>>,
             pub(super) name: &'ser str,
+            pub(super) namespace: ElementNamespace,
             pub(super) is_root: bool,
         }
         #[derive(Debug)]
@@ -493,15 +508,28 @@ pub mod example {
                 loop {
                     match &mut *self.state {
                         FooTypeSerializerState::Init__ => {
-                            *self.state = FooTypeSerializerState::Once(WithSerializer::serializer(
-                                &self.value.once,
-                                Some("example:Once"),
-                                false,
-                            )?);
+                            *self.state = FooTypeSerializerState::Once(
+                                WithSerializer::serializer_with_namespace(
+                                    &self.value.once,
+                                    Some("example:Once"),
+                                    ElementNamespace::Namespace(super::super::NS_EXAMPLE),
+                                    false,
+                                )?,
+                            );
+                            let namespace = if self.is_root {
+                                ElementNamespace::Namespace(super::super::NS_EXAMPLE)
+                            } else {
+                                self.namespace.clone()
+                            };
+                            self.name = helper.element_name(self.name, &namespace);
                             let mut bytes = BytesStart::new(self.name);
                             helper.begin_ns_scope();
+                            helper.write_xmlns_for_element(&mut bytes, self.name, &namespace);
                             if self.is_root {
-                                helper.write_xmlns(
+                                helper.write_default_namespace(&mut bytes, self.name, &namespace);
+                            }
+                            if self.is_root {
+                                helper.write_xmlns_unless_default(
                                     &mut bytes,
                                     Some(&super::super::PREFIX_EXAMPLE),
                                     &super::super::NS_EXAMPLE,
@@ -512,34 +540,45 @@ pub mod example {
                         FooTypeSerializerState::Once(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = FooTypeSerializerState::Optional(IterSerializer::new(
-                                    self.value.optional.as_ref(),
-                                    Some("example:Optional"),
-                                    false,
-                                ))
+                                *self.state = FooTypeSerializerState::Optional(
+                                    IterSerializer::new(
+                                        self.value.optional.as_ref(),
+                                        Some("example:Optional"),
+                                        false,
+                                    )
+                                    .with_namespace(
+                                        ElementNamespace::Namespace(super::super::NS_EXAMPLE),
+                                    ),
+                                )
                             }
                         },
                         FooTypeSerializerState::Optional(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    FooTypeSerializerState::OnceSpecify(WithSerializer::serializer(
+                                *self.state = FooTypeSerializerState::OnceSpecify(
+                                    WithSerializer::serializer_with_namespace(
                                         &self.value.once_specify,
                                         Some("example:OnceSpecify"),
+                                        ElementNamespace::Namespace(super::super::NS_EXAMPLE),
                                         false,
-                                    )?)
+                                    )?,
+                                )
                             }
                         },
                         FooTypeSerializerState::OnceSpecify(x) => {
                             match x.next(helper).transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
-                                    *self.state =
-                                        FooTypeSerializerState::TwiceOrMore(IterSerializer::new(
+                                    *self.state = FooTypeSerializerState::TwiceOrMore(
+                                        IterSerializer::new(
                                             &self.value.twice_or_more[..],
                                             Some("example:TwiceOrMore"),
                                             false,
-                                        ))
+                                        )
+                                        .with_namespace(
+                                            ElementNamespace::Namespace(super::super::NS_EXAMPLE),
+                                        ),
+                                    )
                                 }
                             }
                         }

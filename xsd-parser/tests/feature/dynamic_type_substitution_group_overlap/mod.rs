@@ -152,7 +152,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "list",
+        "tns:list",
         "tests/feature/dynamic_type_substitution_group_overlap/example/default.xml",
     );
 }
@@ -248,7 +248,7 @@ fn write_quick_xml_flatten() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "list",
+        "tns:list",
         "tests/feature/dynamic_type_substitution_group_overlap/example/default_flatten.xml",
     );
 }
@@ -354,8 +354,8 @@ fn write_quick_xml_optimized() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "list",
-        "tests/feature/dynamic_type_substitution_group_overlap/example/default_optimized.xml",
+        "tns:list",
+        "tests/feature/dynamic_type_substitution_group_overlap/example/default_flatten.xml",
     );
 }
 

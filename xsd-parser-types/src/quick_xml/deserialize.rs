@@ -42,6 +42,23 @@ pub trait WithDeserializer: Sized {
         Self::Deserializer::init(helper, event)
     }
 
+    /// Initializes a new deserializer for the given `event`, the parent
+    /// expects an element with the passed name.
+    ///
+    /// This is a shortcut for `Self::Deserializer::init_with_name()`.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the errors from `Self::Deserializer::init_with_name()`;
+    fn init_with_name<'de>(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, Self> {
+        Self::Deserializer::init_with_name(helper, event, ns, name)
+    }
+
     /// Create a new default deserializer.
     ///
     /// If a type does not represent a element (for example a group type), it
@@ -83,6 +100,29 @@ where
     ///
     /// Returns an [`struct@Error`] if the initialization of the deserializer failed.
     fn init(helper: &mut DeserializeHelper, event: Event<'de>) -> DeserializerResult<'de, T>;
+
+    /// Initializes a new deserializer like [`init`](Self::init), but the
+    /// parent tells the name of the element it expects.
+    ///
+    /// `ns` and `name` are the expected element name in the form of
+    /// [`DeserializeHelper::check_start_tag_name`] (`ns = None` compares the
+    /// local name only). Only the deserializers of dynamic types use the name
+    /// to decide if they take the element, wrapper deserializers forward it
+    /// to the deserializer they wrap, all others ignore it.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`struct@Error`] if the initialization of the deserializer failed.
+    fn init_with_name(
+        helper: &mut DeserializeHelper,
+        event: Event<'de>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+    ) -> DeserializerResult<'de, T> {
+        let _ = (ns, name);
+
+        Self::init(helper, event)
+    }
 
     /// Processes the next XML [`Event`].
     ///
@@ -919,20 +959,37 @@ impl DeserializeHelper {
         }
     }
 
-    /// Try to resolve the local name of the passed qname and the expected namespace.
+    /// Try to resolve the local name of the passed element qname and the expected namespace.
+    ///
+    /// Use this for element names and [`QName`] values (e.g. an `xsi:type` value).
+    /// Checks if the passed [`QName`] `name` matches the expected namespace `ns`
+    /// and returns the local name of it. A name without prefix is resolved in the
+    /// default namespace, so it is accepted if that is `ns` or if no default
+    /// namespace is in scope (also after `xmlns=\"\"`).
+    #[must_use]
+    pub fn resolve_element_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
+        self.local_name_in(name, ns, false)
+    }
+
+    /// Try to resolve the local name of the passed attribute qname and the expected namespace.
     ///
     /// Checks if the passed [`QName`] `name` matches the expected namespace `ns`
-    /// and returns the local name of it. If `name` does not have a namespace prefix
-    /// to resolve, the local name is just returned as is.
+    /// and returns the local name of it. A name without prefix is not in any
+    /// namespace and is returned as is.
     #[must_use]
+    pub fn resolve_attrib_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
+        self.local_name_in(name, ns, true)
+    }
+
+    /// Try to resolve the local name of the passed qname and the expected namespace.
+    ///
+    /// Behaves like [`Self::resolve_attrib_local_name`].
+    #[must_use]
+    #[deprecated(
+        note = "use `resolve_element_local_name` for element names or `resolve_attrib_local_name` for attribute names"
+    )]
     pub fn resolve_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
-        match self.resolve(name, true) {
-            (ResolveResult::Unbound, local) => Some(local.into_inner().as_bytes()),
-            (ResolveResult::Bound(x), local) if x.0.as_bytes() == ns => {
-                Some(local.into_inner().as_bytes())
-            }
-            (_, _) => None,
-        }
+        self.resolve_attrib_local_name(name, ns)
     }
 
     /// Try to extract the resolved tag name of either a [`Start`](Event::Start) or a
@@ -944,7 +1001,7 @@ impl DeserializeHelper {
         };
 
         if let Some(ns) = ns {
-            matches!(self.resolve_local_name(x.name(), ns), Some(x) if x == name)
+            matches!(self.resolve_element_local_name(x.name(), ns), Some(x) if x == name)
         } else {
             x.name().local_name().into_inner().as_bytes() == name
         }
@@ -1243,6 +1300,16 @@ impl DeserializeHelper {
             Ok(arr)
         } else {
             unreachable!()
+        }
+    }
+
+    fn local_name_in<'a>(&self, name: QName<'a>, ns: &[u8], attribute: bool) -> Option<&'a [u8]> {
+        match self.resolve(name, attribute) {
+            (ResolveResult::Unbound, local) => Some(local.into_inner().as_bytes()),
+            (ResolveResult::Bound(x), local) if x.0.as_bytes() == ns => {
+                Some(local.into_inner().as_bytes())
+            }
+            (_, _) => None,
         }
     }
 
@@ -1550,5 +1617,136 @@ mod tests {
 
             assert!(matches!(err.kind, ErrorKind::UnexpectedEvent(_)), "{err:?}");
         }
+    }
+
+    #[test]
+    fn init_with_name_ignores_the_name_of_a_plain_deserializer() {
+        let mut helper = DeserializeHelper::default();
+
+        // Success: a start tag is taken whatever name is expected.
+        for (ns, name) in [(None, &b"other"[..]), (Some(&b"T"[..]), &b"outer"[..])] {
+            let named = ContentDeserializer::<String>::init_with_name(
+                &mut helper,
+                Event::Start(BytesStart::new("outer")),
+                ns,
+                name,
+            )
+            .unwrap();
+
+            assert!(matches!(
+                named.artifact,
+                DeserializerArtifact::Deserializer(_)
+            ));
+            assert!(matches!(named.event, DeserializerEvent::None));
+        }
+
+        // Failure: the error of `init` is returned unchanged.
+        let err = <Marker as WithDeserializer>::init_with_name(
+            &mut helper,
+            Event::Start(BytesStart::new("known")),
+            Some(b"T"),
+            b"known",
+        )
+        .unwrap_err();
+        assert!(matches!(err.kind, ErrorKind::UnexpectedEvent(_)), "{err:?}");
+    }
+
+    /// Builds a helper that has seen the given start tags (`"name attrs"`).
+    fn helper_in(tags: &[&str]) -> DeserializeHelper {
+        let mut helper = DeserializeHelper::default();
+        for tag in tags {
+            let name_len = tag.find(' ').unwrap_or(tag.len());
+            let event = Event::Start(BytesStart::from_content(*tag, name_len));
+            helper.handle_event(&event).unwrap();
+        }
+        helper
+    }
+
+    fn element(tags: &[&str], name: &str) -> Option<Vec<u8>> {
+        let helper = helper_in(tags);
+
+        helper
+            .resolve_element_local_name(QName(name), b"T")
+            .map(<[u8]>::to_vec)
+    }
+
+    fn attrib(tags: &[&str], name: &str) -> Option<Vec<u8>> {
+        let helper = helper_in(tags);
+
+        helper
+            .resolve_attrib_local_name(QName(name), b"T")
+            .map(<[u8]>::to_vec)
+    }
+
+    #[test]
+    #[expect(deprecated)]
+    fn resolve_local_name_forwards_to_attrib() {
+        let tags = ["r xmlns:p=\"T\" xmlns:q=\"O\" xmlns=\"O\""];
+
+        for name in ["a", "p:a", "q:a", "u:a"] {
+            let helper = helper_in(&tags);
+
+            assert_eq!(
+                helper.resolve_local_name(QName(name), b"T"),
+                helper.resolve_attrib_local_name(QName(name), b"T"),
+                "{name}"
+            );
+        }
+    }
+
+    #[test]
+    fn resolve_element_local_name_uses_default_namespace() {
+        assert_eq!(element(&["r xmlns=\"T\""], "a"), Some(b"a".to_vec()));
+        assert_eq!(element(&["r xmlns=\"O\""], "a"), None);
+    }
+
+    #[test]
+    fn resolve_element_local_name_is_lenient_without_namespace() {
+        assert_eq!(element(&[], "a"), Some(b"a".to_vec()));
+        assert_eq!(element(&["r xmlns:x=\"O\""], "a"), Some(b"a".to_vec()));
+        assert_eq!(
+            element(&["r xmlns=\"T\"", "a xmlns=\"\""], "a"),
+            Some(b"a".to_vec())
+        );
+    }
+
+    #[test]
+    fn resolve_element_local_name_prefixed() {
+        let tags = ["r xmlns:p=\"T\" xmlns:q=\"O\" xmlns=\"O\""];
+
+        assert_eq!(element(&tags, "p:a"), Some(b"a".to_vec()));
+        assert_eq!(element(&tags, "q:a"), None);
+        assert_eq!(element(&tags, "u:a"), None);
+        assert_eq!(element(&[], "u:a"), None);
+    }
+
+    #[test]
+    fn resolve_attrib_local_name_ignores_default_namespace() {
+        assert_eq!(attrib(&["r xmlns=\"O\""], "a"), Some(b"a".to_vec()));
+        assert_eq!(attrib(&["r xmlns=\"T\""], "a"), Some(b"a".to_vec()));
+        assert_eq!(attrib(&[], "a"), Some(b"a".to_vec()));
+    }
+
+    #[test]
+    fn resolve_attrib_local_name_prefixed() {
+        let tags = ["r xmlns:p=\"T\" xmlns:q=\"O\""];
+
+        assert_eq!(attrib(&tags, "p:a"), Some(b"a".to_vec()));
+        assert_eq!(attrib(&tags, "q:a"), None);
+        assert_eq!(attrib(&tags, "u:a"), None);
+    }
+
+    #[test]
+    fn check_start_tag_name_uses_default_namespace() {
+        fn tag(t: &str) -> Event<'_> {
+            Event::Start(BytesStart::from_content(t, 1))
+        }
+
+        let mut helper = helper_in(&["r xmlns=\"O\""]);
+        helper.handle_event(&tag("a")).unwrap();
+
+        assert!(!helper.check_start_tag_name(&tag("a"), Some(b"T"), b"a"));
+        assert!(helper.check_start_tag_name(&tag("a"), Some(b"O"), b"a"));
+        assert!(helper.check_start_tag_name(&tag("a"), None, b"a"));
     }
 }

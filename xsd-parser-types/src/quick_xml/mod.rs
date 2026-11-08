@@ -34,9 +34,9 @@ pub use self::reader::{
     DecodingIoReader, ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync,
 };
 pub use self::serialize::{
-    BoxedSerializer, CollectNamespaces, ContentSerializer, DerefIter, IterSerializer,
-    SerializeBytes, SerializeBytesToString, SerializeHelper, SerializeSync, Serializer,
-    WithBoxedSerializer, WithSerializeToBytes, WithSerializer, XsiTypeSerializer,
+    BoxedSerializer, CollectNamespaces, ContentSerializer, DerefIter, ElementNamespace,
+    IterSerializer, SerializeBytes, SerializeBytesToString, SerializeHelper, SerializeSync,
+    Serializer, WithBoxedSerializer, WithSerializeToBytes, WithSerializer, XsiTypeSerializer,
 };
 
 #[cfg(feature = "async")]
