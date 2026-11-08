@@ -216,8 +216,10 @@ where
 
                 let mut bytes = BytesStart::new(*name);
 
+                helper.begin_ns_scope();
                 helper.write_xmlns(&mut bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
                 bytes.push_attribute(("xsi:nil", "true"));
+                helper.end_ns_scope();
 
                 *self = Self::Done;
 

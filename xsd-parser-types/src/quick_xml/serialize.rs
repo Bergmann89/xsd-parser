@@ -575,7 +575,12 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
 
         let mut new = BytesStart::new(self.name);
 
-        if self.is_root {
+        // An empty inner element has already ended its scope, so the helper does
+        // not know about its `xmlns:xsi` anymore.
+        let has_xmlns_xsi = bytes
+            .attributes()
+            .any(|attr| matches!(attr, Ok(attr) if attr.key.0 == "xmlns:xsi"));
+        if self.is_root && !has_xmlns_xsi {
             helper.write_xmlns(&mut new, Some(&NamespacePrefix::XSI), &Namespace::XSI);
         }
 
@@ -583,7 +588,7 @@ impl<'ser, T> XsiTypeSerializer<'ser, T> {
         new.extend_attributes(bytes.attributes().filter_map(|attr| {
             let attr = attr.ok()?;
 
-            if attr.key.0 == "xsi:type" || attr.key.0 == "xmlns:xsi" {
+            if attr.key.0 == "xsi:type" {
                 None
             } else {
                 Some(attr)
@@ -599,21 +604,31 @@ where
     T: Serializer<'ser>,
 {
     fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
-        let event = match self.inner.next(helper)? {
-            Ok(event) => event,
-            Err(error) => return Some(Err(error)),
-        };
-
+        // The scope is opened before the inner serializer emits its element,
+        // so the declarations of `rewrite` are on the level of the element.
         if matches!(self.state, XsiTypeState::Init) {
             self.state = XsiTypeState::Pending;
             helper.begin_ns_scope();
         }
+
+        let event = match self.inner.next(helper) {
+            Some(Ok(event)) => event,
+            ret => {
+                if matches!(self.state, XsiTypeState::Pending) {
+                    self.state = XsiTypeState::Done;
+                    helper.end_ns_scope();
+                }
+
+                return ret;
+            }
+        };
 
         if matches!(self.state, XsiTypeState::Pending) {
             return Some(Ok(match event {
                 Event::Empty(bytes) => {
                     let bytes = self.rewrite(bytes, helper);
                     self.state = XsiTypeState::Done;
+                    helper.end_ns_scope();
 
                     Event::Empty(bytes)
                 }
@@ -625,6 +640,7 @@ where
                 }
                 other => {
                     self.state = XsiTypeState::Done;
+                    helper.end_ns_scope();
 
                     other
                 }
@@ -795,42 +811,53 @@ impl SerializeHelper {
     /// Add the xmlns needed by the passed `qname` to the current scope, if not
     /// already active.
     ///
-    /// The prefix of the namespace may be changed if the namespace is already
-    /// active with a different prefix. The updated qname is returned.
+    /// The prefix of the qname is changed if the namespace is already active
+    /// with a different prefix, or if the prefix of the qname is bound to a
+    /// different namespace (a new prefix `ns0`, `ns1`, ... is declared then).
+    /// The updated qname is returned.
     pub fn add_qname_namespace(&mut self, bytes: &mut BytesStart<'_>, mut qname: QName) -> QName {
         let Some(ns) = qname.take_namespace() else {
             return qname;
         };
 
-        if let Some(entry) = self
-            .namespaces
-            .iter()
-            .rev()
-            .find(|entry| entry.namespace == ns)
-        {
-            qname = if let Some(prefix) = &entry.prefix {
-                QName::from_bytes(
-                    prefix
-                        .0
-                        .iter()
-                        .chain(Some(&b':'))
-                        .chain(qname.local_name())
-                        .copied()
-                        .collect::<Vec<u8>>(),
-                )
-            } else {
-                QName::from_bytes(qname.local_name().to_vec())
-            };
-            qname = qname.with_namespace(ns);
+        let prefix = if let Some(entry) = self.find_entry(&ns) {
+            entry.prefix.clone()
         } else {
-            self.add_namespace_entry(bytes, qname.prefix(), ns.clone());
-        }
+            let prefix = qname
+                .prefix()
+                .filter(|prefix| !prefix.is_empty())
+                .map(|prefix| NamespacePrefix::new(prefix.to_vec()))
+                .filter(|prefix| !self.is_declared(Some(prefix)))
+                .unwrap_or_else(|| self.fresh_prefix());
 
-        qname
+            self.add_namespace_entry(bytes, Some(&prefix.0), ns.clone());
+
+            Some(prefix)
+        };
+
+        let qname = if let Some(prefix) = &prefix {
+            QName::from_bytes(
+                prefix
+                    .0
+                    .iter()
+                    .chain(Some(&b':'))
+                    .chain(qname.local_name())
+                    .copied()
+                    .collect::<Vec<u8>>(),
+            )
+        } else {
+            QName::from_bytes(qname.local_name().to_vec())
+        };
+
+        qname.with_namespace(ns)
     }
 
     /// Write a suitable `xmlns` attribute to the passed `bytes` object, if the
-    /// namespace is not already active in the current scope.
+    /// `prefix` is not already bound to the `namespace` in the current scope.
+    ///
+    /// Every element that declares namespaces must begin its own scope first.
+    /// If `prefix` is already declared for another namespace on the current
+    /// element, nothing is written; that is an error of the caller.
     pub fn write_xmlns(
         &mut self,
         bytes: &mut BytesStart<'_>,
@@ -838,14 +865,8 @@ impl SerializeHelper {
         namespace: &Namespace,
     ) {
         let prefix = prefix.filter(|p| !p.0.is_empty());
-        for entry in self.namespaces.iter().rev() {
-            if &entry.namespace == namespace {
-                if entry.prefix.as_ref() == prefix {
-                    return;
-                }
-
-                break;
-            }
+        if self.is_bound(prefix, namespace) || self.is_declared_on_element(prefix) {
+            return;
         }
 
         self.add_namespace_entry(bytes, prefix.map(|x| &x.0[..]), namespace.clone());
@@ -856,7 +877,8 @@ impl SerializeHelper {
     ///
     /// If `tag` contains a colon (e.g. `"tns:Element"`), the part before the
     /// colon is used as the namespace prefix (`xmlns:tns="..."`). Otherwise, a
-    /// default namespace declaration is emitted (`xmlns="..."`).
+    /// default namespace declaration is emitted (`xmlns="..."`). Conflicting
+    /// declarations are handled like in [`write_xmlns`](Self::write_xmlns).
     pub fn write_xmlns_for_tag(
         &mut self,
         bytes: &mut BytesStart<'_>,
@@ -922,13 +944,57 @@ impl SerializeHelper {
         &self,
         namespace: &Namespace,
     ) -> Result<Option<NamespacePrefix>, Error> {
-        for entry in self.namespaces.iter().rev() {
-            if &entry.namespace == namespace {
-                return Ok(entry.prefix.clone());
-            }
+        if let Some(entry) = self.find_entry(namespace) {
+            return Ok(entry.prefix.clone());
         }
 
         Err(ErrorKind::UnknownNamespace(namespace.clone()))?
+    }
+
+    /// Returns the newest entry of `namespace` whose prefix is still bound to it.
+    fn find_entry(&self, namespace: &Namespace) -> Option<&NamespaceEntry> {
+        self.namespaces.iter().rev().find(|entry| {
+            &entry.namespace == namespace && self.is_bound(entry.prefix.as_ref(), namespace)
+        })
+    }
+
+    /// Returns `true` if `prefix` is currently bound to `namespace`.
+    fn is_bound(&self, prefix: Option<&NamespacePrefix>, namespace: &Namespace) -> bool {
+        self.namespaces
+            .iter()
+            .rev()
+            .find(|entry| entry.prefix.as_ref() == prefix)
+            .is_some_and(|entry| &entry.namespace == namespace)
+    }
+
+    /// Returns `true` if `prefix` is bound to any namespace in the current scope.
+    fn is_declared(&self, prefix: Option<&NamespacePrefix>) -> bool {
+        self.namespaces
+            .iter()
+            .any(|entry| entry.prefix.as_ref() == prefix)
+    }
+
+    /// Returns `true` if `prefix` was declared on the current element.
+    fn is_declared_on_element(&self, prefix: Option<&NamespacePrefix>) -> bool {
+        self.namespaces
+            .iter()
+            .rev()
+            .take_while(|entry| entry.level == self.level)
+            .any(|entry| entry.prefix.as_ref() == prefix)
+    }
+
+    /// Returns a new prefix (`ns0`, `ns1`, ...) that is not bound in the
+    /// current scope.
+    fn fresh_prefix(&self) -> NamespacePrefix {
+        let mut index = 0_usize;
+        loop {
+            let prefix = NamespacePrefix::new(format!("ns{index}").into_bytes());
+            if !self.is_declared(Some(&prefix)) {
+                return prefix;
+            }
+
+            index += 1;
+        }
     }
 
     fn add_namespace_entry(
@@ -937,6 +1003,7 @@ impl SerializeHelper {
         prefix: Option<&[u8]>,
         namespace: Namespace,
     ) {
+        let prefix = prefix.filter(|x| !x.is_empty());
         let xmlns = prefix.map(|x| format!("xmlns:{}", String::from_utf8_lossy(x)));
         let xmlns = xmlns.as_deref().unwrap_or("xmlns");
         bytes.push_attribute(Attribute {
@@ -1010,5 +1077,310 @@ where
         }
 
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use quick_xml::events::{BytesEnd, BytesStart, Event};
+
+    use crate::misc::{Namespace, NamespacePrefix};
+    use crate::xml::{AnySimpleType, Nillable, QName};
+
+    use super::{Error, SerializeHelper, Serializer, WithSerializer, XsiTypeSerializer};
+
+    const NS_X: Namespace = Namespace::new_const(b"X");
+    const NS_Y: Namespace = Namespace::new_const(b"Y");
+    const PREFIX_A: NamespacePrefix = NamespacePrefix::new_const(b"a");
+    const PREFIX_B: NamespacePrefix = NamespacePrefix::new_const(b"b");
+    const XSI: &str = "http://www.w3.org/2001/XMLSchema-instance";
+
+    fn events<'ser, S: Serializer<'ser>>(
+        mut serializer: S,
+        helper: &mut SerializeHelper,
+    ) -> Vec<Event<'ser>> {
+        let mut events = Vec::new();
+        while let Some(event) = serializer.next(helper) {
+            events.push(event.unwrap());
+        }
+
+        events
+    }
+
+    fn first_tag<'a>(events: &'a [Event<'_>]) -> &'a BytesStart<'a> {
+        match events.first() {
+            Some(Event::Start(bytes) | Event::Empty(bytes)) => bytes,
+            event => panic!("Expected start tag, got {event:?}"),
+        }
+    }
+
+    fn attribs(bytes: &BytesStart<'_>, key: &str) -> Vec<String> {
+        bytes
+            .attributes()
+            .map(Result::unwrap)
+            .filter(|attr| attr.key.0 == key)
+            .map(|attr| attr.value.into_owned())
+            .collect()
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    enum StubKind {
+        Nothing,
+        Empty,
+        StartEnd,
+    }
+
+    /// Emits one `tns:Dog` element like generated code does.
+    #[derive(Debug)]
+    struct Stub {
+        kind: StubKind,
+        scope: bool,
+        xsi: bool,
+        step: usize,
+    }
+
+    impl Stub {
+        fn new(kind: StubKind, scope: bool, xsi: bool) -> Self {
+            Self {
+                kind,
+                scope,
+                xsi,
+                step: 0,
+            }
+        }
+    }
+
+    impl<'ser> Serializer<'ser> for Stub {
+        fn next(&mut self, helper: &mut SerializeHelper) -> Option<Result<Event<'ser>, Error>> {
+            let step = self.step;
+            self.step += 1;
+
+            match (self.kind, step) {
+                (StubKind::Empty | StubKind::StartEnd, 0) => {
+                    let mut bytes = BytesStart::new("tns:Dog");
+                    if self.scope {
+                        helper.begin_ns_scope();
+                    }
+                    if self.xsi {
+                        helper.write_xmlns(
+                            &mut bytes,
+                            Some(&NamespacePrefix::XSI),
+                            &Namespace::XSI,
+                        );
+                    }
+
+                    if matches!(self.kind, StubKind::Empty) {
+                        if self.scope {
+                            helper.end_ns_scope();
+                        }
+
+                        Some(Ok(Event::Empty(bytes)))
+                    } else {
+                        Some(Ok(Event::Start(bytes)))
+                    }
+                }
+                (StubKind::StartEnd, 1) => {
+                    if self.scope {
+                        helper.end_ns_scope();
+                    }
+
+                    Some(Ok(Event::End(BytesEnd::new("tns:Dog"))))
+                }
+                _ => None,
+            }
+        }
+    }
+
+    fn xsi_type(kind: StubKind, scope: bool, xsi: bool) -> XsiTypeSerializer<'static, Stub> {
+        XsiTypeSerializer::new(Stub::new(kind, scope, xsi), "tns:Animal", true)
+    }
+
+    #[test]
+    fn any_simple_type_ends_its_scope() {
+        let mut helper = SerializeHelper::default();
+        let value = AnySimpleType::String("a".into());
+
+        for _ in 0..2 {
+            let serializer = value.serializer(Some("v"), false).unwrap();
+            let events = events(serializer, &mut helper);
+            let bytes = first_tag(&events);
+
+            assert_eq!(attribs(bytes, "xmlns:xsi"), [XSI]);
+            assert_eq!(
+                attribs(bytes, "xmlns:xs"),
+                ["http://www.w3.org/2001/XMLSchema"]
+            );
+        }
+    }
+
+    #[test]
+    fn any_simple_type_keeps_xsi_prefix() {
+        let mut helper = SerializeHelper::default();
+        let value = AnySimpleType::Unknown {
+            type_: Some(QName::from_bytes(b"xsi:t".to_vec()).with_namespace(NS_Y)),
+            content: "a".into(),
+            namespaces: Default::default(),
+        };
+
+        let serializer = value.serializer(Some("v"), false).unwrap();
+        let events = events(serializer, &mut helper);
+        let bytes = first_tag(&events);
+
+        assert_eq!(attribs(bytes, "xmlns:xsi"), [XSI]);
+        assert_eq!(attribs(bytes, "xmlns:ns0"), ["Y"]);
+        assert_eq!(attribs(bytes, "xsi:type"), ["ns0:t"]);
+    }
+
+    #[test]
+    fn xsi_type_serializer_ends_its_scope() {
+        for scope in [true, false] {
+            for kind in [StubKind::Empty, StubKind::StartEnd] {
+                let mut helper = SerializeHelper::default();
+
+                for _ in 0..2 {
+                    let events = events(xsi_type(kind, scope, false), &mut helper);
+                    let bytes = first_tag(&events);
+
+                    assert_eq!(attribs(bytes, "xmlns:xsi"), [XSI], "{kind:?} {scope}");
+                    assert_eq!(attribs(bytes, "xsi:type"), ["tns:Dog"], "{kind:?} {scope}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn xsi_type_serializer_ends_its_scope_without_inner_element() {
+        let mut helper = SerializeHelper::default();
+
+        assert!(events(xsi_type(StubKind::Nothing, true, false), &mut helper).is_empty());
+
+        let events = events(xsi_type(StubKind::Empty, true, false), &mut helper);
+        assert_eq!(attribs(first_tag(&events), "xmlns:xsi"), [XSI]);
+    }
+
+    #[test]
+    fn xsi_type_serializer_keeps_inner_xsi_declaration() {
+        for kind in [StubKind::Empty, StubKind::StartEnd] {
+            let mut helper = SerializeHelper::default();
+
+            let events = events(xsi_type(kind, true, true), &mut helper);
+            assert_eq!(attribs(first_tag(&events), "xmlns:xsi"), [XSI], "{kind:?}");
+        }
+    }
+
+    #[test]
+    fn nillable_nil_has_its_own_scope() {
+        let mut helper = SerializeHelper::default();
+        let value = Nillable::<String>::nil();
+
+        for _ in 0..2 {
+            let serializer = value.serializer(Some("v"), false).unwrap();
+            let events = events(serializer, &mut helper);
+
+            assert_eq!(attribs(first_tag(&events), "xmlns:xsi"), [XSI]);
+        }
+    }
+
+    #[test]
+    fn shadowed_prefix_is_not_bound() {
+        for prefix in [Some(&PREFIX_A), None] {
+            let mut helper = SerializeHelper::default();
+
+            helper.begin_ns_scope();
+            helper.write_xmlns(&mut BytesStart::new("e"), prefix, &NS_X);
+            helper.begin_ns_scope();
+            helper.write_xmlns(&mut BytesStart::new("e"), prefix, &NS_Y);
+
+            assert!(helper.get_namespace_prefix(&NS_X).is_err());
+
+            helper.begin_ns_scope();
+            let mut bytes = BytesStart::new("e");
+            helper.write_xmlns(&mut bytes, prefix, &NS_X);
+
+            let key = if prefix.is_some() { "xmlns:a" } else { "xmlns" };
+            assert_eq!(attribs(&bytes, key), ["X"]);
+        }
+    }
+
+    #[test]
+    fn qname_does_not_use_shadowed_prefix() {
+        let mut helper = SerializeHelper::default();
+
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut BytesStart::new("e"), Some(&PREFIX_A), &NS_X);
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut BytesStart::new("e"), Some(&PREFIX_A), &NS_Y);
+
+        helper.begin_ns_scope();
+        let mut bytes = BytesStart::new("e");
+        let qname = QName::from_bytes(b"a:n".to_vec()).with_namespace(NS_X);
+        let qname = helper.add_qname_namespace(&mut bytes, qname);
+
+        assert_eq!(qname.as_bytes(), b"ns0:n");
+        assert_eq!(attribs(&bytes, "xmlns:ns0"), ["X"]);
+        assert!(attribs(&bytes, "xmlns:a").is_empty());
+    }
+
+    #[test]
+    fn older_binding_is_used_if_newer_one_is_shadowed() {
+        let mut helper = SerializeHelper::default();
+
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut BytesStart::new("e"), Some(&PREFIX_A), &NS_X);
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut BytesStart::new("e"), Some(&PREFIX_B), &NS_X);
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut BytesStart::new("e"), Some(&PREFIX_B), &NS_Y);
+
+        assert_eq!(helper.get_namespace_prefix(&NS_X).unwrap(), Some(PREFIX_A));
+
+        let mut bytes = BytesStart::new("e");
+        let qname = QName::from_bytes(b"b:n".to_vec()).with_namespace(NS_X);
+        let qname = helper.add_qname_namespace(&mut bytes, qname);
+
+        assert_eq!(qname.as_bytes(), b"a:n");
+        assert_eq!(bytes.attributes().count(), 0);
+    }
+
+    #[test]
+    fn qname_does_not_rebind_prefix() {
+        let mut helper = SerializeHelper::default();
+
+        // Same element.
+        let mut bytes = BytesStart::new("e");
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut bytes, Some(&PREFIX_A), &NS_X);
+        let qname = QName::from_bytes(b"a:t".to_vec()).with_namespace(NS_Y);
+        let qname = helper.add_qname_namespace(&mut bytes, qname);
+
+        assert_eq!(qname.as_bytes(), b"ns0:t");
+        assert_eq!(attribs(&bytes, "xmlns:a"), ["X"]);
+        assert_eq!(attribs(&bytes, "xmlns:ns0"), ["Y"]);
+
+        // Child element.
+        let mut bytes = BytesStart::new("e");
+        helper.begin_ns_scope();
+        let qname = QName::from_bytes(b"a:t".to_vec()).with_namespace(NS_Y);
+        let qname = helper.add_qname_namespace(&mut bytes, qname);
+
+        assert_eq!(qname.as_bytes(), b"ns0:t");
+        assert!(attribs(&bytes, "xmlns:a").is_empty());
+    }
+
+    #[test]
+    fn prefix_is_declared_once_per_element() {
+        let mut helper = SerializeHelper::default();
+        let mut bytes = BytesStart::new("e");
+
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut bytes, Some(&PREFIX_A), &NS_X);
+        helper.write_xmlns(&mut bytes, Some(&PREFIX_A), &NS_Y);
+        assert_eq!(attribs(&bytes, "xmlns:a"), ["X"]);
+
+        let mut bytes = BytesStart::new("e");
+        helper.begin_ns_scope();
+        helper.write_xmlns(&mut bytes, None, &NS_X);
+        helper.write_xmlns_for_tag(&mut bytes, "el", &NS_Y);
+        assert_eq!(attribs(&bytes, "xmlns"), ["X"]);
     }
 }

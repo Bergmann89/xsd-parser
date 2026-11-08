@@ -379,9 +379,10 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
                         type_ = type_.with_namespace(Namespace::XS);
                     }
 
-                    let type_ = helper.add_qname_namespace(&mut bytes, type_);
-
+                    // Declare `xsi` first, so the type can not take the prefix.
                     helper.write_xmlns(&mut bytes, Some(&NamespacePrefix::XSI), &Namespace::XSI);
+
+                    let type_ = helper.add_qname_namespace(&mut bytes, type_);
                     let type_ = match from_utf8(type_.as_ref()) {
                         Ok(type_) => type_,
                         Err(err) => return Some(Err(err.into())),
@@ -398,7 +399,11 @@ impl<'ser> Serializer<'ser> for AnySimpleTypeSerializer<'ser> {
 
                 Some(Ok(Event::Text(BytesText::from_escaped(escape(content)))))
             }
-            Self::End { name } => Some(Ok(Event::End(BytesEnd::new(name)))),
+            Self::End { name } => {
+                helper.end_ns_scope();
+
+                Some(Ok(Event::End(BytesEnd::new(name))))
+            }
             Self::Done => None,
         }
     }

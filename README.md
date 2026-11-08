@@ -177,6 +177,9 @@ Below you can find a short list of the most important changes for each released 
 - **Reading and Writing Other Encodings**
   `xsd-parser-types` 0.3.1 adds the `DecodingIoReader`, which decodes the input based on the BOM or the XML declaration (e.g. `Windows-1251` or `UTF-16`), and the `EncodingWriter`, which encodes the serialized output (`write_document` writes a complete document including the matching XML declaration). Characters that can not be represented in the target encoding are written as numeric character references in text and attribute values. Since the upgrade to `quick-xml` 0.42 the `IoReader` only accepts UTF-8.
 
+- **Balanced Namespace Scopes**
+  The `SerializeHelper` lost track of the declared namespaces in some cases: `AnySimpleType` never closed its namespace scope, the `XsiTypeSerializer` left its scope open for empty elements and dropped the `xmlns:xsi` declared by the wrapped serializer, and a nil `Nillable` declared `xmlns:xsi` without a scope of its own. A following element then omitted declarations it needed. The helper now also checks the binding of a prefix instead of only the namespace, so a re-bound prefix is not used for the old namespace anymore, and it never declares the same prefix twice on one element. A prefix of a QName value (e.g. `xsi:type`) that is bound to a different namespace is replaced by a generated prefix (`ns0`, `ns1`, ...).
+
 ## Version 1.6.0
 
 This release adds proper support for dynamic and abstract types, opt-in skipping of unknown elements and dedicated types for binary data. It also upgrades `quick-xml` to 0.42 and fixes a long list of issues found with real-world schemas. Because `xsd-parser-types` re-exports `quick-xml` types, it gets a new minor version (`0.3.0`). Please have a look at the breaking changes at the end of this section before upgrading.
