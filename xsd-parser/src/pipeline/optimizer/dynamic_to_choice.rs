@@ -1,4 +1,4 @@
-use std::collections::btree_map::Entry;
+use std::collections::{btree_map::Entry, BTreeSet};
 
 use bitflags::Flags;
 
@@ -17,6 +17,9 @@ use super::{Error, Optimizer};
 impl Optimizer {
     /// This will use a enum that contains all known variants of the dynamic
     /// type instead of a dynamic box.
+    ///
+    /// Abstract descendants are excluded. A type without concrete descendants
+    /// becomes an empty choice, representing an uninhabited type.
     ///
     /// # Examples
     ///
@@ -78,11 +81,21 @@ impl Optimizer {
             return Err(Error::ExpectedDynamicType(ident));
         };
 
+        let abstract_types = self.abstract_types.get_or_insert_with(|| {
+            self.types
+                .items
+                .iter()
+                .filter_map(|(ident, ty)| match &ty.variant {
+                    MetaTypeVariant::Dynamic(meta) if meta.is_abstract => Some(ident.clone()),
+                    _ => None,
+                })
+                .collect()
+        });
         let content_name = self.types.name_builder().shared_name("Content").finish();
         let content_ident = TypeIdent::new(content_name).with_ns(ident.ns);
 
         let mut si = GroupMeta::default();
-        add_elements(&mut si, dm);
+        add_elements(&mut si, dm, abstract_types);
 
         let ty = self.types.items.get_mut(&ident).unwrap();
         ty.variant = MetaTypeVariant::ComplexType(ComplexMeta {
@@ -93,11 +106,7 @@ impl Optimizer {
 
         match self.types.items.entry(content_ident) {
             Entry::Vacant(e) => {
-                e.insert(MetaType::new(if si.elements.is_empty() {
-                    MetaTypeVariant::Sequence(si)
-                } else {
-                    MetaTypeVariant::Choice(si)
-                }));
+                e.insert(MetaType::new(MetaTypeVariant::Choice(si)));
             }
             Entry::Occupied(_) => crate::unreachable!(),
         }
@@ -106,8 +115,11 @@ impl Optimizer {
     }
 }
 
-fn add_elements(group: &mut GroupMeta, meta: &DynamicMeta) {
+fn add_elements(group: &mut GroupMeta, meta: &DynamicMeta, abstract_types: &BTreeSet<TypeIdent>) {
     for (key, meta) in &meta.derived_types {
+        if abstract_types.contains(key) {
+            continue;
+        }
         let el = group
             .elements
             .find_or_insert(key.to_property_ident(), |ident| {

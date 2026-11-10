@@ -7,7 +7,7 @@ use crate::models::{
 };
 
 /// Represents the name of a XML tag including an optional namespace prefix.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct TagName<'types> {
     /// Name of the XML tag.
     pub name: String,

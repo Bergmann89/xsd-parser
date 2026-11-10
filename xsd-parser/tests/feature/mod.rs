@@ -1,6 +1,7 @@
 #![allow(missing_docs, unreachable_pub, unused_mut, unused_variables)]
 
 mod absolute_paths;
+mod abstract_dynamic_choice;
 mod advanced_enums;
 mod all;
 mod any;

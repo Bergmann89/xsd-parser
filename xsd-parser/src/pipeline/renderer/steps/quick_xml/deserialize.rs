@@ -1399,6 +1399,11 @@ impl ComplexDataEnum<'_> {
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
         let deserialize_helper =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
+        let helper_param = if self.elements.is_empty() {
+            quote!(_)
+        } else {
+            quote!(helper)
+        };
         let element_handler_output =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ElementHandlerOutput");
 
@@ -1476,7 +1481,7 @@ impl ComplexDataEnum<'_> {
         quote! {
             fn find_suitable<'de>(
                 &mut self,
-                helper: &mut #deserialize_helper,
+                #helper_param: &mut #deserialize_helper,
                 event: #event<'de>,
                 #name_params
             ) -> #result<#element_handler_output<'de>, #error> {
@@ -1590,6 +1595,11 @@ impl ComplexDataEnum<'_> {
         let error_kind = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
         let deserialize_helper =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
+        let helper_param = if self.elements.is_empty() {
+            quote!(_)
+        } else {
+            quote!(helper)
+        };
 
         let finish_elements = self
             .elements
@@ -1610,7 +1620,7 @@ impl ComplexDataEnum<'_> {
         };
 
         quote! {
-            fn finish_state(helper: &mut #deserialize_helper, state: #deserializer_state_ident) -> #result<super::#type_ident, #error> {
+            fn finish_state(#helper_param: &mut #deserialize_helper, state: #deserializer_state_ident) -> #result<super::#type_ident, #error> {
                 use #deserializer_state_ident as S;
 
                 match state {
@@ -1817,6 +1827,14 @@ impl ComplexDataEnum<'_> {
                 }
             }
         });
+        let handler_fallback = (!self.elements.is_empty()).then(|| {
+            quote! {
+                (state, event) => {
+                    *self.state__ = state;
+                    break (#deserializer_event::Continue(event), false);
+                }
+            }
+        });
         let unconsumed_event = self.base.render_deserializer_unconsumed_event(ctx);
         let name_args = type_keyed.then(|| quote!(, ns, name));
 
@@ -1848,10 +1866,7 @@ impl ComplexDataEnum<'_> {
 
                         break (#deserializer_event::Continue(event), false);
                     },
-                    (state, event) => {
-                        *self.state__ = state;
-                        break (#deserializer_event::Continue(event), false);
-                    }
+                    #handler_fallback
                 }
             };
 

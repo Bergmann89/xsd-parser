@@ -2,7 +2,7 @@ pub mod onix {
     use core::ops::Deref;
     use xsd_parser_types::{
         quick_xml::ValidateError,
-        xml::{AnyElement, Mixed, Text},
+        xml::{Mixed, Text},
     };
     ///Root element – the top level container within an ONIX message
     ///
@@ -10118,9 +10118,6 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum BlockElement {
-        Heading(AnyElement),
-        Lists(AnyElement),
-        Blocktext(AnyElement),
         Div(DdElementType),
         P(AbbrElementType),
         H1(AbbrElementType),
@@ -10140,10 +10137,6 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum InlineElement {
-        Special(AnyElement),
-        Fontstyle(AnyElement),
-        Phrase(AnyElement),
-        Gloss(AnyElement),
         A(AElementType),
         Span(AbbrElementType),
         Bdo(BdoElementType),

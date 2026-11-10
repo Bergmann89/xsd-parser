@@ -1,0 +1,4 @@
+<tns:Message xmlns:tns="urn:example" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <tns:Payload xsi:type="tns:Leaf" id="7" label="concrete leaf"/>
+    <tns:Member>concrete member</tns:Member>
+</tns:Message>

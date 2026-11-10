@@ -16,7 +16,7 @@ pub mod onix {
             SerializeBytes, SerializeHelper, ValidateError, WithDeserializer,
             WithDeserializerFromBytes, WithSerializeToBytes, WithSerializer,
         },
-        xml::{AnyElement, Mixed, Text},
+        xml::{Mixed, Text},
     };
     ///Root element – the top level container within an ONIX message
     ///
@@ -24833,9 +24833,6 @@ pub mod onix {
     impl WithDeserializerFromBytes for List34 {}
     #[derive(Debug)]
     pub enum BlockElement {
-        Heading(AnyElement),
-        Lists(AnyElement),
-        Blocktext(AnyElement),
         Div(DdElementType),
         P(AbbrElementType),
         H1(AbbrElementType),
@@ -24887,10 +24884,6 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum InlineElement {
-        Special(AnyElement),
-        Fontstyle(AnyElement),
-        Phrase(AnyElement),
-        Gloss(AnyElement),
         A(AElementType),
         Span(AbbrElementType),
         Bdo(BdoElementType),
@@ -85561,7 +85554,7 @@ pub mod onix {
                 DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
                 ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
             },
-            xml::{AnyElement, Mixed, Text},
+            xml::{Mixed, Text},
         };
         #[derive(Debug)]
         pub struct OnixMessageElementTypeDeserializer {
@@ -101989,7 +101982,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"IllustrationsNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_illustrations_note(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -102678,7 +102671,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"AudienceDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_audience_description(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -104206,7 +104199,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"EventDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_event_description(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -109143,7 +109136,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"MarketPublishingStatusNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_market_publishing_status_note(
                                 helper,
@@ -109184,7 +109177,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"PromotionCampaign",
-                                true,
+                                false,
                             )?;
                             match self.handle_promotion_campaign(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -109201,7 +109194,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"InitialPrintRun",
-                                true,
+                                false,
                             )?;
                             match self.handle_initial_print_run(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -109218,7 +109211,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ReprintDetail",
-                                true,
+                                false,
                             )?;
                             match self.handle_reprint_detail(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -109235,7 +109228,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"CopiesSold",
-                                true,
+                                false,
                             )?;
                             match self.handle_copies_sold(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -109255,7 +109248,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"BookClubAdoption",
-                                true,
+                                false,
                             )?;
                             match self.handle_book_club_adoption(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -118200,7 +118193,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"TitleStatement",
-                                true,
+                                false,
                             )?;
                             match self.handle_title_statement(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -118840,7 +118833,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ContributorStatement",
-                                true,
+                                false,
                             )?;
                             match self.handle_contributor_statement(
                                 helper,
@@ -122567,7 +122560,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"AncillaryContentDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_ancillary_content_description(
                                 helper,
@@ -126422,7 +126415,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"Text",
-                                true,
+                                false,
                             )?;
                             match self.handle_text(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -126500,7 +126493,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"TextSourceDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_text_source_description(
                                 helper,
@@ -127439,7 +127432,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"CitationNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_citation_note(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -129167,7 +129160,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"PrizeStatement",
-                                true,
+                                false,
                             )?;
                             match self.handle_prize_statement(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -129184,7 +129177,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"PrizeJury",
-                                true,
+                                false,
                             )?;
                             match self.handle_prize_jury(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -131569,7 +131562,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"EventDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_event_description(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -132629,7 +132622,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"WebsiteDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_website_description(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -134509,7 +134502,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"CopyrightStatementText",
-                                true,
+                                false,
                             )?;
                             match self.handle_copyright_statement_text(
                                 helper,
@@ -136466,7 +136459,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"PublishingStatusNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_publishing_status_note(
                                 helper,
@@ -140806,7 +140799,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"SalesRestrictionNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_sales_restriction_note(
                                 helper,
@@ -155892,7 +155885,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"BiographicalNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_biographical_note(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -155929,7 +155922,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ContributorDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_contributor_description(
                                 helper,
@@ -157611,7 +157604,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"EditionStatement",
-                                true,
+                                false,
                             )?;
                             match self.handle_edition_statement(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -160382,21 +160375,6 @@ pub mod onix {
         #[derive(Debug)]
         pub enum BlockElementDeserializerState {
             Init__,
-            Heading(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Lists(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Blocktext(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
             Div(
                 Option<super::DdElementType>,
                 Option<<super::DdElementType as WithDeserializer>::Deserializer>,
@@ -160487,27 +160465,6 @@ pub mod onix {
                 event: Event<'de>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
-                        Some(b"heading")
-                    ) {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        return self.handle_heading(helper, Default::default(), None, output);
-                    }
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
-                        Some(b"lists")
-                    ) {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        return self.handle_lists(helper, Default::default(), None, output);
-                    }
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
-                        Some(b"blocktext")
-                    ) {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        return self.handle_blocktext(helper, Default::default(), None, output);
-                    }
                     if matches!(
                         helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
                         Some(b"div")
@@ -160648,33 +160605,6 @@ pub mod onix {
                 use BlockElementDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
-                    S::Heading(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_heading(&mut values, value)?;
-                        }
-                        Ok(super::BlockElement::Heading(
-                            helper.finish_element("heading", values)?,
-                        ))
-                    }
-                    S::Lists(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_lists(&mut values, value)?;
-                        }
-                        Ok(super::BlockElement::Lists(
-                            helper.finish_element("lists", values)?,
-                        ))
-                    }
-                    S::Blocktext(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_blocktext(&mut values, value)?;
-                        }
-                        Ok(super::BlockElement::Blocktext(
-                            helper.finish_element("blocktext", values)?,
-                        ))
-                    }
                     S::Div(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
@@ -160820,42 +160750,6 @@ pub mod onix {
                     S::Done__(data) => Ok(data),
                     _ => unreachable!(),
                 }
-            }
-            fn store_heading(
-                values: &mut Option<AnyElement>,
-                value: AnyElement,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"heading",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_lists(
-                values: &mut Option<AnyElement>,
-                value: AnyElement,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"lists",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_blocktext(
-                values: &mut Option<AnyElement>,
-                value: AnyElement,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"blocktext",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
             }
             fn store_div(
                 values: &mut Option<super::DdElementType>,
@@ -161022,108 +160916,6 @@ pub mod onix {
                 }
                 *values = Some(value);
                 Ok(())
-            }
-            fn handle_heading<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BlockElementDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_heading(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_heading(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Heading(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Heading(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_lists<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BlockElementDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_lists(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_lists(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Lists(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Lists(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_blocktext<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use BlockElementDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_blocktext(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_blocktext(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Blocktext(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Blocktext(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
             }
             fn handle_div<'de>(
                 &mut self,
@@ -161700,33 +161492,6 @@ pub mod onix {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
-                        (S::Heading(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_heading(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Lists(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_lists(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Blocktext(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_blocktext(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
                         (S::Div(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
                             match self.handle_div(helper, values, fallback, output)? {
@@ -161887,57 +161652,6 @@ pub mod onix {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         },
                         (
-                            S::Heading(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ONIX),
-                                b"heading",
-                                true,
-                            )?;
-                            match self.handle_heading(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Lists(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ONIX),
-                                b"lists",
-                                true,
-                            )?;
-                            match self.handle_lists(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Blocktext(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ONIX),
-                                b"blocktext",
-                                true,
-                            )?;
-                            match self.handle_blocktext(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
                             S::Div(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
@@ -161945,7 +161659,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"div",
-                                true,
+                                false,
                             )?;
                             match self.handle_div(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -161962,7 +161676,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"p",
-                                true,
+                                false,
                             )?;
                             match self.handle_p(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -161979,7 +161693,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"h1",
-                                true,
+                                false,
                             )?;
                             match self.handle_h1(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -161996,7 +161710,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"h2",
-                                true,
+                                false,
                             )?;
                             match self.handle_h2(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162013,7 +161727,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"h3",
-                                true,
+                                false,
                             )?;
                             match self.handle_h3(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162030,7 +161744,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"h4",
-                                true,
+                                false,
                             )?;
                             match self.handle_h4(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162047,7 +161761,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"h5",
-                                true,
+                                false,
                             )?;
                             match self.handle_h5(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162064,7 +161778,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"h6",
-                                true,
+                                false,
                             )?;
                             match self.handle_h6(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162081,7 +161795,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ul",
-                                true,
+                                false,
                             )?;
                             match self.handle_ul(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162098,7 +161812,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ol",
-                                true,
+                                false,
                             )?;
                             match self.handle_ol(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162115,7 +161829,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"dl",
-                                true,
+                                false,
                             )?;
                             match self.handle_dl(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162132,7 +161846,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"address",
-                                true,
+                                false,
                             )?;
                             match self.handle_address(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162166,7 +161880,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"pre",
-                                true,
+                                false,
                             )?;
                             match self.handle_pre(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162183,7 +161897,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"blockquote",
-                                true,
+                                false,
                             )?;
                             match self.handle_blockquote(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162200,7 +161914,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"table",
-                                true,
+                                false,
                             )?;
                             match self.handle_table(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -162241,26 +161955,6 @@ pub mod onix {
         #[derive(Debug)]
         pub enum InlineElementDeserializerState {
             Init__,
-            Special(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Fontstyle(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Phrase(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
-            Gloss(
-                Option<AnyElement>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-                Option<<AnyElement as WithDeserializer>::Deserializer>,
-            ),
             A(
                 Option<super::AElementType>,
                 Option<<super::AElementType as WithDeserializer>::Deserializer>,
@@ -162396,34 +162090,6 @@ pub mod onix {
                 event: Event<'de>,
             ) -> Result<ElementHandlerOutput<'de>, Error> {
                 if let Event::Start(x) | Event::Empty(x) = &event {
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
-                        Some(b"special")
-                    ) {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        return self.handle_special(helper, Default::default(), None, output);
-                    }
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
-                        Some(b"fontstyle")
-                    ) {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        return self.handle_fontstyle(helper, Default::default(), None, output);
-                    }
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
-                        Some(b"phrase")
-                    ) {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        return self.handle_phrase(helper, Default::default(), None, output);
-                    }
-                    if matches!(
-                        helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
-                        Some(b"gloss")
-                    ) {
-                        let output = <AnyElement as WithDeserializer>::init(helper, event)?;
-                        return self.handle_gloss(helper, Default::default(), None, output);
-                    }
                     if matches!(
                         helper.resolve_element_local_name(x.name(), &super::super::NS_ONIX),
                         Some(b"a")
@@ -162635,42 +162301,6 @@ pub mod onix {
                 use InlineElementDeserializerState as S;
                 match state {
                     S::Init__ => Err(ErrorKind::MissingContent.into()),
-                    S::Special(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_special(&mut values, value)?;
-                        }
-                        Ok(super::InlineElement::Special(
-                            helper.finish_element("special", values)?,
-                        ))
-                    }
-                    S::Fontstyle(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_fontstyle(&mut values, value)?;
-                        }
-                        Ok(super::InlineElement::Fontstyle(
-                            helper.finish_element("fontstyle", values)?,
-                        ))
-                    }
-                    S::Phrase(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_phrase(&mut values, value)?;
-                        }
-                        Ok(super::InlineElement::Phrase(
-                            helper.finish_element("phrase", values)?,
-                        ))
-                    }
-                    S::Gloss(mut values, None, deserializer) => {
-                        if let Some(deserializer) = deserializer {
-                            let value = deserializer.finish(helper)?;
-                            Self::store_gloss(&mut values, value)?;
-                        }
-                        Ok(super::InlineElement::Gloss(
-                            helper.finish_element("gloss", values)?,
-                        ))
-                    }
                     S::A(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
@@ -162891,54 +162521,6 @@ pub mod onix {
                     S::Done__(data) => Ok(data),
                     _ => unreachable!(),
                 }
-            }
-            fn store_special(
-                values: &mut Option<AnyElement>,
-                value: AnyElement,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"special",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_fontstyle(
-                values: &mut Option<AnyElement>,
-                value: AnyElement,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"fontstyle",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_phrase(
-                values: &mut Option<AnyElement>,
-                value: AnyElement,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"phrase",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
-            }
-            fn store_gloss(
-                values: &mut Option<AnyElement>,
-                value: AnyElement,
-            ) -> Result<(), Error> {
-                if values.is_some() {
-                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                        b"gloss",
-                    )))?;
-                }
-                *values = Some(value);
-                Ok(())
             }
             fn store_a(
                 values: &mut Option<super::AElementType>,
@@ -163195,142 +162777,6 @@ pub mod onix {
                 }
                 *values = Some(value);
                 Ok(())
-            }
-            fn handle_special<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use InlineElementDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_special(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_special(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Special(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Special(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_fontstyle<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use InlineElementDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_fontstyle(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_fontstyle(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Fontstyle(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Fontstyle(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_phrase<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use InlineElementDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_phrase(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_phrase(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Phrase(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Phrase(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
-            }
-            fn handle_gloss<'de>(
-                &mut self,
-                helper: &mut DeserializeHelper,
-                mut values: Option<AnyElement>,
-                fallback: Option<<AnyElement as WithDeserializer>::Deserializer>,
-                output: DeserializerOutput<'de, AnyElement>,
-            ) -> Result<ElementHandlerOutput<'de>, Error> {
-                use InlineElementDeserializerState as S;
-                let DeserializerOutput {
-                    artifact,
-                    event,
-                    allow_any,
-                } = output;
-                if artifact.is_none() {
-                    return Ok(ElementHandlerOutput::return_to_root(event, allow_any));
-                }
-                if let Some(deserializer) = fallback {
-                    let data = deserializer.finish(helper)?;
-                    Self::store_gloss(&mut values, data)?;
-                }
-                match artifact {
-                    DeserializerArtifact::None => unreachable!(),
-                    DeserializerArtifact::Data(data) => {
-                        Self::store_gloss(&mut values, data)?;
-                        let data = Self::finish_state(helper, S::Gloss(values, None, None))?;
-                        *self.state__ = S::Done__(data);
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                    DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state__ = S::Gloss(values, None, Some(deserializer));
-                        Ok(ElementHandlerOutput::break_(event, allow_any))
-                    }
-                }
             }
             fn handle_a<'de>(
                 &mut self,
@@ -164213,42 +163659,6 @@ pub mod onix {
                     let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Unknown__, _) => unreachable!(),
-                        (S::Special(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_special(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Fontstyle(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_fontstyle(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Phrase(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_phrase(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (S::Gloss(values, fallback, Some(deserializer)), event) => {
-                            let output = deserializer.next(helper, event)?;
-                            match self.handle_gloss(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
                         (S::A(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
                             match self.handle_a(helper, values, fallback, output)? {
@@ -164490,74 +163900,6 @@ pub mod onix {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         },
                         (
-                            S::Special(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ONIX),
-                                b"special",
-                                true,
-                            )?;
-                            match self.handle_special(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Fontstyle(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ONIX),
-                                b"fontstyle",
-                                true,
-                            )?;
-                            match self.handle_fontstyle(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Phrase(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ONIX),
-                                b"phrase",
-                                true,
-                            )?;
-                            match self.handle_phrase(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
-                            S::Gloss(values, fallback, None),
-                            event @ (Event::Start(_) | Event::Empty(_)),
-                        ) => {
-                            let output = helper.init_start_tag_deserializer(
-                                event,
-                                Some(&super::super::NS_ONIX),
-                                b"gloss",
-                                true,
-                            )?;
-                            match self.handle_gloss(helper, values, fallback, output)? {
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
-                                ElementHandlerOutput::Continue { event, .. } => event,
-                            }
-                        }
-                        (
                             S::A(values, fallback, None),
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
@@ -164565,7 +163907,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"a",
-                                true,
+                                false,
                             )?;
                             match self.handle_a(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164582,7 +163924,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"span",
-                                true,
+                                false,
                             )?;
                             match self.handle_span(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164599,7 +163941,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"bdo",
-                                true,
+                                false,
                             )?;
                             match self.handle_bdo(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164633,7 +163975,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"em",
-                                true,
+                                false,
                             )?;
                             match self.handle_em(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164650,7 +163992,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"strong",
-                                true,
+                                false,
                             )?;
                             match self.handle_strong(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164667,7 +164009,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"dfn",
-                                true,
+                                false,
                             )?;
                             match self.handle_dfn(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164684,7 +164026,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"code",
-                                true,
+                                false,
                             )?;
                             match self.handle_code(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164701,7 +164043,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"samp",
-                                true,
+                                false,
                             )?;
                             match self.handle_samp(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164718,7 +164060,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"kbd",
-                                true,
+                                false,
                             )?;
                             match self.handle_kbd(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164735,7 +164077,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"var",
-                                true,
+                                false,
                             )?;
                             match self.handle_var(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164752,7 +164094,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"cite",
-                                true,
+                                false,
                             )?;
                             match self.handle_cite(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164769,7 +164111,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"abbr",
-                                true,
+                                false,
                             )?;
                             match self.handle_abbr(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164786,7 +164128,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"acronym",
-                                true,
+                                false,
                             )?;
                             match self.handle_acronym(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164803,7 +164145,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"q",
-                                true,
+                                false,
                             )?;
                             match self.handle_q(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164820,7 +164162,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"sub",
-                                true,
+                                false,
                             )?;
                             match self.handle_sub(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164837,7 +164179,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"sup",
-                                true,
+                                false,
                             )?;
                             match self.handle_sup(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164854,7 +164196,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"tt",
-                                true,
+                                false,
                             )?;
                             match self.handle_tt(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164871,7 +164213,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"i",
-                                true,
+                                false,
                             )?;
                             match self.handle_i(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164888,7 +164230,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"b",
-                                true,
+                                false,
                             )?;
                             match self.handle_b(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164905,7 +164247,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"big",
-                                true,
+                                false,
                             )?;
                             match self.handle_big(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164922,7 +164264,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"small",
-                                true,
+                                false,
                             )?;
                             match self.handle_small(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164956,7 +164298,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"map",
-                                true,
+                                false,
                             )?;
                             match self.handle_map(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -164973,7 +164315,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ruby",
-                                true,
+                                false,
                             )?;
                             match self.handle_ruby(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -175016,7 +174358,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"FeatureNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_feature_note(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -178022,7 +177364,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ContributorStatement",
-                                true,
+                                false,
                             )?;
                             match self.handle_contributor_statement(
                                 helper,
@@ -178867,7 +178209,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"VenueNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_venue_note(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -206470,7 +205812,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ReligiousTextFeatureDescription",
-                                true,
+                                false,
                             )?;
                             match self.handle_religious_text_feature_description(
                                 helper,
@@ -207683,7 +207025,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"li",
-                                true,
+                                false,
                             )?;
                             match self.handle_li(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -207940,7 +207282,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"li",
-                                true,
+                                false,
                             )?;
                             match self.handle_li(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -208434,7 +207776,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"dt",
-                                true,
+                                false,
                             )?;
                             match self.handle_dt(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -208451,7 +207793,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"dd",
-                                true,
+                                false,
                             )?;
                             match self.handle_dd(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -209543,7 +208885,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"caption",
-                                true,
+                                false,
                             )?;
                             match self.handle_caption(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -209573,7 +208915,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"thead",
-                                true,
+                                false,
                             )?;
                             match self.handle_thead(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -209590,7 +208932,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"tfoot",
-                                true,
+                                false,
                             )?;
                             match self.handle_tfoot(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -218697,7 +218039,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"FeatureNote",
-                                true,
+                                false,
                             )?;
                             match self.handle_feature_note(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -245863,7 +245205,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"em",
-                                true,
+                                false,
                             )?;
                             match self.handle_em(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245880,7 +245222,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"strong",
-                                true,
+                                false,
                             )?;
                             match self.handle_strong(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245897,7 +245239,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"dfn",
-                                true,
+                                false,
                             )?;
                             match self.handle_dfn(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245914,7 +245256,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"code",
-                                true,
+                                false,
                             )?;
                             match self.handle_code(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245931,7 +245273,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"samp",
-                                true,
+                                false,
                             )?;
                             match self.handle_samp(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245948,7 +245290,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"kbd",
-                                true,
+                                false,
                             )?;
                             match self.handle_kbd(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245965,7 +245307,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"var",
-                                true,
+                                false,
                             )?;
                             match self.handle_var(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245982,7 +245324,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"cite",
-                                true,
+                                false,
                             )?;
                             match self.handle_cite(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -245999,7 +245341,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"abbr",
-                                true,
+                                false,
                             )?;
                             match self.handle_abbr(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -246016,7 +245358,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"acronym",
-                                true,
+                                false,
                             )?;
                             match self.handle_acronym(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -246033,7 +245375,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"q",
-                                true,
+                                false,
                             )?;
                             match self.handle_q(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -246050,7 +245392,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"sub",
-                                true,
+                                false,
                             )?;
                             match self.handle_sub(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -246067,7 +245409,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"sup",
-                                true,
+                                false,
                             )?;
                             match self.handle_sup(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -246262,7 +245604,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"ruby",
-                                true,
+                                false,
                             )?;
                             match self.handle_ruby(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247247,7 +246589,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"a",
-                                true,
+                                false,
                             )?;
                             match self.handle_a(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247281,7 +246623,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"span",
-                                true,
+                                false,
                             )?;
                             match self.handle_span(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247298,7 +246640,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"bdo",
-                                true,
+                                false,
                             )?;
                             match self.handle_bdo(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247315,7 +246657,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"map",
-                                true,
+                                false,
                             )?;
                             match self.handle_map(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247332,7 +246674,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"tt",
-                                true,
+                                false,
                             )?;
                             match self.handle_tt(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247349,7 +246691,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"i",
-                                true,
+                                false,
                             )?;
                             match self.handle_i(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247366,7 +246708,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"b",
-                                true,
+                                false,
                             )?;
                             match self.handle_b(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -247971,7 +247313,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"tr",
-                                true,
+                                false,
                             )?;
                             match self.handle_tr(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -248283,7 +247625,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"tbody",
-                                true,
+                                false,
                             )?;
                             match self.handle_tbody(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -248300,7 +247642,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"tr",
-                                true,
+                                false,
                             )?;
                             match self.handle_tr(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -248798,7 +248140,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"span",
-                                true,
+                                false,
                             )?;
                             match self.handle_span(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -248815,7 +248157,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"bdo",
-                                true,
+                                false,
                             )?;
                             match self.handle_bdo(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -248866,7 +248208,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"map",
-                                true,
+                                false,
                             )?;
                             match self.handle_map(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -249366,7 +248708,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"tt",
-                                true,
+                                false,
                             )?;
                             match self.handle_tt(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -249383,7 +248725,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"i",
-                                true,
+                                false,
                             )?;
                             match self.handle_i(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -249400,7 +248742,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"b",
-                                true,
+                                false,
                             )?;
                             match self.handle_b(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -249417,7 +248759,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"big",
-                                true,
+                                false,
                             )?;
                             match self.handle_big(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -249434,7 +248776,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"small",
-                                true,
+                                false,
                             )?;
                             match self.handle_small(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -250476,7 +249818,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"rb",
-                                true,
+                                false,
                             )?;
                             match self.handle_rb(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -250726,7 +250068,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"rbc",
-                                true,
+                                false,
                             )?;
                             match self.handle_rbc(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -250743,7 +250085,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"rtc",
-                                true,
+                                false,
                             )?;
                             match self.handle_rtc(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -273707,7 +273049,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"th",
-                                true,
+                                false,
                             )?;
                             match self.handle_th(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -273724,7 +273066,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"td",
-                                true,
+                                false,
                             )?;
                             match self.handle_td(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -274218,7 +273560,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"rt",
-                                true,
+                                false,
                             )?;
                             match self.handle_rt(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -274454,7 +273796,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"rb",
-                                true,
+                                false,
                             )?;
                             match self.handle_rb(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -274695,7 +274037,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"rt",
-                                true,
+                                false,
                             )?;
                             match self.handle_rt(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -283629,7 +282971,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"a",
-                                true,
+                                false,
                             )?;
                             match self.handle_a(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -284157,7 +283499,7 @@ pub mod onix {
                                 event,
                                 Some(&super::super::NS_ONIX),
                                 b"rt",
-                                true,
+                                false,
                             )?;
                             match self.handle_rt(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
@@ -289953,7 +289295,7 @@ pub mod onix {
                 BytesEnd, BytesStart, ElementNamespace, Error, Event, IterSerializer,
                 SerializeHelper, Serializer, WithSerializer,
             },
-            xml::{AnyElement, Mixed, Text},
+            xml::{Mixed, Text},
         };
         #[derive(Debug)]
         pub struct OnixMessageElementTypeSerializer<'ser> {
@@ -316701,9 +316043,6 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum BlockElementSerializerState<'ser> {
             Init__,
-            Heading(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Lists(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Blocktext(<AnyElement as WithSerializer>::Serializer<'ser>),
             Div(<super::DdElementType as WithSerializer>::Serializer<'ser>),
             P(<super::AbbrElementType as WithSerializer>::Serializer<'ser>),
             H1(<super::AbbrElementType as WithSerializer>::Serializer<'ser>),
@@ -316731,36 +316070,6 @@ pub mod onix {
                 loop {
                     match &mut *self.state {
                         BlockElementSerializerState::Init__ => match self.value {
-                            super::BlockElement::Heading(x) => {
-                                *self.state = BlockElementSerializerState::Heading(
-                                    WithSerializer::serializer_with_namespace(
-                                        x,
-                                        Some("heading"),
-                                        ElementNamespace::Namespace(super::super::NS_ONIX),
-                                        self.is_root,
-                                    )?,
-                                )
-                            }
-                            super::BlockElement::Lists(x) => {
-                                *self.state = BlockElementSerializerState::Lists(
-                                    WithSerializer::serializer_with_namespace(
-                                        x,
-                                        Some("lists"),
-                                        ElementNamespace::Namespace(super::super::NS_ONIX),
-                                        self.is_root,
-                                    )?,
-                                )
-                            }
-                            super::BlockElement::Blocktext(x) => {
-                                *self.state = BlockElementSerializerState::Blocktext(
-                                    WithSerializer::serializer_with_namespace(
-                                        x,
-                                        Some("blocktext"),
-                                        ElementNamespace::Namespace(super::super::NS_ONIX),
-                                        self.is_root,
-                                    )?,
-                                )
-                            }
                             super::BlockElement::Div(x) => {
                                 *self.state = BlockElementSerializerState::Div(
                                     WithSerializer::serializer_with_namespace(
@@ -316922,24 +316231,6 @@ pub mod onix {
                                 )
                             }
                         },
-                        BlockElementSerializerState::Heading(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = BlockElementSerializerState::Done__,
-                            }
-                        }
-                        BlockElementSerializerState::Lists(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = BlockElementSerializerState::Done__,
-                            }
-                        }
-                        BlockElementSerializerState::Blocktext(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = BlockElementSerializerState::Done__,
-                            }
-                        }
                         BlockElementSerializerState::Div(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BlockElementSerializerState::Done__,
@@ -317037,10 +316328,6 @@ pub mod onix {
         #[derive(Debug)]
         pub(super) enum InlineElementSerializerState<'ser> {
             Init__,
-            Special(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Fontstyle(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Phrase(<AnyElement as WithSerializer>::Serializer<'ser>),
-            Gloss(<AnyElement as WithSerializer>::Serializer<'ser>),
             A(<super::AElementType as WithSerializer>::Serializer<'ser>),
             Span(<super::AbbrElementType as WithSerializer>::Serializer<'ser>),
             Bdo(<super::BdoElementType as WithSerializer>::Serializer<'ser>),
@@ -317077,46 +316364,6 @@ pub mod onix {
                 loop {
                     match &mut *self.state {
                         InlineElementSerializerState::Init__ => match self.value {
-                            super::InlineElement::Special(x) => {
-                                *self.state = InlineElementSerializerState::Special(
-                                    WithSerializer::serializer_with_namespace(
-                                        x,
-                                        Some("special"),
-                                        ElementNamespace::Namespace(super::super::NS_ONIX),
-                                        self.is_root,
-                                    )?,
-                                )
-                            }
-                            super::InlineElement::Fontstyle(x) => {
-                                *self.state = InlineElementSerializerState::Fontstyle(
-                                    WithSerializer::serializer_with_namespace(
-                                        x,
-                                        Some("fontstyle"),
-                                        ElementNamespace::Namespace(super::super::NS_ONIX),
-                                        self.is_root,
-                                    )?,
-                                )
-                            }
-                            super::InlineElement::Phrase(x) => {
-                                *self.state = InlineElementSerializerState::Phrase(
-                                    WithSerializer::serializer_with_namespace(
-                                        x,
-                                        Some("phrase"),
-                                        ElementNamespace::Namespace(super::super::NS_ONIX),
-                                        self.is_root,
-                                    )?,
-                                )
-                            }
-                            super::InlineElement::Gloss(x) => {
-                                *self.state = InlineElementSerializerState::Gloss(
-                                    WithSerializer::serializer_with_namespace(
-                                        x,
-                                        Some("gloss"),
-                                        ElementNamespace::Namespace(super::super::NS_ONIX),
-                                        self.is_root,
-                                    )?,
-                                )
-                            }
                             super::InlineElement::A(x) => {
                                 *self.state = InlineElementSerializerState::A(
                                     WithSerializer::serializer_with_namespace(
@@ -317368,30 +316615,6 @@ pub mod onix {
                                 )
                             }
                         },
-                        InlineElementSerializerState::Special(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = InlineElementSerializerState::Done__,
-                            }
-                        }
-                        InlineElementSerializerState::Fontstyle(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = InlineElementSerializerState::Done__,
-                            }
-                        }
-                        InlineElementSerializerState::Phrase(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = InlineElementSerializerState::Done__,
-                            }
-                        }
-                        InlineElementSerializerState::Gloss(x) => {
-                            match x.next(helper).transpose()? {
-                                Some(event) => return Ok(Some(event)),
-                                None => *self.state = InlineElementSerializerState::Done__,
-                            }
-                        }
                         InlineElementSerializerState::A(x) => match x.next(helper).transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = InlineElementSerializerState::Done__,
