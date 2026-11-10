@@ -27,6 +27,7 @@ fn main() -> Result<(), Error> {
             .with_generator_flags(
                 GeneratorFlags::all()
                     - GeneratorFlags::USE_MODULES
+                    - GeneratorFlags::USE_TYPE_MODULES
                     - GeneratorFlags::ANY_TYPE_SUPPORT
                     - GeneratorFlags::MIXED_TYPE_SUPPORT
                     - GeneratorFlags::NILLABLE_TYPE_SUPPORT

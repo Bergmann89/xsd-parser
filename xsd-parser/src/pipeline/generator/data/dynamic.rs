@@ -19,6 +19,7 @@ impl<'types> DynamicData<'types> {
     ) -> Result<Self, Error> {
         let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_ident = format_ident!("{type_ident}Trait");
+        ctx.register_public_path(&trait_ident)?;
         let trait_impls = ctx.make_trait_impls()?;
         let sub_traits = ctx.make_traits_derive()?;
         let form = ctx.types.get_form(ctx.ident);

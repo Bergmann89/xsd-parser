@@ -596,7 +596,7 @@ pub mod quick_xml_deserialize {
                     Some(b"Base64Type")
                 ) {
                     let output = <super::Base64Type as WithDeserializer>::init(helper, event)?;
-                    return self.handle_base_64_type(helper, Default::default(), None, output);
+                    return self.handle_base64_type(helper, Default::default(), None, output);
                 }
             }
             *self.state__ = RootTypeContentDeserializerState::Init__;
@@ -648,7 +648,7 @@ pub mod quick_xml_deserialize {
                 S::Base64Type(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
-                        Self::store_base_64_type(&mut values, value)?;
+                        Self::store_base64_type(&mut values, value)?;
                     }
                     Ok(super::RootTypeContent::Base64Type(
                         helper.finish_element("Base64Type", values)?,
@@ -706,7 +706,7 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn store_base_64_type(
+        fn store_base64_type(
             values: &mut Option<super::Base64Type>,
             value: super::Base64Type,
         ) -> Result<(), Error> {
@@ -854,7 +854,7 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn handle_base_64_type<'de>(
+        fn handle_base64_type<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<super::Base64Type>,
@@ -872,12 +872,12 @@ pub mod quick_xml_deserialize {
             }
             if let Some(deserializer) = fallback {
                 let data = deserializer.finish(helper)?;
-                Self::store_base_64_type(&mut values, data)?;
+                Self::store_base64_type(&mut values, data)?;
             }
             match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    Self::store_base_64_type(&mut values, data)?;
+                    Self::store_base64_type(&mut values, data)?;
                     let data = Self::finish_state(helper, S::Base64Type(values, None, None))?;
                     *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -957,7 +957,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Base64Type(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_base_64_type(helper, values, fallback, output)? {
+                        match self.handle_base64_type(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -1057,7 +1057,7 @@ pub mod quick_xml_deserialize {
                             b"Base64Type",
                             false,
                         )?;
-                        match self.handle_base_64_type(helper, values, fallback, output)? {
+                        match self.handle_base64_type(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }

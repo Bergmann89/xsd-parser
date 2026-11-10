@@ -23,6 +23,8 @@ pub(super) struct State<'types> {
     /// Rust paths of the generated types, to detect two types sharing one path.
     pub paths: BTreeMap<IdentPath, TypeIdent>,
 
+    pub type_modules: super::layout::TypeModules,
+
     /// Resolved identifiers of the content types that are used by more than one
     /// complex type.
     ///
@@ -61,6 +63,7 @@ impl State<'_> {
             trait_infos: TraitInfos::empty(),
             loop_detection: LoopDetection::default(),
             paths: BTreeMap::new(),
+            type_modules: super::layout::TypeModules::default(),
             shared_content_idents,
         }
     }

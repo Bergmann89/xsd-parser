@@ -15,7 +15,7 @@ fn config() -> Config {
         .with_interpreter_flags(InterpreterFlags::all())
         .with_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATES)
         .with_generator_flags(
-            GeneratorFlags::all()
+            (GeneratorFlags::all() - GeneratorFlags::USE_TYPE_MODULES)
                 - GeneratorFlags::FLATTEN_CONTENT
                 - GeneratorFlags::ADVANCED_ENUMS,
         );

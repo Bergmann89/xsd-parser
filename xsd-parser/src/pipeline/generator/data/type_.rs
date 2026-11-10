@@ -43,6 +43,7 @@ impl<'types> DataType<'types> {
         let extra_attributes = Vec::new();
 
         Ok(Self {
+            module_path: ctx.current_module(),
             meta,
             derive,
             variant,

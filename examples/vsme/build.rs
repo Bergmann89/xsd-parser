@@ -52,7 +52,11 @@ fn main() -> Result<(), Error> {
         .with_generate([(IdentType::Element, "xbrli:xbrl")])
         .with_interpreter_flags(InterpreterFlags::all() - InterpreterFlags::WITH_NUM_BIG_INT)
         .with_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS)
+        .with_generator_flags(
+            GeneratorFlags::all()
+                - GeneratorFlags::ADVANCED_ENUMS
+                - GeneratorFlags::USE_TYPE_MODULES,
+        )
         .with_naming(CustomNaming::default())
         .with_quick_xml()
         .with_render_step(fix_item_type.clone());

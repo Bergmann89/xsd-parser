@@ -61,7 +61,7 @@ impl UnionData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.current_module().append(code);
+        ctx.current_module().append(code).export(type_ident);
 
         self.render_common_impls(ctx);
     }
@@ -127,7 +127,10 @@ impl DynamicData<'_> {
             }
         };
 
-        ctx.current_module().append(code);
+        ctx.current_module()
+            .append(code)
+            .export(type_ident)
+            .export(trait_ident);
     }
 }
 
@@ -179,7 +182,7 @@ impl ReferenceData<'_> {
             }
         };
 
-        ctx.current_module().append(code);
+        ctx.current_module().append(code).export(type_ident);
     }
 }
 
@@ -215,7 +218,7 @@ impl EnumerationData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.current_module().append(code);
+        ctx.current_module().append(code).export(type_ident);
 
         self.render_common_impls(ctx);
     }
@@ -276,7 +279,7 @@ impl SimpleData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.current_module().append(code);
+        ctx.current_module().append(code).export(type_ident);
 
         self.render_common_impls(ctx);
     }
@@ -332,7 +335,7 @@ impl ComplexDataEnum<'_> {
             #( #trait_impls )*
         };
 
-        ctx.current_module().append(code);
+        ctx.current_module().append(code).export(type_ident);
     }
 }
 
@@ -370,7 +373,7 @@ impl ComplexDataStruct<'_> {
             #( #trait_impls )*
         };
 
-        ctx.current_module().append(code);
+        ctx.current_module().append(code).export(type_ident);
     }
 }
 

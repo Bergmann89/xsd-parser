@@ -820,8 +820,6 @@ impl EnumerationData<'_> {
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
         let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let error_kind = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-        let raw_byte_str = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::RawByteStr");
         let deserialize_bytes =
             resolve_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeBytes");
         let deserialize_helper =
@@ -832,6 +830,9 @@ impl EnumerationData<'_> {
         );
 
         let other = other.unwrap_or_else(|| {
+            let error_kind = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
+            let raw_byte_str = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::RawByteStr");
+
             quote! {
                 Err(
                     #error::from(
@@ -1587,7 +1588,6 @@ impl ComplexDataEnum<'_> {
         let result = resolve_build_in!(ctx, "::core::result::Result");
 
         let error = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
-        let error_kind = resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
         let deserialize_helper =
             resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::DeserializeHelper");
 
@@ -1606,6 +1606,9 @@ impl ComplexDataEnum<'_> {
         let finish_init = if is_defaultable {
             self.elements[0].deserializer_enum_variant_default(ctx, type_ident)
         } else {
+            let error_kind =
+                resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
+
             quote!(Err(#error_kind::MissingContent.into()))
         };
 

@@ -113,6 +113,7 @@ mod tuple_with_integer;
 mod tuple_with_string;
 mod tuple_with_vec;
 mod type_loops;
+mod type_modules;
 mod type_name_clash;
 mod union;
 mod unknown_element_adversarial;

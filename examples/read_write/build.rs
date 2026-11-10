@@ -15,7 +15,11 @@ fn main() -> Result<(), Error> {
         .with_optimizer_flags(OptimizerFlags::all())
         // `ADVANCED_ENUMS` also needs `RenderStep::EnumConstants`,
         // see `Config::with_advanced_enums`.
-        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::ADVANCED_ENUMS)
+        .with_generator_flags(
+            GeneratorFlags::all()
+                - GeneratorFlags::ADVANCED_ENUMS
+                - GeneratorFlags::USE_TYPE_MODULES,
+        )
         .with_quick_xml();
 
     // Generate the code based on the configuration above.

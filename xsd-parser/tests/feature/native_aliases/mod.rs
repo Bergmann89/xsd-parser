@@ -81,6 +81,11 @@ macro_rules! fixture {
 
 fixture!(default, generate_default, config(true));
 fixture!(
+    type_modules,
+    generate_type_modules,
+    config(true).with_generator_flags(GeneratorFlags::USE_TYPE_MODULES)
+);
+fixture!(
     disabled,
     generate_disabled,
     config(false).with_generator_flags(GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS)

@@ -1,0 +1,1 @@
+<tns:Root xmlns:tns="urn:imports" limit="unbounded" choice="42" label="example" words="one two" mode="on"/>

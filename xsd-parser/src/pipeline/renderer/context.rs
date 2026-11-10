@@ -9,7 +9,7 @@ use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::format_ident;
 
 use crate::config::GeneratorFlags;
-use crate::models::code::{IdentPath, ModuleIdent};
+use crate::models::code::IdentPath;
 use crate::models::{
     code::{Module, ModulePath},
     data::{DataType, PathData},
@@ -316,13 +316,7 @@ impl<'a, 'types> Context<'a, 'types> {
         module: &'a mut Module,
         values: Values,
     ) -> Self {
-        let module_ident = ModuleIdent::new(
-            meta.types,
-            ident,
-            meta.check_generator_flags(GeneratorFlags::USE_NAMESPACE_MODULES),
-            meta.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
-        );
-        let module_path = ModulePath::from_ident(meta.types.meta.types, module_ident);
+        let module_path = data.module_path.clone();
         let serialize_module_path = module_path
             .clone()
             .join(format_ident!("quick_xml_serialize"));
