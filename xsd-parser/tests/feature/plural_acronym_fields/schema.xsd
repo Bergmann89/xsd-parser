@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+    <xs:element name="Response" type="tns:ResponseType" />
+    <xs:complexType name="ResponseType">
+        <xs:sequence>
+            <xs:element name="UserIDs" type="xs:string" maxOccurs="unbounded" />
+            <xs:element name="NumberOfAPIs" type="xs:unsignedInt" />
+            <xs:element name="IDStatus" type="xs:string" />
+            <xs:element name="IPv4s" type="xs:string" />
+        </xs:sequence>
+        <xs:attribute name="ResourceURLs" type="xs:string" use="required" />
+    </xs:complexType>
+</xs:schema>

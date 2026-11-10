@@ -127,7 +127,9 @@ impl NamingTrait for ExplicitNaming {
     }
 
     fn format_field_name(&self, s: &str) -> String {
-        let s = self.unify(s).to_snake_case();
+        let s = self
+            .unify(&super::normalize_plural_acronyms(s))
+            .to_snake_case();
 
         super::format_ident(s)
     }

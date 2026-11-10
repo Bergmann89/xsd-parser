@@ -17,6 +17,42 @@ use super::Name;
 pub use self::default::{NameBuilder, Naming};
 pub use self::explicit::{ExplicitNameBuilder, ExplicitNaming};
 
+/// Normalize plural acronyms before case conversion, e.g. `IDs` to `Ids`.
+///
+/// Runs start with an uppercase ASCII letter and may include ASCII digits.
+/// Lowercase letters end a run, so `IPv4s` is preserved.
+#[must_use]
+pub fn normalize_plural_acronyms(s: &str) -> Cow<'_, str> {
+    let mut normalized = Cow::Borrowed(s);
+    let mut chars = s.char_indices().peekable();
+
+    while let Some((start, first)) = chars.next() {
+        if !first.is_ascii_uppercase() {
+            continue;
+        }
+
+        let mut end = start + 1;
+        while let Some((offset, _)) =
+            chars.next_if(|(_, c)| c.is_ascii_uppercase() || c.is_ascii_digit())
+        {
+            end = offset + 1;
+        }
+
+        // The s must end a word, rather than start one as in IDstring.
+        if end - start > 1
+            && s.as_bytes().get(end) == Some(&b's')
+            && s[end + 1..]
+                .chars()
+                .next()
+                .is_none_or(|c| !c.is_lowercase())
+        {
+            normalized.to_mut()[start + 1..end].make_ascii_lowercase();
+        }
+    }
+
+    normalized
+}
+
 /// Make a type name based on the passed `ident` and `ty` and the provided `postfixes`.
 pub fn make_type_name<X>(naming: &X, postfixes: &[String], ty: &MetaType, ident: &TypeIdent) -> Name
 where
