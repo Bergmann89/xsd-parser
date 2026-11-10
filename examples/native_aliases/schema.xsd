@@ -1,0 +1,11 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ex="urn:native-aliases" targetNamespace="urn:native-aliases">
+    <xs:simpleType name="Label"><xs:annotation>
+        <xs:documentation>A label supplied by the native application.</xs:documentation>
+    </xs:annotation><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="Description"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:element name="Record"><xs:complexType><xs:sequence>
+        <xs:element name="Label" type="ex:Label"/>
+        <xs:element name="Description" type="ex:Description"/>
+    </xs:sequence></xs:complexType></xs:element>
+</xs:schema>

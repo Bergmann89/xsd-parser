@@ -15,6 +15,10 @@ pub enum Error {
     #[error("Unknown type identifier: {0}!")]
     UnknownType(TypeIdent),
 
+    /// A custom type alias was requested without an included Rust type path.
+    #[error("Custom type alias {0} requires an include path!")]
+    MissingCustomAliasTarget(TypeIdent),
+
     /// Unknown namespace.
     ///
     /// Is raised if a specific namespace id could not be resolved to it's

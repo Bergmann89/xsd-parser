@@ -11,6 +11,8 @@ use crate::pipeline::generator::{
 };
 
 /// Type information for a custom defined type.
+///
+/// Equality and hashing use the custom type's name and alias setting.
 pub struct CustomMeta {
     /// Name of the custom defined type.
     pub name: String,
@@ -18,6 +20,7 @@ pub struct CustomMeta {
     /// The path the type should be included from.
     ///
     /// The path should be absolute, or relative to the root of the generated code.
+    /// See [`include_from`](Self::include_from) for how path prefixes are resolved.
     pub include: Option<String>,
 
     /// The handler for the default values for this custom defined type.
@@ -36,6 +39,10 @@ pub struct CustomMeta {
 
     /// Wether this custom type contains `xs:any` elements or not.
     pub allow_any: bool,
+
+    /// Generate a schema-named type alias for this mapping instead of referring
+    /// directly to the included Rust type. Disabled by default.
+    pub alias: bool,
 }
 
 impl CustomMeta {
@@ -52,6 +59,7 @@ impl CustomMeta {
             generator: None,
             namespaces: Vec::new(),
             allow_any: false,
+            alias: false,
         }
     }
 
@@ -67,15 +75,40 @@ impl CustomMeta {
         self.include.as_deref()
     }
 
-    /// The the path the type should be included from.
+    /// Set the path the type should be included from.
     ///
     /// The path should be absolute, or relative to the root of the generated code.
+    /// A `self::` prefix refers to that generated root, rather than the module
+    /// containing the rendered type. A `crate::` prefix remains anchored to the
+    /// application's Rust crate.
     #[must_use]
     pub fn include_from<X>(mut self, include: X) -> Self
     where
         X: Into<String>,
     {
         self.include = Some(include.into());
+
+        self
+    }
+
+    /// Preserve this schema declaration as a public Rust type alias.
+    ///
+    /// The alias uses the configured schema naming and module placement. Fields
+    /// reference the alias, which has the same identity as the included Rust type.
+    /// Schema documentation is retained unless explicitly supplied in the
+    /// surrounding [`MetaType`](super::MetaType). No derives or trait
+    /// implementations are generated for the alias itself.
+    ///
+    /// The alias target uses the full include path rather than a `use` import,
+    /// regardless of
+    /// [`ABSOLUTE_PATHS_INSTEAD_USINGS`](crate::config::GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS).
+    /// This avoids imported names colliding with the alias name.
+    ///
+    /// Requires an [`include_from`](Self::include_from) path, absolute or relative
+    /// to the root of the generated code. Generation returns an error without it.
+    #[must_use]
+    pub fn with_alias(mut self, alias: bool) -> Self {
+        self.alias = alias;
 
         self
     }
@@ -142,6 +175,7 @@ impl Clone for CustomMeta {
                 .map(|x| CustomGenerator::clone(&**x)),
             namespaces: self.namespaces.clone(),
             allow_any: self.allow_any,
+            alias: self.alias,
         }
     }
 }
@@ -155,6 +189,7 @@ impl Debug for CustomMeta {
             .field("generator", &self.generator.is_some())
             .field("namespaces", &self.namespaces)
             .field("allow_any", &self.allow_any)
+            .field("alias", &self.alias)
             .finish()
     }
 }
@@ -163,13 +198,14 @@ impl Eq for CustomMeta {}
 
 impl PartialEq for CustomMeta {
     fn eq(&self, other: &Self) -> bool {
-        self.name.eq(&other.name)
+        self.name.eq(&other.name) && self.alias.eq(&other.alias)
     }
 }
 
 impl Hash for CustomMeta {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.name.hash(state);
+        self.alias.hash(state);
     }
 }
 

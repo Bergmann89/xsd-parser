@@ -82,6 +82,7 @@ mod multi_pattern_facets;
 mod namespaces_qualified;
 mod namespaces_unqualified;
 mod naming;
+mod native_aliases;
 mod nested_group_reuse;
 mod nillable;
 mod nonzero_int;
