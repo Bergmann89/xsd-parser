@@ -6,6 +6,7 @@ members = [
     "examples/native_aliases",
     "examples/read_write",
     "examples/vsme",
+    "examples/type_modules",
     "xsd-parser-types",
     "xsd-parser",
 ]
@@ -38,6 +39,7 @@ Inflector = "0.11"
 libc = "0.2"
 num = "0.4"
 parking_lot = "0.13"
+prettyplease = "0.2"
 proc-macro2 = "1.0"
 quick-xml = "0.42"
 quote = "1.0"
@@ -48,6 +50,7 @@ serde = "1.0"
 serde-xml-rs = "0.8"
 serde-xml-rs-v7 = { package = "serde-xml-rs", version = "0.7" }
 smallvec = "1.16"
+syn = "2.0"
 sysinfo = "0.40"
 text-diff = "0.4"
 thiserror = "2.0.21"

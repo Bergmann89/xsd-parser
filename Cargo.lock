@@ -1343,6 +1343,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "prettyplease"
+version = "0.2.37"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "479ca8adacdd7ce8f1fb39ce9ecccbfe93a3f1344b3d0d97f20bc0196208f62b"
+dependencies = [
+ "proc-macro2",
+ "syn 2.0.119",
+]
+
+[[package]]
 name = "proc-macro-crate"
 version = "3.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2356,6 +2366,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e421abadd41a4225275504ea4d6566923418b7f05506fbc9c0fe86ba7396114b"
 
 [[package]]
+name = "type_modules"
+version = "0.1.0"
+dependencies = [
+ "xsd-parser",
+ "xsd-parser-types",
+]
+
+[[package]]
 name = "unarray"
 version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2854,6 +2872,7 @@ dependencies = [
  "indexmap",
  "num",
  "parking_lot 0.13.0",
+ "prettyplease",
  "proc-macro2",
  "quick-xml",
  "quote",
@@ -2864,6 +2883,7 @@ dependencies = [
  "serde-xml-rs 0.7.1",
  "serde-xml-rs 0.8.2",
  "smallvec",
+ "syn 2.0.119",
  "text-diff",
  "thiserror 2.0.21",
  "tokio",

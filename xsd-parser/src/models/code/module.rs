@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::fs::{create_dir_all, write};
-use std::io::Error as IoError;
+use std::io::{Error as IoError, ErrorKind};
 use std::mem::replace;
 use std::path::Path;
 use std::str::FromStr;
@@ -64,6 +64,17 @@ pub enum SubModules {
     /// }
     /// ```
     Inline,
+}
+
+/// Formatting applied when converting generated code to source text.
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CodeFormat {
+    /// Use the token stream's unformatted representation (the default).
+    #[default]
+    Plain,
+
+    /// Format Rust source using `prettyplease`, enabled by the `pretty` feature.
+    Pretty,
 }
 
 impl Module {
@@ -168,6 +179,44 @@ impl Module {
         }
     }
 
+    /// Convert this module to Rust source with the selected formatting.
+    ///
+    /// Use [`SubModules::Inline`] for single-file output or [`SubModules::Files`]
+    /// when writing each module separately. Formatting is applied to the final
+    /// source text; token streams returned by [`crate::generate`] retain their
+    /// usual representation.
+    ///
+    /// # Errors
+    /// Returns [`crate::Error::FormattingError`] if the generated code is not a
+    /// valid Rust file, or if [`CodeFormat::Pretty`] is selected without the
+    /// `pretty` feature.
+    pub fn to_code_with_format(
+        &self,
+        sub_modules: SubModules,
+        format: CodeFormat,
+    ) -> Result<String, crate::Error> {
+        let mut code = TokenStream::new();
+        self.to_code(&mut code, sub_modules);
+
+        match format {
+            CodeFormat::Plain => Ok(code.to_string()),
+            CodeFormat::Pretty => {
+                #[cfg(feature = "pretty")]
+                {
+                    syn::parse2(code)
+                        .map(|syntax| prettyplease::unparse(&syntax))
+                        .map_err(|error| crate::Error::FormattingError(error.to_string()))
+                }
+                #[cfg(not(feature = "pretty"))]
+                {
+                    Err(crate::Error::FormattingError(
+                        "the pretty feature is not enabled".into(),
+                    ))
+                }
+            }
+        }
+    }
+
     /// Write the code of the current module to the passed `directory`.
     ///
     /// This will split up the current module into it's sub modules and
@@ -177,6 +226,31 @@ impl Module {
     /// # Errors
     /// Returns an [`IoError`] if writing a module to a file failed.
     pub fn write_to_files<P>(&self, directory: P) -> Result<(), IoError>
+    where
+        P: AsRef<Path>,
+    {
+        self.write_to_files_with_format(directory, CodeFormat::Plain)
+            .map_err(|error| match error {
+                crate::Error::IoError(error) => error,
+                error => IoError::new(ErrorKind::InvalidData, error),
+            })
+    }
+
+    /// Write each module to a separate file with the selected formatting.
+    ///
+    /// Like [`write_to_files`](Self::write_to_files), with explicit control over
+    /// formatting. `CodeFormat::Pretty` formats every file using `prettyplease` with the
+    /// `pretty` feature enabled.
+    ///
+    /// # Errors
+    /// Returns [`crate::Error::IoError`] if writing fails, or
+    /// [`crate::Error::FormattingError`] if formatting fails or the `pretty`
+    /// feature is not enabled when selecting [`CodeFormat::Pretty`].
+    pub fn write_to_files_with_format<P>(
+        &self,
+        directory: P,
+        format: CodeFormat,
+    ) -> Result<(), crate::Error>
     where
         P: AsRef<Path>,
     {
@@ -192,10 +266,7 @@ impl Module {
                 create_dir_all(parent)?;
             }
 
-            let mut code = TokenStream::new();
-            module.to_code(&mut code, SubModules::Files);
-
-            let code = code.to_string();
+            let code = module.to_code_with_format(SubModules::Files, format)?;
             write(filename, code)?;
 
             Ok(())
@@ -310,6 +381,71 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn plain_format_is_the_default() {
+        assert_eq!(CodeFormat::default(), CodeFormat::Plain);
+        let mut module = Module::default();
+        module.append(quote!(
+            pub struct Example;
+        ));
+        assert_eq!(
+            module
+                .to_code_with_format(SubModules::Inline, CodeFormat::Plain)
+                .unwrap(),
+            quote!(
+                pub struct Example;
+            )
+            .to_string(),
+        );
+    }
+
+    #[test]
+    fn formatting_entry_points_return_the_same_error() {
+        let mut module = Module::default();
+        module.append(quote!(pub struct));
+        module.module_mut("child");
+        let directory =
+            std::env::temp_dir().join(format!("xsd-parser-format-errors-{}", std::process::id()));
+        let inline = module.to_code_with_format(SubModules::Files, CodeFormat::Pretty);
+        let files = module.write_to_files_with_format(&directory, CodeFormat::Pretty);
+        let Err(crate::Error::FormattingError(inline)) = inline else {
+            panic!("Expected a formatting error for inline output");
+        };
+        let Err(crate::Error::FormattingError(files)) = files else {
+            panic!("Expected a formatting error for file output");
+        };
+        assert_eq!(inline, files);
+        #[cfg(not(feature = "pretty"))]
+        assert_eq!(inline, "the pretty feature is not enabled");
+        std::fs::remove_dir_all(directory).unwrap();
+    }
+
+    #[cfg(feature = "pretty")]
+    #[test]
+    fn pretty_format_produces_readable_source() {
+        let mut module = Module::default();
+        module.append(quote!(
+            pub struct Example {
+                pub value: u32,
+            }
+        ));
+        let source = module
+            .to_code_with_format(SubModules::Inline, CodeFormat::Pretty)
+            .unwrap();
+        assert_eq!(source, "pub struct Example {\n    pub value: u32,\n}\n");
+    }
+
+    #[test]
+    fn formatted_writer_preserves_io_errors() {
+        let module = Module::default();
+        let error = module
+            .write_to_files_with_format("", CodeFormat::Plain)
+            .unwrap_err();
+        assert!(
+            matches!(error, crate::Error::IoError(ref error) if error.kind() == ErrorKind::NotFound)
+        );
+    }
 
     #[test]
     fn write_to_files_with_empty_directory_returns_error() {

@@ -513,6 +513,10 @@ pub enum Error {
         #[source]
         RendererError,
     ),
+
+    /// Generated Rust source could not be formatted.
+    #[error("Formatting error: {0}")]
+    FormattingError(String),
 }
 
 impl<E> From<ParserError<E>> for Error
