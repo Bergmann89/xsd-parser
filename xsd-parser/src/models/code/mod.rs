@@ -5,4 +5,4 @@ mod ident_path;
 mod module;
 
 pub use self::ident_path::{IdentPath, InvalidIdentPath, ModuleIdent, ModulePath};
-pub use self::module::{Module, SubModules};
+pub use self::module::{CodeFormat, Module, SubModules};

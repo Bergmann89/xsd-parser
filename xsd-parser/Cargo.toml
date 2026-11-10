@@ -20,6 +20,9 @@ web-resolver = [ "reqwest" ]
 # Enable support for base64 encoding/decoding
 base64 = ["xsd-parser-types/base64"]
 
+# Enable optional Rust source formatting with prettyplease.
+pretty = ["dep:prettyplease", "dep:syn"]
+
 # Helper feature to automatically update all code expectations of the tests
 update-expectations = [ ]
 
@@ -30,10 +33,12 @@ bitflags = { workspace = true }
 indexmap = { workspace = true }
 Inflector = { workspace = true }
 parking_lot = { workspace = true }
+prettyplease = { workspace = true, optional = true }
 proc-macro2 = { workspace = true }
 quick-xml = { workspace = true }
 quote = { workspace = true }
 smallvec = { workspace = true }
+syn = { workspace = true, features = [ "full" ], optional = true }
 thiserror = { workspace = true }
 tracing = { workspace = true }
 unindent = { workspace = true }
