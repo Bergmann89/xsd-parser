@@ -289,7 +289,7 @@ impl<'types> ComplexData<'types> {
 
         let type_ident = &base.type_ident;
         let content_ident = format_ident!("{type_ident}Content");
-        let has_content = occurs.is_some() && !elements.is_empty();
+        let has_content = occurs.is_some() && (!elements.is_empty() || base.is_dynamic());
         let shared_content = ctx.shared_content();
 
         if has_content && shared_content.is_none() {
@@ -297,14 +297,19 @@ impl<'types> ComplexData<'types> {
         }
 
         let content_type = (has_content && shared_content.is_none()).then(|| {
+            let mut content_base = ComplexBase::new_empty(
+                content_ident.clone(),
+                base.flags
+                    .extract(ComplexFlags::HAS_ANY)
+                    .with(ComplexFlags::IS_MIXED, mixed_mode.is_mixed())
+                    .with(ComplexFlags::IS_CONTENT, true),
+            );
+            if base.is_dynamic() {
+                content_base.flags.insert(ComplexFlags::IS_DYNAMIC);
+                content_base.tag_name.clone_from(&base.tag_name);
+            }
             let type_ = ComplexDataEnum {
-                base: ComplexBase::new_empty(
-                    content_ident.clone(),
-                    base.flags
-                        .extract(ComplexFlags::HAS_ANY)
-                        .with(ComplexFlags::IS_MIXED, mixed_mode.is_mixed())
-                        .with(ComplexFlags::IS_CONTENT, true),
-                ),
+                base: content_base,
                 elements: take(&mut elements),
                 allow_any,
                 allow_any_attribute,

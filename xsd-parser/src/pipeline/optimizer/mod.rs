@@ -28,6 +28,8 @@ mod resolve_typedefs;
 mod simplify_mixed_types;
 mod unrestricted_base;
 
+use std::collections::BTreeSet;
+
 use thiserror::Error;
 
 use crate::models::{meta::MetaTypes, TypeIdent};
@@ -53,6 +55,8 @@ pub struct Optimizer {
     types: MetaTypes,
     bases: Option<BaseMap>,
     typedefs: Option<TypedefMap>,
+    // Preserve abstractness when a conversion replaces the original DynamicMeta.
+    abstract_types: Option<BTreeSet<TypeIdent>>,
 }
 
 /// Error that is raised by the [`Optimizer`].
@@ -155,6 +159,7 @@ impl Optimizer {
             types,
             bases: None,
             typedefs: None,
+            abstract_types: None,
         }
     }
 

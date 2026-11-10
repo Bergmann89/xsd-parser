@@ -1143,8 +1143,10 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
-        self.render_with_serializer(ctx, !self.is_content(), self.forward_name());
-        self.render_serializer_type(ctx, !self.is_content(), self.forward_name());
+        let uninhabited = self.is_dynamic() && self.elements.is_empty();
+        let forward_root = !uninhabited && (!self.is_content() || self.is_dynamic());
+        self.render_with_serializer(ctx, forward_root, self.forward_name());
+        self.render_serializer_type(ctx, forward_root, self.forward_name());
         self.render_serializer_state_type(ctx);
         self.render_serializer_impl(ctx);
     }
@@ -1215,7 +1217,7 @@ impl ComplexDataEnum<'_> {
             let init = element.render_serializer_enum_state_init(
                 ctx,
                 &self.serializer_state_ident,
-                !self.is_content(),
+                !self.is_content() || self.is_dynamic(),
                 self.forward_name(),
                 &element_name,
             );
@@ -1225,8 +1227,13 @@ impl ComplexDataEnum<'_> {
             }
         });
 
+        let (value, helper_param) = match (self.elements.is_empty(), self.represents_element()) {
+            (false, _) => (quote!(self.value), quote!(helper)),
+            (true, true) => (quote!(*self.value), quote!(helper)),
+            (true, false) => (quote!(*self.value), quote!(_)),
+        };
         let handle_state_init = quote! {
-            match self.value {
+            match #value {
                 #( #variants_init )*
             }
         };
@@ -1257,7 +1264,7 @@ impl ComplexDataEnum<'_> {
 
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
-                fn next_event(&mut self, helper: &mut #serialize_helper) -> #result<#option<#event<'ser>>, #error> {
+                fn next_event(&mut self, #helper_param: &mut #serialize_helper) -> #result<#option<#event<'ser>>, #error> {
                     loop {
                         match &mut *self.state {
                             #serializer_state_ident::Init__ => {
@@ -1311,8 +1318,11 @@ impl ComplexDataStruct<'_> {
     }
 
     fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
-        self.render_with_serializer(ctx, self.represents_element(), false);
-        self.render_serializer_type(ctx, self.represents_element(), false);
+        // The wrapper transports the caller's context; the content enum decides
+        // whether to use its name for type-keyed variants or its own tag names.
+        let forward_root = self.represents_element() || self.is_dynamic();
+        self.render_with_serializer(ctx, forward_root, self.is_dynamic());
+        self.render_serializer_type(ctx, forward_root, self.is_dynamic());
         self.render_serializer_state_type(ctx);
         self.render_serializer_impl(ctx);
     }
@@ -1379,7 +1389,11 @@ impl ComplexDataStruct<'_> {
 
             quote!(#init;)
         } else if let Some(content) = &self.content() {
-            let init = content.render_serializer_state_init(ctx, serializer_state_ident);
+            let init = content.render_serializer_state_init(
+                ctx,
+                serializer_state_ident,
+                self.is_dynamic(),
+            );
 
             quote!(#init;)
         } else {
@@ -1506,8 +1520,21 @@ impl ComplexDataContent<'_> {
         &self,
         ctx: &Context<'_, '_>,
         state_ident: &Ident2,
+        forward_context: bool,
     ) -> TokenStream {
         let field_ident = &self.field_ident;
+        let name = if forward_context {
+            quote!(self.name)
+        } else {
+            quote!(None)
+        };
+        let is_root = if forward_context {
+            quote!(self.is_root)
+        } else {
+            quote!(false)
+        };
+        let namespace = (forward_context && use_namespaces(ctx))
+            .then(|| quote!(.with_namespace(self.namespace.clone())));
 
         match self.occurs {
             Occurs::None => crate::unreachable!(),
@@ -1515,11 +1542,16 @@ impl ComplexDataContent<'_> {
                 let with_serializer =
                     resolve_quick_xml_ident!(ctx, "::xsd_parser_types::quick_xml::WithSerializer");
 
-                quote! {
-                    *self.state = #state_ident::Content__(
-                        #with_serializer::serializer(&self.value.#field_ident, None, false)?
-                    )
-                }
+                let serializer = if forward_context && use_namespaces(ctx) {
+                    quote! {
+                        #with_serializer::serializer_with_namespace(
+                            &self.value.#field_ident, #name, self.namespace.clone(), #is_root,
+                        )?
+                    }
+                } else {
+                    quote! { #with_serializer::serializer(&self.value.#field_ident, #name, #is_root)? }
+                };
+                quote! { *self.state = #state_ident::Content__(#serializer) }
             }
             Occurs::Optional => {
                 let iter_serializer =
@@ -1529,9 +1561,9 @@ impl ComplexDataContent<'_> {
                     *self.state = #state_ident::Content__(
                         #iter_serializer::new(
                             self.value.#field_ident.as_ref(),
-                            None,
-                            false
-                        )
+                            #name,
+                            #is_root
+                        )#namespace
                     )
                 }
             }
@@ -1543,9 +1575,9 @@ impl ComplexDataContent<'_> {
                     *self.state = #state_ident::Content__(
                         #iter_serializer::new(
                             &self.value.#field_ident[..],
-                            None,
-                            false
-                        )
+                            #name,
+                            #is_root
+                        )#namespace
                     )
                 }
             }
