@@ -39,14 +39,28 @@ pub use self::types::TypesRenderStep;
 pub use self::with_namespace_trait::WithNamespaceTraitRenderStep;
 
 impl Context<'_, '_> {
-    pub(crate) fn render_type_docs(&self) -> Option<TokenStream> {
+    /// Render the current type's schema documentation as `#[doc = "..."]` attributes.
+    ///
+    /// Returns `None` when [`RendererFlags::RENDER_TYPE_DOCS`] is disabled.
+    /// Uses the same formatting as [`render_docs`](Self::render_docs), allowing
+    /// custom render steps to share the built-in renderers' documentation handling.
+    pub fn render_type_docs(&self) -> Option<TokenStream> {
         self.render_docs(
             RendererFlags::RENDER_TYPE_DOCS,
             &self.data.documentation[..],
         )
     }
 
-    pub(crate) fn render_docs(&self, flags: RendererFlags, docs: &[String]) -> Option<TokenStream> {
+    /// Render documentation entries as `#[doc = "..."]` attributes.
+    ///
+    /// Each entry is split into lines, trailing whitespace is removed, and a
+    /// blank documentation line separates consecutive entries. Leading whitespace
+    /// is preserved. Returns `None` when none of `flags` are enabled. With enabled
+    /// flags and no entries, returns `Some` containing an empty token stream.
+    ///
+    /// Custom render steps can use the appropriate documentation flag for their
+    /// output, for example [`RendererFlags::RENDER_ELEMENT_DOCS`] for field docs.
+    pub fn render_docs(&self, flags: RendererFlags, docs: &[String]) -> Option<TokenStream> {
         self.check_renderer_flags(flags).then(|| {
             // Separate the single documentation entries by an empty line, so they
             // are rendered as separate paragraphs.
