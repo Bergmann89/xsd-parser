@@ -293,7 +293,7 @@ impl<'types> ComplexData<'types> {
         let shared_content = ctx.shared_content();
 
         if has_content && shared_content.is_none() {
-            ctx.register_content_path(&content_ident)?;
+            ctx.register_public_path(&content_ident)?;
         }
 
         let content_type = (has_content && shared_content.is_none()).then(|| {
@@ -460,7 +460,7 @@ impl<'types> ComplexData<'types> {
         let shared_content = ctx.shared_content();
 
         if has_content && shared_content.is_none() {
-            ctx.register_content_path(&content_ident)?;
+            ctx.register_public_path(&content_ident)?;
         }
 
         let content_type = (has_content && shared_content.is_none()).then(|| {

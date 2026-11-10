@@ -11,7 +11,7 @@ fn config() -> Config {
         .set_interpreter_flags(InterpreterFlags::BUILDIN_TYPES | InterpreterFlags::DEFAULT_TYPEDEFS)
         .set_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATES)
         .set_generator_flags(
-            GeneratorFlags::all()
+            (GeneratorFlags::all() - GeneratorFlags::USE_TYPE_MODULES)
                 - GeneratorFlags::ABSOLUTE_PATHS_INSTEAD_USINGS
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
                 - GeneratorFlags::ANY_TYPE_SUPPORT

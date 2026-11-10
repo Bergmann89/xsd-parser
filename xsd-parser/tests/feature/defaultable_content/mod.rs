@@ -11,7 +11,7 @@ fn config() -> Config {
         .with_interpreter_flags(InterpreterFlags::all())
         .without_optimizer_flags(OptimizerFlags::all())
         .with_generator_flags(
-            GeneratorFlags::all()
+            (GeneratorFlags::all() - GeneratorFlags::USE_TYPE_MODULES)
                 - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::FLATTEN_CONTENT
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS

@@ -21,6 +21,7 @@
 mod context;
 mod custom;
 mod error;
+mod layout;
 mod meta;
 mod steps;
 
@@ -250,6 +251,7 @@ impl<'types> Renderer<'types> {
             step.finish(&meta, &mut module);
         }
 
+        layout::finish(&meta, &mut module);
         module
     }
 }

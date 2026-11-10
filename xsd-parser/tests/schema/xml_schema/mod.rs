@@ -15,7 +15,7 @@ fn config() -> Config {
                 - OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE_SIMPLE,
         )
         .with_generator_flags(
-            GeneratorFlags::all()
+            (GeneratorFlags::all() - GeneratorFlags::USE_TYPE_MODULES)
                 - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::USE_NAMESPACE_MODULES
                 - GeneratorFlags::USE_SCHEMA_MODULES

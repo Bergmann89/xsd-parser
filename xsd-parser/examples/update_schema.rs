@@ -221,6 +221,8 @@ fn wrap_struct(
     inner_struct.base.deserializer_state_ident = format_ident!("{inner}TypeDeserializerState");
 
     let mut outer_item = DataType {
+        // This example disables USE_TYPE_MODULES, so the wrapper shares the schema module.
+        module_path: inner_item.module_path.clone(),
         meta: inner_item.meta.clone(),
         derive: ConfigValue::Default,
         variant: DataTypeVariant::Reference(ReferenceData {

@@ -24,6 +24,9 @@ pub struct Module {
 
     /// A map of sub-modules contained inside this module.
     pub modules: BTreeMap<String, Module>,
+
+    /// Public items re-exported from this module when using type modules.
+    pub exports: BTreeMap<String, Ident2>,
 }
 
 /// Defines how the sub modules of the [`Module`] will be generated when calling
@@ -68,6 +71,15 @@ impl Module {
     pub fn append(&mut self, code: TokenStream) -> &mut Self {
         self.code.extend(code);
 
+        self
+    }
+
+    /// Register a public item for re-export from the containing namespace or schema.
+    ///
+    /// Custom render steps that emit public items into a type module should call
+    /// this method for each item that also needs to be accessible from its parent.
+    pub fn export(&mut self, ident: &Ident2) -> &mut Self {
+        self.exports.insert(ident.to_string(), ident.clone());
         self
     }
 
@@ -121,6 +133,7 @@ impl Module {
             code,
             usings,
             modules,
+            ..
         } = self;
 
         if sub_modules == SubModules::Files {

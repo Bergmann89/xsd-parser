@@ -24,11 +24,11 @@ mod context;
 mod custom;
 mod data;
 mod error;
+mod layout;
 mod meta;
 mod state;
 
-use std::collections::btree_map::{Entry, VacantEntry};
-use std::collections::{BTreeMap, VecDeque};
+use std::collections::BTreeMap;
 use std::str::FromStr;
 
 use quote::format_ident;
@@ -41,7 +41,6 @@ use crate::models::{
     meta::{MetaTypeVariant, MetaTypes},
     IdentType, TypeIdent,
 };
-use crate::traits::Naming;
 
 pub use self::context::Context;
 pub use self::custom::{
@@ -312,7 +311,8 @@ impl<'types> Generator<'types> {
     /// to generate data types for specific types. The underlying configuration can
     /// not be changed anymore.
     pub fn into_fixed(self) -> GeneratorFixed<'types> {
-        let Self { meta, state } = self;
+        let Self { meta, mut state } = self;
+        state.type_modules = layout::TypeModules::new(&meta);
 
         let data_types = DataTypes::new(meta);
 
@@ -440,24 +440,13 @@ impl<'types> State<'types> {
     ) -> Result<&mut TypeRef, Error> {
         if !self.cache.contains_key(ident) {
             self.requeue_derived_types(meta, ident);
+            let type_ref = self.create_type_ref(meta, ident)?;
+            self.cache.insert(ident.clone(), type_ref);
         }
 
-        match self.cache.entry(ident.clone()) {
-            Entry::Occupied(e) => Ok(e.into_mut()),
-            Entry::Vacant(e) => {
-                let id = self.loop_detection.next_id(e.key().clone());
-
-                Self::create_type_ref(
-                    id,
-                    &*meta.naming,
-                    &mut self.pending,
-                    &mut self.paths,
-                    e,
-                    meta,
-                    ident,
-                )
-            }
-        }
+        self.cache
+            .get_mut(ident)
+            .ok_or_else(|| Error::UnknownType(ident.clone()))
     }
 
     /// Regenerates already generated types that derive from the dynamic type
@@ -477,20 +466,18 @@ impl<'types> State<'types> {
         }
     }
 
-    fn create_type_ref<'a>(
-        id: usize,
-        naming: &dyn Naming,
-        pending: &mut VecDeque<PendingType<'types>>,
-        paths: &mut BTreeMap<IdentPath, TypeIdent>,
-        entry: VacantEntry<'a, TypeIdent, TypeRef>,
+    fn create_type_ref(
+        &mut self,
         meta: &MetaData<'types>,
         ident: &TypeIdent,
-    ) -> Result<&'a mut TypeRef, Error> {
+    ) -> Result<TypeRef, Error> {
+        let id = self.loop_detection.next_id(ident.clone());
         let ty = meta
             .types
             .items
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
+        let naming = &*meta.naming;
         let name = naming.make_type_name(&meta.postfixes, ty, ident);
         let path = match &ty.variant {
             MetaTypeVariant::BuildIn(x) => {
@@ -529,9 +516,17 @@ impl<'types> State<'types> {
                 let module_path = ModulePath::from_ident(meta.types, module_ident);
                 let type_ident = naming.format_type_ident(&name, ty.display_name.as_deref());
 
+                let public_path = IdentPath::from_parts(module_path.0.clone(), type_ident.clone());
+                Self::claim_path(&mut self.paths, meta, &public_path, ident)?;
+                let module_path = if let Some(module) =
+                    self.type_modules
+                        .allocate(meta, ident, &module_path, &type_ident)
+                {
+                    module_path.join(module)
+                } else {
+                    module_path
+                };
                 let path = IdentPath::from_parts(module_path.0, type_ident);
-
-                Self::claim_path(paths, meta, &path, ident)?;
 
                 PathData::from_path(path)
             }
@@ -539,12 +534,12 @@ impl<'types> State<'types> {
 
         tracing::debug!("Queue new type generation: {ident}");
 
-        pending.push_back(PendingType {
+        self.pending.push_back(PendingType {
             ty,
             ident: ident.clone(),
         });
 
-        Ok(entry.insert(TypeRef::new_pending(id, path)))
+        Ok(TypeRef::new_pending(id, path))
     }
 
     /// Registers `path` for `ident` and fails if another type already uses it.

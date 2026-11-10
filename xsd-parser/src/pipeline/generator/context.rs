@@ -7,7 +7,7 @@ use xsd_parser_types::xml::NamespacesShared;
 
 use crate::config::GeneratorFlags;
 use crate::models::{
-    code::{ModuleIdent, ModulePath},
+    code::{IdentPath, ModuleIdent, ModulePath},
     data::{Occurs, PathData},
     meta::{BuildInMeta, ElementMetaVariant, MetaTypeVariant},
     schema::xs::Use,
@@ -109,25 +109,33 @@ impl<'a, 'types> Context<'a, 'types> {
         }
     }
 
-    pub(super) fn current_module(&self) -> ModuleIdent {
-        ModuleIdent::new(
+    pub(super) fn current_module(&self) -> ModulePath {
+        let module = ModuleIdent::new(
             self.meta.types,
             self.ident,
             self.check_generator_flags(GeneratorFlags::USE_NAMESPACE_MODULES),
             self.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
-        )
+        );
+        let mut path = ModulePath::from_ident(self.types, module);
+        if let Some(name) = self.state.type_modules.name(self.ident) {
+            path.0.push(name.clone());
+        }
+        path
     }
 
     pub(super) fn current_type_ref(&self) -> &TypeRef {
         self.state.cache.get(self.ident).unwrap()
     }
 
-    /// Claims the path of the content type `content_ident`, that is generated
-    /// next to the current type, so it can not be used by another type.
-    pub(super) fn register_content_path(&mut self, content_ident: &Ident2) -> Result<(), Error> {
-        let path = (*self.current_type_ref().path)
-            .clone()
-            .with_ident(content_ident.clone());
+    /// Claims a public item generated next to the current type, including its
+    /// re-export when type modules are enabled.
+    pub(super) fn register_public_path(&mut self, item_ident: &Ident2) -> Result<(), Error> {
+        let mut module = self.current_module();
+        if self.state.type_modules.name(self.ident).is_some() {
+            module.0.pop();
+        }
+        // Auxiliary items are re-exported next to their owner in the public namespace.
+        let path = IdentPath::from_parts(module.0, item_ident.clone());
 
         State::claim_path(&mut self.state.paths, self.meta, &path, self.ident)
     }
@@ -137,8 +145,7 @@ impl<'a, 'types> Context<'a, 'types> {
     }
     pub(super) fn make_trait_impls(&mut self) -> Result<Vec<TokenStream>, Error> {
         let ident = self.ident.clone();
-        let current_module = self.current_module();
-        let module_path = ModulePath::from_ident(self.types, current_module);
+        let module_path = self.current_module();
 
         self.get_trait_infos()
             .get(&ident)

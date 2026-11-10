@@ -11,7 +11,7 @@ const NS: Namespace = Namespace::new_const(b"http://www.etim-international.com/b
 fn config() -> Config {
     let mut config = Config::test_default()
         .with_generator_flags(
-            GeneratorFlags::all()
+            (GeneratorFlags::all() - GeneratorFlags::USE_TYPE_MODULES)
                 - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
                 - GeneratorFlags::NILLABLE_TYPE_SUPPORT

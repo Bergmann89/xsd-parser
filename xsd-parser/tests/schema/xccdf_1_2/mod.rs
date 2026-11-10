@@ -12,7 +12,7 @@ fn config() -> Config {
     Config::default()
         .with_optimizer_flags(OptimizerFlags::all())
         .with_generator_flags(
-            GeneratorFlags::all()
+            (GeneratorFlags::all() - GeneratorFlags::USE_TYPE_MODULES)
                 - GeneratorFlags::ADVANCED_ENUMS
                 - GeneratorFlags::USE_SCHEMA_MODULES
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS

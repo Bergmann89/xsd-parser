@@ -3,7 +3,10 @@ use std::ops::Deref;
 
 use proc_macro2::TokenStream;
 
-use crate::models::{code::IdentPath, meta::MetaType};
+use crate::models::{
+    code::{IdentPath, ModulePath},
+    meta::MetaType,
+};
 
 use super::{
     BuildInData, ComplexData, ConfigValue, CustomData, DynamicData, EnumerationData, ReferenceData,
@@ -21,6 +24,9 @@ use super::{
 /// on the kind of the underlying type.
 #[derive(Debug)]
 pub struct DataType<'types> {
+    /// Module where this type and its implementations are generated.
+    pub module_path: ModulePath,
+
     /// Underlying meta type this data type contains additional information for.
     pub meta: Cow<'types, MetaType>,
 

@@ -125,6 +125,31 @@ bitflags! {
         /// See [`USE_MODULES`](Self::USE_MODULES) for details.
         const USE_SCHEMA_MODULES = 1 << 1;
 
+        /// Generate each type and its implementations in a separate module.
+        ///
+        /// Types are re-exported from their namespace or schema module. Inline
+        /// content and private XML helpers stay with their owning type. The
+        /// `quick_xml_serialize` and `quick_xml_deserialize` helper modules are
+        /// private in this layout; access their types through the serializer and
+        /// deserializer traits' associated types instead of public helper paths.
+        /// Compose this with namespace and schema grouping, then use
+        /// [`generate_modules`](crate::generate_modules) and the module writers
+        /// to emit separate files or inline modules.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/feature/enumeration/schema.xsd")]
+        /// ```
+        ///
+        /// Generating `tns:Foo` with `USE_TYPE_MODULES | FLATTEN_CONTENT` produces:
+        /// ```rust,ignore
+        #[doc = include_str!("../../tests/feature/type_modules/expected/simple.rs")]
+        /// ```
+        // Keep the existing flag bit assignments stable.
+        const USE_TYPE_MODULES = 1 << 10;
+
         /// The generator flattens the content type of choice types if it does not
         /// define any element attributes.
         ///
