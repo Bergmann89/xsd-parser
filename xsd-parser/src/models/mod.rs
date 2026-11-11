@@ -27,6 +27,7 @@ pub use self::ident::{
 pub use self::ident_cache::IdentCache;
 pub use self::name::Name;
 pub use self::naming::{
-    format_ident, format_unknown_variant, make_type_name, unify_string, ExplicitNameBuilder,
-    ExplicitNaming, NameBuilder, Naming,
+    format_ident, format_unknown_variant, make_type_name, split_words, to_constant_case,
+    to_field_case, to_type_case, unify_string, ExplicitNameBuilder, ExplicitNaming,
+    LegacyExplicitNaming, LegacyNaming, NameBuilder, Naming,
 };

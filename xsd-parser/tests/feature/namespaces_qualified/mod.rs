@@ -38,8 +38,8 @@ fn read_quick_xml_local_alt() {
         "tests/feature/namespaces_qualified/example/local_alt.xml",
     );
 
-    assert_eq!(obj.inner_1.a, "Bar String");
-    assert_eq!(obj.inner_2.b, "Baz String");
+    assert_eq!(obj.inner1.a, "Bar String");
+    assert_eq!(obj.inner2.b, "Baz String");
 }
 
 #[test]
@@ -48,10 +48,10 @@ fn write_quick_xml_local_alt() {
     use quick_xml_local_alt::{Foo, Inner1Type, Inner2Type};
 
     let obj = Foo {
-        inner_1: Inner1Type {
+        inner1: Inner1Type {
             a: "Bar String".into(),
         },
-        inner_2: Inner2Type {
+        inner2: Inner2Type {
             b: "Baz String".into(),
         },
     };
@@ -92,8 +92,8 @@ fn read_quick_xml_local_no_alt() {
         "tests/feature/namespaces_qualified/example/local_no_alt.xml",
     );
 
-    assert_eq!(obj.inner_1.a, "Bar String");
-    assert_eq!(obj.inner_2.b, "Baz String");
+    assert_eq!(obj.inner1.a, "Bar String");
+    assert_eq!(obj.inner2.b, "Baz String");
 }
 
 #[test]
@@ -102,10 +102,10 @@ fn write_quick_xml_local_no_alt() {
     use quick_xml_local_no_alt::{Foo, Inner1Type, Inner2Type};
 
     let obj = Foo {
-        inner_1: Inner1Type {
+        inner1: Inner1Type {
             a: "Bar String".into(),
         },
-        inner_2: Inner2Type {
+        inner2: Inner2Type {
             b: "Baz String".into(),
         },
     };
@@ -144,8 +144,8 @@ fn read_quick_xml_global_alt() {
         "tests/feature/namespaces_qualified/example/global_alt.xml",
     );
 
-    assert_eq!(obj.inner_1.a, "Bar String");
-    assert_eq!(obj.inner_2.b, "Baz String");
+    assert_eq!(obj.inner1.a, "Bar String");
+    assert_eq!(obj.inner2.b, "Baz String");
 }
 
 #[test]
@@ -154,10 +154,10 @@ fn write_quick_xml_global_alt() {
     use quick_xml_global_alt::{Foo, Inner1Type, Inner2Type};
 
     let obj = Foo {
-        inner_1: Inner1Type {
+        inner1: Inner1Type {
             a: "Bar String".into(),
         },
-        inner_2: Inner2Type {
+        inner2: Inner2Type {
             b: "Baz String".into(),
         },
     };
@@ -175,10 +175,10 @@ fn write_quick_xml_global_alt_prefixed() {
     use quick_xml_global_alt::{Foo, Inner1Type, Inner2Type};
 
     let obj = Foo {
-        inner_1: Inner1Type {
+        inner1: Inner1Type {
             a: "Bar String".into(),
         },
-        inner_2: Inner2Type {
+        inner2: Inner2Type {
             b: "Baz String".into(),
         },
     };
@@ -219,8 +219,8 @@ fn read_quick_xml_global_no_alt() {
         "tests/feature/namespaces_qualified/example/global_no_alt.xml",
     );
 
-    assert_eq!(obj.inner_1.a, "Bar String");
-    assert_eq!(obj.inner_2.b, "Baz String");
+    assert_eq!(obj.inner1.a, "Bar String");
+    assert_eq!(obj.inner2.b, "Baz String");
 }
 
 #[test]
@@ -229,10 +229,10 @@ fn write_quick_xml_global_no_alt() {
     use quick_xml_global_no_alt::{Foo, Inner1Type, Inner2Type};
 
     let obj = Foo {
-        inner_1: Inner1Type {
+        inner1: Inner1Type {
             a: "Bar String".into(),
         },
-        inner_2: Inner2Type {
+        inner2: Inner2Type {
             b: "Baz String".into(),
         },
     };
@@ -271,8 +271,8 @@ fn read_quick_xml_dynamic_alt() {
         "tests/feature/namespaces_qualified/example/dynamic_alt.xml",
     );
 
-    assert_eq!(obj.inner_1.a, "Bar String");
-    assert_eq!(obj.inner_2.b, "Baz String");
+    assert_eq!(obj.inner1.a, "Bar String");
+    assert_eq!(obj.inner2.b, "Baz String");
 }
 
 #[test]
@@ -281,10 +281,10 @@ fn write_quick_xml_dynamic_alt() {
     use quick_xml_dynamic_alt::{Foo, Inner1Type, Inner2Type};
 
     let obj = Foo {
-        inner_1: Inner1Type {
+        inner1: Inner1Type {
             a: "Bar String".into(),
         },
-        inner_2: Inner2Type {
+        inner2: Inner2Type {
             b: "Baz String".into(),
         },
     };
@@ -325,8 +325,8 @@ fn read_quick_xml_dynamic_no_alt() {
         "tests/feature/namespaces_qualified/example/dynamic_no_alt.xml",
     );
 
-    assert_eq!(obj.inner_1.a, "Bar String");
-    assert_eq!(obj.inner_2.b, "Baz String");
+    assert_eq!(obj.inner1.a, "Bar String");
+    assert_eq!(obj.inner2.b, "Baz String");
 }
 
 #[test]
@@ -335,10 +335,10 @@ fn write_quick_xml_dynamic_no_alt() {
     use quick_xml_dynamic_no_alt::{Foo, Inner1Type, Inner2Type};
 
     let obj = Foo {
-        inner_1: Inner1Type {
+        inner1: Inner1Type {
             a: "Bar String".into(),
         },
-        inner_2: Inner2Type {
+        inner2: Inner2Type {
             b: "Baz String".into(),
         },
     };

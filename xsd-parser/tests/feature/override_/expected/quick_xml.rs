@@ -459,7 +459,7 @@ pub mod tns {
             }
         }
     }
-    pub mod schema_1 {
+    pub mod schema1 {
         pub type Persons = PersonsType;
         #[derive(Debug)]
         pub struct PersonsType {
@@ -823,7 +823,7 @@ pub mod tns {
             }
         }
     }
-    pub mod schema_2 {
+    pub mod schema2 {
         pub type AdvancedPersons = AdvancedPersonsType;
         #[derive(Debug)]
         pub struct AdvancedPersonsType {

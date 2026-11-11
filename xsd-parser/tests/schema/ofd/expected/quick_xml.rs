@@ -4616,7 +4616,7 @@ pub mod definition {
     impl WithDeserializerFromBytes for CtActionMovieOperatorXType {}
     #[derive(Debug)]
     pub struct CtRegionAreaLineXElementType {
-        pub point_1: String,
+        pub point1: String,
     }
     impl WithSerializer for CtRegionAreaLineXElementType {
         type Serializer<'x> = quick_xml_serialize::CtRegionAreaLineXElementTypeSerializer<'x>;
@@ -4657,7 +4657,7 @@ pub mod definition {
     #[derive(Debug)]
     pub struct CtRegionAreaOuadraticBezierXElementType {
         pub pointl: String,
-        pub point_2: String,
+        pub point2: String,
     }
     impl WithSerializer for CtRegionAreaOuadraticBezierXElementType {
         type Serializer<'x> =
@@ -4689,9 +4689,9 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtRegionAreaCubicBezierXElementType {
-        pub point_1: Option<String>,
-        pub point_2: Option<String>,
-        pub point_3: String,
+        pub point1: Option<String>,
+        pub point2: Option<String>,
+        pub point3: String,
     }
     impl WithSerializer for CtRegionAreaCubicBezierXElementType {
         type Serializer<'x> =
@@ -7947,7 +7947,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtRegionAreaLineXElementTypeDeserializer {
-            point_1: String,
+            point1: String,
             state__: Box<CtRegionAreaLineXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -7960,20 +7960,20 @@ pub mod definition {
                 helper: &mut DeserializeHelper,
                 bytes_start: &BytesStart<'_>,
             ) -> Result<Self, Error> {
-                let mut point_1: Option<String> = None;
+                let mut point1: Option<String> = None;
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
                         helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point1")
                     ) {
-                        helper.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
+                        helper.read_attrib(&mut point1, b"Point1", &attrib.value)?;
                     } else {
                         helper.raise_unexpected_attrib_checked(&attrib)?;
                     }
                 }
                 Ok(Self {
-                    point_1: point_1.ok_or_else(|| ErrorKind::MissingAttribute("Point1".into()))?,
+                    point1: point1.ok_or_else(|| ErrorKind::MissingAttribute("Point1".into()))?,
                     state__: Box::new(CtRegionAreaLineXElementTypeDeserializerState::Init__),
                 })
             }
@@ -8023,14 +8023,14 @@ pub mod definition {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtRegionAreaLineXElementType {
-                    point_1: self.point_1,
+                    point1: self.point1,
                 })
             }
         }
         #[derive(Debug)]
         pub struct CtRegionAreaOuadraticBezierXElementTypeDeserializer {
             pointl: String,
-            point_2: String,
+            point2: String,
             state__: Box<CtRegionAreaOuadraticBezierXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -8044,7 +8044,7 @@ pub mod definition {
                 bytes_start: &BytesStart<'_>,
             ) -> Result<Self, Error> {
                 let mut pointl: Option<String> = None;
-                let mut point_2: Option<String> = None;
+                let mut point2: Option<String> = None;
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
@@ -8056,14 +8056,14 @@ pub mod definition {
                         helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point2")
                     ) {
-                        helper.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
+                        helper.read_attrib(&mut point2, b"Point2", &attrib.value)?;
                     } else {
                         helper.raise_unexpected_attrib_checked(&attrib)?;
                     }
                 }
                 Ok(Self {
                     pointl: pointl.ok_or_else(|| ErrorKind::MissingAttribute("Pointl".into()))?,
-                    point_2: point_2.ok_or_else(|| ErrorKind::MissingAttribute("Point2".into()))?,
+                    point2: point2.ok_or_else(|| ErrorKind::MissingAttribute("Point2".into()))?,
                     state__: Box::new(
                         CtRegionAreaOuadraticBezierXElementTypeDeserializerState::Init__,
                     ),
@@ -8118,15 +8118,15 @@ pub mod definition {
                 self.finish_state(helper, state)?;
                 Ok(super::CtRegionAreaOuadraticBezierXElementType {
                     pointl: self.pointl,
-                    point_2: self.point_2,
+                    point2: self.point2,
                 })
             }
         }
         #[derive(Debug)]
         pub struct CtRegionAreaCubicBezierXElementTypeDeserializer {
-            point_1: Option<String>,
-            point_2: Option<String>,
-            point_3: String,
+            point1: Option<String>,
+            point2: Option<String>,
+            point3: String,
             state__: Box<CtRegionAreaCubicBezierXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -8139,34 +8139,34 @@ pub mod definition {
                 helper: &mut DeserializeHelper,
                 bytes_start: &BytesStart<'_>,
             ) -> Result<Self, Error> {
-                let mut point_1: Option<String> = None;
-                let mut point_2: Option<String> = None;
-                let mut point_3: Option<String> = None;
+                let mut point1: Option<String> = None;
+                let mut point2: Option<String> = None;
+                let mut point3: Option<String> = None;
                 for attrib in helper.filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
                         helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point1")
                     ) {
-                        helper.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
+                        helper.read_attrib(&mut point1, b"Point1", &attrib.value)?;
                     } else if matches!(
                         helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point2")
                     ) {
-                        helper.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
+                        helper.read_attrib(&mut point2, b"Point2", &attrib.value)?;
                     } else if matches!(
                         helper.resolve_attrib_local_name(attrib.key, &super::super::NS_UNNAMED_5),
                         Some(b"Point3")
                     ) {
-                        helper.read_attrib(&mut point_3, b"Point3", &attrib.value)?;
+                        helper.read_attrib(&mut point3, b"Point3", &attrib.value)?;
                     } else {
                         helper.raise_unexpected_attrib_checked(&attrib)?;
                     }
                 }
                 Ok(Self {
-                    point_1: point_1,
-                    point_2: point_2,
-                    point_3: point_3.ok_or_else(|| ErrorKind::MissingAttribute("Point3".into()))?,
+                    point1: point1,
+                    point2: point2,
+                    point3: point3.ok_or_else(|| ErrorKind::MissingAttribute("Point3".into()))?,
                     state__: Box::new(CtRegionAreaCubicBezierXElementTypeDeserializerState::Init__),
                 })
             }
@@ -8216,9 +8216,9 @@ pub mod definition {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::CtRegionAreaCubicBezierXElementType {
-                    point_1: self.point_1,
-                    point_2: self.point_2,
-                    point_3: self.point_3,
+                    point1: self.point1,
+                    point2: self.point2,
+                    point3: self.point3,
                 })
             }
         }
@@ -9537,7 +9537,7 @@ pub mod definition {
                             if self.is_root {
                                 helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
-                            helper.write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
+                            helper.write_attrib(&mut bytes, "Point1", &self.value.point1)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
@@ -9596,7 +9596,7 @@ pub mod definition {
                                 helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
                             helper.write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
-                            helper.write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
+                            helper.write_attrib(&mut bytes, "Point2", &self.value.point2)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }
@@ -9659,9 +9659,9 @@ pub mod definition {
                             if self.is_root {
                                 helper.write_default_namespace(&mut bytes, self.name, &namespace);
                             }
-                            helper.write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
-                            helper.write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
-                            helper.write_attrib(&mut bytes, "Point3", &self.value.point_3)?;
+                            helper.write_attrib_opt(&mut bytes, "Point1", &self.value.point1)?;
+                            helper.write_attrib_opt(&mut bytes, "Point2", &self.value.point2)?;
+                            helper.write_attrib(&mut bytes, "Point3", &self.value.point3)?;
                             helper.end_ns_scope();
                             return Ok(Some(Event::Empty(bytes)));
                         }

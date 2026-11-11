@@ -92,7 +92,7 @@ pub struct LaneXType {
     pub type_attrib: Option<LaneTypeXType>,
     pub level_attrib: Option<SingleSideXType>,
     pub link: Option<LaneLinkXElementType>,
-    pub content_73: LaneContent73XType,
+    pub content73: LaneContent73XType,
     pub road_mark: Vec<LaneRoadMarkXElementType>,
     pub material: Vec<LaneMaterialXElementType>,
     pub visibility: Vec<LaneVisibilityXElementType>,
@@ -955,14 +955,14 @@ pub struct OpenDriveRoadPlanViewGeometryPoly3XElementType {
 }
 #[derive(Debug)]
 pub struct OpenDriveRoadPlanViewGeometryParamPoly3XElementType {
-    pub au_attrib: Option<f64>,
-    pub bu_attrib: Option<f64>,
-    pub cu_attrib: Option<f64>,
-    pub du_attrib: Option<f64>,
-    pub av_attrib: Option<f64>,
-    pub bv_attrib: Option<f64>,
-    pub cv_attrib: Option<f64>,
-    pub dv_attrib: Option<f64>,
+    pub a_u_attrib: Option<f64>,
+    pub b_u_attrib: Option<f64>,
+    pub c_u_attrib: Option<f64>,
+    pub d_u_attrib: Option<f64>,
+    pub a_v_attrib: Option<f64>,
+    pub b_v_attrib: Option<f64>,
+    pub c_v_attrib: Option<f64>,
+    pub d_v_attrib: Option<f64>,
     pub p_range_attrib: Option<PRangeXType>,
     pub user_data: Vec<UserDataXType>,
     pub include: Vec<IncludeXType>,
@@ -1003,7 +1003,7 @@ pub struct OpenDriveRoadObjectsObjectRepeatXElementType {
 }
 #[derive(Debug)]
 pub struct OpenDriveRoadObjectsObjectOutlineXElementType {
-    pub content_29: Option<OpenDriveRoadObjectsObjectOutlineContent29XType>,
+    pub content29: Option<OpenDriveRoadObjectsObjectOutlineContent29XType>,
 }
 #[derive(Debug)]
 pub struct OpenDriveRoadObjectsObjectMaterialXElementType {

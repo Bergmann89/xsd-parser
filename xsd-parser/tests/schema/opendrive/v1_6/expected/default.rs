@@ -378,7 +378,7 @@ pub struct TRoadSignalsSignalXType {
     pub validity: Vec<TRoadObjectsObjectLaneValidityXType>,
     pub dependency: Vec<TRoadSignalsSignalDependencyXType>,
     pub reference: Vec<TRoadSignalsSignalReferenceXType>,
-    pub content_91: Option<TRoadSignalsSignalContent91XType>,
+    pub content91: Option<TRoadSignalsSignalContent91XType>,
     pub g_additional_data: Vec<TRoadSignalsSignalGAdditionalDataXType>,
 }
 impl OpenDriveElementXTypeTrait for TRoadSignalsSignalXType {}
@@ -603,14 +603,14 @@ pub struct TRoadPlanViewGeometryLineXType;
 impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometryLineXType {}
 #[derive(Debug)]
 pub struct TRoadPlanViewGeometryParamPoly3XType {
-    pub au_attrib: f64,
-    pub bu_attrib: f64,
-    pub cu_attrib: f64,
-    pub du_attrib: f64,
-    pub av_attrib: f64,
-    pub bv_attrib: f64,
-    pub cv_attrib: f64,
-    pub dv_attrib: f64,
+    pub a_u_attrib: f64,
+    pub b_u_attrib: f64,
+    pub c_u_attrib: f64,
+    pub d_u_attrib: f64,
+    pub a_v_attrib: f64,
+    pub b_v_attrib: f64,
+    pub c_v_attrib: f64,
+    pub d_v_attrib: f64,
     pub p_range_attrib: EParamPoly3PRangeXType,
 }
 impl OpenDriveElementXTypeTrait for TRoadPlanViewGeometryParamPoly3XType {}
@@ -868,7 +868,7 @@ pub struct TRoadObjectsObjectOutlinesOutlineXType {
     pub outer_attrib: Option<TBoolXType>,
     pub closed_attrib: Option<TBoolXType>,
     pub lane_type_attrib: Option<ELaneTypeXType>,
-    pub content_61: Option<TRoadObjectsObjectOutlinesOutlineContent61XType>,
+    pub content61: Option<TRoadObjectsObjectOutlinesOutlineContent61XType>,
     pub g_additional_data: Vec<TRoadObjectsObjectOutlinesOutlineGAdditionalDataXType>,
 }
 impl OpenDriveElementXTypeTrait for TRoadObjectsObjectOutlinesOutlineXType {}
@@ -1067,7 +1067,7 @@ pub struct TRoadLanesLaneSectionCenterLaneXType {
     pub level_attrib: Option<TBoolXType>,
     pub id_attrib: i32,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
+    pub content25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,
@@ -1160,7 +1160,7 @@ pub struct TRoadLanesLaneSectionLeftLaneXType {
     pub level_attrib: Option<TBoolXType>,
     pub id_attrib: usize,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
+    pub content25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,
@@ -1175,7 +1175,7 @@ pub struct TRoadLanesLaneSectionLrLaneXType {
     pub type_attrib: ELaneTypeXType,
     pub level_attrib: Option<TBoolXType>,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
+    pub content25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,
@@ -1250,7 +1250,7 @@ pub struct TRoadLanesLaneSectionRightLaneXType {
     pub level_attrib: Option<TBoolXType>,
     pub id_attrib: isize,
     pub link: Option<TRoadLanesLaneSectionLcrLaneLinkXType>,
-    pub content_25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
+    pub content25: Vec<TRoadLanesLaneSectionLrLaneContent25XType>,
     pub road_mark: Vec<TRoadLanesLaneSectionLcrLaneRoadMarkXType>,
     pub material: Vec<TRoadLanesLaneSectionLrLaneMaterialXType>,
     pub speed: Vec<TRoadLanesLaneSectionLrLaneSpeedXType>,

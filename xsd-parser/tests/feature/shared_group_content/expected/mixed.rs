@@ -47,12 +47,12 @@ pub type UnsignedLongType = u64;
 pub type UnsignedShortType = u16;
 #[derive(Debug)]
 pub struct ElementAType {
-    pub attr_1: Option<String>,
+    pub attr1: Option<String>,
     pub content: Vec<FlowTypeContentType>,
 }
 #[derive(Debug)]
 pub struct ElementBType {
-    pub attr_2: Option<String>,
+    pub attr2: Option<String>,
     pub content: Vec<FlowTypeContentType>,
 }
 #[derive(Debug)]

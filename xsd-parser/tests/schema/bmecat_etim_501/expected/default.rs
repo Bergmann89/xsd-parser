@@ -378,7 +378,7 @@ pub struct MimeInfoElementType {
 }
 #[derive(Debug)]
 pub enum TypeBmEcatEtimVersion {
-    _50,
+    _5_0,
 }
 #[derive(Debug)]
 pub enum TNewCatalogProductMode {
@@ -1269,7 +1269,7 @@ pub struct UdxEdxfPackingUnitElementType {
     pub udx_edxf_depth: Option<f64>,
     pub udx_edxf_diameter: Option<f64>,
     pub udx_edxf_gtin: Option<String>,
-    pub udx_edxf_gs_1128: Option<String>,
+    pub udx_edxf_gs1_128: Option<String>,
 }
 #[derive(Debug)]
 pub enum UdxEdxfReachInfoElementType {
@@ -1298,17 +1298,17 @@ pub enum UdxEdxfAggregationStateElementType {
 #[derive(Debug)]
 pub enum UdxEdxfHazardClassElementType {
     _1,
-    _21,
-    _22,
-    _23,
+    _2_1,
+    _2_2,
+    _2_3,
     _3,
-    _41,
-    _42,
-    _43,
-    _51,
-    _52,
-    _61,
-    _62,
+    _4_1,
+    _4_2,
+    _4_3,
+    _5_1,
+    _5_2,
+    _6_1,
+    _6_2,
     _7,
     _8,
     _9,

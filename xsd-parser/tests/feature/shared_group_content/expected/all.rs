@@ -49,7 +49,7 @@ pub type UnsignedShortType = u16;
 pub struct Content0Type;
 #[derive(Debug)]
 pub struct ElementAType {
-    pub attr_1: Option<String>,
+    pub attr1: Option<String>,
     pub content: ChoiceGroupType,
 }
 #[derive(Debug)]
@@ -62,7 +62,7 @@ pub type ElementAContent1Type = ChoiceGroupType;
 pub type ElementB = ElementBType;
 #[derive(Debug)]
 pub struct ElementBType {
-    pub attr_2: Option<String>,
+    pub attr2: Option<String>,
     pub content: ChoiceGroupType,
 }
 pub type ElementBChoiceGroupType = ChoiceGroupType;

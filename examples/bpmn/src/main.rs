@@ -6,7 +6,7 @@ use std::io::BufReader;
 use anyhow::{Context, Error};
 use xsd_parser_types::quick_xml::{DeserializeSync, IoReader, XmlReader};
 
-use bpmn::bpmn_20::Definitions;
+use bpmn::bpmn20::Definitions;
 
 fn main() -> Result<(), Error> {
     let input_file = File::open("xmls/triso-order-process-for-pizza-v4.bpmn.xml")

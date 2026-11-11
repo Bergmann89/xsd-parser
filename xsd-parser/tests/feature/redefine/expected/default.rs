@@ -11,14 +11,14 @@ pub mod tns {
             Female,
         }
     }
-    pub mod schema_1 {
+    pub mod schema1 {
         pub type Persons = PersonsType;
         #[derive(Debug)]
         pub struct PersonsType {
             pub person: ::std::vec::Vec<super::base::PersonType>,
         }
     }
-    pub mod schema_2 {
+    pub mod schema2 {
         pub type AdvancedPersons = AdvancedPersonsType;
         #[derive(Debug)]
         pub struct AdvancedPersonsType {

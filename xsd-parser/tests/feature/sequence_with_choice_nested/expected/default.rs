@@ -1,7 +1,7 @@
 pub type Container = ContainerType;
 #[derive(Debug)]
 pub struct ContainerType {
-    pub content_2: Vec<ContainerContent2Type>,
+    pub content2: Vec<ContainerContent2Type>,
 }
 #[derive(Debug)]
 pub enum ContainerContent2Type {
@@ -10,7 +10,7 @@ pub enum ContainerContent2Type {
 }
 #[derive(Debug)]
 pub struct ContainerContent3Type {
-    pub content_4: Vec<ContainerContent4Type>,
+    pub content4: Vec<ContainerContent4Type>,
 }
 #[derive(Debug)]
 pub enum ContainerContent4Type {

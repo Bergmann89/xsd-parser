@@ -50,7 +50,7 @@ fn generate_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml_persons() {
-    use quick_xml::tns::{base::GenderType, schema_1::Persons};
+    use quick_xml::tns::{base::GenderType, schema1::Persons};
 
     let obj = crate::utils::quick_xml_read_test::<Persons, _>(
         "tests/feature/redefine/example/Persons.xml",
@@ -72,7 +72,7 @@ fn read_quick_xml_persons() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml_advanced_persons() {
-    use quick_xml::tns::{base::GenderType, schema_2::AdvancedPersons};
+    use quick_xml::tns::{base::GenderType, schema2::AdvancedPersons};
 
     let obj = crate::utils::quick_xml_read_test::<AdvancedPersons, _>(
         "tests/feature/redefine/example/AdvancedPersons.xml",

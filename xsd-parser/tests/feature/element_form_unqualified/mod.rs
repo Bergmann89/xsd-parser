@@ -26,7 +26,7 @@ macro_rules! check_obj {
         assert_eq!(obj.item, "i");
         assert_eq!(obj.q, "q");
         assert_eq!(obj.ref_.v, "r");
-        assert_eq!(obj.ref_2.v, "r2");
+        assert_eq!(obj.ref2.v, "r2");
     }};
 }
 
@@ -42,7 +42,7 @@ macro_rules! test_obj {
             item: "i".into(),
             q: "q".into(),
             ref_: RefType { v: "r".into() },
-            ref_2: RootRef2Type { v: "r2".into() },
+            ref2: RootRef2Type { v: "r2".into() },
         }
     }};
 }

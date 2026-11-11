@@ -1,7 +1,6 @@
 use std::any::Any;
 use std::sync::{atomic::AtomicUsize, Arc};
 
-use inflector::Inflector;
 use proc_macro2::Ident as Ident2;
 
 use crate::config::MetaType;
@@ -18,10 +17,10 @@ use super::{Name, NameBuilder};
 /// `FooTypeType`), but will reduce naming conflicts in most cases.
 #[derive(Debug, Clone)]
 pub struct ExplicitNaming {
-    id: Arc<AtomicUsize>,
-    unify_names: bool,
-    element_field_postfix: Option<String>,
-    attribute_field_postfix: Option<String>,
+    pub(super) id: Arc<AtomicUsize>,
+    pub(super) unify_names: bool,
+    pub(super) element_field_postfix: Option<String>,
+    pub(super) attribute_field_postfix: Option<String>,
 }
 
 impl ExplicitNaming {
@@ -115,31 +114,39 @@ impl NamingTrait for ExplicitNaming {
     }
 
     fn format_module_name(&self, s: &str) -> String {
-        let s = self.unify(s).to_snake_case();
+        let s = super::to_field_case(&self.unify(s));
 
         super::format_ident(s)
     }
 
     fn format_type_name(&self, s: &str) -> String {
-        let s = self.unify(s);
+        let s = if self.unify_names {
+            super::to_type_case(&self.unify(s))
+        } else {
+            self.unify(s)
+        };
 
         super::format_ident(s)
     }
 
     fn format_field_name(&self, s: &str) -> String {
-        let s = self.unify(s).to_snake_case();
+        let s = super::to_field_case(&self.unify(s));
 
         super::format_ident(s)
     }
 
     fn format_variant_name(&self, s: &str) -> String {
-        let s = self.unify(s);
+        let s = if self.unify_names {
+            super::to_type_case(&self.unify(s))
+        } else {
+            self.unify(s)
+        };
 
         super::format_ident(s)
     }
 
     fn format_constant_name(&self, s: &str) -> String {
-        let s = self.unify(s).to_screaming_snake_case();
+        let s = super::to_constant_case(&self.unify(s));
 
         super::format_ident(s)
     }

@@ -46,11 +46,11 @@ fn read_quick_xml() {
         "tests/feature/sequence_with_choice_nested/example/default.xml",
     );
 
-    let mut it = obj.content_2.into_iter();
+    let mut it = obj.content2.into_iter();
     let Some(ContainerContent2Type::Content3(cntr)) = it.next() else {
         panic!();
     };
-    let mut items = cntr.content_4.into_iter();
+    let mut items = cntr.content4.into_iter();
     assert!(matches!(items.next(), Some(ContainerContent4Type::Bar(s)) if s == "bar"));
 
     assert!(matches!(it.next(), Some(ContainerContent2Type::Foo(s)) if s == "foo"));
@@ -65,9 +65,9 @@ fn write_quick_xml() {
     };
 
     let obj = Container {
-        content_2: vec![
+        content2: vec![
             ContainerContent2Type::Content3(ContainerContent3Type {
-                content_4: vec![ContainerContent4Type::Bar("bar".into())],
+                content4: vec![ContainerContent4Type::Bar("bar".into())],
             }),
             ContainerContent2Type::Foo("foo".into()),
         ],

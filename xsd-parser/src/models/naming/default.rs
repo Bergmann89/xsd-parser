@@ -4,7 +4,6 @@ use std::sync::{
     Arc,
 };
 
-use inflector::Inflector;
 use proc_macro2::Ident as Ident2;
 
 use crate::models::{meta::MetaType, TypeIdent};
@@ -16,6 +15,11 @@ use super::Name;
 ///
 /// This type implements the [`Naming`](NamingTrait) trait that is used for
 /// naming generation and formatting.
+///
+/// Names are split into words by [`split_words`](super::split_words), which
+/// keeps acronyms together with their digits and plural `s` (`MP3s` becomes
+/// `mp3s`, `UserIDs` becomes `user_ids`). Use [`LegacyNaming`](super::LegacyNaming)
+/// to keep the names of `xsd-parser` up to version 1.7.
 #[derive(Default, Debug, Clone)]
 pub struct Naming(Arc<AtomicUsize>);
 
@@ -41,31 +45,31 @@ impl NamingTrait for Naming {
     }
 
     fn format_module_name(&self, s: &str) -> String {
-        let s = self.unify(s).to_snake_case();
+        let s = super::to_field_case(&self.unify(s));
 
         super::format_ident(s)
     }
 
     fn format_type_name(&self, s: &str) -> String {
-        let s = self.unify(s);
+        let s = super::to_type_case(&self.unify(s));
 
         super::format_ident(s)
     }
 
     fn format_field_name(&self, s: &str) -> String {
-        let s = self.unify(s).to_snake_case();
+        let s = super::to_field_case(&self.unify(s));
 
         super::format_ident(s)
     }
 
     fn format_variant_name(&self, s: &str) -> String {
-        let s = self.unify(s);
+        let s = super::to_type_case(&self.unify(s));
 
         super::format_ident(s)
     }
 
     fn format_constant_name(&self, s: &str) -> String {
-        let s = self.unify(s).to_screaming_snake_case();
+        let s = super::to_constant_case(&self.unify(s));
 
         super::format_ident(s)
     }
@@ -263,11 +267,12 @@ mod tests {
         let naming = Naming::default();
 
         assert_eq!("_", naming.unify("+"));
+        assert_eq!("_", naming.format_type_name("+"));
         assert_eq!("FuuBarBaz", naming.unify("Fuu_BAR_BAZ"));
         assert_eq!("FuuBarBaz", naming.unify("fuu_bar_baz"));
         assert_eq!("FuuBarBaz", naming.unify("fuu+Bar-BAZ"));
 
-        assert_eq!("QName", naming.unify("QName"));
+        assert_eq!("Q_Name", naming.unify("QName"));
         assert_eq!("QName", naming.format_type_name("QName"));
         assert_eq!("QName", naming.format_variant_name("QName"));
         assert_eq!("q_name", naming.format_field_name("QName"));

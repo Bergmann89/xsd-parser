@@ -1,8 +1,8 @@
 pub type Foo = FooType;
 #[derive(Debug)]
 pub struct FooType {
-    pub content_2: FooContent2Type,
-    pub content_3: FooContent3Type,
+    pub content2: FooContent2Type,
+    pub content3: FooContent3Type,
 }
 #[derive(Debug)]
 pub enum FooContent2Type {
