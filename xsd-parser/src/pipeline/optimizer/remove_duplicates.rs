@@ -124,6 +124,10 @@ impl Optimizer {
             let mut buckets = Vec::<Vec<&TypeIdent>>::new();
 
             for (ident, type_) in &meta.items {
+                // These aliases intentionally preserve each schema declaration.
+                if matches!(&type_.variant, MetaTypeVariant::Custom(custom) if custom.alias) {
+                    continue;
+                }
                 let index = *map.entry(Value { type_, types: meta }).or_insert_with(|| {
                     buckets.push(Vec::new());
 

@@ -502,7 +502,7 @@ impl<'types> State<'types> {
 
                 PathData::from_path(path)
             }
-            MetaTypeVariant::Custom(x) => {
+            MetaTypeVariant::Custom(x) if !x.alias => {
                 if let Some(using) = x.include() {
                     let path = IdentPath::from_str(using)?;
 

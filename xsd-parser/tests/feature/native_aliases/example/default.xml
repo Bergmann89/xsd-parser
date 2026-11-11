@@ -1,0 +1,6 @@
+<ex:Message xmlns:ex="urn:example">
+    <Value>value</Value>
+    <Sibling>sibling</Sibling>
+    <Local>local</Local>
+    <CrateValue>crate</CrateValue>
+</ex:Message>

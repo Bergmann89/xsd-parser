@@ -1,6 +1,7 @@
 mod crate_ident_cache;
 mod crate_node_cache;
 mod create_node_list;
+mod custom_aliases;
 mod fix_derived_types;
 mod fix_element_naming_conflicts;
 mod generate_types;
@@ -105,6 +106,7 @@ impl<'a> State<'a> {
 
     pub(super) fn finish(mut self) -> Result<(MetaTypes, IdentCache), Error> {
         self.create_node_cache()?;
+        self.prepare_custom_aliases();
         self.prepare_modules();
         self.prepare_schemas();
         let nodes = self.create_node_list()?;

@@ -1,0 +1,11 @@
+[package]
+name = "native_aliases"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+
+[dependencies]
+xsd-parser-types = { workspace = true, features = ["quick-xml"] }
+
+[build-dependencies]
+xsd-parser = { workspace = true }

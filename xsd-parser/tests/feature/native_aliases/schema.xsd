@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ex="urn:example" targetNamespace="urn:example">
+    <xs:simpleType name="Value"><xs:annotation>
+        <xs:documentation>First paragraph.</xs:documentation>
+        <xs:documentation>Second paragraph.</xs:documentation>
+    </xs:annotation><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="Sibling"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="Local"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="CrateValue"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:element name="Message"><xs:complexType><xs:sequence>
+        <xs:element name="Value" type="ex:Value"/>
+        <xs:element name="Sibling" type="ex:Sibling"/>
+        <xs:element name="Local" type="ex:Local"/>
+        <xs:element name="CrateValue" type="ex:CrateValue"/>
+    </xs:sequence></xs:complexType></xs:element>
+</xs:schema>

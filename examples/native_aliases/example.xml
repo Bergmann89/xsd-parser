@@ -1,0 +1,4 @@
+<ex:Record xmlns:ex="urn:native-aliases">
+    <Label>Example</Label>
+    <Description>Native Rust values exposed under schema names</Description>
+</ex:Record>

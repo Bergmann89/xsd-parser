@@ -10,10 +10,17 @@ use crate::models::{
 
 /// Contains additional information for the rendering process of a
 /// [`MetaTypeVariant::Reference`](crate::models::meta::MetaTypeVariant::Reference)
-/// type.
+/// type or an alias to a native Rust type.
 #[derive(Debug)]
 pub struct ReferenceData<'types> {
     /// Reference to the original type information.
+    ///
+    /// Native custom-type aliases use synthetic placeholder metadata that points
+    /// to the original [`CustomMeta`](crate::models::meta::CustomMeta) in
+    /// [`MetaTypes`](crate::models::meta::MetaTypes), not to a separate generated
+    /// target. Custom renderers must use [`target_type`](Self::target_type) for
+    /// the Rust alias target rather than follow `meta.type_` as another generated
+    /// reference.
     pub meta: Cow<'types, ReferenceMeta>,
 
     /// Typedef mode that should be used to render this reference type.

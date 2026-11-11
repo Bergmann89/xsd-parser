@@ -21,6 +21,13 @@ impl<'types> DataType<'types> {
         let derive = ConfigValue::Default;
         let variant = match &meta.variant {
             M::BuildIn(x) => D::BuildIn(BuildInData::new(x)),
+            M::Custom(x) if x.alias => {
+                let alias = ReferenceData::new_custom_alias(x, ctx)?;
+                if let Some(generator) = &x.generator {
+                    generator.exec(ctx, x)?;
+                }
+                D::Reference(alias)
+            }
             M::Custom(x) => D::Custom(CustomData::new(x, ctx)?),
             M::Union(x) => D::Union(UnionData::new(x, ctx)?),
             M::Dynamic(x) => D::Dynamic(DynamicData::new(x, ctx)?),

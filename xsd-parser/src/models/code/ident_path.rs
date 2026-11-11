@@ -133,6 +133,9 @@ impl IdentPath {
     ///
     /// This uses the `super` keyword to create a relative path from the passed `dst` module path
     /// and this identifier path. The relative path is returned as token stream.
+    ///
+    /// A leading `crate::` remains anchored to the Rust crate. A leading `self::`
+    /// denotes the generated root and is stripped before calculating the relative path.
     #[must_use]
     pub fn relative_to(&self, dst: &ModulePath) -> TokenStream {
         let ident = &self.ident;
@@ -150,7 +153,13 @@ impl IdentPath {
             return quote!(#ret::#ident);
         }
 
-        let mut src = src.0.iter().fuse();
+        // `crate` is anchored independently of the generated module tree.
+        if src.first().is_some_and(|segment| segment == "crate") {
+            return quote!(#self);
+        }
+        // `self` in a root-relative include denotes the generated root.
+        let offset = usize::from(src.first().is_some_and(|segment| segment == "self"));
+        let mut src = src.0.iter().skip(offset).fuse();
         let mut dst = dst.0.iter().fuse();
 
         macro_rules! push {
@@ -432,6 +441,9 @@ mod tests {
             format_ident!("MyTypeDeserializer"),
         );
 
+        let crate_path = IdentPath::from_str("crate::a::B").unwrap();
+        let self_path = IdentPath::from_str("self::a::B").unwrap();
+
         let empty_path = ModulePath::default();
         let module_path = ModulePath::default().join(format_ident!("my_module"));
         let other_module_path = ModulePath::default().join(format_ident!("other_module"));
@@ -446,6 +458,20 @@ mod tests {
                 assert_eq!(a, b);
             }};
         }
+
+        /* Explicit anchors */
+
+        test!(crate_path.relative_to(&empty_path), crate::a::B);
+        test!(crate_path.relative_to(&module_path), crate::a::B);
+        test!(crate_path.relative_to(&other_module_path), crate::a::B);
+        test!(crate_path.relative_to(&serializer_path), crate::a::B);
+        test!(crate_path.relative_to(&deserializer_path), crate::a::B);
+
+        test!(self_path.relative_to(&empty_path), a::B);
+        test!(self_path.relative_to(&module_path), super::a::B);
+        test!(self_path.relative_to(&other_module_path), super::a::B);
+        test!(self_path.relative_to(&serializer_path), super::super::a::B);
+        test!(self_path.relative_to(&deserializer_path), super::super::a::B);
 
         /* With modules */
 
