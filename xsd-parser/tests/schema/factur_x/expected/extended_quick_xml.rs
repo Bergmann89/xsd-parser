@@ -689,7 +689,7 @@ impl WithSerializer for DateTimeTypeDateTimeStringType {
                 state: Box::new(
                     quick_xml_serialize::DateTimeTypeDateTimeStringTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("udt:DateTimeTypeDateTimeString"),
+                name: name.unwrap_or("udt:DateTimeString"),
                 namespace,
                 is_root,
             },
@@ -2856,7 +2856,7 @@ impl WithSerializer for FormattedDateTimeTypeDateTimeStringType {
         namespace: ElementNamespace,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok (quick_xml_serialize :: FormattedDateTimeTypeDateTimeStringTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: FormattedDateTimeTypeDateTimeStringTypeSerializerState :: Init__) , name : name . unwrap_or ("qdt:FormattedDateTimeTypeDateTimeString") , namespace , is_root , })
+        Ok (quick_xml_serialize :: FormattedDateTimeTypeDateTimeStringTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: FormattedDateTimeTypeDateTimeStringTypeSerializerState :: Init__) , name : name . unwrap_or ("qdt:DateTimeString") , namespace , is_root , })
     }
 }
 impl WithDeserializer for FormattedDateTimeTypeDateTimeStringType {
@@ -2916,7 +2916,7 @@ impl WithSerializer for DateTypeDateStringType {
         Ok(quick_xml_serialize::DateTypeDateStringTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::DateTypeDateStringTypeSerializerState::Init__),
-            name: name.unwrap_or("udt:DateTypeDateString"),
+            name: name.unwrap_or("udt:DateString"),
             namespace,
             is_root,
         })

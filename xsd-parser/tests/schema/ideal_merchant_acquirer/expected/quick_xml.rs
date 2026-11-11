@@ -71,7 +71,7 @@ impl WithSerializer for DirectoryReqMerchantType {
         Ok(quick_xml_serialize::DirectoryReqMerchantTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::DirectoryReqMerchantTypeSerializerState::Init__),
-            name: name.unwrap_or("DirectoryReqMerchant"),
+            name: name.unwrap_or("Merchant"),
             namespace,
             is_root,
         })

@@ -68,7 +68,7 @@ impl WithSerializer for ShiporderShiptoType {
         Ok(quick_xml_serialize::ShiporderShiptoTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ShiporderShiptoTypeSerializerState::Init__),
-            name: name.unwrap_or("ShiporderShipto"),
+            name: name.unwrap_or("shipto"),
             namespace,
             is_root,
         })
@@ -102,7 +102,7 @@ impl WithSerializer for ShiporderItemType {
         Ok(quick_xml_serialize::ShiporderItemTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ShiporderItemTypeSerializerState::Init__),
-            name: name.unwrap_or("ShiporderItem"),
+            name: name.unwrap_or("item"),
             namespace,
             is_root,
         })

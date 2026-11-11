@@ -132,7 +132,7 @@ impl WithSerializer for RootRef2Type {
         Ok(quick_xml_serialize::RootRef2TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::RootRef2TypeSerializerState::Init__),
-            name: name.unwrap_or("RootRef2"),
+            name: name.unwrap_or("Ref2"),
             namespace,
             is_root,
         })

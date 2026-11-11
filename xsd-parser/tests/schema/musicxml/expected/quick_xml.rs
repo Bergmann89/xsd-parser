@@ -18702,7 +18702,7 @@ impl ::xsd_parser_types::quick_xml::WithSerializer for AttributesDirectiveElemen
                 state: ::std::boxed::Box::new(
                     quick_xml_serialize::AttributesDirectiveElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("AttributesDirective"),
+                name: name.unwrap_or("directive"),
                 namespace,
                 is_root,
             },
@@ -18747,7 +18747,7 @@ impl ::xsd_parser_types::quick_xml::WithSerializer for ScorePartwisePartElementT
                 state: ::std::boxed::Box::new(
                     quick_xml_serialize::ScorePartwisePartElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ScorePartwisePart"),
+                name: name.unwrap_or("part"),
                 namespace,
                 is_root,
             },
@@ -18833,7 +18833,7 @@ impl ::xsd_parser_types::quick_xml::WithSerializer for ScoreTimewiseMeasureEleme
                 state: ::std::boxed::Box::new(
                     quick_xml_serialize::ScoreTimewiseMeasureElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ScoreTimewiseMeasure"),
+                name: name.unwrap_or("measure"),
                 namespace,
                 is_root,
             },
@@ -18925,7 +18925,7 @@ impl ::xsd_parser_types::quick_xml::WithSerializer for ScorePartwisePartMeasureE
                 state: ::std::boxed::Box::new(
                     quick_xml_serialize::ScorePartwisePartMeasureElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ScorePartwisePartMeasure"),
+                name: name.unwrap_or("measure"),
                 namespace,
                 is_root,
             },
@@ -19016,7 +19016,7 @@ impl ::xsd_parser_types::quick_xml::WithSerializer for ScoreTimewiseMeasurePartE
                 state: ::std::boxed::Box::new(
                     quick_xml_serialize::ScoreTimewiseMeasurePartElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ScoreTimewiseMeasurePart"),
+                name: name.unwrap_or("part"),
                 namespace,
                 is_root,
             },

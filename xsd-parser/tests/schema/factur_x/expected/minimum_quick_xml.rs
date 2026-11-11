@@ -443,7 +443,7 @@ impl WithSerializer for DateTimeTypeDateTimeStringType {
                 state: Box::new(
                     quick_xml_serialize::DateTimeTypeDateTimeStringTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("udt:DateTimeTypeDateTimeString"),
+                name: name.unwrap_or("udt:DateTimeString"),
                 namespace,
                 is_root,
             },
