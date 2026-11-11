@@ -69,7 +69,7 @@ impl WithSerializer for FooBarType {
         Ok(quick_xml_serialize::FooBarTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooBarTypeSerializerState::Init__),
-            name: name.unwrap_or("FooBar"),
+            name: name.unwrap_or("Bar"),
             namespace,
             is_root,
         })

@@ -136,7 +136,7 @@ impl WithSerializer for RequestType {
         Ok(quick_xml_serialize::RequestTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::RequestTypeSerializerState::Init__),
-            name: name.unwrap_or("Request"),
+            name: name.unwrap_or("request"),
             namespace,
             is_root,
         })
@@ -206,7 +206,7 @@ impl WithSerializer for EventType {
         Ok(quick_xml_serialize::EventTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::EventTypeSerializerState::Init__),
-            name: name.unwrap_or("Event"),
+            name: name.unwrap_or("event"),
             namespace,
             is_root,
         })
@@ -431,7 +431,7 @@ impl WithSerializer for XidtypeType {
         Ok(quick_xml_serialize::XidtypeTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::XidtypeTypeSerializerState::Init__),
-            name: name.unwrap_or("Xidtype"),
+            name: name.unwrap_or("xidtype"),
             namespace,
             is_root,
         })
@@ -463,7 +463,7 @@ impl WithSerializer for XidunionType {
         Ok(quick_xml_serialize::XidunionTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::XidunionTypeSerializerState::Init__),
-            name: name.unwrap_or("Xidunion"),
+            name: name.unwrap_or("xidunion"),
             namespace,
             is_root,
         })
@@ -500,7 +500,7 @@ impl WithSerializer for EnumType {
         Ok(quick_xml_serialize::EnumTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::EnumTypeSerializerState::Init__),
-            name: name.unwrap_or("Enum"),
+            name: name.unwrap_or("enum"),
             namespace,
             is_root,
         })
@@ -559,7 +559,7 @@ impl WithSerializer for TypedefType {
         Ok(quick_xml_serialize::TypedefTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::TypedefTypeSerializerState::Init__),
-            name: name.unwrap_or("Typedef"),
+            name: name.unwrap_or("typedef"),
             namespace,
             is_root,
         })
@@ -952,7 +952,7 @@ impl WithSerializer for RequestReplyType {
         Ok(quick_xml_serialize::RequestReplyTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::RequestReplyTypeSerializerState::Init__),
-            name: name.unwrap_or("RequestReply"),
+            name: name.unwrap_or("reply"),
             namespace,
             is_root,
         })
@@ -1083,7 +1083,7 @@ impl WithSerializer for EnumItemType {
         Ok(quick_xml_serialize::EnumItemTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::EnumItemTypeSerializerState::Init__),
-            name: name.unwrap_or("EnumItem"),
+            name: name.unwrap_or("item"),
             namespace,
             is_root,
         })
@@ -1153,7 +1153,7 @@ impl WithSerializer for OpType {
         Ok(quick_xml_serialize::OpTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::OpTypeSerializerState::Init__),
-            name: name.unwrap_or("Op"),
+            name: name.unwrap_or("op"),
             namespace,
             is_root,
         })
@@ -1223,7 +1223,7 @@ impl WithSerializer for UnopType {
         Ok(quick_xml_serialize::UnopTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::UnopTypeSerializerState::Init__),
-            name: name.unwrap_or("Unop"),
+            name: name.unwrap_or("unop"),
             namespace,
             is_root,
         })
@@ -1282,7 +1282,7 @@ impl WithSerializer for EnumrefType {
         Ok(quick_xml_serialize::EnumrefTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::EnumrefTypeSerializerState::Init__),
-            name: name.unwrap_or("Enumref"),
+            name: name.unwrap_or("enumref"),
             namespace,
             is_root,
         })
@@ -1320,7 +1320,7 @@ impl WithSerializer for PopcountType {
         Ok(quick_xml_serialize::PopcountTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::PopcountTypeSerializerState::Init__),
-            name: name.unwrap_or("Popcount"),
+            name: name.unwrap_or("popcount"),
             namespace,
             is_root,
         })
@@ -1351,7 +1351,7 @@ impl WithSerializer for SumofType {
         Ok(quick_xml_serialize::SumofTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::SumofTypeSerializerState::Init__),
-            name: name.unwrap_or("Sumof"),
+            name: name.unwrap_or("sumof"),
             namespace,
             is_root,
         })
@@ -1487,7 +1487,7 @@ impl WithSerializer for FieldType {
         Ok(quick_xml_serialize::FieldTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FieldTypeSerializerState::Init__),
-            name: name.unwrap_or("Field"),
+            name: name.unwrap_or("field"),
             namespace,
             is_root,
         })
@@ -1519,7 +1519,7 @@ impl WithSerializer for ErrorType {
         Ok(quick_xml_serialize::ErrorTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ErrorTypeSerializerState::Init__),
-            name: name.unwrap_or("Error"),
+            name: name.unwrap_or("error"),
             namespace,
             is_root,
         })
@@ -1551,7 +1551,7 @@ impl WithSerializer for SeeType {
         Ok(quick_xml_serialize::SeeTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::SeeTypeSerializerState::Init__),
-            name: name.unwrap_or("See"),
+            name: name.unwrap_or("see"),
             namespace,
             is_root,
         })

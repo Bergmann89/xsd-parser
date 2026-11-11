@@ -225,6 +225,12 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                 .clone()
                 .with_type(IdentType::ElementType);
 
+            let element_name = type_
+                .name
+                .is_generated()
+                .then(|| ty.name.clone().map(Name::from))
+                .flatten();
+
             self.owner.create_type(type_.clone(), |processor| {
                 for c in &ty.content {
                     match c {
@@ -236,6 +242,10 @@ impl<'a, 'state, 'schema> VariantProcessor<'a, 'state, 'schema> {
                         C::SimpleType(x) => processor.apply_simple_type(x)?,
                         C::ComplexType(x) => processor.apply_complex_type(x)?,
                     }
+                }
+
+                if let Some(MetaTypeVariant::ComplexType(meta)) = &mut processor.variant {
+                    meta.element_name = element_name;
                 }
 
                 Ok(())

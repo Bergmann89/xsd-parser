@@ -77,7 +77,7 @@ pub mod annotations {
                 state: Box::new(
                     quick_xml_serialize::AnnotationsPageXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("AnnotationsPage"),
+                name: name.unwrap_or("Page"),
                 namespace,
                 is_root,
             })
@@ -739,7 +739,7 @@ pub mod annotion {
                 state: Box::new(
                     quick_xml_serialize::PageAnnotAnnotXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("PageAnnotAnnot"),
+                name: name.unwrap_or("Annot"),
                 namespace,
                 is_root,
             })
@@ -811,7 +811,7 @@ pub mod annotion {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotParameters") , namespace , is_root , })
+            Ok (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Parameters") , namespace , is_root , })
         }
     }
     impl WithDeserializer for PageAnnotAnnotParametersXElementType {
@@ -843,7 +843,7 @@ pub mod annotion {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotAppearance") , namespace , is_root , })
+            Ok (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotAppearanceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Appearance") , namespace , is_root , })
         }
     }
     impl WithDeserializer for PageAnnotAnnotAppearanceXElementType {
@@ -875,7 +875,7 @@ pub mod annotion {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageAnnotAnnotParametersParameter") , namespace , is_root , })
+            Ok (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: PageAnnotAnnotParametersParameterXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Parameter") , namespace , is_root , })
         }
     }
     impl WithDeserializer for PageAnnotAnnotParametersParameterXElementType {
@@ -3307,7 +3307,7 @@ pub mod custom_tags {
                     state: Box::new(
                         quick_xml_serialize::CustomTagsCustomTagXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CustomTagsCustomTag"),
+                    name: name.unwrap_or("CustomTag"),
                     namespace,
                     is_root,
                 },
@@ -4247,7 +4247,7 @@ pub mod definition {
                 state: Box::new(
                     quick_xml_serialize::CtActionGotoXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtActionGoto"),
+                name: name.unwrap_or("Goto"),
                 namespace,
                 is_root,
             })
@@ -4287,7 +4287,7 @@ pub mod definition {
                 state: Box::new(
                     quick_xml_serialize::CtActionUriXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtActionUri"),
+                name: name.unwrap_or("URI"),
                 namespace,
                 is_root,
             })
@@ -4332,7 +4332,7 @@ pub mod definition {
                 state: Box::new(
                     quick_xml_serialize::CtActionGotoAxElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtActionGotoA"),
+                name: name.unwrap_or("GotoA"),
                 namespace,
                 is_root,
             })
@@ -4373,7 +4373,7 @@ pub mod definition {
                 state: Box::new(
                     quick_xml_serialize::CtActionSoundXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtActionSound"),
+                name: name.unwrap_or("Sound"),
                 namespace,
                 is_root,
             })
@@ -4418,7 +4418,7 @@ pub mod definition {
                 state: Box::new(
                     quick_xml_serialize::CtActionMovieXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtActionMovie"),
+                name: name.unwrap_or("Movie"),
                 namespace,
                 is_root,
             })
@@ -4504,7 +4504,7 @@ pub mod definition {
                 state: Box::new(
                     quick_xml_serialize::CtRegionAreaXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtRegionArea"),
+                name: name.unwrap_or("Area"),
                 namespace,
                 is_root,
             })
@@ -4573,7 +4573,7 @@ pub mod definition {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtActionGotoBookmark") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtActionGotoBookmarkXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Bookmark") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtActionGotoBookmarkXElementType {
@@ -4644,7 +4644,7 @@ pub mod definition {
                     state: Box::new(
                         quick_xml_serialize::CtRegionAreaLineXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtRegionAreaLine"),
+                    name: name.unwrap_or("Line"),
                     namespace,
                     is_root,
                 },
@@ -4680,7 +4680,7 @@ pub mod definition {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtRegionAreaOuadraticBezier") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaOuadraticBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("OuadraticBezier") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtRegionAreaOuadraticBezierXElementType {
@@ -4714,7 +4714,7 @@ pub mod definition {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtRegionAreaCubicBezier") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtRegionAreaCubicBezierXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CubicBezier") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtRegionAreaCubicBezierXElementType {
@@ -4753,7 +4753,7 @@ pub mod definition {
                 state: Box::new(
                     quick_xml_serialize::CtRegionAreaArcXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtRegionAreaArc"),
+                name: name.unwrap_or("Arc"),
                 namespace,
                 is_root,
             })
@@ -10060,7 +10060,7 @@ pub mod document {
                     state: Box::new(
                         quick_xml_serialize::CtPermissionPrintXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtPermissionPrint"),
+                    name: name.unwrap_or("Print"),
                     namespace,
                     is_root,
                 },
@@ -10096,7 +10096,7 @@ pub mod document {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPermissionValidPeriod") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPermissionValidPeriodXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ValidPeriod") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPermissionValidPeriodXElementType {
@@ -10289,7 +10289,7 @@ pub mod document {
                     state: Box::new(
                         quick_xml_serialize::DocumentCommonDataXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("DocumentCommonData"),
+                    name: name.unwrap_or("CommonData"),
                     namespace,
                     is_root,
                 },
@@ -10328,7 +10328,7 @@ pub mod document {
                 state: Box::new(
                     quick_xml_serialize::DocumentPagesXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("DocumentPages"),
+                name: name.unwrap_or("Pages"),
                 namespace,
                 is_root,
             })
@@ -10367,7 +10367,7 @@ pub mod document {
                     state: Box::new(
                         quick_xml_serialize::DocumentOutlinesXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("DocumentOutlines"),
+                    name: name.unwrap_or("Outlines"),
                     namespace,
                     is_root,
                 },
@@ -10407,7 +10407,7 @@ pub mod document {
                     state: Box::new(
                         quick_xml_serialize::DocumentBookmarksXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("DocumentBookmarks"),
+                    name: name.unwrap_or("Bookmarks"),
                     namespace,
                     is_root,
                 },
@@ -10445,7 +10445,7 @@ pub mod document {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DocumentCommonDataTemplatePage") , namespace , is_root , })
+            Ok (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocumentCommonDataTemplatePageXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("TemplatePage") , namespace , is_root , })
         }
     }
     impl WithDeserializer for DocumentCommonDataTemplatePageXElementType {
@@ -10483,7 +10483,7 @@ pub mod document {
                     state: Box::new(
                         quick_xml_serialize::DocumentPagesPageXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("DocumentPagesPage"),
+                    name: name.unwrap_or("Page"),
                     namespace,
                     is_root,
                 },
@@ -17069,7 +17069,7 @@ pub mod extensions {
                     state: Box::new(
                         quick_xml_serialize::CtExtensionPropertyXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtExtensionProperty"),
+                    name: name.unwrap_or("Property"),
                     namespace,
                     is_root,
                 },
@@ -18483,7 +18483,7 @@ pub mod ofd {
                     state: Box::new(
                         quick_xml_serialize::CtDocInfoKeywordsXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtDocInfoKeywords"),
+                    name: name.unwrap_or("Keywords"),
                     namespace,
                     is_root,
                 },
@@ -18517,7 +18517,7 @@ pub mod ofd {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtDocInfoCustomDatas") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtDocInfoCustomDatasXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CustomDatas") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtDocInfoCustomDatasXElementType {
@@ -18579,7 +18579,7 @@ pub mod ofd {
             Ok(quick_xml_serialize::OfdDocBodyXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::OfdDocBodyXElementTypeSerializerState::Init__),
-                name: name.unwrap_or("OfdDocBody"),
+                name: name.unwrap_or("DocBody"),
                 namespace,
                 is_root,
             })
@@ -18618,7 +18618,7 @@ pub mod ofd {
                     state: Box::new(
                         quick_xml_serialize::OfdDocBodyVersionsXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("OfdDocBodyVersions"),
+                    name: name.unwrap_or("Versions"),
                     namespace,
                     is_root,
                 },
@@ -18662,7 +18662,7 @@ pub mod ofd {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("OfdDocBodyVersionsVersion") , namespace , is_root , })
+            Ok (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: OfdDocBodyVersionsVersionXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Version") , namespace , is_root , })
         }
     }
     impl WithDeserializer for OfdDocBodyVersionsVersionXElementType {
@@ -23124,7 +23124,7 @@ pub mod page {
                     state: Box::new(
                         quick_xml_serialize::CtAxialShdSegmentXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtAxialShdSegment"),
+                    name: name.unwrap_or("Segment"),
                     namespace,
                     is_root,
                 },
@@ -23168,7 +23168,7 @@ pub mod page {
             Ok(quick_xml_serialize::CtClipAreaXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::CtClipAreaXElementTypeSerializerState::Init__),
-                name: name.unwrap_or("CtClipArea"),
+                name: name.unwrap_or("Area"),
                 namespace,
                 is_root,
             })
@@ -23301,7 +23301,7 @@ pub mod page {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtGraphicUnitActions") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtGraphicUnitActionsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Actions") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtGraphicUnitActionsXElementType {
@@ -23337,7 +23337,7 @@ pub mod page {
                     state: Box::new(
                         quick_xml_serialize::CtGraphicUnitClipsXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtGraphicUnitClips"),
+                    name: name.unwrap_or("Clips"),
                     namespace,
                     is_root,
                 },
@@ -23380,7 +23380,7 @@ pub mod page {
                     state: Box::new(
                         quick_xml_serialize::CtGouraudShdPointXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtGouraudShdPoint"),
+                    name: name.unwrap_or("Point"),
                     namespace,
                     is_root,
                 },
@@ -23494,7 +23494,7 @@ pub mod page {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockTextObject") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockTextObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("TextObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockTextObjectXElementType {
@@ -23586,7 +23586,7 @@ pub mod page {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockPathObject") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPathObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PathObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockPathObjectXElementType {
@@ -23664,7 +23664,7 @@ pub mod page {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockImageObject") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockImageObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ImageObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockImageObjectXElementType {
@@ -23740,7 +23740,7 @@ pub mod page {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockCompositeObject") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockCompositeObjectXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CompositeObject") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockCompositeObjectXElementType {
@@ -23799,7 +23799,7 @@ pub mod page {
                 state: Box::new(
                     quick_xml_serialize::CtImageBorderXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtImageBorder"),
+                name: name.unwrap_or("Border"),
                 namespace,
                 is_root,
             })
@@ -23840,7 +23840,7 @@ pub mod page {
                     state: Box::new(
                         quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtLaGouraudShdPoint"),
+                    name: name.unwrap_or("Point"),
                     namespace,
                     is_root,
                 },
@@ -23910,7 +23910,7 @@ pub mod page {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPageBlockPageBlock") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPageBlockPageBlockXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("PageBlock") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPageBlockPageBlockXElementType {
@@ -24076,7 +24076,7 @@ pub mod page {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CtPatternCellContent") , namespace , is_root , })
+            Ok (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: CtPatternCellContentXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CellContent") , namespace , is_root , })
         }
     }
     impl WithDeserializer for CtPatternCellContentXElementType {
@@ -24171,7 +24171,7 @@ pub mod page {
                 state: Box::new(
                     quick_xml_serialize::CtTextTextCodeXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("CtTextTextCode"),
+                name: name.unwrap_or("TextCode"),
                 namespace,
                 is_root,
             })
@@ -24257,7 +24257,7 @@ pub mod page {
                 state: Box::new(
                     quick_xml_serialize::PageTemplateXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("PageTemplate"),
+                name: name.unwrap_or("Template"),
                 namespace,
                 is_root,
             })
@@ -24295,7 +24295,7 @@ pub mod page {
                 state: Box::new(
                     quick_xml_serialize::PageContentXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("PageContent"),
+                name: name.unwrap_or("Content"),
                 namespace,
                 is_root,
             })
@@ -24404,7 +24404,7 @@ pub mod page {
                     state: Box::new(
                         quick_xml_serialize::PageContentLayerXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("PageContentLayer"),
+                    name: name.unwrap_or("Layer"),
                     namespace,
                     is_root,
                 },
@@ -41472,7 +41472,7 @@ pub mod res {
                     state: Box::new(
                         quick_xml_serialize::CtColorSpacePaletteXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("CtColorSpacePalette"),
+                    name: name.unwrap_or("Palette"),
                     namespace,
                     is_root,
                 },
@@ -41587,7 +41587,7 @@ pub mod res {
                 state: Box::new(
                     quick_xml_serialize::ResColorSpacesXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ResColorSpaces"),
+                name: name.unwrap_or("ColorSpaces"),
                 namespace,
                 is_root,
             })
@@ -41625,7 +41625,7 @@ pub mod res {
                 state: Box::new(
                     quick_xml_serialize::ResDrawParamsXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ResDrawParams"),
+                name: name.unwrap_or("DrawParams"),
                 namespace,
                 is_root,
             })
@@ -41661,7 +41661,7 @@ pub mod res {
             Ok(quick_xml_serialize::ResFontsXElementTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::ResFontsXElementTypeSerializerState::Init__),
-                name: name.unwrap_or("ResFonts"),
+                name: name.unwrap_or("Fonts"),
                 namespace,
                 is_root,
             })
@@ -41699,7 +41699,7 @@ pub mod res {
                 state: Box::new(
                     quick_xml_serialize::ResMultiMediasXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ResMultiMedias"),
+                name: name.unwrap_or("MultiMedias"),
                 namespace,
                 is_root,
             })
@@ -41733,7 +41733,7 @@ pub mod res {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResCompositeGraphicUnits") , namespace , is_root , })
+            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CompositeGraphicUnits") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResCompositeGraphicUnitsXElementType {
@@ -41774,7 +41774,7 @@ pub mod res {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResColorSpacesColorSpace") , namespace , is_root , })
+            Ok (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResColorSpacesColorSpaceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ColorSpace") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResColorSpacesColorSpaceXElementType {
@@ -41835,7 +41835,7 @@ pub mod res {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResDrawParamsDrawParam") , namespace , is_root , })
+            Ok (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResDrawParamsDrawParamXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DrawParam") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResDrawParamsDrawParamXElementType {
@@ -41900,7 +41900,7 @@ pub mod res {
                 state: Box::new(
                     quick_xml_serialize::ResFontsFontXElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("ResFontsFont"),
+                name: name.unwrap_or("Font"),
                 namespace,
                 is_root,
             })
@@ -41937,7 +41937,7 @@ pub mod res {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResMultiMediasMultiMedia") , namespace , is_root , })
+            Ok (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResMultiMediasMultiMediaXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("MultiMedia") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResMultiMediasMultiMediaXElementType {
@@ -41975,7 +41975,7 @@ pub mod res {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ResCompositeGraphicUnitsCompositeGraphicUnit") , namespace , is_root , })
+            Ok (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("CompositeGraphicUnit") , namespace , is_root , })
         }
     }
     impl WithDeserializer for ResCompositeGraphicUnitsCompositeGraphicUnitXElementType {
@@ -48449,7 +48449,7 @@ pub mod signature {
                     state: Box::new(
                         quick_xml_serialize::SianatureSiqnedInfoXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("SianatureSiqnedInfo"),
+                    name: name.unwrap_or("SiqnedInfo"),
                     namespace,
                     is_root,
                 },
@@ -48486,7 +48486,7 @@ pub mod signature {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoProvider") , namespace , is_root , })
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoProviderXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Provider") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoProviderXElementType {
@@ -48525,7 +48525,7 @@ pub mod signature {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoReferences") , namespace , is_root , })
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("References") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoReferencesXElementType {
@@ -48560,7 +48560,7 @@ pub mod signature {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoStampAnnot") , namespace , is_root , })
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoStampAnnotXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("StampAnnot") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoStampAnnotXElementType {
@@ -48592,7 +48592,7 @@ pub mod signature {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoSeal") , namespace , is_root , })
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoSealXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Seal") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoSealXElementType {
@@ -48653,7 +48653,7 @@ pub mod signature {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("SianatureSiqnedInfoReferencesReference") , namespace , is_root , })
+            Ok (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("Reference") , namespace , is_root , })
         }
     }
     impl WithDeserializer for SianatureSiqnedInfoReferencesReferenceXElementType {
@@ -50946,7 +50946,7 @@ pub mod signatures {
                     state: Box::new(
                         quick_xml_serialize::SiqnaturesSignatureXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("SiqnaturesSignature"),
+                    name: name.unwrap_or("Signature"),
                     namespace,
                     is_root,
                 },
@@ -51597,7 +51597,7 @@ pub mod version {
                     state: Box::new(
                         quick_xml_serialize::DocVersionFileListXElementTypeSerializerState::Init__,
                     ),
-                    name: name.unwrap_or("DocVersionFileList"),
+                    name: name.unwrap_or("FileList"),
                     namespace,
                     is_root,
                 },
@@ -51632,7 +51632,7 @@ pub mod version {
             namespace: ElementNamespace,
             is_root: bool,
         ) -> Result<Self::Serializer<'ser>, Error> {
-            Ok (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DocVersionFileListFile") , namespace , is_root , })
+            Ok (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: DocVersionFileListFileXElementTypeSerializerState :: Init__) , name : name . unwrap_or ("File") , namespace , is_root , })
         }
     }
     impl WithDeserializer for DocVersionFileListFileXElementType {

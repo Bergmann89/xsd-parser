@@ -546,8 +546,18 @@ impl<'types> ComplexBase<'types> {
         let type_ref = ctx.current_type_ref();
         let type_ident = type_ref.path.ident().clone();
 
+        let element_name = match ctx.types.get_variant(ctx.ident) {
+            Some(MetaTypeVariant::ComplexType(ci)) => ci.element_name.as_ref(),
+            _ => None,
+        };
+
         let mut ret = Self::new_empty(type_ident, flags);
-        ret.tag_name = Some(TagName::new(ctx.types, ctx.ident.ns, &ctx.ident.name, form));
+        ret.tag_name = Some(TagName::new(
+            ctx.types,
+            ctx.ident.ns,
+            element_name.unwrap_or(&ctx.ident.name),
+            form,
+        ));
         ret.trait_impls = ctx.make_trait_impls()?;
 
         if let Some(MetaTypeVariant::ComplexType(ci)) = ctx.types.get_variant(ctx.ident) {

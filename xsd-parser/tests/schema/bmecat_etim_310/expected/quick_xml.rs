@@ -413,7 +413,7 @@ impl WithSerializer for TNewCatalogProductElementType {
                 state: Box::new(
                     quick_xml_serialize::TNewCatalogProductElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("TNewCatalogProduct"),
+                name: name.unwrap_or("PRODUCT"),
                 namespace,
                 is_root,
             },
@@ -457,7 +457,7 @@ impl WithSerializer for TUpdateProductsProductElementType {
                 state: Box::new(
                     quick_xml_serialize::TUpdateProductsProductElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("TUpdateProductsProduct"),
+                name: name.unwrap_or("PRODUCT"),
                 namespace,
                 is_root,
             },
@@ -501,7 +501,7 @@ impl WithSerializer for TUpdatePricesProductElementType {
                 state: Box::new(
                     quick_xml_serialize::TUpdatePricesProductElementTypeSerializerState::Init__,
                 ),
-                name: name.unwrap_or("TUpdatePricesProduct"),
+                name: name.unwrap_or("PRODUCT"),
                 namespace,
                 is_root,
             },
@@ -600,7 +600,7 @@ impl WithSerializer for CatalogDatetimeElementType {
         Ok(quick_xml_serialize::CatalogDatetimeElementTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::CatalogDatetimeElementTypeSerializerState::Init__),
-            name: name.unwrap_or("CatalogDatetime"),
+            name: name.unwrap_or("DATETIME"),
             namespace,
             is_root,
         })
@@ -1165,7 +1165,7 @@ impl WithSerializer for SupplierAddressElementType {
         Ok(quick_xml_serialize::SupplierAddressElementTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::SupplierAddressElementTypeSerializerState::Init__),
-            name: name.unwrap_or("SupplierAddress"),
+            name: name.unwrap_or("ADDRESS"),
             namespace,
             is_root,
         })
@@ -3451,7 +3451,7 @@ impl WithSerializer for ProductPriceDetailsDatetimeElementType {
         namespace: ElementNamespace,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok (quick_xml_serialize :: ProductPriceDetailsDatetimeElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ProductPriceDetailsDatetimeElementTypeSerializerState :: Init__) , name : name . unwrap_or ("ProductPriceDetailsDatetime") , namespace , is_root , })
+        Ok (quick_xml_serialize :: ProductPriceDetailsDatetimeElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: ProductPriceDetailsDatetimeElementTypeSerializerState :: Init__) , name : name . unwrap_or ("DATETIME") , namespace , is_root , })
     }
 }
 impl WithDeserializer for ProductPriceDetailsDatetimeElementType {
@@ -4060,7 +4060,7 @@ impl WithSerializer for UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberEle
         namespace: ElementNamespace,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok (quick_xml_serialize :: UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__) , name : name . unwrap_or ("UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumber") , namespace , is_root , })
+        Ok (quick_xml_serialize :: UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeSerializerState :: Init__) , name : name . unwrap_or ("UDX.EDXF.COUNTRY_BRANCH_NUMBER") , namespace , is_root , })
     }
 }
 impl WithDeserializer for UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType {
@@ -4087,7 +4087,7 @@ impl WithSerializer for UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSuppl
         namespace: ElementNamespace,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok (quick_xml_serialize :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__) , name : name . unwrap_or ("UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierId") , namespace , is_root , })
+        Ok (quick_xml_serialize :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializer { value : self , state : Box :: new (quick_xml_serialize :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeSerializerState :: Init__) , name : name . unwrap_or ("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID") , namespace , is_root , })
     }
 }
 impl WithDeserializer for UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType {

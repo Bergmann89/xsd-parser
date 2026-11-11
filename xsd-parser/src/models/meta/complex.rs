@@ -5,7 +5,7 @@ use std::hash::{Hash, Hasher};
 use crate::models::{
     meta::{ElementMetaVariant, ElementMode},
     schema::{MaxOccurs, MinOccurs},
-    TypeIdent,
+    Name, TypeIdent,
 };
 
 use super::{AttributesMeta, Base, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes, TypeEq};
@@ -61,6 +61,12 @@ pub struct ComplexMeta {
     /// inline complex type with `xs:simpleContent`. It defines the value to
     /// use when the element is present but has no text content.
     pub default: Option<String>,
+
+    /// Name of the element this type was defined inline at.
+    ///
+    /// Types of inline `xs:element` definitions get a generated name, so this
+    /// is the name to use for the element tag instead.
+    pub element_name: Option<Name>,
 }
 
 /* GroupMeta */
@@ -218,6 +224,7 @@ impl Default for ComplexMeta {
             is_mixed: false,
             attributes: AttributesMeta::default(),
             default: None,
+            element_name: None,
         }
     }
 }
@@ -233,6 +240,7 @@ impl TypeEq for ComplexMeta {
             is_mixed: mixed_content,
             attributes,
             default,
+            element_name: _,
         } = self;
 
         base.type_hash(hasher, types);
@@ -255,6 +263,7 @@ impl TypeEq for ComplexMeta {
             is_mixed: mixed_content,
             attributes,
             default,
+            element_name: _,
         } = self;
 
         base.type_eq(&other.base, types)

@@ -66,7 +66,7 @@ impl WithSerializer for FooTypeMessagesType {
         Ok(quick_xml_serialize::FooTypeMessagesTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooTypeMessagesTypeSerializerState::Init__),
-            name: name.unwrap_or("tns:FooTypeMessages"),
+            name: name.unwrap_or("tns:Messages"),
             namespace,
             is_root,
         })

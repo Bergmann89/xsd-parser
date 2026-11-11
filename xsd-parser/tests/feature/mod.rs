@@ -69,6 +69,7 @@ mod group_refs_with_ns;
 mod include_references;
 mod include_target_namespace;
 mod inline_element_names;
+mod inline_element_tag;
 mod list;
 mod missing_base_type;
 mod mixed_choice_with_any;
