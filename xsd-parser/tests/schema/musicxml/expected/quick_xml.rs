@@ -7847,12 +7847,12 @@ pub enum KindValue {
     DominantNinth,
     MajorNinth,
     MinorNinth,
-    Dominant11Th,
-    Major11Th,
-    Minor11Th,
-    Dominant13Th,
-    Major13Th,
-    Minor13Th,
+    Dominant11th,
+    Major11th,
+    Minor11th,
+    Dominant13th,
+    Major13th,
+    Minor13th,
     SuspendedSecond,
     SuspendedFourth,
     Neapolitan,
@@ -7890,12 +7890,12 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for KindValue {
             Self::DominantNinth => Ok(Some(::std::borrow::Cow::Borrowed("dominant-ninth"))),
             Self::MajorNinth => Ok(Some(::std::borrow::Cow::Borrowed("major-ninth"))),
             Self::MinorNinth => Ok(Some(::std::borrow::Cow::Borrowed("minor-ninth"))),
-            Self::Dominant11Th => Ok(Some(::std::borrow::Cow::Borrowed("dominant-11th"))),
-            Self::Major11Th => Ok(Some(::std::borrow::Cow::Borrowed("major-11th"))),
-            Self::Minor11Th => Ok(Some(::std::borrow::Cow::Borrowed("minor-11th"))),
-            Self::Dominant13Th => Ok(Some(::std::borrow::Cow::Borrowed("dominant-13th"))),
-            Self::Major13Th => Ok(Some(::std::borrow::Cow::Borrowed("major-13th"))),
-            Self::Minor13Th => Ok(Some(::std::borrow::Cow::Borrowed("minor-13th"))),
+            Self::Dominant11th => Ok(Some(::std::borrow::Cow::Borrowed("dominant-11th"))),
+            Self::Major11th => Ok(Some(::std::borrow::Cow::Borrowed("major-11th"))),
+            Self::Minor11th => Ok(Some(::std::borrow::Cow::Borrowed("minor-11th"))),
+            Self::Dominant13th => Ok(Some(::std::borrow::Cow::Borrowed("dominant-13th"))),
+            Self::Major13th => Ok(Some(::std::borrow::Cow::Borrowed("major-13th"))),
+            Self::Minor13th => Ok(Some(::std::borrow::Cow::Borrowed("minor-13th"))),
             Self::SuspendedSecond => Ok(Some(::std::borrow::Cow::Borrowed("suspended-second"))),
             Self::SuspendedFourth => Ok(Some(::std::borrow::Cow::Borrowed("suspended-fourth"))),
             Self::Neapolitan => Ok(Some(::std::borrow::Cow::Borrowed("Neapolitan"))),
@@ -7933,12 +7933,12 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for KindValue {
             b"dominant-ninth" => Ok(Self::DominantNinth),
             b"major-ninth" => Ok(Self::MajorNinth),
             b"minor-ninth" => Ok(Self::MinorNinth),
-            b"dominant-11th" => Ok(Self::Dominant11Th),
-            b"major-11th" => Ok(Self::Major11Th),
-            b"minor-11th" => Ok(Self::Minor11Th),
-            b"dominant-13th" => Ok(Self::Dominant13Th),
-            b"major-13th" => Ok(Self::Major13Th),
-            b"minor-13th" => Ok(Self::Minor13Th),
+            b"dominant-11th" => Ok(Self::Dominant11th),
+            b"major-11th" => Ok(Self::Major11th),
+            b"minor-11th" => Ok(Self::Minor11th),
+            b"dominant-13th" => Ok(Self::Dominant13th),
+            b"major-13th" => Ok(Self::Major13th),
+            b"minor-13th" => Ok(Self::Minor13th),
             b"suspended-second" => Ok(Self::SuspendedSecond),
             b"suspended-fourth" => Ok(Self::SuspendedFourth),
             b"Neapolitan" => Ok(Self::Neapolitan),
@@ -10527,13 +10527,13 @@ impl ::xsd_parser_types::quick_xml::WithDeserializer for NoteType {
 }
 #[derive(Debug)]
 pub enum NoteTypeValue {
-    _1024Th,
-    _512Th,
-    _256Th,
-    _128Th,
-    _64Th,
-    _32Nd,
-    _16Th,
+    _1024th,
+    _512th,
+    _256th,
+    _128th,
+    _64th,
+    _32nd,
+    _16th,
     Eighth,
     Quarter,
     Half,
@@ -10551,13 +10551,13 @@ impl ::xsd_parser_types::quick_xml::SerializeBytes for NoteTypeValue {
         ::xsd_parser_types::quick_xml::Error,
     > {
         match self {
-            Self::_1024Th => Ok(Some(::std::borrow::Cow::Borrowed("1024th"))),
-            Self::_512Th => Ok(Some(::std::borrow::Cow::Borrowed("512th"))),
-            Self::_256Th => Ok(Some(::std::borrow::Cow::Borrowed("256th"))),
-            Self::_128Th => Ok(Some(::std::borrow::Cow::Borrowed("128th"))),
-            Self::_64Th => Ok(Some(::std::borrow::Cow::Borrowed("64th"))),
-            Self::_32Nd => Ok(Some(::std::borrow::Cow::Borrowed("32nd"))),
-            Self::_16Th => Ok(Some(::std::borrow::Cow::Borrowed("16th"))),
+            Self::_1024th => Ok(Some(::std::borrow::Cow::Borrowed("1024th"))),
+            Self::_512th => Ok(Some(::std::borrow::Cow::Borrowed("512th"))),
+            Self::_256th => Ok(Some(::std::borrow::Cow::Borrowed("256th"))),
+            Self::_128th => Ok(Some(::std::borrow::Cow::Borrowed("128th"))),
+            Self::_64th => Ok(Some(::std::borrow::Cow::Borrowed("64th"))),
+            Self::_32nd => Ok(Some(::std::borrow::Cow::Borrowed("32nd"))),
+            Self::_16th => Ok(Some(::std::borrow::Cow::Borrowed("16th"))),
             Self::Eighth => Ok(Some(::std::borrow::Cow::Borrowed("eighth"))),
             Self::Quarter => Ok(Some(::std::borrow::Cow::Borrowed("quarter"))),
             Self::Half => Ok(Some(::std::borrow::Cow::Borrowed("half"))),
@@ -10575,13 +10575,13 @@ impl ::xsd_parser_types::quick_xml::DeserializeBytes for NoteTypeValue {
         bytes: &[::core::primitive::u8],
     ) -> ::core::result::Result<Self, ::xsd_parser_types::quick_xml::Error> {
         match bytes {
-            b"1024th" => Ok(Self::_1024Th),
-            b"512th" => Ok(Self::_512Th),
-            b"256th" => Ok(Self::_256Th),
-            b"128th" => Ok(Self::_128Th),
-            b"64th" => Ok(Self::_64Th),
-            b"32nd" => Ok(Self::_32Nd),
-            b"16th" => Ok(Self::_16Th),
+            b"1024th" => Ok(Self::_1024th),
+            b"512th" => Ok(Self::_512th),
+            b"256th" => Ok(Self::_256th),
+            b"128th" => Ok(Self::_128th),
+            b"64th" => Ok(Self::_64th),
+            b"32nd" => Ok(Self::_32nd),
+            b"16th" => Ok(Self::_16th),
             b"eighth" => Ok(Self::Eighth),
             b"quarter" => Ok(Self::Quarter),
             b"half" => Ok(Self::Half),
@@ -14446,7 +14446,7 @@ pub struct Slur {
     pub bezier_x2: ::core::option::Option<::core::primitive::f64>,
     pub bezier_y2: ::core::option::Option<::core::primitive::f64>,
     pub bezier_offset: ::core::option::Option<::core::primitive::f64>,
-    pub bezier_offset_2: ::core::option::Option<::core::primitive::f64>,
+    pub bezier_offset2: ::core::option::Option<::core::primitive::f64>,
     pub color: ::core::option::Option<::std::string::String>,
     pub id: ::core::option::Option<::std::string::String>,
 }
@@ -16699,7 +16699,7 @@ pub struct Tied {
     pub bezier_x2: ::core::option::Option<::core::primitive::f64>,
     pub bezier_y2: ::core::option::Option<::core::primitive::f64>,
     pub bezier_offset: ::core::option::Option<::core::primitive::f64>,
-    pub bezier_offset_2: ::core::option::Option<::core::primitive::f64>,
+    pub bezier_offset2: ::core::option::Option<::core::primitive::f64>,
     pub color: ::core::option::Option<::std::string::String>,
     pub id: ::core::option::Option<::std::string::String>,
 }
@@ -108565,7 +108565,7 @@ pub mod quick_xml_deserialize {
         bezier_x2: ::core::option::Option<::core::primitive::f64>,
         bezier_y2: ::core::option::Option<::core::primitive::f64>,
         bezier_offset: ::core::option::Option<::core::primitive::f64>,
-        bezier_offset_2: ::core::option::Option<::core::primitive::f64>,
+        bezier_offset2: ::core::option::Option<::core::primitive::f64>,
         color: ::core::option::Option<::std::string::String>,
         id: ::core::option::Option<::std::string::String>,
         state__: ::std::boxed::Box<SlurDeserializerState>,
@@ -108596,7 +108596,7 @@ pub mod quick_xml_deserialize {
             let mut bezier_x2: ::core::option::Option<::core::primitive::f64> = None;
             let mut bezier_y2: ::core::option::Option<::core::primitive::f64> = None;
             let mut bezier_offset: ::core::option::Option<::core::primitive::f64> = None;
-            let mut bezier_offset_2: ::core::option::Option<::core::primitive::f64> = None;
+            let mut bezier_offset2: ::core::option::Option<::core::primitive::f64> = None;
             let mut color: ::core::option::Option<::std::string::String> = None;
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
@@ -108634,7 +108634,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset" {
                     helper.read_attrib(&mut bezier_offset, b"bezier-offset", &attrib.value)?;
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset2" {
-                    helper.read_attrib(&mut bezier_offset_2, b"bezier-offset2", &attrib.value)?;
+                    helper.read_attrib(&mut bezier_offset2, b"bezier-offset2", &attrib.value)?;
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
@@ -108662,7 +108662,7 @@ pub mod quick_xml_deserialize {
                 bezier_x2: bezier_x2,
                 bezier_y2: bezier_y2,
                 bezier_offset: bezier_offset,
-                bezier_offset_2: bezier_offset_2,
+                bezier_offset2: bezier_offset2,
                 color: color,
                 id: id,
                 state__: ::std::boxed::Box::new(SlurDeserializerState::Init__),
@@ -108729,7 +108729,7 @@ pub mod quick_xml_deserialize {
                 bezier_x2: self.bezier_x2,
                 bezier_y2: self.bezier_y2,
                 bezier_offset: self.bezier_offset,
-                bezier_offset_2: self.bezier_offset_2,
+                bezier_offset2: self.bezier_offset2,
                 color: self.color,
                 id: self.id,
             })
@@ -120522,7 +120522,7 @@ pub mod quick_xml_deserialize {
         bezier_x2: ::core::option::Option<::core::primitive::f64>,
         bezier_y2: ::core::option::Option<::core::primitive::f64>,
         bezier_offset: ::core::option::Option<::core::primitive::f64>,
-        bezier_offset_2: ::core::option::Option<::core::primitive::f64>,
+        bezier_offset2: ::core::option::Option<::core::primitive::f64>,
         color: ::core::option::Option<::std::string::String>,
         id: ::core::option::Option<::std::string::String>,
         state__: ::std::boxed::Box<TiedDeserializerState>,
@@ -120553,7 +120553,7 @@ pub mod quick_xml_deserialize {
             let mut bezier_x2: ::core::option::Option<::core::primitive::f64> = None;
             let mut bezier_y2: ::core::option::Option<::core::primitive::f64> = None;
             let mut bezier_offset: ::core::option::Option<::core::primitive::f64> = None;
-            let mut bezier_offset_2: ::core::option::Option<::core::primitive::f64> = None;
+            let mut bezier_offset2: ::core::option::Option<::core::primitive::f64> = None;
             let mut color: ::core::option::Option<::std::string::String> = None;
             let mut id: ::core::option::Option<::std::string::String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
@@ -120591,7 +120591,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset" {
                     helper.read_attrib(&mut bezier_offset, b"bezier-offset", &attrib.value)?;
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"bezier-offset2" {
-                    helper.read_attrib(&mut bezier_offset_2, b"bezier-offset2", &attrib.value)?;
+                    helper.read_attrib(&mut bezier_offset2, b"bezier-offset2", &attrib.value)?;
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"color" {
                     helper.read_attrib(&mut color, b"color", &attrib.value)?;
                 } else if attrib.key.local_name().into_inner().as_bytes() == b"id" {
@@ -120619,7 +120619,7 @@ pub mod quick_xml_deserialize {
                 bezier_x2: bezier_x2,
                 bezier_y2: bezier_y2,
                 bezier_offset: bezier_offset,
-                bezier_offset_2: bezier_offset_2,
+                bezier_offset2: bezier_offset2,
                 color: color,
                 id: id,
                 state__: ::std::boxed::Box::new(TiedDeserializerState::Init__),
@@ -120686,7 +120686,7 @@ pub mod quick_xml_deserialize {
                 bezier_x2: self.bezier_x2,
                 bezier_y2: self.bezier_y2,
                 bezier_offset: self.bezier_offset,
-                bezier_offset_2: self.bezier_offset_2,
+                bezier_offset2: self.bezier_offset2,
                 color: self.color,
                 id: self.id,
             })
@@ -157501,7 +157501,7 @@ pub mod quick_xml_serialize {
                         helper.write_attrib_opt(
                             &mut bytes,
                             "bezier-offset2",
-                            &self.value.bezier_offset_2,
+                            &self.value.bezier_offset2,
                         )?;
                         helper.write_attrib_opt(&mut bytes, "color", &self.value.color)?;
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;
@@ -160451,7 +160451,7 @@ pub mod quick_xml_serialize {
                         helper.write_attrib_opt(
                             &mut bytes,
                             "bezier-offset2",
-                            &self.value.bezier_offset_2,
+                            &self.value.bezier_offset2,
                         )?;
                         helper.write_attrib_opt(&mut bytes, "color", &self.value.color)?;
                         helper.write_attrib_opt(&mut bytes, "id", &self.value.id)?;

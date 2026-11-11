@@ -1488,12 +1488,12 @@ impl WithDeserializer for MimeInfoElementType {
 }
 #[derive(Debug)]
 pub enum TypeBmEcatEtimVersion {
-    _50,
+    _5_0,
 }
 impl SerializeBytes for TypeBmEcatEtimVersion {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
-            Self::_50 => Ok(Some(Cow::Borrowed("5.0"))),
+            Self::_5_0 => Ok(Some(Cow::Borrowed("5.0"))),
         }
     }
 }
@@ -1501,7 +1501,7 @@ impl WithSerializeToBytes for TypeBmEcatEtimVersion {}
 impl DeserializeBytes for TypeBmEcatEtimVersion {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
-            b"5.0" => Ok(Self::_50),
+            b"5.0" => Ok(Self::_5_0),
             x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
                 RawByteStr::from_slice(x),
             ))),
@@ -4692,7 +4692,7 @@ pub struct UdxEdxfPackingUnitElementType {
     pub udx_edxf_depth: Option<f64>,
     pub udx_edxf_diameter: Option<f64>,
     pub udx_edxf_gtin: Option<String>,
-    pub udx_edxf_gs_1128: Option<String>,
+    pub udx_edxf_gs1_128: Option<String>,
 }
 impl WithSerializer for UdxEdxfPackingUnitElementType {
     type Serializer<'x> = quick_xml_serialize::UdxEdxfPackingUnitElementTypeSerializer<'x>;
@@ -4842,17 +4842,17 @@ impl WithDeserializerFromBytes for UdxEdxfAggregationStateElementType {}
 #[derive(Debug)]
 pub enum UdxEdxfHazardClassElementType {
     _1,
-    _21,
-    _22,
-    _23,
+    _2_1,
+    _2_2,
+    _2_3,
     _3,
-    _41,
-    _42,
-    _43,
-    _51,
-    _52,
-    _61,
-    _62,
+    _4_1,
+    _4_2,
+    _4_3,
+    _5_1,
+    _5_2,
+    _6_1,
+    _6_2,
     _7,
     _8,
     _9,
@@ -4861,17 +4861,17 @@ impl SerializeBytes for UdxEdxfHazardClassElementType {
     fn serialize_bytes(&self, helper: &mut SerializeHelper) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::_1 => Ok(Some(Cow::Borrowed("1"))),
-            Self::_21 => Ok(Some(Cow::Borrowed("2.1"))),
-            Self::_22 => Ok(Some(Cow::Borrowed("2.2"))),
-            Self::_23 => Ok(Some(Cow::Borrowed("2.3"))),
+            Self::_2_1 => Ok(Some(Cow::Borrowed("2.1"))),
+            Self::_2_2 => Ok(Some(Cow::Borrowed("2.2"))),
+            Self::_2_3 => Ok(Some(Cow::Borrowed("2.3"))),
             Self::_3 => Ok(Some(Cow::Borrowed("3"))),
-            Self::_41 => Ok(Some(Cow::Borrowed("4.1"))),
-            Self::_42 => Ok(Some(Cow::Borrowed("4.2"))),
-            Self::_43 => Ok(Some(Cow::Borrowed("4.3"))),
-            Self::_51 => Ok(Some(Cow::Borrowed("5.1"))),
-            Self::_52 => Ok(Some(Cow::Borrowed("5.2"))),
-            Self::_61 => Ok(Some(Cow::Borrowed("6.1"))),
-            Self::_62 => Ok(Some(Cow::Borrowed("6.2"))),
+            Self::_4_1 => Ok(Some(Cow::Borrowed("4.1"))),
+            Self::_4_2 => Ok(Some(Cow::Borrowed("4.2"))),
+            Self::_4_3 => Ok(Some(Cow::Borrowed("4.3"))),
+            Self::_5_1 => Ok(Some(Cow::Borrowed("5.1"))),
+            Self::_5_2 => Ok(Some(Cow::Borrowed("5.2"))),
+            Self::_6_1 => Ok(Some(Cow::Borrowed("6.1"))),
+            Self::_6_2 => Ok(Some(Cow::Borrowed("6.2"))),
             Self::_7 => Ok(Some(Cow::Borrowed("7"))),
             Self::_8 => Ok(Some(Cow::Borrowed("8"))),
             Self::_9 => Ok(Some(Cow::Borrowed("9"))),
@@ -4883,17 +4883,17 @@ impl DeserializeBytes for UdxEdxfHazardClassElementType {
     fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
         match bytes {
             b"1" => Ok(Self::_1),
-            b"2.1" => Ok(Self::_21),
-            b"2.2" => Ok(Self::_22),
-            b"2.3" => Ok(Self::_23),
+            b"2.1" => Ok(Self::_2_1),
+            b"2.2" => Ok(Self::_2_2),
+            b"2.3" => Ok(Self::_2_3),
             b"3" => Ok(Self::_3),
-            b"4.1" => Ok(Self::_41),
-            b"4.2" => Ok(Self::_42),
-            b"4.3" => Ok(Self::_43),
-            b"5.1" => Ok(Self::_51),
-            b"5.2" => Ok(Self::_52),
-            b"6.1" => Ok(Self::_61),
-            b"6.2" => Ok(Self::_62),
+            b"4.1" => Ok(Self::_4_1),
+            b"4.2" => Ok(Self::_4_2),
+            b"4.3" => Ok(Self::_4_3),
+            b"5.1" => Ok(Self::_5_1),
+            b"5.2" => Ok(Self::_5_2),
+            b"6.1" => Ok(Self::_6_1),
+            b"6.2" => Ok(Self::_6_2),
             b"7" => Ok(Self::_7),
             b"8" => Ok(Self::_8),
             b"9" => Ok(Self::_9),
@@ -30369,7 +30369,7 @@ pub mod quick_xml_deserialize {
         udx_edxf_depth: Option<f64>,
         udx_edxf_diameter: Option<f64>,
         udx_edxf_gtin: Option<String>,
-        udx_edxf_gs_1128: Option<String>,
+        udx_edxf_gs1_128: Option<String>,
         state__: Box<UdxEdxfPackingUnitElementTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -30388,7 +30388,7 @@ pub mod quick_xml_deserialize {
         UdxEdxfDepth(Option<<f64 as WithDeserializer>::Deserializer>),
         UdxEdxfDiameter(Option<<f64 as WithDeserializer>::Deserializer>),
         UdxEdxfGtin(Option<<String as WithDeserializer>::Deserializer>),
-        UdxEdxfGs1128(Option<<String as WithDeserializer>::Deserializer>),
+        UdxEdxfGs1_128(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -30415,7 +30415,7 @@ pub mod quick_xml_deserialize {
                 udx_edxf_depth: None,
                 udx_edxf_diameter: None,
                 udx_edxf_gtin: None,
-                udx_edxf_gs_1128: None,
+                udx_edxf_gs1_128: None,
                 state__: Box::new(UdxEdxfPackingUnitElementTypeDeserializerState::Init__),
             })
         }
@@ -30465,8 +30465,8 @@ pub mod quick_xml_deserialize {
                 S::UdxEdxfGtin(Some(deserializer)) => {
                     self.store_udx_edxf_gtin(deserializer.finish(helper)?)?
                 }
-                S::UdxEdxfGs1128(Some(deserializer)) => {
-                    self.store_udx_edxf_gs_1128(deserializer.finish(helper)?)?
+                S::UdxEdxfGs1_128(Some(deserializer)) => {
+                    self.store_udx_edxf_gs1_128(deserializer.finish(helper)?)?
                 }
                 _ => (),
             }
@@ -30587,13 +30587,13 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_gtin = Some(value);
             Ok(())
         }
-        fn store_udx_edxf_gs_1128(&mut self, value: String) -> Result<(), Error> {
-            if self.udx_edxf_gs_1128.is_some() {
+        fn store_udx_edxf_gs1_128(&mut self, value: String) -> Result<(), Error> {
+            if self.udx_edxf_gs1_128.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"UDX.EDXF.GS1_128",
                 )))?;
             }
-            self.udx_edxf_gs_1128 = Some(value);
+            self.udx_edxf_gs1_128 = Some(value);
             Ok(())
         }
         fn handle_udx_edxf_quantity_min<'de>(
@@ -31013,7 +31013,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state__ = S::UdxEdxfGs1128(None);
+                *self.state__ = S::UdxEdxfGs1_128(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -31023,17 +31023,17 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_gtin(data)?;
-                    *self.state__ = S::UdxEdxfGs1128(None);
+                    *self.state__ = S::UdxEdxfGs1_128(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     fallback.get_or_insert(S::UdxEdxfGtin(Some(deserializer)));
-                    *self.state__ = S::UdxEdxfGs1128(None);
+                    *self.state__ = S::UdxEdxfGs1_128(None);
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
             }
         }
-        fn handle_udx_edxf_gs_1128<'de>(
+        fn handle_udx_edxf_gs1_128<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, String>,
@@ -31055,12 +31055,12 @@ pub mod quick_xml_deserialize {
             match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    self.store_udx_edxf_gs_1128(data)?;
+                    self.store_udx_edxf_gs1_128(data)?;
                     *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    fallback.get_or_insert(S::UdxEdxfGs1128(Some(deserializer)));
+                    fallback.get_or_insert(S::UdxEdxfGs1_128(Some(deserializer)));
                     *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
@@ -31253,9 +31253,9 @@ pub mod quick_xml_deserialize {
                             }
                         }
                     }
-                    (S::UdxEdxfGs1128(Some(deserializer)), event) => {
+                    (S::UdxEdxfGs1_128(Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_udx_edxf_gs_1128(helper, output, &mut fallback)? {
+                        match self.handle_udx_edxf_gs1_128(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -31515,14 +31515,14 @@ pub mod quick_xml_deserialize {
                             }
                         }
                     }
-                    (S::UdxEdxfGs1128(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (S::UdxEdxfGs1_128(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = helper.init_start_tag_deserializer(
                             event,
                             Some(&super::NS_UNNAMED_5),
                             b"UDX.EDXF.GS1_128",
                             false,
                         )?;
-                        match self.handle_udx_edxf_gs_1128(helper, output, &mut fallback)? {
+                        match self.handle_udx_edxf_gs1_128(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -31579,7 +31579,7 @@ pub mod quick_xml_deserialize {
                 udx_edxf_depth: self.udx_edxf_depth,
                 udx_edxf_diameter: self.udx_edxf_diameter,
                 udx_edxf_gtin: self.udx_edxf_gtin,
-                udx_edxf_gs_1128: self.udx_edxf_gs_1128,
+                udx_edxf_gs1_128: self.udx_edxf_gs1_128,
             })
         }
     }
@@ -42873,7 +42873,7 @@ pub mod quick_xml_serialize {
         UdxEdxfDepth(IterSerializer<'ser, Option<&'ser f64>, f64>),
         UdxEdxfDiameter(IterSerializer<'ser, Option<&'ser f64>, f64>),
         UdxEdxfGtin(IterSerializer<'ser, Option<&'ser String>, String>),
-        UdxEdxfGs1128(IterSerializer<'ser, Option<&'ser String>, String>),
+        UdxEdxfGs1_128(IterSerializer<'ser, Option<&'ser String>, String>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -42884,7 +42884,7 @@ pub mod quick_xml_serialize {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (IterSerializer :: new (self . value . udx_edxf_packing_parts . as_ref () , Some ("UDX.EDXF.PACKING_PARTS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (IterSerializer :: new (self . value . udx_edxf_gs_1128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1128 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { UdxEdxfPackingUnitElementTypeSerializerState :: Init__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_quantity_min , Some ("UDX.EDXF.QUANTITY_MIN") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: NS_UNNAMED_5) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } return Ok (Some (Event :: Start (bytes))) } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (IterSerializer :: new (self . value . udx_edxf_quantity_max . as_ref () , Some ("UDX.EDXF.QUANTITY_MAX") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfQuantityMax (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (WithSerializer :: serializer_with_namespace (& self . value . udx_edxf_packing_unit_code , Some ("UDX.EDXF.PACKING_UNIT_CODE") , ElementNamespace :: Namespace (super :: NS_UNNAMED_5) , false) ?) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitCode (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (IterSerializer :: new (& self . value . udx_edxf_packing_unit_name [..] , Some ("UDX.EDXF.PACKING_UNIT_NAME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingUnitName (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (IterSerializer :: new (self . value . udx_edxf_package_break . as_ref () , Some ("UDX.EDXF.PACKAGE_BREAK") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackageBreak (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (IterSerializer :: new (self . value . udx_edxf_packing_parts . as_ref () , Some ("UDX.EDXF.PACKING_PARTS") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfPackingParts (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (IterSerializer :: new (self . value . udx_edxf_volume . as_ref () , Some ("UDX.EDXF.VOLUME") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfVolume (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (IterSerializer :: new (self . value . udx_edxf_weight . as_ref () , Some ("UDX.EDXF.WEIGHT") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWeight (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (IterSerializer :: new (self . value . udx_edxf_length . as_ref () , Some ("UDX.EDXF.LENGTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfLength (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (IterSerializer :: new (self . value . udx_edxf_width . as_ref () , Some ("UDX.EDXF.WIDTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfWidth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (IterSerializer :: new (self . value . udx_edxf_depth . as_ref () , Some ("UDX.EDXF.DEPTH") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDepth (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (IterSerializer :: new (self . value . udx_edxf_diameter . as_ref () , Some ("UDX.EDXF.DIAMETER") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfDiameter (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (IterSerializer :: new (self . value . udx_edxf_gtin . as_ref () , Some ("UDX.EDXF.GTIN") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGtin (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1_128 (IterSerializer :: new (self . value . udx_edxf_gs1_128 . as_ref () , Some ("UDX.EDXF.GS1_128") , false) . with_namespace (ElementNamespace :: Namespace (super :: NS_UNNAMED_5))) , } UdxEdxfPackingUnitElementTypeSerializerState :: UdxEdxfGs1_128 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: End__ , } UdxEdxfPackingUnitElementTypeSerializerState :: End__ => { * self . state = UdxEdxfPackingUnitElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } UdxEdxfPackingUnitElementTypeSerializerState :: Done__ => return Ok (None) , UdxEdxfPackingUnitElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }

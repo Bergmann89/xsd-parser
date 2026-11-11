@@ -49,9 +49,9 @@ fn read_quick_xml() {
         "tests/feature/sequence_with_choice/example/default.xml",
     );
 
-    assert!(matches!(obj.content_2, FooContent2Type::Element1(3)));
+    assert!(matches!(obj.content2, FooContent2Type::Element1(3)));
     assert!(matches!(
-        obj.content_3,
+        obj.content3,
         FooContent3Type::Element4(s) if s == "test"
     ));
 }
@@ -62,8 +62,8 @@ fn write_quick_xml() {
     use quick_xml::{Foo, FooContent2Type, FooContent3Type};
 
     let obj = Foo {
-        content_2: FooContent2Type::Element1(3),
-        content_3: FooContent3Type::Element4("test".into()),
+        content2: FooContent2Type::Element1(3),
+        content3: FooContent3Type::Element4("test".into()),
     };
 
     crate::utils::quick_xml_write_test(

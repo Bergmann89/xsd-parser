@@ -53,8 +53,8 @@ fn read_quick_xml() {
         panic!("Expected `Foo::Content2`");
     };
 
-    assert_eq!(content.element_1, 3);
-    assert_eq!(content.element_2, "test");
+    assert_eq!(content.element1, 3);
+    assert_eq!(content.element2, "test");
 }
 
 #[test]
@@ -63,8 +63,8 @@ fn write_quick_xml() {
     use quick_xml::{Foo, FooContent2Type};
 
     let obj = Foo::Content2(FooContent2Type {
-        element_1: 3,
-        element_2: "test".into(),
+        element1: 3,
+        element2: "test".into(),
     });
 
     crate::utils::quick_xml_write_test(

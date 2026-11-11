@@ -30,7 +30,7 @@ macro_rules! assert_shared_content {
     () => {
         fn _shared_content(a: ElementAType) -> ElementBType {
             ElementBType {
-                attr_2: None,
+                attr2: None,
                 content: a.content,
             }
         }
@@ -176,15 +176,15 @@ fn read_quick_xml() {
         "tests/feature/shared_group_content/example/default.xml",
     );
 
-    assert_eq!(obj.attr_1.as_deref(), Some("a"));
+    assert_eq!(obj.attr1.as_deref(), Some("a"));
     assert_eq!(obj.content.len(), 2);
     assert!(matches!(
         &obj.content[0],
-        ChoiceGroupType::ElementA(x) if x.attr_1.as_deref() == Some("inner-a"),
+        ChoiceGroupType::ElementA(x) if x.attr1.as_deref() == Some("inner-a"),
     ));
     assert!(matches!(
         &obj.content[1],
-        ChoiceGroupType::ElementB(x) if x.attr_2.as_deref() == Some("inner-b"),
+        ChoiceGroupType::ElementB(x) if x.attr2.as_deref() == Some("inner-b"),
     ));
 }
 
@@ -194,14 +194,14 @@ fn write_quick_xml() {
     use quick_xml::{ChoiceGroupType, ElementAType, ElementBType};
 
     let obj = ElementAType {
-        attr_1: Some("a".into()),
+        attr1: Some("a".into()),
         content: vec![
             ChoiceGroupType::ElementA(ElementAType {
-                attr_1: Some("inner-a".into()),
+                attr1: Some("inner-a".into()),
                 content: Vec::new(),
             }),
             ChoiceGroupType::ElementB(ElementBType {
-                attr_2: Some("inner-b".into()),
+                attr2: Some("inner-b".into()),
                 content: Vec::new(),
             }),
         ],

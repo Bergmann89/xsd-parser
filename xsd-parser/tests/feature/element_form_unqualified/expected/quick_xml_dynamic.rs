@@ -22,7 +22,7 @@ pub struct RootType {
     pub item: String,
     pub q: String,
     pub ref_: RefType,
-    pub ref_2: RootRef2Type,
+    pub ref2: RootRef2Type,
 }
 impl CollectNamespaces for RootType {
     fn collect_namespaces(&self, helper: &mut SerializeHelper, bytes: &mut BytesStart<'_>) {
@@ -31,7 +31,7 @@ impl CollectNamespaces for RootType {
         self.item.collect_namespaces(helper, bytes);
         self.q.collect_namespaces(helper, bytes);
         self.ref_.collect_namespaces(helper, bytes);
-        self.ref_2.collect_namespaces(helper, bytes);
+        self.ref2.collect_namespaces(helper, bytes);
     }
 }
 impl WithSerializer for RootType {
@@ -185,7 +185,7 @@ pub mod quick_xml_deserialize {
         item: Option<String>,
         q: Option<String>,
         ref_: Option<super::RefType>,
-        ref_2: Option<super::RootRef2Type>,
+        ref2: Option<super::RootRef2Type>,
         state__: Box<RootTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -229,7 +229,7 @@ pub mod quick_xml_deserialize {
                 item: None,
                 q: None,
                 ref_: None,
-                ref_2: None,
+                ref2: None,
                 state__: Box::new(RootTypeDeserializerState::Init__),
             })
         }
@@ -244,7 +244,7 @@ pub mod quick_xml_deserialize {
                 S::Item(Some(deserializer)) => self.store_item(deserializer.finish(helper)?)?,
                 S::Q(Some(deserializer)) => self.store_q(deserializer.finish(helper)?)?,
                 S::Ref(Some(deserializer)) => self.store_ref_(deserializer.finish(helper)?)?,
-                S::Ref2(Some(deserializer)) => self.store_ref_2(deserializer.finish(helper)?)?,
+                S::Ref2(Some(deserializer)) => self.store_ref2(deserializer.finish(helper)?)?,
                 _ => (),
             }
             Ok(())
@@ -279,11 +279,11 @@ pub mod quick_xml_deserialize {
             self.ref_ = Some(value);
             Ok(())
         }
-        fn store_ref_2(&mut self, value: super::RootRef2Type) -> Result<(), Error> {
-            if self.ref_2.is_some() {
+        fn store_ref2(&mut self, value: super::RootRef2Type) -> Result<(), Error> {
+            if self.ref2.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Ref2")))?;
             }
-            self.ref_2 = Some(value);
+            self.ref2 = Some(value);
             Ok(())
         }
         fn handle_child<'de>(
@@ -434,7 +434,7 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn handle_ref_2<'de>(
+        fn handle_ref2<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             output: DeserializerOutput<'de, super::RootRef2Type>,
@@ -460,7 +460,7 @@ pub mod quick_xml_deserialize {
             match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    self.store_ref_2(data)?;
+                    self.store_ref2(data)?;
                     *self.state__ = S::Done__;
                     Ok(ElementHandlerOutput::from_event(event, allow_any))
                 }
@@ -542,7 +542,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Ref2(Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_ref_2(helper, output, &mut fallback)? {
+                        match self.handle_ref2(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -642,7 +642,7 @@ pub mod quick_xml_deserialize {
                             b"Ref2",
                             false,
                         )?;
-                        match self.handle_ref_2(helper, output, &mut fallback)? {
+                        match self.handle_ref2(helper, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -682,7 +682,7 @@ pub mod quick_xml_deserialize {
                 item: helper.finish_element("item", self.item)?,
                 q: helper.finish_element("q", self.q)?,
                 ref_: helper.finish_element("Ref", self.ref_)?,
-                ref_2: helper.finish_element("Ref2", self.ref_2)?,
+                ref2: helper.finish_element("Ref2", self.ref2)?,
             })
         }
     }
@@ -1318,7 +1318,7 @@ pub mod quick_xml_serialize {
                         None => {
                             *self.state = RootTypeSerializerState::Ref2(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.ref_2,
+                                    &self.value.ref2,
                                     Some("Ref2"),
                                     ElementNamespace::None,
                                     false,

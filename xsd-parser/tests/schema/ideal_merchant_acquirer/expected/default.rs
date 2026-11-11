@@ -92,7 +92,7 @@ pub struct X509DataType {
 }
 #[derive(Debug)]
 pub struct X509DataTypeContent {
-    pub content_19: X509DataContent19Type,
+    pub content19: X509DataContent19Type,
 }
 #[derive(Debug)]
 pub struct PgpDataType {
@@ -121,11 +121,11 @@ pub struct DigestMethodType {
 }
 #[derive(Debug)]
 pub struct DsaKeyValueType {
-    pub content_36: Option<DsaKeyValueContent36Type>,
+    pub content36: Option<DsaKeyValueContent36Type>,
     pub g: Option<Base64String>,
     pub y: Base64String,
     pub j: Option<Base64String>,
-    pub content_37: Option<DsaKeyValueContent37Type>,
+    pub content37: Option<DsaKeyValueContent37Type>,
 }
 #[derive(Debug)]
 pub struct RsaKeyValueType {

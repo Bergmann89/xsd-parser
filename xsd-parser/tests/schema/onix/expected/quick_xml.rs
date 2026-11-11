@@ -226,7 +226,7 @@ pub mod onix {
     impl WithDeserializerFromBytes for List3 {}
     #[derive(Debug)]
     pub enum Release {
-        _31,
+        _3_1,
     }
     impl SerializeBytes for Release {
         fn serialize_bytes(
@@ -234,7 +234,7 @@ pub mod onix {
             helper: &mut SerializeHelper,
         ) -> Result<Option<Cow<'_, str>>, Error> {
             match self {
-                Self::_31 => Ok(Some(Cow::Borrowed("3.1"))),
+                Self::_3_1 => Ok(Some(Cow::Borrowed("3.1"))),
             }
         }
     }
@@ -242,7 +242,7 @@ pub mod onix {
     impl DeserializeBytes for Release {
         fn deserialize_bytes(helper: &mut DeserializeHelper, bytes: &[u8]) -> Result<Self, Error> {
             match bytes {
-                b"3.1" => Ok(Self::_31),
+                b"3.1" => Ok(Self::_3_1),
                 x => Err(Error::from(ErrorKind::UnknownOrInvalidValue(
                     RawByteStr::from_slice(x),
                 ))),
@@ -411,7 +411,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_302: SenderContent302,
+        pub content302: SenderContent302,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Option<TelephoneNumberElementType>,
         pub email_address: Option<EmailAddressElementType>,
@@ -462,7 +462,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_70: AddresseeContent70,
+        pub content70: AddresseeContent70,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Option<TelephoneNumberElementType>,
         pub email_address: Option<EmailAddressElementType>,
@@ -7313,7 +7313,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct DescriptiveDetailGpCollections {
-        pub content_153: Option<DescriptiveDetailContent153>,
+        pub content153: Option<DescriptiveDetailContent153>,
     }
     impl WithSerializer for DescriptiveDetailGpCollections {
         type Serializer<'x> = quick_xml_serialize::DescriptiveDetailGpCollectionsSerializer<'x>;
@@ -7354,7 +7354,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct DescriptiveDetailGpTitles {
         pub title_detail: Vec<TitleDetailElementType>,
-        pub content_154: Option<DescriptiveDetailContent154>,
+        pub content154: Option<DescriptiveDetailContent154>,
     }
     impl WithSerializer for DescriptiveDetailGpTitles {
         type Serializer<'x> = quick_xml_serialize::DescriptiveDetailGpTitlesSerializer<'x>;
@@ -7471,7 +7471,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct DescriptiveDetailGpEditions {
-        pub content_156: Option<DescriptiveDetailContent156>,
+        pub content156: Option<DescriptiveDetailContent156>,
         pub religious_text: Option<ReligiousTextElementType>,
     }
     impl WithSerializer for DescriptiveDetailGpEditions {
@@ -7863,7 +7863,7 @@ pub mod onix {
         pub event_status: Option<EventStatusElementType>,
         pub content_audience: Vec<ContentAudienceElementType>,
         pub event_name: Vec<EventNameElementType>,
-        pub content_256: Option<PromotionalEventContent256>,
+        pub content256: Option<PromotionalEventContent256>,
         pub event_description: Vec<EventDescriptionElementType>,
         pub event_occurrence: Vec<EventOccurrenceElementType>,
         pub supporting_resource: Vec<SupportingResourceElementType>,
@@ -7971,16 +7971,16 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub level_sequence_number: Option<LevelSequenceNumberElementType>,
-        pub content_118: ContentItemContent118,
+        pub content118: ContentItemContent118,
         pub epub_usage_constraint: Vec<EpubUsageConstraintElementType>,
         pub epub_license: Vec<EpubLicenseWithDateType>,
-        pub content_119: ContentItemContent119,
+        pub content119: ContentItemContent119,
         pub gp_authorship: Option<ContentItemGpAuthorship>,
         pub gp_languages: GpLanguages,
         pub gp_subjects: GpSubjects,
         pub gp_descriptions_and_marketing_resources: GpDescriptionsAndMarketingResources,
         pub publisher: Vec<PublisherElementType>,
-        pub content_123: Option<ContentItemContent123>,
+        pub content123: Option<ContentItemContent123>,
         pub gp_related_materials: GpRelatedMaterials,
     }
     impl WithSerializer for ContentItemElementType {
@@ -8069,7 +8069,7 @@ pub mod onix {
     impl WithDeserializerFromBytes for PublishingDetailShortname {}
     #[derive(Debug)]
     pub struct PublishingDetailGpImprintsAndPublishers {
-        pub content_271: PublishingDetailContent271,
+        pub content271: PublishingDetailContent271,
         pub city_of_publication: Vec<CityOfPublicationElementType>,
         pub country_of_publication: Option<CountryOfPublicationElementType>,
         pub product_contact: Vec<ProductContactElementType>,
@@ -8107,10 +8107,10 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct PublishingDetailGpPublishingStatusDatesAndCopyright {
-        pub content_273: Option<PublishingDetailContent273>,
+        pub content273: Option<PublishingDetailContent273>,
         pub publishing_date: Vec<PublishingDateElementType>,
         pub latest_reprint_number: Option<LatestReprintNumberElementType>,
-        pub content_274: Option<ContentItemContent123>,
+        pub content274: Option<ContentItemContent123>,
     }
     impl WithSerializer for PublishingDetailGpPublishingStatusDatesAndCopyright {
         type Serializer<'x> =
@@ -8145,7 +8145,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct PublishingDetailGpSalesRightsAndRestrictions {
-        pub content_275: Option<PublishingDetailContent275>,
+        pub content275: Option<PublishingDetailContent275>,
     }
     impl WithSerializer for PublishingDetailGpSalesRightsAndRestrictions {
         type Serializer<'x> =
@@ -8295,7 +8295,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub product_relation_code: Vec<ProductRelationCodeElementType>,
         pub product_identifier: Vec<ProductIdentifierElementType>,
-        pub content_279: Option<RelatedProductContent279>,
+        pub content279: Option<RelatedProductContent279>,
     }
     impl WithSerializer for RelatedProductElementType {
         type Serializer<'x> = quick_xml_serialize::RelatedProductElementTypeSerializer<'x>;
@@ -8666,8 +8666,8 @@ pub mod onix {
         pub stock: Vec<StockElementType>,
         pub pack_quantity: Option<PackQuantityElementType>,
         pub pallet_quantity: Option<PalletQuantityElementType>,
-        pub content_333: Option<SupplyDetailContent333>,
-        pub content_334: SupplyDetailContent334,
+        pub content333: Option<SupplyDetailContent333>,
+        pub content334: SupplyDetailContent334,
     }
     impl WithSerializer for SupplyDetailElementType {
         type Serializer<'x> = quick_xml_serialize::SupplyDetailElementTypeSerializer<'x>;
@@ -10531,7 +10531,7 @@ pub mod onix {
         pub product_form_description: Vec<ProductFormDescriptionElementType>,
         pub product_content_type: Vec<ProductContentTypeElementType>,
         pub measure: Vec<MeasureElementType>,
-        pub content_249: ProductPartContent249,
+        pub content249: ProductPartContent249,
         pub country_of_manufacture: Option<CountryOfManufactureElementType>,
     }
     impl WithSerializer for ProductPartElementType {
@@ -11041,7 +11041,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub extent_type: ExtentTypeElementType,
-        pub content_182: ExtentContent182,
+        pub content182: ExtentContent182,
         pub extent_unit: ExtentUnitElementType,
     }
     impl WithSerializer for ExtentElementType {
@@ -11296,7 +11296,7 @@ pub mod onix {
         pub subject_scheme_identifier: SubjectSchemeIdentifierElementType,
         pub subject_scheme_name: Option<SubjectSchemeNameElementType>,
         pub subject_scheme_version: Option<SubjectSchemeVersionElementType>,
-        pub content_315: SubjectContent315,
+        pub content315: SubjectContent315,
     }
     impl WithSerializer for SubjectElementType {
         type Serializer<'x> = quick_xml_serialize::SubjectElementTypeSerializer<'x>;
@@ -11345,7 +11345,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub name_type: Option<NameTypeElementType>,
-        pub content_205: NameAsSubjectContent205,
+        pub content205: NameAsSubjectContent205,
         pub alternative_name: Vec<AlternativeNameElementType>,
         pub subject_date: Vec<SubjectDateElementType>,
         pub professional_affiliation: Vec<ProfessionalAffiliationElementType>,
@@ -11401,7 +11401,7 @@ pub mod onix {
         pub main_audience: Option<MainAudienceElementType>,
         pub audience_code_type: AudienceCodeTypeElementType,
         pub audience_code_type_name: Option<AudienceCodeTypeNameElementType>,
-        pub content_87: AudienceContent87,
+        pub content87: AudienceContent87,
     }
     impl WithSerializer for AudienceElementType {
         type Serializer<'x> = quick_xml_serialize::AudienceElementTypeSerializer<'x>;
@@ -11452,7 +11452,7 @@ pub mod onix {
         pub audience_range_qualifier: AudienceRangeQualifierElementType,
         pub audience_range_precision: AudienceRangePrecisionElementType,
         pub audience_range_value: AudienceRangeValueElementType,
-        pub content_91: Option<AudienceRangeContent91>,
+        pub content91: Option<AudienceRangeContent91>,
     }
     impl WithSerializer for AudienceRangeElementType {
         type Serializer<'x> = quick_xml_serialize::AudienceRangeElementTypeSerializer<'x>;
@@ -11677,7 +11677,7 @@ pub mod onix {
         pub content_audience: Vec<ContentAudienceElementType>,
         pub territory: Option<TerritoryElementType>,
         pub source_type: Option<SourceTypeElementType>,
-        pub content_103: CitedContent103,
+        pub content103: CitedContent103,
         pub citation_note: Vec<CitationNoteElementType>,
         pub resource_link: Vec<ResourceLinkElementType>,
         pub content_date: Vec<ContentDateElementType>,
@@ -12248,7 +12248,7 @@ pub mod onix {
         pub event_identifier: Vec<EventIdentifierElementType>,
         pub occurrence_date: Vec<OccurrenceDateElementType>,
         pub event_status: EventStatusElementType,
-        pub content_173: Option<EventOccurrenceContent173>,
+        pub content173: Option<EventOccurrenceContent173>,
         pub event_description: Vec<EventDescriptionElementType>,
         pub supporting_resource: Vec<SupportingResourceElementType>,
         pub event_sponsor: Vec<EventSponsorElementType>,
@@ -12669,7 +12669,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub publishing_role: PublishingRoleElementType,
-        pub content_263: PublisherContent263,
+        pub content263: PublisherContent263,
         pub funding: Vec<FundingElementType>,
         pub website: Vec<WebsiteElementType>,
     }
@@ -12942,12 +12942,12 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub product_contact_role: ProductContactRoleElementType,
-        pub content_240: ProductContactContent240,
+        pub content240: ProductContactContent240,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
-        pub content_242: Option<ProductContactContent242>,
+        pub content242: Option<ProductContactContent242>,
     }
     impl WithSerializer for ProductContactElementType {
         type Serializer<'x> = quick_xml_serialize::ProductContactElementTypeSerializer<'x>;
@@ -13683,7 +13683,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub sales_outlet: Vec<SalesOutletElementType>,
-        pub content_319: SupplementManifestContent319,
+        pub content319: SupplementManifestContent319,
     }
     impl WithSerializer for SupplementManifestElementType {
         type Serializer<'x> = quick_xml_serialize::SupplementManifestElementTypeSerializer<'x>;
@@ -14040,7 +14040,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub agent_role: AgentRoleElementType,
-        pub content_267: PublisherRepresentativeContent267,
+        pub content267: PublisherRepresentativeContent267,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
@@ -14572,7 +14572,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub supplier_role: SupplierRoleElementType,
-        pub content_322: SupplierContent322,
+        pub content322: SupplierContent322,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
@@ -14625,12 +14625,12 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub supply_contact_role: SupplyContactRoleElementType,
-        pub content_327: SupplyContactContent327,
+        pub content327: SupplyContactContent327,
         pub contact_name: Option<ContactNameElementType>,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
-        pub content_329: Option<ProductContactContent242>,
+        pub content329: Option<ProductContactContent242>,
     }
     impl WithSerializer for SupplyContactElementType {
         type Serializer<'x> = quick_xml_serialize::SupplyContactElementTypeSerializer<'x>;
@@ -14938,7 +14938,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_215: NewSupplierContent215,
+        pub content215: NewSupplierContent215,
         pub telephone_number: Vec<TelephoneNumberElementType>,
         pub fax_number: Vec<FaxNumberElementType>,
         pub email_address: Vec<EmailAddressElementType>,
@@ -14992,7 +14992,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub location_identifier: Vec<LocationIdentifierElementType>,
         pub location_name: Vec<LocationNameElementType>,
-        pub content_308: StockContent308,
+        pub content308: StockContent308,
         pub on_order_detail: Vec<OnOrderDetailElementType>,
         pub velocity: Vec<VelocityElementType>,
     }
@@ -23086,7 +23086,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub title_element_level: TitleElementLevelElementType,
-        pub content_351: TitleElementContent351,
+        pub content351: TitleElementContent351,
         pub subtitle: Option<SubtitleElementType>,
     }
     impl WithSerializer for TitleElementElementType {
@@ -23358,7 +23358,7 @@ pub mod onix {
         pub from_language: Vec<FromLanguageElementType>,
         pub to_language: Vec<ToLanguageElementType>,
         pub name_type: Option<NameTypeElementType>,
-        pub content_125: ContributorContent125,
+        pub content125: ContributorContent125,
         pub alternative_name: Vec<AlternativeNameElementType>,
         pub contributor_date: Vec<ContributorDateElementType>,
         pub professional_affiliation: Vec<ProfessionalAffiliationElementType>,
@@ -23877,7 +23877,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct DescriptiveDetailContent157 {
         pub edition_type: Vec<EditionTypeElementType>,
-        pub content_158: Option<DescriptiveDetailContent158>,
+        pub content158: Option<DescriptiveDetailContent158>,
         pub edition_statement: Vec<EditionStatementElementType>,
     }
     impl WithSerializer for DescriptiveDetailContent157 {
@@ -25634,7 +25634,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub name_type: NameTypeElementType,
-        pub content_76: AlternativeNameContent76,
+        pub content76: AlternativeNameContent76,
     }
     impl WithSerializer for AlternativeNameElementType {
         type Serializer<'x> = quick_xml_serialize::AlternativeNameElementTypeSerializer<'x>;
@@ -28597,7 +28597,7 @@ pub mod onix {
     impl WithDeserializerFromBytes for EventNameShortname {}
     #[derive(Debug)]
     pub struct PromotionalEventContent257 {
-        pub content_258: PromotionalEventContent258,
+        pub content258: PromotionalEventContent258,
         pub contributor_statement: Vec<ContributorStatementElementType>,
     }
     impl WithSerializer for PromotionalEventContent257 {
@@ -28791,10 +28791,10 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct EventOccurrenceContent173 {
-        pub content_174: EventOccurrenceContent174,
+        pub content174: EventOccurrenceContent174,
         pub location_name: Vec<LocationNameElementType>,
         pub venue_name: VenueNameElementType,
-        pub content_176: Option<EventOccurrenceContent176>,
+        pub content176: Option<EventOccurrenceContent176>,
         pub venue_note: Vec<VenueNoteElementType>,
     }
     impl WithSerializer for EventOccurrenceContent173 {
@@ -28886,7 +28886,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct EventSponsorContent178 {
         pub event_sponsor_identifier: Vec<EventSponsorIdentifierElementType>,
-        pub content_179: Option<CopyrightOwnerContent143>,
+        pub content179: Option<CopyrightOwnerContent143>,
     }
     impl WithSerializer for EventSponsorContent178 {
         type Serializer<'x> = quick_xml_serialize::EventSponsorContent178Serializer<'x>;
@@ -29692,7 +29692,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub copyright_type: Option<CopyrightTypeElementType>,
-        pub content_146: CopyrightStatementContent146,
+        pub content146: CopyrightStatementContent146,
     }
     impl WithSerializer for CopyrightStatementElementType {
         type Serializer<'x> = quick_xml_serialize::CopyrightStatementElementTypeSerializer<'x>;
@@ -31374,7 +31374,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub sales_outlet: Vec<SalesOutletElementType>,
-        pub content_151: CoverResourceContent151,
+        pub content151: CoverResourceContent151,
     }
     impl WithSerializer for CoverResourceElementType {
         type Serializer<'x> = quick_xml_serialize::CoverResourceElementTypeSerializer<'x>;
@@ -31630,7 +31630,7 @@ pub mod onix {
         pub sourcetype: Option<List3>,
         pub sequence_number: Option<SequenceNumberElementType>,
         pub sales_outlet: Vec<SalesOutletElementType>,
-        pub content_196: CoverResourceContent151,
+        pub content196: CoverResourceContent151,
     }
     impl WithSerializer for InsertResourceElementType {
         type Serializer<'x> = quick_xml_serialize::InsertResourceElementTypeSerializer<'x>;
@@ -31732,7 +31732,7 @@ pub mod onix {
         pub datestamp: Option<String>,
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
-        pub content_295: SalesOutletContent295,
+        pub content295: SalesOutletContent295,
     }
     impl WithSerializer for SalesOutletElementType {
         type Serializer<'x> = quick_xml_serialize::SalesOutletElementTypeSerializer<'x>;
@@ -34772,12 +34772,12 @@ pub mod onix {
         pub discount_coded: Vec<DiscountCodedElementType>,
         pub discount: Vec<DiscountElementType>,
         pub price_status: Option<PriceStatusElementType>,
-        pub content_221: PriceContent221,
+        pub content221: PriceContent221,
         pub currency_code: Option<CurrencyCodeElementType>,
         pub territory: Option<TerritoryElementType>,
         pub comparison_product_price: Vec<ComparisonProductPriceElementType>,
         pub price_date: Vec<PriceDateElementType>,
-        pub content_225: Option<PriceContent225>,
+        pub content225: Option<PriceContent225>,
     }
     impl WithSerializer for PriceElementType {
         type Serializer<'x> = quick_xml_serialize::PriceElementTypeSerializer<'x>;
@@ -38682,7 +38682,7 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub contributor_place_relator: ContributorPlaceRelatorElementType,
-        pub content_136: ContributorPlaceContent136,
+        pub content136: ContributorPlaceContent136,
         pub location_name: Vec<LocationNameElementType>,
     }
     impl WithSerializer for ContributorPlaceElementType {
@@ -43709,10 +43709,10 @@ pub mod onix {
         pub cellspacing: Option<String>,
         pub cellpadding: Option<String>,
         pub caption: Option<AbbrElementType>,
-        pub content_48: Option<TableContent48>,
+        pub content48: Option<TableContent48>,
         pub thead: Option<TbodyElementType>,
         pub tfoot: Option<TbodyElementType>,
-        pub content_49: TableContent49,
+        pub content49: TableContent49,
     }
     impl WithSerializer for TableElementType {
         type Serializer<'x> = quick_xml_serialize::TableElementTypeSerializer<'x>;
@@ -45707,7 +45707,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct NameAsSubjectContent206 {
         pub name_identifier: Vec<NameIdentifierElementType>,
-        pub content_207: Option<NameAsSubjectContent207>,
+        pub content207: Option<NameAsSubjectContent207>,
     }
     impl WithSerializer for NameAsSubjectContent206 {
         type Serializer<'x> = quick_xml_serialize::NameAsSubjectContent206Serializer<'x>;
@@ -48456,7 +48456,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct CitedContent105 {
         pub source_title: Vec<SourceTitleElementType>,
-        pub content_106: Option<CitedContent106>,
+        pub content106: Option<CitedContent106>,
     }
     impl WithSerializer for CitedContent105 {
         type Serializer<'x> = quick_xml_serialize::CitedContent105Serializer<'x>;
@@ -56584,9 +56584,9 @@ pub mod onix {
     pub struct StockContent309 {
         pub on_hand: OnHandElementType,
         pub proximity: Option<ProximityElementType>,
-        pub content_310: Option<StockContent310>,
-        pub content_311: Option<StockContent311>,
-        pub content_312: Option<StockContent312>,
+        pub content310: Option<StockContent310>,
+        pub content311: Option<StockContent311>,
+        pub content312: Option<StockContent312>,
     }
     impl WithSerializer for StockContent309 {
         type Serializer<'x> = quick_xml_serialize::StockContent309Serializer<'x>;
@@ -57831,8 +57831,8 @@ pub mod onix {
         pub sourcename: Option<String>,
         pub sourcetype: Option<List3>,
         pub discount_type: Option<DiscountTypeElementType>,
-        pub content_160: Option<DiscountContent160>,
-        pub content_161: DiscountContent161,
+        pub content160: Option<DiscountContent160>,
+        pub content161: DiscountContent161,
     }
     impl WithSerializer for DiscountElementType {
         type Serializer<'x> = quick_xml_serialize::DiscountElementTypeSerializer<'x>;
@@ -59622,7 +59622,7 @@ pub mod onix {
     pub struct TitleElementContent352 {
         pub part_number: PartNumberElementType,
         pub year_of_annual: Option<YearOfAnnualElementType>,
-        pub content_353: Option<TitleElementContent353>,
+        pub content353: Option<TitleElementContent353>,
     }
     impl WithSerializer for TitleElementContent352 {
         type Serializer<'x> = quick_xml_serialize::TitleElementContent352Serializer<'x>;
@@ -59659,7 +59659,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct TitleElementContent356 {
         pub year_of_annual: YearOfAnnualElementType,
-        pub content_357: Option<TitleElementContent357>,
+        pub content357: Option<TitleElementContent357>,
     }
     impl WithSerializer for TitleElementContent356 {
         type Serializer<'x> = quick_xml_serialize::TitleElementContent356Serializer<'x>;
@@ -59695,7 +59695,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct TitleElementContent360 {
-        pub content_361: TitleElementContent355,
+        pub content361: TitleElementContent355,
         pub title_without_prefix: TitleWithoutPrefixElementType,
     }
     impl WithSerializer for TitleElementContent360 {
@@ -60755,7 +60755,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct ContributorContent126 {
         pub name_identifier: Vec<NameIdentifierElementType>,
-        pub content_127: Option<ContributorContent127>,
+        pub content127: Option<ContributorContent127>,
     }
     impl WithSerializer for ContributorContent126 {
         type Serializer<'x> = quick_xml_serialize::ContributorContent126Serializer<'x>;
@@ -64085,7 +64085,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct RubyContent59 {
         pub rb: RbElementType,
-        pub content_60: RubyContent60,
+        pub content60: RubyContent60,
     }
     impl WithSerializer for RubyContent59 {
         type Serializer<'x> = quick_xml_serialize::RubyContent59Serializer<'x>;
@@ -64350,7 +64350,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct NameAsSubjectGpUnstructuredName {
-        pub content_209: NameAsSubjectContent209,
+        pub content209: NameAsSubjectContent209,
     }
     impl WithSerializer for NameAsSubjectGpUnstructuredName {
         type Serializer<'x> = quick_xml_serialize::NameAsSubjectGpUnstructuredNameSerializer<'x>;
@@ -65005,7 +65005,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct AlternativeNameContent77 {
         pub name_identifier: Vec<NameIdentifierElementType>,
-        pub content_78: Option<AlternativeNameContent78>,
+        pub content78: Option<AlternativeNameContent78>,
     }
     impl WithSerializer for AlternativeNameContent77 {
         type Serializer<'x> = quick_xml_serialize::AlternativeNameContent77Serializer<'x>;
@@ -72841,8 +72841,8 @@ pub mod onix {
     impl WithDeserializerFromBytes for PriceStatusShortname {}
     #[derive(Debug)]
     pub struct PriceContent222 {
-        pub content_223: PriceContent223,
-        pub content_224: Option<PriceContent224>,
+        pub content223: PriceContent223,
+        pub content224: Option<PriceContent224>,
     }
     impl WithSerializer for PriceContent222 {
         type Serializer<'x> = quick_xml_serialize::PriceContent222Serializer<'x>;
@@ -74040,7 +74040,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct ContributorGpUnstructuredName {
-        pub content_129: ContributorContent129,
+        pub content129: ContributorContent129,
     }
     impl WithSerializer for ContributorGpUnstructuredName {
         type Serializer<'x> = quick_xml_serialize::ContributorGpUnstructuredNameSerializer<'x>;
@@ -75985,7 +75985,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct AlternativeNameGpUnstructuredName {
-        pub content_80: AlternativeNameContent80,
+        pub content80: AlternativeNameContent80,
     }
     impl WithSerializer for AlternativeNameGpUnstructuredName {
         type Serializer<'x> = quick_xml_serialize::AlternativeNameGpUnstructuredNameSerializer<'x>;
@@ -77322,7 +77322,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct CopyrightOwnerContent142 {
         pub copyright_owner_identifier: Vec<CopyrightOwnerIdentifierElementType>,
-        pub content_143: Option<CopyrightOwnerContent143>,
+        pub content143: Option<CopyrightOwnerContent143>,
     }
     impl WithSerializer for CopyrightOwnerContent142 {
         type Serializer<'x> = quick_xml_serialize::CopyrightOwnerContent142Serializer<'x>;
@@ -81219,7 +81219,7 @@ pub mod onix {
     impl WithDeserializerFromBytes for YearOfAnnualShortname {}
     #[derive(Debug)]
     pub struct TitleElementContent354 {
-        pub content_355: TitleElementContent355,
+        pub content355: TitleElementContent355,
         pub title_without_prefix: TitleWithoutPrefixElementType,
     }
     impl WithSerializer for TitleElementContent354 {
@@ -81256,7 +81256,7 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub struct TitleElementContent358 {
-        pub content_359: TitleElementContent355,
+        pub content359: TitleElementContent355,
         pub title_without_prefix: TitleWithoutPrefixElementType,
     }
     impl WithSerializer for TitleElementContent358 {
@@ -83543,7 +83543,7 @@ pub mod onix {
         pub price_part_description: Vec<PricePartDescriptionElementType>,
         pub tax_type: Option<TaxTypeElementType>,
         pub tax_rate_code: Option<TaxRateCodeElementType>,
-        pub content_337: TaxContent337,
+        pub content337: TaxContent337,
     }
     impl WithSerializer for TaxElementType {
         type Serializer<'x> = quick_xml_serialize::TaxElementTypeSerializer<'x>;
@@ -87124,7 +87124,7 @@ pub mod onix {
             datestamp: Option<String>,
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
-            content_302: Option<super::SenderContent302>,
+            content302: Option<super::SenderContent302>,
             contact_name: Option<super::ContactNameElementType>,
             telephone_number: Option<super::TelephoneNumberElementType>,
             email_address: Option<super::EmailAddressElementType>,
@@ -87191,7 +87191,7 @@ pub mod onix {
                     datestamp: datestamp,
                     sourcename: sourcename,
                     sourcetype: sourcetype,
-                    content_302: None,
+                    content302: None,
                     contact_name: None,
                     telephone_number: None,
                     email_address: None,
@@ -87206,7 +87206,7 @@ pub mod onix {
                 use SenderElementTypeDeserializerState as S;
                 match state {
                     S::Content302(Some(deserializer)) => {
-                        self.store_content_302(deserializer.finish(helper)?)?
+                        self.store_content302(deserializer.finish(helper)?)?
                     }
                     S::ContactName(Some(deserializer)) => {
                         self.store_contact_name(deserializer.finish(helper)?)?
@@ -87221,13 +87221,13 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_302(&mut self, value: super::SenderContent302) -> Result<(), Error> {
-                if self.content_302.is_some() {
+            fn store_content302(&mut self, value: super::SenderContent302) -> Result<(), Error> {
+                if self.content302.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content302",
                     )))?;
                 }
-                self.content_302 = Some(value);
+                self.content302 = Some(value);
                 Ok(())
             }
             fn store_contact_name(
@@ -87266,7 +87266,7 @@ pub mod onix {
                 self.email_address = Some(value);
                 Ok(())
             }
-            fn handle_content_302<'de>(
+            fn handle_content302<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SenderContent302>,
@@ -87292,7 +87292,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_302(data)?;
+                        self.store_content302(data)?;
                         *self.state__ = S::ContactName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -87425,7 +87425,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content302(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_302(helper, output, &mut fallback)? {
+                            match self.handle_content302(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -87489,7 +87489,7 @@ pub mod onix {
                         (S::Content302(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::SenderContent302 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_302(helper, output, &mut fallback)? {
+                            match self.handle_content302(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -87585,7 +87585,7 @@ pub mod onix {
                     datestamp: self.datestamp,
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
-                    content_302: helper.finish_element("Content302", self.content_302)?,
+                    content302: helper.finish_element("Content302", self.content302)?,
                     contact_name: self.contact_name,
                     telephone_number: self.telephone_number,
                     email_address: self.email_address,
@@ -87599,7 +87599,7 @@ pub mod onix {
             datestamp: Option<String>,
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
-            content_70: Option<super::AddresseeContent70>,
+            content70: Option<super::AddresseeContent70>,
             contact_name: Option<super::ContactNameElementType>,
             telephone_number: Option<super::TelephoneNumberElementType>,
             email_address: Option<super::EmailAddressElementType>,
@@ -87666,7 +87666,7 @@ pub mod onix {
                     datestamp: datestamp,
                     sourcename: sourcename,
                     sourcetype: sourcetype,
-                    content_70: None,
+                    content70: None,
                     contact_name: None,
                     telephone_number: None,
                     email_address: None,
@@ -87681,7 +87681,7 @@ pub mod onix {
                 use AddresseeElementTypeDeserializerState as S;
                 match state {
                     S::Content70(Some(deserializer)) => {
-                        self.store_content_70(deserializer.finish(helper)?)?
+                        self.store_content70(deserializer.finish(helper)?)?
                     }
                     S::ContactName(Some(deserializer)) => {
                         self.store_contact_name(deserializer.finish(helper)?)?
@@ -87696,13 +87696,13 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_70(&mut self, value: super::AddresseeContent70) -> Result<(), Error> {
-                if self.content_70.is_some() {
+            fn store_content70(&mut self, value: super::AddresseeContent70) -> Result<(), Error> {
+                if self.content70.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content70",
                     )))?;
                 }
-                self.content_70 = Some(value);
+                self.content70 = Some(value);
                 Ok(())
             }
             fn store_contact_name(
@@ -87741,7 +87741,7 @@ pub mod onix {
                 self.email_address = Some(value);
                 Ok(())
             }
-            fn handle_content_70<'de>(
+            fn handle_content70<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::AddresseeContent70>,
@@ -87767,7 +87767,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_70(data)?;
+                        self.store_content70(data)?;
                         *self.state__ = S::ContactName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -87900,7 +87900,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content70(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_70(helper, output, &mut fallback)? {
+                            match self.handle_content70(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -87965,7 +87965,7 @@ pub mod onix {
                             let output = <super::AddresseeContent70 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_70(helper, output, &mut fallback)? {
+                            match self.handle_content70(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -88061,7 +88061,7 @@ pub mod onix {
                     datestamp: self.datestamp,
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
-                    content_70: helper.finish_element("Content70", self.content_70)?,
+                    content70: helper.finish_element("Content70", self.content70)?,
                     contact_name: self.contact_name,
                     telephone_number: self.telephone_number,
                     email_address: self.email_address,
@@ -90454,7 +90454,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::SenderContent303 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_303(helper, Default::default(), None, output)? {
+                        match self.handle_content303(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -90481,7 +90481,7 @@ pub mod onix {
                     S::Content303(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_303(&mut values, value)?;
+                            Self::store_content303(&mut values, value)?;
                         }
                         Ok(super::SenderContent302::Content303(
                             helper.finish_element("Content303", values)?,
@@ -90500,7 +90500,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_303(
+            fn store_content303(
                 values: &mut Option<super::SenderContent303>,
                 value: super::SenderContent303,
             ) -> Result<(), Error> {
@@ -90524,7 +90524,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_303<'de>(
+            fn handle_content303<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SenderContent303>,
@@ -90547,12 +90547,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_303(&mut values, data)?;
+                    Self::store_content303(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_303(&mut values, data)?;
+                        Self::store_content303(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content303(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -90630,7 +90630,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content303(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_303(helper, values, fallback, output)? {
+                            match self.handle_content303(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -90667,7 +90667,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::SenderContent303 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_303(helper, values, fallback, output)? {
+                            match self.handle_content303(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -91286,7 +91286,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::AddresseeContent71 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_71(helper, Default::default(), None, output)? {
+                        match self.handle_content71(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -91313,7 +91313,7 @@ pub mod onix {
                     S::Content71(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_71(&mut values, value)?;
+                            Self::store_content71(&mut values, value)?;
                         }
                         Ok(super::AddresseeContent70::Content71(
                             helper.finish_element("Content71", values)?,
@@ -91332,7 +91332,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_71(
+            fn store_content71(
                 values: &mut Option<super::AddresseeContent71>,
                 value: super::AddresseeContent71,
             ) -> Result<(), Error> {
@@ -91356,7 +91356,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_71<'de>(
+            fn handle_content71<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AddresseeContent71>,
@@ -91379,12 +91379,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_71(&mut values, data)?;
+                    Self::store_content71(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_71(&mut values, data)?;
+                        Self::store_content71(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content71(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -91465,7 +91465,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content71(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_71(helper, values, fallback, output)? {
+                            match self.handle_content71(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -91503,7 +91503,7 @@ pub mod onix {
                             let output = <super::AddresseeContent71 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_71(helper, values, fallback, output)? {
+                            match self.handle_content71(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -100105,7 +100105,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct DescriptiveDetailGpCollectionsDeserializer {
-            content_153: Option<super::DescriptiveDetailContent153>,
+            content153: Option<super::DescriptiveDetailContent153>,
             state__: Box<DescriptiveDetailGpCollectionsDeserializerState>,
         }
         #[derive(Debug)]
@@ -100126,25 +100126,25 @@ pub mod onix {
                 use DescriptiveDetailGpCollectionsDeserializerState as S;
                 match state {
                     S::Content153(Some(deserializer)) => {
-                        self.store_content_153(deserializer.finish(helper)?)?
+                        self.store_content153(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_153(
+            fn store_content153(
                 &mut self,
                 value: super::DescriptiveDetailContent153,
             ) -> Result<(), Error> {
-                if self.content_153.is_some() {
+                if self.content153.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content153",
                     )))?;
                 }
-                self.content_153 = Some(value);
+                self.content153 = Some(value);
                 Ok(())
             }
-            fn handle_content_153<'de>(
+            fn handle_content153<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::DescriptiveDetailContent153>,
@@ -100166,7 +100166,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_153(data)?;
+                        self.store_content153(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -100181,7 +100181,7 @@ pub mod onix {
         impl Default for DescriptiveDetailGpCollectionsDeserializer {
             fn default() -> Self {
                 Self {
-                    content_153: None,
+                    content153: None,
                     state__: Box::new(DescriptiveDetailGpCollectionsDeserializerState::Init__),
                 }
             }
@@ -100194,7 +100194,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::DescriptiveDetailGpCollections> {
                 let deserializer = Self {
-                    content_153: None,
+                    content153: None,
                     state__: Box::new(DescriptiveDetailGpCollectionsDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -100226,7 +100226,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content153(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_153(helper, output, &mut fallback)? {
+                            match self.handle_content153(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -100256,7 +100256,7 @@ pub mod onix {
                                 <super::DescriptiveDetailContent153 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_153(helper, output, &mut fallback)? {
+                            match self.handle_content153(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -100295,14 +100295,14 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::DescriptiveDetailGpCollections {
-                    content_153: self.content_153,
+                    content153: self.content153,
                 })
             }
         }
         #[derive(Debug)]
         pub struct DescriptiveDetailGpTitlesDeserializer {
             title_detail: Vec<super::TitleDetailElementType>,
-            content_154: Option<super::DescriptiveDetailContent154>,
+            content154: Option<super::DescriptiveDetailContent154>,
             state__: Box<DescriptiveDetailGpTitlesDeserializerState>,
         }
         #[derive(Debug)]
@@ -100327,7 +100327,7 @@ pub mod onix {
                         self.store_title_detail(deserializer.finish(helper)?)?
                     }
                     S::Content154(Some(deserializer)) => {
-                        self.store_content_154(deserializer.finish(helper)?)?
+                        self.store_content154(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -100340,16 +100340,16 @@ pub mod onix {
                 self.title_detail.push(value);
                 Ok(())
             }
-            fn store_content_154(
+            fn store_content154(
                 &mut self,
                 value: super::DescriptiveDetailContent154,
             ) -> Result<(), Error> {
-                if self.content_154.is_some() {
+                if self.content154.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content154",
                     )))?;
                 }
-                self.content_154 = Some(value);
+                self.content154 = Some(value);
                 Ok(())
             }
             fn handle_title_detail<'de>(
@@ -100396,7 +100396,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_154<'de>(
+            fn handle_content154<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::DescriptiveDetailContent154>,
@@ -100418,7 +100418,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_154(data)?;
+                        self.store_content154(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -100439,7 +100439,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::DescriptiveDetailGpTitles> {
                 let deserializer = Self {
                     title_detail: Vec::new(),
-                    content_154: None,
+                    content154: None,
                     state__: Box::new(DescriptiveDetailGpTitlesDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -100483,7 +100483,7 @@ pub mod onix {
                         }
                         (S::Content154(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_154(helper, output, &mut fallback)? {
+                            match self.handle_content154(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -100530,7 +100530,7 @@ pub mod onix {
                                 <super::DescriptiveDetailContent154 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_154(helper, output, &mut fallback)? {
+                            match self.handle_content154(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -100570,7 +100570,7 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::DescriptiveDetailGpTitles {
                     title_detail: helper.finish_vec(1usize, None, self.title_detail)?,
-                    content_154: self.content_154,
+                    content154: self.content154,
                 })
             }
         }
@@ -100620,7 +100620,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::CollectionContent110 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_155(helper, Default::default(), None, output)? {
+                        match self.handle_content155(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -100647,7 +100647,7 @@ pub mod onix {
                     S::Content155(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_155(&mut values, value)?;
+                            Self::store_content155(&mut values, value)?;
                         }
                         Ok(super::DescriptiveDetailGpAuthorship::Content155(
                             helper.finish_element("Content155", values)?,
@@ -100664,7 +100664,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_155(
+            fn store_content155(
                 values: &mut Option<super::CollectionContent110>,
                 value: super::CollectionContent110,
             ) -> Result<(), Error> {
@@ -100688,7 +100688,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_155<'de>(
+            fn handle_content155<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CollectionContent110>,
@@ -100711,12 +100711,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_155(&mut values, data)?;
+                    Self::store_content155(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_155(&mut values, data)?;
+                        Self::store_content155(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content155(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -100802,7 +100802,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content155(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_155(helper, values, fallback, output)? {
+                            match self.handle_content155(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -100840,7 +100840,7 @@ pub mod onix {
                             let output = <super::CollectionContent110 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_155(helper, values, fallback, output)? {
+                            match self.handle_content155(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -101080,7 +101080,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct DescriptiveDetailGpEditionsDeserializer {
-            content_156: Option<super::DescriptiveDetailContent156>,
+            content156: Option<super::DescriptiveDetailContent156>,
             religious_text: Option<super::ReligiousTextElementType>,
             state__: Box<DescriptiveDetailGpEditionsDeserializerState>,
         }
@@ -101105,7 +101105,7 @@ pub mod onix {
                 use DescriptiveDetailGpEditionsDeserializerState as S;
                 match state {
                     S::Content156(Some(deserializer)) => {
-                        self.store_content_156(deserializer.finish(helper)?)?
+                        self.store_content156(deserializer.finish(helper)?)?
                     }
                     S::ReligiousText(Some(deserializer)) => {
                         self.store_religious_text(deserializer.finish(helper)?)?
@@ -101114,16 +101114,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_156(
+            fn store_content156(
                 &mut self,
                 value: super::DescriptiveDetailContent156,
             ) -> Result<(), Error> {
-                if self.content_156.is_some() {
+                if self.content156.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content156",
                     )))?;
                 }
-                self.content_156 = Some(value);
+                self.content156 = Some(value);
                 Ok(())
             }
             fn store_religious_text(
@@ -101138,7 +101138,7 @@ pub mod onix {
                 self.religious_text = Some(value);
                 Ok(())
             }
-            fn handle_content_156<'de>(
+            fn handle_content156<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::DescriptiveDetailContent156>,
@@ -101160,7 +101160,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_156(data)?;
+                        self.store_content156(data)?;
                         *self.state__ = S::ReligiousText(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -101213,7 +101213,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::DescriptiveDetailGpEditions> {
                 let deserializer = Self {
-                    content_156: None,
+                    content156: None,
                     religious_text: None,
                     state__: Box::new(DescriptiveDetailGpEditionsDeserializerState::Init__),
                 };
@@ -101246,7 +101246,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content156(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_156(helper, output, &mut fallback)? {
+                            match self.handle_content156(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -101288,7 +101288,7 @@ pub mod onix {
                                 <super::DescriptiveDetailContent156 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_156(helper, output, &mut fallback)? {
+                            match self.handle_content156(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -101344,7 +101344,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::DescriptiveDetailGpEditions {
-                    content_156: self.content_156,
+                    content156: self.content156,
                     religious_text: self.religious_text,
                 })
             }
@@ -103293,7 +103293,7 @@ pub mod onix {
             event_status: Option<super::EventStatusElementType>,
             content_audience: Vec<super::ContentAudienceElementType>,
             event_name: Vec<super::EventNameElementType>,
-            content_256: Option<super::PromotionalEventContent256>,
+            content256: Option<super::PromotionalEventContent256>,
             event_description: Vec<super::EventDescriptionElementType>,
             event_occurrence: Vec<super::EventOccurrenceElementType>,
             supporting_resource: Vec<super::SupportingResourceElementType>,
@@ -103384,7 +103384,7 @@ pub mod onix {
                     event_status: None,
                     content_audience: Vec::new(),
                     event_name: Vec::new(),
-                    content_256: None,
+                    content256: None,
                     event_description: Vec::new(),
                     event_occurrence: Vec::new(),
                     supporting_resource: Vec::new(),
@@ -103416,7 +103416,7 @@ pub mod onix {
                         self.store_event_name(deserializer.finish(helper)?)?
                     }
                     S::Content256(Some(deserializer)) => {
-                        self.store_content_256(deserializer.finish(helper)?)?
+                        self.store_content256(deserializer.finish(helper)?)?
                     }
                     S::EventDescription(Some(deserializer)) => {
                         self.store_event_description(deserializer.finish(helper)?)?
@@ -103477,16 +103477,16 @@ pub mod onix {
                 self.event_name.push(value);
                 Ok(())
             }
-            fn store_content_256(
+            fn store_content256(
                 &mut self,
                 value: super::PromotionalEventContent256,
             ) -> Result<(), Error> {
-                if self.content_256.is_some() {
+                if self.content256.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content256",
                     )))?;
                 }
-                self.content_256 = Some(value);
+                self.content256 = Some(value);
                 Ok(())
             }
             fn store_event_description(
@@ -103719,7 +103719,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_256<'de>(
+            fn handle_content256<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PromotionalEventContent256>,
@@ -103741,7 +103741,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_256(data)?;
+                        self.store_content256(data)?;
                         *self.state__ = S::EventDescription(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -104013,7 +104013,7 @@ pub mod onix {
                         }
                         (S::Content256(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_256(helper, output, &mut fallback)? {
+                            match self.handle_content256(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -104188,7 +104188,7 @@ pub mod onix {
                                 <super::PromotionalEventContent256 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_256(helper, output, &mut fallback)? {
+                            match self.handle_content256(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -104329,7 +104329,7 @@ pub mod onix {
                     event_status: self.event_status,
                     content_audience: helper.finish_vec(1usize, None, self.content_audience)?,
                     event_name: helper.finish_vec(1usize, None, self.event_name)?,
-                    content_256: self.content_256,
+                    content256: self.content256,
                     event_description: self.event_description,
                     event_occurrence: helper.finish_vec(1usize, None, self.event_occurrence)?,
                     supporting_resource: self.supporting_resource,
@@ -104346,17 +104346,17 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             level_sequence_number: Option<super::LevelSequenceNumberElementType>,
-            content_118: Option<super::ContentItemContent118>,
+            content118: Option<super::ContentItemContent118>,
             epub_usage_constraint: Vec<super::EpubUsageConstraintElementType>,
             epub_license: Vec<super::EpubLicenseWithDateType>,
-            content_119: Option<super::ContentItemContent119>,
+            content119: Option<super::ContentItemContent119>,
             gp_authorship: Option<super::ContentItemGpAuthorship>,
             gp_languages: Option<super::GpLanguages>,
             gp_subjects: Option<super::GpSubjects>,
             gp_descriptions_and_marketing_resources:
                 Option<super::GpDescriptionsAndMarketingResources>,
             publisher: Vec<super::PublisherElementType>,
-            content_123: Option<super::ContentItemContent123>,
+            content123: Option<super::ContentItemContent123>,
             gp_related_materials: Option<super::GpRelatedMaterials>,
             state__: Box<ContentItemElementTypeDeserializerState>,
         }
@@ -104438,16 +104438,16 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     level_sequence_number: None,
-                    content_118: None,
+                    content118: None,
                     epub_usage_constraint: Vec::new(),
                     epub_license: Vec::new(),
-                    content_119: None,
+                    content119: None,
                     gp_authorship: None,
                     gp_languages: None,
                     gp_subjects: None,
                     gp_descriptions_and_marketing_resources: None,
                     publisher: Vec::new(),
-                    content_123: None,
+                    content123: None,
                     gp_related_materials: None,
                     state__: Box::new(ContentItemElementTypeDeserializerState::Init__),
                 })
@@ -104463,7 +104463,7 @@ pub mod onix {
                         self.store_level_sequence_number(deserializer.finish(helper)?)?
                     }
                     S::Content118(Some(deserializer)) => {
-                        self.store_content_118(deserializer.finish(helper)?)?
+                        self.store_content118(deserializer.finish(helper)?)?
                     }
                     S::EpubUsageConstraint(Some(deserializer)) => {
                         self.store_epub_usage_constraint(deserializer.finish(helper)?)?
@@ -104472,7 +104472,7 @@ pub mod onix {
                         self.store_epub_license(deserializer.finish(helper)?)?
                     }
                     S::Content119(Some(deserializer)) => {
-                        self.store_content_119(deserializer.finish(helper)?)?
+                        self.store_content119(deserializer.finish(helper)?)?
                     }
                     S::GpAuthorship(Some(deserializer)) => {
                         self.store_gp_authorship(deserializer.finish(helper)?)?
@@ -104491,7 +104491,7 @@ pub mod onix {
                         self.store_publisher(deserializer.finish(helper)?)?
                     }
                     S::Content123(Some(deserializer)) => {
-                        self.store_content_123(deserializer.finish(helper)?)?
+                        self.store_content123(deserializer.finish(helper)?)?
                     }
                     S::GpRelatedMaterials(Some(deserializer)) => {
                         self.store_gp_related_materials(deserializer.finish(helper)?)?
@@ -104512,16 +104512,16 @@ pub mod onix {
                 self.level_sequence_number = Some(value);
                 Ok(())
             }
-            fn store_content_118(
+            fn store_content118(
                 &mut self,
                 value: super::ContentItemContent118,
             ) -> Result<(), Error> {
-                if self.content_118.is_some() {
+                if self.content118.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content118",
                     )))?;
                 }
-                self.content_118 = Some(value);
+                self.content118 = Some(value);
                 Ok(())
             }
             fn store_epub_usage_constraint(
@@ -104538,16 +104538,16 @@ pub mod onix {
                 self.epub_license.push(value);
                 Ok(())
             }
-            fn store_content_119(
+            fn store_content119(
                 &mut self,
                 value: super::ContentItemContent119,
             ) -> Result<(), Error> {
-                if self.content_119.is_some() {
+                if self.content119.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content119",
                     )))?;
                 }
-                self.content_119 = Some(value);
+                self.content119 = Some(value);
                 Ok(())
             }
             fn store_gp_authorship(
@@ -104596,16 +104596,16 @@ pub mod onix {
                 self.publisher.push(value);
                 Ok(())
             }
-            fn store_content_123(
+            fn store_content123(
                 &mut self,
                 value: super::ContentItemContent123,
             ) -> Result<(), Error> {
-                if self.content_123.is_some() {
+                if self.content123.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content123",
                     )))?;
                 }
-                self.content_123 = Some(value);
+                self.content123 = Some(value);
                 Ok(())
             }
             fn store_gp_related_materials(
@@ -104653,7 +104653,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_118<'de>(
+            fn handle_content118<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContentItemContent118>,
@@ -104679,7 +104679,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_118(data)?;
+                        self.store_content118(data)?;
                         *self.state__ = S::EpubUsageConstraint(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -104756,7 +104756,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_119<'de>(
+            fn handle_content119<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContentItemContent119>,
@@ -104782,7 +104782,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_119(data)?;
+                        self.store_content119(data)?;
                         *self.state__ = S::GpAuthorship(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -104960,7 +104960,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_123<'de>(
+            fn handle_content123<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContentItemContent123>,
@@ -104982,7 +104982,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_123(data)?;
+                        self.store_content123(data)?;
                         *self.state__ = S::GpRelatedMaterials(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -105065,7 +105065,7 @@ pub mod onix {
                         }
                         (S::Content118(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_118(helper, output, &mut fallback)? {
+                            match self.handle_content118(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105105,7 +105105,7 @@ pub mod onix {
                         }
                         (S::Content119(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_119(helper, output, &mut fallback)? {
+                            match self.handle_content119(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105181,7 +105181,7 @@ pub mod onix {
                         }
                         (S::Content123(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_123(helper, output, &mut fallback)? {
+                            match self.handle_content123(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105246,7 +105246,7 @@ pub mod onix {
                             let output = <super::ContentItemContent118 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_118(helper, output, &mut fallback)? {
+                            match self.handle_content118(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105301,7 +105301,7 @@ pub mod onix {
                             let output = <super::ContentItemContent119 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_119(helper, output, &mut fallback)? {
+                            match self.handle_content119(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105392,7 +105392,7 @@ pub mod onix {
                             let output = <super::ContentItemContent123 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_123(helper, output, &mut fallback)? {
+                            match self.handle_content123(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105455,24 +105455,24 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     level_sequence_number: self.level_sequence_number,
-                    content_118: helper.finish_element("Content118", self.content_118)?,
+                    content118: helper.finish_element("Content118", self.content118)?,
                     epub_usage_constraint: self.epub_usage_constraint,
                     epub_license: self.epub_license,
-                    content_119: helper.finish_element("Content119", self.content_119)?,
+                    content119: helper.finish_element("Content119", self.content119)?,
                     gp_authorship: self.gp_authorship,
                     gp_languages: helper.finish_default(self.gp_languages)?,
                     gp_subjects: helper.finish_default(self.gp_subjects)?,
                     gp_descriptions_and_marketing_resources: helper
                         .finish_default(self.gp_descriptions_and_marketing_resources)?,
                     publisher: self.publisher,
-                    content_123: self.content_123,
+                    content123: self.content123,
                     gp_related_materials: helper.finish_default(self.gp_related_materials)?,
                 })
             }
         }
         #[derive(Debug)]
         pub struct PublishingDetailGpImprintsAndPublishersDeserializer {
-            content_271: Option<super::PublishingDetailContent271>,
+            content271: Option<super::PublishingDetailContent271>,
             city_of_publication: Vec<super::CityOfPublicationElementType>,
             country_of_publication: Option<super::CountryOfPublicationElementType>,
             product_contact: Vec<super::ProductContactElementType>,
@@ -105505,7 +105505,7 @@ pub mod onix {
                 use PublishingDetailGpImprintsAndPublishersDeserializerState as S;
                 match state {
                     S::Content271(Some(deserializer)) => {
-                        self.store_content_271(deserializer.finish(helper)?)?
+                        self.store_content271(deserializer.finish(helper)?)?
                     }
                     S::CityOfPublication(Some(deserializer)) => {
                         self.store_city_of_publication(deserializer.finish(helper)?)?
@@ -105520,16 +105520,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_271(
+            fn store_content271(
                 &mut self,
                 value: super::PublishingDetailContent271,
             ) -> Result<(), Error> {
-                if self.content_271.is_some() {
+                if self.content271.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content271",
                     )))?;
                 }
-                self.content_271 = Some(value);
+                self.content271 = Some(value);
                 Ok(())
             }
             fn store_city_of_publication(
@@ -105558,7 +105558,7 @@ pub mod onix {
                 self.product_contact.push(value);
                 Ok(())
             }
-            fn handle_content_271<'de>(
+            fn handle_content271<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PublishingDetailContent271>,
@@ -105584,7 +105584,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_271(data)?;
+                        self.store_content271(data)?;
                         *self.state__ = S::CityOfPublication(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -105704,7 +105704,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::PublishingDetailGpImprintsAndPublishers>
             {
                 let deserializer = Self {
-                    content_271: None,
+                    content271: None,
                     city_of_publication: Vec::new(),
                     country_of_publication: None,
                     product_contact: Vec::new(),
@@ -105742,7 +105742,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content271(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_271(helper, output, &mut fallback)? {
+                            match self.handle_content271(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105812,7 +105812,7 @@ pub mod onix {
                                 <super::PublishingDetailContent271 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_271(helper, output, &mut fallback)? {
+                            match self.handle_content271(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -105912,7 +105912,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::PublishingDetailGpImprintsAndPublishers {
-                    content_271: helper.finish_element("Content271", self.content_271)?,
+                    content271: helper.finish_element("Content271", self.content271)?,
                     city_of_publication: self.city_of_publication,
                     country_of_publication: self.country_of_publication,
                     product_contact: self.product_contact,
@@ -105921,10 +105921,10 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializer {
-            content_273: Option<super::PublishingDetailContent273>,
+            content273: Option<super::PublishingDetailContent273>,
             publishing_date: Vec<super::PublishingDateElementType>,
             latest_reprint_number: Option<super::LatestReprintNumberElementType>,
-            content_274: Option<super::ContentItemContent123>,
+            content274: Option<super::ContentItemContent123>,
             state__: Box<PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializerState>,
         }
         #[derive(Debug)]
@@ -105952,7 +105952,7 @@ pub mod onix {
                 use PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializerState as S;
                 match state {
                     S::Content273(Some(deserializer)) => {
-                        self.store_content_273(deserializer.finish(helper)?)?
+                        self.store_content273(deserializer.finish(helper)?)?
                     }
                     S::PublishingDate(Some(deserializer)) => {
                         self.store_publishing_date(deserializer.finish(helper)?)?
@@ -105961,22 +105961,22 @@ pub mod onix {
                         self.store_latest_reprint_number(deserializer.finish(helper)?)?
                     }
                     S::Content274(Some(deserializer)) => {
-                        self.store_content_274(deserializer.finish(helper)?)?
+                        self.store_content274(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_273(
+            fn store_content273(
                 &mut self,
                 value: super::PublishingDetailContent273,
             ) -> Result<(), Error> {
-                if self.content_273.is_some() {
+                if self.content273.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content273",
                     )))?;
                 }
-                self.content_273 = Some(value);
+                self.content273 = Some(value);
                 Ok(())
             }
             fn store_publishing_date(
@@ -105998,19 +105998,19 @@ pub mod onix {
                 self.latest_reprint_number = Some(value);
                 Ok(())
             }
-            fn store_content_274(
+            fn store_content274(
                 &mut self,
                 value: super::ContentItemContent123,
             ) -> Result<(), Error> {
-                if self.content_274.is_some() {
+                if self.content274.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content274",
                     )))?;
                 }
-                self.content_274 = Some(value);
+                self.content274 = Some(value);
                 Ok(())
             }
-            fn handle_content_273<'de>(
+            fn handle_content273<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PublishingDetailContent273>,
@@ -106034,7 +106034,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_273(data)?;
+                        self.store_content273(data)?;
                         *self.state__ = S::PublishingDate(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -106115,7 +106115,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_274<'de>(
+            fn handle_content274<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContentItemContent123>,
@@ -106139,7 +106139,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_274(data)?;
+                        self.store_content274(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -106153,7 +106153,7 @@ pub mod onix {
         }
         impl Default for PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializer {
             fn default() -> Self {
-                Self { content_273 : None , publishing_date : Vec :: new () , latest_reprint_number : None , content_274 : None , state__ : Box :: new (PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializerState :: Init__) , }
+                Self { content273 : None , publishing_date : Vec :: new () , latest_reprint_number : None , content274 : None , state__ : Box :: new (PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializerState :: Init__) , }
             }
         }
         impl<'de> Deserializer<'de, super::PublishingDetailGpPublishingStatusDatesAndCopyright>
@@ -106164,7 +106164,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::PublishingDetailGpPublishingStatusDatesAndCopyright>
             {
-                let deserializer = Self { content_273 : None , publishing_date : Vec :: new () , latest_reprint_number : None , content_274 : None , state__ : Box :: new (PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializerState :: Init__) , } ;
+                let deserializer = Self { content273 : None , publishing_date : Vec :: new () , latest_reprint_number : None , content274 : None , state__ : Box :: new (PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializerState :: Init__) , } ;
                 let mut output = deserializer.next(helper, event)?;
                 output . artifact = match output . artifact { DeserializerArtifact :: Deserializer (x) if matches ! (& * x . state__ , PublishingDetailGpPublishingStatusDatesAndCopyrightDeserializerState :: Init__) => DeserializerArtifact :: None , artifact => artifact , } ;
                 Ok(output)
@@ -106185,7 +106185,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content273(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_273(helper, output, &mut fallback)? {
+                            match self.handle_content273(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -106225,7 +106225,7 @@ pub mod onix {
                         }
                         (S::Content274(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_274(helper, output, &mut fallback)? {
+                            match self.handle_content274(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -106255,7 +106255,7 @@ pub mod onix {
                                 <super::PublishingDetailContent273 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_273(helper, output, &mut fallback)? {
+                            match self.handle_content273(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -106310,7 +106310,7 @@ pub mod onix {
                             let output = <super::ContentItemContent123 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_274(helper, output, &mut fallback)? {
+                            match self.handle_content274(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -106350,16 +106350,16 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::PublishingDetailGpPublishingStatusDatesAndCopyright {
-                    content_273: self.content_273,
+                    content273: self.content273,
                     publishing_date: self.publishing_date,
                     latest_reprint_number: self.latest_reprint_number,
-                    content_274: self.content_274,
+                    content274: self.content274,
                 })
             }
         }
         #[derive(Debug)]
         pub struct PublishingDetailGpSalesRightsAndRestrictionsDeserializer {
-            content_275: Option<super::PublishingDetailContent275>,
+            content275: Option<super::PublishingDetailContent275>,
             state__: Box<PublishingDetailGpSalesRightsAndRestrictionsDeserializerState>,
         }
         #[derive(Debug)]
@@ -106380,25 +106380,25 @@ pub mod onix {
                 use PublishingDetailGpSalesRightsAndRestrictionsDeserializerState as S;
                 match state {
                     S::Content275(Some(deserializer)) => {
-                        self.store_content_275(deserializer.finish(helper)?)?
+                        self.store_content275(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_275(
+            fn store_content275(
                 &mut self,
                 value: super::PublishingDetailContent275,
             ) -> Result<(), Error> {
-                if self.content_275.is_some() {
+                if self.content275.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content275",
                     )))?;
                 }
-                self.content_275 = Some(value);
+                self.content275 = Some(value);
                 Ok(())
             }
-            fn handle_content_275<'de>(
+            fn handle_content275<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PublishingDetailContent275>,
@@ -106422,7 +106422,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_275(data)?;
+                        self.store_content275(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -106437,7 +106437,7 @@ pub mod onix {
         impl Default for PublishingDetailGpSalesRightsAndRestrictionsDeserializer {
             fn default() -> Self {
                 Self {
-                    content_275: None,
+                    content275: None,
                     state__: Box::new(
                         PublishingDetailGpSalesRightsAndRestrictionsDeserializerState::Init__,
                     ),
@@ -106453,7 +106453,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::PublishingDetailGpSalesRightsAndRestrictions>
             {
                 let deserializer = Self {
-                    content_275: None,
+                    content275: None,
                     state__: Box::new(
                         PublishingDetailGpSalesRightsAndRestrictionsDeserializerState::Init__,
                     ),
@@ -106488,7 +106488,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content275(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_275(helper, output, &mut fallback)? {
+                            match self.handle_content275(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -106518,7 +106518,7 @@ pub mod onix {
                                 <super::PublishingDetailContent275 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_275(helper, output, &mut fallback)? {
+                            match self.handle_content275(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -106557,7 +106557,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::PublishingDetailGpSalesRightsAndRestrictions {
-                    content_275: self.content_275,
+                    content275: self.content275,
                 })
             }
         }
@@ -106900,7 +106900,7 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             product_relation_code: Vec<super::ProductRelationCodeElementType>,
             product_identifier: Vec<super::ProductIdentifierElementType>,
-            content_279: Option<super::RelatedProductContent279>,
+            content279: Option<super::RelatedProductContent279>,
             state__: Box<RelatedProductElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -106965,7 +106965,7 @@ pub mod onix {
                     sourcetype: sourcetype,
                     product_relation_code: Vec::new(),
                     product_identifier: Vec::new(),
-                    content_279: None,
+                    content279: None,
                     state__: Box::new(RelatedProductElementTypeDeserializerState::Init__),
                 })
             }
@@ -106983,7 +106983,7 @@ pub mod onix {
                         self.store_product_identifier(deserializer.finish(helper)?)?
                     }
                     S::Content279(Some(deserializer)) => {
-                        self.store_content_279(deserializer.finish(helper)?)?
+                        self.store_content279(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -107003,16 +107003,16 @@ pub mod onix {
                 self.product_identifier.push(value);
                 Ok(())
             }
-            fn store_content_279(
+            fn store_content279(
                 &mut self,
                 value: super::RelatedProductContent279,
             ) -> Result<(), Error> {
-                if self.content_279.is_some() {
+                if self.content279.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content279",
                     )))?;
                 }
-                self.content_279 = Some(value);
+                self.content279 = Some(value);
                 Ok(())
             }
             fn handle_product_relation_code<'de>(
@@ -107103,7 +107103,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_279<'de>(
+            fn handle_content279<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::RelatedProductContent279>,
@@ -107125,7 +107125,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_279(data)?;
+                        self.store_content279(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -107189,7 +107189,7 @@ pub mod onix {
                         }
                         (S::Content279(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_279(helper, output, &mut fallback)? {
+                            match self.handle_content279(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -107263,7 +107263,7 @@ pub mod onix {
                                 <super::RelatedProductContent279 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_279(helper, output, &mut fallback)? {
+                            match self.handle_content279(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -107314,7 +107314,7 @@ pub mod onix {
                         self.product_relation_code,
                     )?,
                     product_identifier: helper.finish_vec(1usize, None, self.product_identifier)?,
-                    content_279: self.content_279,
+                    content279: self.content279,
                 })
             }
         }
@@ -109334,8 +109334,8 @@ pub mod onix {
             stock: Vec<super::StockElementType>,
             pack_quantity: Option<super::PackQuantityElementType>,
             pallet_quantity: Option<super::PalletQuantityElementType>,
-            content_333: Option<super::SupplyDetailContent333>,
-            content_334: Option<super::SupplyDetailContent334>,
+            content333: Option<super::SupplyDetailContent333>,
+            content334: Option<super::SupplyDetailContent334>,
             state__: Box<SupplyDetailElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -109427,8 +109427,8 @@ pub mod onix {
                     stock: Vec::new(),
                     pack_quantity: None,
                     pallet_quantity: None,
-                    content_333: None,
-                    content_334: None,
+                    content333: None,
+                    content334: None,
                     state__: Box::new(SupplyDetailElementTypeDeserializerState::Init__),
                 })
             }
@@ -109473,10 +109473,10 @@ pub mod onix {
                         self.store_pallet_quantity(deserializer.finish(helper)?)?
                     }
                     S::Content333(Some(deserializer)) => {
-                        self.store_content_333(deserializer.finish(helper)?)?
+                        self.store_content333(deserializer.finish(helper)?)?
                     }
                     S::Content334(Some(deserializer)) => {
-                        self.store_content_334(deserializer.finish(helper)?)?
+                        self.store_content334(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -109583,28 +109583,28 @@ pub mod onix {
                 self.pallet_quantity = Some(value);
                 Ok(())
             }
-            fn store_content_333(
+            fn store_content333(
                 &mut self,
                 value: super::SupplyDetailContent333,
             ) -> Result<(), Error> {
-                if self.content_333.is_some() {
+                if self.content333.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content333",
                     )))?;
                 }
-                self.content_333 = Some(value);
+                self.content333 = Some(value);
                 Ok(())
             }
-            fn store_content_334(
+            fn store_content334(
                 &mut self,
                 value: super::SupplyDetailContent334,
             ) -> Result<(), Error> {
-                if self.content_334.is_some() {
+                if self.content334.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content334",
                     )))?;
                 }
-                self.content_334 = Some(value);
+                self.content334 = Some(value);
                 Ok(())
             }
             fn handle_supplier<'de>(
@@ -109978,7 +109978,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_333<'de>(
+            fn handle_content333<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SupplyDetailContent333>,
@@ -110000,7 +110000,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_333(data)?;
+                        self.store_content333(data)?;
                         *self.state__ = S::Content334(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -110011,7 +110011,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_334<'de>(
+            fn handle_content334<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SupplyDetailContent334>,
@@ -110037,7 +110037,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_334(data)?;
+                        self.store_content334(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -110205,7 +110205,7 @@ pub mod onix {
                         }
                         (S::Content333(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_333(helper, output, &mut fallback)? {
+                            match self.handle_content333(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -110217,7 +110217,7 @@ pub mod onix {
                         }
                         (S::Content334(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_334(helper, output, &mut fallback)? {
+                            match self.handle_content334(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -110442,7 +110442,7 @@ pub mod onix {
                             let output = <super::SupplyDetailContent333 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_333(helper, output, &mut fallback)? {
+                            match self.handle_content333(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -110456,7 +110456,7 @@ pub mod onix {
                             let output = <super::SupplyDetailContent334 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_334(helper, output, &mut fallback)? {
+                            match self.handle_content334(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -110513,8 +110513,8 @@ pub mod onix {
                     stock: self.stock,
                     pack_quantity: self.pack_quantity,
                     pallet_quantity: self.pallet_quantity,
-                    content_333: self.content_333,
-                    content_334: helper.finish_element("Content334", self.content_334)?,
+                    content333: self.content333,
+                    content334: helper.finish_element("Content334", self.content334)?,
                 })
             }
         }
@@ -116485,7 +116485,7 @@ pub mod onix {
             product_form_description: Vec<super::ProductFormDescriptionElementType>,
             product_content_type: Vec<super::ProductContentTypeElementType>,
             measure: Vec<super::MeasureElementType>,
-            content_249: Option<super::ProductPartContent249>,
+            content249: Option<super::ProductPartContent249>,
             country_of_manufacture: Option<super::CountryOfManufactureElementType>,
             state__: Box<ProductPartElementTypeDeserializerState>,
         }
@@ -116578,7 +116578,7 @@ pub mod onix {
                     product_form_description: Vec::new(),
                     product_content_type: Vec::new(),
                     measure: Vec::new(),
-                    content_249: None,
+                    content249: None,
                     country_of_manufacture: None,
                     state__: Box::new(ProductPartElementTypeDeserializerState::Init__),
                 })
@@ -116618,7 +116618,7 @@ pub mod onix {
                         self.store_measure(deserializer.finish(helper)?)?
                     }
                     S::Content249(Some(deserializer)) => {
-                        self.store_content_249(deserializer.finish(helper)?)?
+                        self.store_content249(deserializer.finish(helper)?)?
                     }
                     S::CountryOfManufacture(Some(deserializer)) => {
                         self.store_country_of_manufacture(deserializer.finish(helper)?)?
@@ -116702,16 +116702,16 @@ pub mod onix {
                 self.measure.push(value);
                 Ok(())
             }
-            fn store_content_249(
+            fn store_content249(
                 &mut self,
                 value: super::ProductPartContent249,
             ) -> Result<(), Error> {
-                if self.content_249.is_some() {
+                if self.content249.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content249",
                     )))?;
                 }
-                self.content_249 = Some(value);
+                self.content249 = Some(value);
                 Ok(())
             }
             fn store_country_of_manufacture(
@@ -117027,7 +117027,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_249<'de>(
+            fn handle_content249<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ProductPartContent249>,
@@ -117053,7 +117053,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_249(data)?;
+                        self.store_content249(data)?;
                         *self.state__ = S::CountryOfManufacture(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -117232,7 +117232,7 @@ pub mod onix {
                         }
                         (S::Content249(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_249(helper, output, &mut fallback)? {
+                            match self.handle_content249(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -117452,7 +117452,7 @@ pub mod onix {
                             let output = <super::ProductPartContent249 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_249(helper, output, &mut fallback)? {
+                            match self.handle_content249(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -117530,7 +117530,7 @@ pub mod onix {
                     product_form_description: self.product_form_description,
                     product_content_type: self.product_content_type,
                     measure: self.measure,
-                    content_249: helper.finish_element("Content249", self.content_249)?,
+                    content249: helper.finish_element("Content249", self.content249)?,
                     country_of_manufacture: self.country_of_manufacture,
                 })
             }
@@ -119915,7 +119915,7 @@ pub mod onix {
                             <super::DescriptiveDetailContent157 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                        match self.handle_content_157(helper, Default::default(), None, output)? {
+                        match self.handle_content157(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -119942,7 +119942,7 @@ pub mod onix {
                     S::Content157(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_157(&mut values, value)?;
+                            Self::store_content157(&mut values, value)?;
                         }
                         Ok(super::DescriptiveDetailContent156::Content157(
                             helper.finish_default(values)?,
@@ -119959,7 +119959,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_157(
+            fn store_content157(
                 values: &mut Option<super::DescriptiveDetailContent157>,
                 value: super::DescriptiveDetailContent157,
             ) -> Result<(), Error> {
@@ -119983,7 +119983,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_157<'de>(
+            fn handle_content157<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DescriptiveDetailContent157>,
@@ -120008,12 +120008,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_157(&mut values, data)?;
+                    Self::store_content157(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_157(&mut values, data)?;
+                        Self::store_content157(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content157(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -120096,7 +120096,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content157(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_157(helper, values, fallback, output)? {
+                            match self.handle_content157(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -120135,7 +120135,7 @@ pub mod onix {
                                 <super::DescriptiveDetailContent157 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_157(helper, values, fallback, output)? {
+                            match self.handle_content157(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -120431,7 +120431,7 @@ pub mod onix {
                         let output = <super::ReligiousTextContent282 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_282(helper, Default::default(), None, output)? {
+                        match self.handle_content282(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -120467,7 +120467,7 @@ pub mod onix {
                     S::Content282(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_282(&mut values, value)?;
+                            Self::store_content282(&mut values, value)?;
                         }
                         Ok(super::ReligiousTextElementTypeContent::Content282(
                             helper.finish_element("Content282", values)?,
@@ -120489,7 +120489,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_282(
+            fn store_content282(
                 values: &mut Option<super::ReligiousTextContent282>,
                 value: super::ReligiousTextContent282,
             ) -> Result<(), Error> {
@@ -120535,7 +120535,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_282<'de>(
+            fn handle_content282<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ReligiousTextContent282>,
@@ -120560,12 +120560,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_282(&mut values, data)?;
+                    Self::store_content282(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_282(&mut values, data)?;
+                        Self::store_content282(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content282(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -120623,7 +120623,7 @@ pub mod onix {
                         }
                         (S::Content282(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_282(helper, values, fallback, output)? {
+                            match self.handle_content282(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -120670,7 +120670,7 @@ pub mod onix {
                                 <super::ReligiousTextContent282 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_282(helper, values, fallback, output)? {
+                            match self.handle_content282(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -121280,7 +121280,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             extent_type: Option<super::ExtentTypeElementType>,
-            content_182: Option<super::ExtentContent182>,
+            content182: Option<super::ExtentContent182>,
             extent_unit: Option<super::ExtentUnitElementType>,
             state__: Box<ExtentElementTypeDeserializerState>,
         }
@@ -121341,7 +121341,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     extent_type: None,
-                    content_182: None,
+                    content182: None,
                     extent_unit: None,
                     state__: Box::new(ExtentElementTypeDeserializerState::Init__),
                 })
@@ -121357,7 +121357,7 @@ pub mod onix {
                         self.store_extent_type(deserializer.finish(helper)?)?
                     }
                     S::Content182(Some(deserializer)) => {
-                        self.store_content_182(deserializer.finish(helper)?)?
+                        self.store_content182(deserializer.finish(helper)?)?
                     }
                     S::ExtentUnit(Some(deserializer)) => {
                         self.store_extent_unit(deserializer.finish(helper)?)?
@@ -121378,13 +121378,13 @@ pub mod onix {
                 self.extent_type = Some(value);
                 Ok(())
             }
-            fn store_content_182(&mut self, value: super::ExtentContent182) -> Result<(), Error> {
-                if self.content_182.is_some() {
+            fn store_content182(&mut self, value: super::ExtentContent182) -> Result<(), Error> {
+                if self.content182.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content182",
                     )))?;
                 }
-                self.content_182 = Some(value);
+                self.content182 = Some(value);
                 Ok(())
             }
             fn store_extent_unit(
@@ -121436,7 +121436,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_182<'de>(
+            fn handle_content182<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ExtentContent182>,
@@ -121462,7 +121462,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_182(data)?;
+                        self.store_content182(data)?;
                         *self.state__ = S::ExtentUnit(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -121545,7 +121545,7 @@ pub mod onix {
                         }
                         (S::Content182(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_182(helper, output, &mut fallback)? {
+                            match self.handle_content182(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -121602,7 +121602,7 @@ pub mod onix {
                         (S::Content182(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::ExtentContent182 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_182(helper, output, &mut fallback)? {
+                            match self.handle_content182(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -121665,7 +121665,7 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     extent_type: helper.finish_element("ExtentType", self.extent_type)?,
-                    content_182: helper.finish_element("Content182", self.content_182)?,
+                    content182: helper.finish_element("Content182", self.content182)?,
                     extent_unit: helper.finish_element("ExtentUnit", self.extent_unit)?,
                 })
             }
@@ -122653,7 +122653,7 @@ pub mod onix {
             subject_scheme_identifier: Option<super::SubjectSchemeIdentifierElementType>,
             subject_scheme_name: Option<super::SubjectSchemeNameElementType>,
             subject_scheme_version: Option<super::SubjectSchemeVersionElementType>,
-            content_315: Option<super::SubjectContent315>,
+            content315: Option<super::SubjectContent315>,
             state__: Box<SubjectElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -122726,7 +122726,7 @@ pub mod onix {
                     subject_scheme_identifier: None,
                     subject_scheme_name: None,
                     subject_scheme_version: None,
-                    content_315: None,
+                    content315: None,
                     state__: Box::new(SubjectElementTypeDeserializerState::Init__),
                 })
             }
@@ -122750,7 +122750,7 @@ pub mod onix {
                         self.store_subject_scheme_version(deserializer.finish(helper)?)?
                     }
                     S::Content315(Some(deserializer)) => {
-                        self.store_content_315(deserializer.finish(helper)?)?
+                        self.store_content315(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -122804,13 +122804,13 @@ pub mod onix {
                 self.subject_scheme_version = Some(value);
                 Ok(())
             }
-            fn store_content_315(&mut self, value: super::SubjectContent315) -> Result<(), Error> {
-                if self.content_315.is_some() {
+            fn store_content315(&mut self, value: super::SubjectContent315) -> Result<(), Error> {
+                if self.content315.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content315",
                     )))?;
                 }
-                self.content_315 = Some(value);
+                self.content315 = Some(value);
                 Ok(())
             }
             fn handle_main_subject<'de>(
@@ -122949,7 +122949,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_315<'de>(
+            fn handle_content315<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SubjectContent315>,
@@ -122975,7 +122975,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_315(data)?;
+                        self.store_content315(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -123065,7 +123065,7 @@ pub mod onix {
                         }
                         (S::Content315(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_315(helper, output, &mut fallback)? {
+                            match self.handle_content315(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -123179,7 +123179,7 @@ pub mod onix {
                             let output = <super::SubjectContent315 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_315(helper, output, &mut fallback)? {
+                            match self.handle_content315(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -123231,7 +123231,7 @@ pub mod onix {
                     )?,
                     subject_scheme_name: self.subject_scheme_name,
                     subject_scheme_version: self.subject_scheme_version,
-                    content_315: helper.finish_element("Content315", self.content_315)?,
+                    content315: helper.finish_element("Content315", self.content315)?,
                 })
             }
         }
@@ -123243,7 +123243,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             name_type: Option<super::NameTypeElementType>,
-            content_205: Option<super::NameAsSubjectContent205>,
+            content205: Option<super::NameAsSubjectContent205>,
             alternative_name: Vec<super::AlternativeNameElementType>,
             subject_date: Vec<super::SubjectDateElementType>,
             professional_affiliation: Vec<super::ProfessionalAffiliationElementType>,
@@ -123314,7 +123314,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     name_type: None,
-                    content_205: None,
+                    content205: None,
                     alternative_name: Vec::new(),
                     subject_date: Vec::new(),
                     professional_affiliation: Vec::new(),
@@ -123332,7 +123332,7 @@ pub mod onix {
                         self.store_name_type(deserializer.finish(helper)?)?
                     }
                     S::Content205(Some(deserializer)) => {
-                        self.store_content_205(deserializer.finish(helper)?)?
+                        self.store_content205(deserializer.finish(helper)?)?
                     }
                     S::AlternativeName(Some(deserializer)) => {
                         self.store_alternative_name(deserializer.finish(helper)?)?
@@ -123356,16 +123356,16 @@ pub mod onix {
                 self.name_type = Some(value);
                 Ok(())
             }
-            fn store_content_205(
+            fn store_content205(
                 &mut self,
                 value: super::NameAsSubjectContent205,
             ) -> Result<(), Error> {
-                if self.content_205.is_some() {
+                if self.content205.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content205",
                     )))?;
                 }
-                self.content_205 = Some(value);
+                self.content205 = Some(value);
                 Ok(())
             }
             fn store_alternative_name(
@@ -123422,7 +123422,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_205<'de>(
+            fn handle_content205<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::NameAsSubjectContent205>,
@@ -123448,7 +123448,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_205(data)?;
+                        self.store_content205(data)?;
                         *self.state__ = S::AlternativeName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -123595,7 +123595,7 @@ pub mod onix {
                         }
                         (S::Content205(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_205(helper, output, &mut fallback)? {
+                            match self.handle_content205(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -123682,7 +123682,7 @@ pub mod onix {
                                 <super::NameAsSubjectContent205 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_205(helper, output, &mut fallback)? {
+                            match self.handle_content205(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -123786,7 +123786,7 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     name_type: self.name_type,
-                    content_205: helper.finish_element("Content205", self.content_205)?,
+                    content205: helper.finish_element("Content205", self.content205)?,
                     alternative_name: self.alternative_name,
                     subject_date: self.subject_date,
                     professional_affiliation: self.professional_affiliation,
@@ -123803,7 +123803,7 @@ pub mod onix {
             main_audience: Option<super::MainAudienceElementType>,
             audience_code_type: Option<super::AudienceCodeTypeElementType>,
             audience_code_type_name: Option<super::AudienceCodeTypeNameElementType>,
-            content_87: Option<super::AudienceContent87>,
+            content87: Option<super::AudienceContent87>,
             state__: Box<AudienceElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -123872,7 +123872,7 @@ pub mod onix {
                     main_audience: None,
                     audience_code_type: None,
                     audience_code_type_name: None,
-                    content_87: None,
+                    content87: None,
                     state__: Box::new(AudienceElementTypeDeserializerState::Init__),
                 })
             }
@@ -123893,7 +123893,7 @@ pub mod onix {
                         self.store_audience_code_type_name(deserializer.finish(helper)?)?
                     }
                     S::Content87(Some(deserializer)) => {
-                        self.store_content_87(deserializer.finish(helper)?)?
+                        self.store_content87(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -123935,13 +123935,13 @@ pub mod onix {
                 self.audience_code_type_name = Some(value);
                 Ok(())
             }
-            fn store_content_87(&mut self, value: super::AudienceContent87) -> Result<(), Error> {
-                if self.content_87.is_some() {
+            fn store_content87(&mut self, value: super::AudienceContent87) -> Result<(), Error> {
+                if self.content87.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content87",
                     )))?;
                 }
-                self.content_87 = Some(value);
+                self.content87 = Some(value);
                 Ok(())
             }
             fn handle_main_audience<'de>(
@@ -124047,7 +124047,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_87<'de>(
+            fn handle_content87<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::AudienceContent87>,
@@ -124073,7 +124073,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_87(data)?;
+                        self.store_content87(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -124147,7 +124147,7 @@ pub mod onix {
                         }
                         (S::Content87(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_87(helper, output, &mut fallback)? {
+                            match self.handle_content87(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -124237,7 +124237,7 @@ pub mod onix {
                             let output = <super::AudienceContent87 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_87(helper, output, &mut fallback)? {
+                            match self.handle_content87(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -124286,7 +124286,7 @@ pub mod onix {
                     audience_code_type: helper
                         .finish_element("AudienceCodeType", self.audience_code_type)?,
                     audience_code_type_name: self.audience_code_type_name,
-                    content_87: helper.finish_element("Content87", self.content_87)?,
+                    content87: helper.finish_element("Content87", self.content87)?,
                 })
             }
         }
@@ -124300,7 +124300,7 @@ pub mod onix {
             audience_range_qualifier: Option<super::AudienceRangeQualifierElementType>,
             audience_range_precision: Option<super::AudienceRangePrecisionElementType>,
             audience_range_value: Option<super::AudienceRangeValueElementType>,
-            content_91: Option<super::AudienceRangeContent91>,
+            content91: Option<super::AudienceRangeContent91>,
             state__: Box<AudienceRangeElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -124373,7 +124373,7 @@ pub mod onix {
                     audience_range_qualifier: None,
                     audience_range_precision: None,
                     audience_range_value: None,
-                    content_91: None,
+                    content91: None,
                     state__: Box::new(AudienceRangeElementTypeDeserializerState::Init__),
                 })
             }
@@ -124394,7 +124394,7 @@ pub mod onix {
                         self.store_audience_range_value(deserializer.finish(helper)?)?
                     }
                     S::Content91(Some(deserializer)) => {
-                        self.store_content_91(deserializer.finish(helper)?)?
+                        self.store_content91(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -124436,16 +124436,16 @@ pub mod onix {
                 self.audience_range_value = Some(value);
                 Ok(())
             }
-            fn store_content_91(
+            fn store_content91(
                 &mut self,
                 value: super::AudienceRangeContent91,
             ) -> Result<(), Error> {
-                if self.content_91.is_some() {
+                if self.content91.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content91",
                     )))?;
                 }
-                self.content_91 = Some(value);
+                self.content91 = Some(value);
                 Ok(())
             }
             fn handle_audience_range_qualifier<'de>(
@@ -124559,7 +124559,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_91<'de>(
+            fn handle_content91<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::AudienceRangeContent91>,
@@ -124581,7 +124581,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_91(data)?;
+                        self.store_content91(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -124661,7 +124661,7 @@ pub mod onix {
                         }
                         (S::Content91(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_91(helper, output, &mut fallback)? {
+                            match self.handle_content91(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -124758,7 +124758,7 @@ pub mod onix {
                             let output = <super::AudienceRangeContent91 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_91(helper, output, &mut fallback)? {
+                            match self.handle_content91(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -124809,7 +124809,7 @@ pub mod onix {
                         .finish_element("AudienceRangePrecision", self.audience_range_precision)?,
                     audience_range_value: helper
                         .finish_element("AudienceRangeValue", self.audience_range_value)?,
-                    content_91: self.content_91,
+                    content91: self.content91,
                 })
             }
         }
@@ -126672,7 +126672,7 @@ pub mod onix {
             content_audience: Vec<super::ContentAudienceElementType>,
             territory: Option<super::TerritoryElementType>,
             source_type: Option<super::SourceTypeElementType>,
-            content_103: Option<super::CitedContent103>,
+            content103: Option<super::CitedContent103>,
             citation_note: Vec<super::CitationNoteElementType>,
             resource_link: Vec<super::ResourceLinkElementType>,
             content_date: Vec<super::ContentDateElementType>,
@@ -126755,7 +126755,7 @@ pub mod onix {
                     content_audience: Vec::new(),
                     territory: None,
                     source_type: None,
-                    content_103: None,
+                    content103: None,
                     citation_note: Vec::new(),
                     resource_link: Vec::new(),
                     content_date: Vec::new(),
@@ -126785,7 +126785,7 @@ pub mod onix {
                         self.store_source_type(deserializer.finish(helper)?)?
                     }
                     S::Content103(Some(deserializer)) => {
-                        self.store_content_103(deserializer.finish(helper)?)?
+                        self.store_content103(deserializer.finish(helper)?)?
                     }
                     S::CitationNote(Some(deserializer)) => {
                         self.store_citation_note(deserializer.finish(helper)?)?
@@ -126852,13 +126852,13 @@ pub mod onix {
                 self.source_type = Some(value);
                 Ok(())
             }
-            fn store_content_103(&mut self, value: super::CitedContent103) -> Result<(), Error> {
-                if self.content_103.is_some() {
+            fn store_content103(&mut self, value: super::CitedContent103) -> Result<(), Error> {
+                if self.content103.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content103",
                     )))?;
                 }
-                self.content_103 = Some(value);
+                self.content103 = Some(value);
                 Ok(())
             }
             fn store_citation_note(
@@ -127051,7 +127051,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_103<'de>(
+            fn handle_content103<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CitedContent103>,
@@ -127077,7 +127077,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_103(data)?;
+                        self.store_content103(data)?;
                         *self.state__ = S::CitationNote(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -127272,7 +127272,7 @@ pub mod onix {
                         }
                         (S::Content103(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_103(helper, output, &mut fallback)? {
+                            match self.handle_content103(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -127424,7 +127424,7 @@ pub mod onix {
                         (S::Content103(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::CitedContent103 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_103(helper, output, &mut fallback)? {
+                            match self.handle_content103(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -127526,7 +127526,7 @@ pub mod onix {
                     content_audience: self.content_audience,
                     territory: self.territory,
                     source_type: self.source_type,
-                    content_103: helper.finish_element("Content103", self.content_103)?,
+                    content103: helper.finish_element("Content103", self.content103)?,
                     citation_note: self.citation_note,
                     resource_link: self.resource_link,
                     content_date: self.content_date,
@@ -130391,7 +130391,7 @@ pub mod onix {
                         let output = <super::PromotionalEventContent257 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_257(helper, Default::default(), None, output)? {
+                        match self.handle_content257(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -130418,7 +130418,7 @@ pub mod onix {
                     S::Content257(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_257(&mut values, value)?;
+                            Self::store_content257(&mut values, value)?;
                         }
                         Ok(super::PromotionalEventContent256::Content257(
                             helper.finish_element("Content257", values)?,
@@ -130437,7 +130437,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_257(
+            fn store_content257(
                 values: &mut Option<super::PromotionalEventContent257>,
                 value: super::PromotionalEventContent257,
             ) -> Result<(), Error> {
@@ -130461,7 +130461,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_257<'de>(
+            fn handle_content257<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PromotionalEventContent257>,
@@ -130486,12 +130486,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_257(&mut values, data)?;
+                    Self::store_content257(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_257(&mut values, data)?;
+                        Self::store_content257(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content257(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -130577,7 +130577,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content257(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_257(helper, values, fallback, output)? {
+                            match self.handle_content257(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -130616,7 +130616,7 @@ pub mod onix {
                                 <super::PromotionalEventContent257 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_257(helper, values, fallback, output)? {
+                            match self.handle_content257(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -130893,7 +130893,7 @@ pub mod onix {
             event_identifier: Vec<super::EventIdentifierElementType>,
             occurrence_date: Vec<super::OccurrenceDateElementType>,
             event_status: Option<super::EventStatusElementType>,
-            content_173: Option<super::EventOccurrenceContent173>,
+            content173: Option<super::EventOccurrenceContent173>,
             event_description: Vec<super::EventDescriptionElementType>,
             supporting_resource: Vec<super::SupportingResourceElementType>,
             event_sponsor: Vec<super::EventSponsorElementType>,
@@ -130976,7 +130976,7 @@ pub mod onix {
                     event_identifier: Vec::new(),
                     occurrence_date: Vec::new(),
                     event_status: None,
-                    content_173: None,
+                    content173: None,
                     event_description: Vec::new(),
                     supporting_resource: Vec::new(),
                     event_sponsor: Vec::new(),
@@ -131001,7 +131001,7 @@ pub mod onix {
                         self.store_event_status(deserializer.finish(helper)?)?
                     }
                     S::Content173(Some(deserializer)) => {
-                        self.store_content_173(deserializer.finish(helper)?)?
+                        self.store_content173(deserializer.finish(helper)?)?
                     }
                     S::EventDescription(Some(deserializer)) => {
                         self.store_event_description(deserializer.finish(helper)?)?
@@ -131045,16 +131045,16 @@ pub mod onix {
                 self.event_status = Some(value);
                 Ok(())
             }
-            fn store_content_173(
+            fn store_content173(
                 &mut self,
                 value: super::EventOccurrenceContent173,
             ) -> Result<(), Error> {
-                if self.content_173.is_some() {
+                if self.content173.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content173",
                     )))?;
                 }
-                self.content_173 = Some(value);
+                self.content173 = Some(value);
                 Ok(())
             }
             fn store_event_description(
@@ -131196,7 +131196,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_173<'de>(
+            fn handle_content173<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::EventOccurrenceContent173>,
@@ -131218,7 +131218,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_173(data)?;
+                        self.store_content173(data)?;
                         *self.state__ = S::EventDescription(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -131422,7 +131422,7 @@ pub mod onix {
                         }
                         (S::Content173(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_173(helper, output, &mut fallback)? {
+                            match self.handle_content173(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -131551,7 +131551,7 @@ pub mod onix {
                                 <super::EventOccurrenceContent173 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_173(helper, output, &mut fallback)? {
+                            match self.handle_content173(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -131673,7 +131673,7 @@ pub mod onix {
                     event_identifier: self.event_identifier,
                     occurrence_date: helper.finish_vec(1usize, None, self.occurrence_date)?,
                     event_status: helper.finish_element("EventStatus", self.event_status)?,
-                    content_173: self.content_173,
+                    content173: self.content173,
                     event_description: self.event_description,
                     supporting_resource: self.supporting_resource,
                     event_sponsor: self.event_sponsor,
@@ -131945,7 +131945,7 @@ pub mod onix {
                         let output = <super::EventSponsorContent178 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_178(helper, Default::default(), None, output)? {
+                        match self.handle_content178(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -131972,7 +131972,7 @@ pub mod onix {
                     S::Content178(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_178(&mut values, value)?;
+                            Self::store_content178(&mut values, value)?;
                         }
                         Ok(super::EventSponsorElementTypeContent::Content178(
                             helper.finish_element("Content178", values)?,
@@ -132000,7 +132000,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_178(
+            fn store_content178(
                 values: &mut Option<super::EventSponsorContent178>,
                 value: super::EventSponsorContent178,
             ) -> Result<(), Error> {
@@ -132036,7 +132036,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_178<'de>(
+            fn handle_content178<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::EventSponsorContent178>,
@@ -132059,12 +132059,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_178(&mut values, data)?;
+                    Self::store_content178(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_178(&mut values, data)?;
+                        Self::store_content178(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content178(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -132184,7 +132184,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content178(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_178(helper, values, fallback, output)? {
+                            match self.handle_content178(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -132231,7 +132231,7 @@ pub mod onix {
                             let output = <super::EventSponsorContent178 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_178(helper, values, fallback, output)? {
+                            match self.handle_content178(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -133205,7 +133205,7 @@ pub mod onix {
                         let output = <super::ContentItemContent120 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_120(helper, Default::default(), None, output)? {
+                        match self.handle_content120(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -133219,7 +133219,7 @@ pub mod onix {
                         let output = <super::ContentItemContent121 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_121(helper, Default::default(), None, output)? {
+                        match self.handle_content121(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -133246,7 +133246,7 @@ pub mod onix {
                     S::Content120(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_120(&mut values, value)?;
+                            Self::store_content120(&mut values, value)?;
                         }
                         Ok(super::ContentItemContent119::Content120(
                             helper.finish_element("Content120", values)?,
@@ -133255,7 +133255,7 @@ pub mod onix {
                     S::Content121(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_121(&mut values, value)?;
+                            Self::store_content121(&mut values, value)?;
                         }
                         Ok(super::ContentItemContent119::Content121(
                             helper.finish_element("Content121", values)?,
@@ -133265,7 +133265,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_120(
+            fn store_content120(
                 values: &mut Option<super::ContentItemContent120>,
                 value: super::ContentItemContent120,
             ) -> Result<(), Error> {
@@ -133277,7 +133277,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_121(
+            fn store_content121(
                 values: &mut Option<super::ContentItemContent121>,
                 value: super::ContentItemContent121,
             ) -> Result<(), Error> {
@@ -133289,7 +133289,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_120<'de>(
+            fn handle_content120<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ContentItemContent120>,
@@ -133312,12 +133312,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_120(&mut values, data)?;
+                    Self::store_content120(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_120(&mut values, data)?;
+                        Self::store_content120(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content120(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -133328,7 +133328,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_121<'de>(
+            fn handle_content121<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ContentItemContent121>,
@@ -133351,12 +133351,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_121(&mut values, data)?;
+                    Self::store_content121(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_121(&mut values, data)?;
+                        Self::store_content121(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content121(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -133403,7 +133403,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content120(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_120(helper, values, fallback, output)? {
+                            match self.handle_content120(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -133412,7 +133412,7 @@ pub mod onix {
                         }
                         (S::Content121(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_121(helper, values, fallback, output)? {
+                            match self.handle_content121(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -133441,7 +133441,7 @@ pub mod onix {
                             let output = <super::ContentItemContent120 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_120(helper, values, fallback, output)? {
+                            match self.handle_content120(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -133455,7 +133455,7 @@ pub mod onix {
                             let output = <super::ContentItemContent121 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_121(helper, values, fallback, output)? {
+                            match self.handle_content121(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -133536,7 +133536,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::CollectionContent110 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_122(helper, Default::default(), None, output)? {
+                        match self.handle_content122(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -133563,7 +133563,7 @@ pub mod onix {
                     S::Content122(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_122(&mut values, value)?;
+                            Self::store_content122(&mut values, value)?;
                         }
                         Ok(super::ContentItemGpAuthorship::Content122(
                             helper.finish_element("Content122", values)?,
@@ -133580,7 +133580,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_122(
+            fn store_content122(
                 values: &mut Option<super::CollectionContent110>,
                 value: super::CollectionContent110,
             ) -> Result<(), Error> {
@@ -133604,7 +133604,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_122<'de>(
+            fn handle_content122<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CollectionContent110>,
@@ -133627,12 +133627,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_122(&mut values, data)?;
+                    Self::store_content122(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_122(&mut values, data)?;
+                        Self::store_content122(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content122(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -133718,7 +133718,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content122(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_122(helper, values, fallback, output)? {
+                            match self.handle_content122(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -133756,7 +133756,7 @@ pub mod onix {
                             let output = <super::CollectionContent110 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_122(helper, values, fallback, output)? {
+                            match self.handle_content122(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -133816,7 +133816,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             publishing_role: Option<super::PublishingRoleElementType>,
-            content_263: Option<super::PublisherContent263>,
+            content263: Option<super::PublisherContent263>,
             funding: Vec<super::FundingElementType>,
             website: Vec<super::WebsiteElementType>,
             state__: Box<PublisherElementTypeDeserializerState>,
@@ -133881,7 +133881,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     publishing_role: None,
-                    content_263: None,
+                    content263: None,
                     funding: Vec::new(),
                     website: Vec::new(),
                     state__: Box::new(PublisherElementTypeDeserializerState::Init__),
@@ -133898,7 +133898,7 @@ pub mod onix {
                         self.store_publishing_role(deserializer.finish(helper)?)?
                     }
                     S::Content263(Some(deserializer)) => {
-                        self.store_content_263(deserializer.finish(helper)?)?
+                        self.store_content263(deserializer.finish(helper)?)?
                     }
                     S::Funding(Some(deserializer)) => {
                         self.store_funding(deserializer.finish(helper)?)?
@@ -133922,16 +133922,13 @@ pub mod onix {
                 self.publishing_role = Some(value);
                 Ok(())
             }
-            fn store_content_263(
-                &mut self,
-                value: super::PublisherContent263,
-            ) -> Result<(), Error> {
-                if self.content_263.is_some() {
+            fn store_content263(&mut self, value: super::PublisherContent263) -> Result<(), Error> {
+                if self.content263.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content263",
                     )))?;
                 }
-                self.content_263 = Some(value);
+                self.content263 = Some(value);
                 Ok(())
             }
             fn store_funding(&mut self, value: super::FundingElementType) -> Result<(), Error> {
@@ -133979,7 +133976,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_263<'de>(
+            fn handle_content263<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PublisherContent263>,
@@ -134005,7 +134002,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_263(data)?;
+                        self.store_content263(data)?;
                         *self.state__ = S::Funding(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -134117,7 +134114,7 @@ pub mod onix {
                         }
                         (S::Content263(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_263(helper, output, &mut fallback)? {
+                            match self.handle_content263(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -134187,7 +134184,7 @@ pub mod onix {
                             let output = <super::PublisherContent263 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_263(helper, output, &mut fallback)? {
+                            match self.handle_content263(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -134268,7 +134265,7 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     publishing_role: helper
                         .finish_element("PublishingRole", self.publishing_role)?,
-                    content_263: helper.finish_element("Content263", self.content_263)?,
+                    content263: helper.finish_element("Content263", self.content263)?,
                     funding: self.funding,
                     website: self.website,
                 })
@@ -134872,7 +134869,7 @@ pub mod onix {
                         let output = <super::PublishingDetailContent272 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_272(helper, Default::default(), None, output)? {
+                        match self.handle_content272(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -134899,7 +134896,7 @@ pub mod onix {
                     S::Content272(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_272(&mut values, value)?;
+                            Self::store_content272(&mut values, value)?;
                         }
                         Ok(super::PublishingDetailContent271::Content272(
                             helper.finish_element("Content272", values)?,
@@ -134918,7 +134915,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_272(
+            fn store_content272(
                 values: &mut Option<super::PublishingDetailContent272>,
                 value: super::PublishingDetailContent272,
             ) -> Result<(), Error> {
@@ -134937,7 +134934,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_272<'de>(
+            fn handle_content272<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PublishingDetailContent272>,
@@ -134962,12 +134959,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_272(&mut values, data)?;
+                    Self::store_content272(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_272(&mut values, data)?;
+                        Self::store_content272(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content272(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -135063,7 +135060,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content272(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_272(helper, values, fallback, output)? {
+                            match self.handle_content272(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -135102,7 +135099,7 @@ pub mod onix {
                                 <super::PublishingDetailContent272 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_272(helper, values, fallback, output)? {
+                            match self.handle_content272(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -135523,12 +135520,12 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             product_contact_role: Option<super::ProductContactRoleElementType>,
-            content_240: Option<super::ProductContactContent240>,
+            content240: Option<super::ProductContactContent240>,
             contact_name: Option<super::ContactNameElementType>,
             telephone_number: Vec<super::TelephoneNumberElementType>,
             fax_number: Vec<super::FaxNumberElementType>,
             email_address: Vec<super::EmailAddressElementType>,
-            content_242: Option<super::ProductContactContent242>,
+            content242: Option<super::ProductContactContent242>,
             state__: Box<ProductContactElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -135598,12 +135595,12 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     product_contact_role: None,
-                    content_240: None,
+                    content240: None,
                     contact_name: None,
                     telephone_number: Vec::new(),
                     fax_number: Vec::new(),
                     email_address: Vec::new(),
-                    content_242: None,
+                    content242: None,
                     state__: Box::new(ProductContactElementTypeDeserializerState::Init__),
                 })
             }
@@ -135618,7 +135615,7 @@ pub mod onix {
                         self.store_product_contact_role(deserializer.finish(helper)?)?
                     }
                     S::Content240(Some(deserializer)) => {
-                        self.store_content_240(deserializer.finish(helper)?)?
+                        self.store_content240(deserializer.finish(helper)?)?
                     }
                     S::ContactName(Some(deserializer)) => {
                         self.store_contact_name(deserializer.finish(helper)?)?
@@ -135633,7 +135630,7 @@ pub mod onix {
                         self.store_email_address(deserializer.finish(helper)?)?
                     }
                     S::Content242(Some(deserializer)) => {
-                        self.store_content_242(deserializer.finish(helper)?)?
+                        self.store_content242(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -135651,16 +135648,16 @@ pub mod onix {
                 self.product_contact_role = Some(value);
                 Ok(())
             }
-            fn store_content_240(
+            fn store_content240(
                 &mut self,
                 value: super::ProductContactContent240,
             ) -> Result<(), Error> {
-                if self.content_240.is_some() {
+                if self.content240.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content240",
                     )))?;
                 }
-                self.content_240 = Some(value);
+                self.content240 = Some(value);
                 Ok(())
             }
             fn store_contact_name(
@@ -135696,16 +135693,16 @@ pub mod onix {
                 self.email_address.push(value);
                 Ok(())
             }
-            fn store_content_242(
+            fn store_content242(
                 &mut self,
                 value: super::ProductContactContent242,
             ) -> Result<(), Error> {
-                if self.content_242.is_some() {
+                if self.content242.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content242",
                     )))?;
                 }
-                self.content_242 = Some(value);
+                self.content242 = Some(value);
                 Ok(())
             }
             fn handle_product_contact_role<'de>(
@@ -135745,7 +135742,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_240<'de>(
+            fn handle_content240<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ProductContactContent240>,
@@ -135771,7 +135768,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_240(data)?;
+                        self.store_content240(data)?;
                         *self.state__ = S::ContactName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -135914,7 +135911,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_242<'de>(
+            fn handle_content242<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ProductContactContent242>,
@@ -135936,7 +135933,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_242(data)?;
+                        self.store_content242(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -135984,7 +135981,7 @@ pub mod onix {
                         }
                         (S::Content240(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_240(helper, output, &mut fallback)? {
+                            match self.handle_content240(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -136044,7 +136041,7 @@ pub mod onix {
                         }
                         (S::Content242(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_242(helper, output, &mut fallback)? {
+                            match self.handle_content242(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -136094,7 +136091,7 @@ pub mod onix {
                                 <super::ProductContactContent240 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_240(helper, output, &mut fallback)? {
+                            match self.handle_content240(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -136177,7 +136174,7 @@ pub mod onix {
                                 <super::ProductContactContent242 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_242(helper, output, &mut fallback)? {
+                            match self.handle_content242(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -136224,12 +136221,12 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     product_contact_role: helper
                         .finish_element("ProductContactRole", self.product_contact_role)?,
-                    content_240: helper.finish_element("Content240", self.content_240)?,
+                    content240: helper.finish_element("Content240", self.content240)?,
                     contact_name: self.contact_name,
                     telephone_number: self.telephone_number,
                     fax_number: self.fax_number,
                     email_address: self.email_address,
-                    content_242: self.content_242,
+                    content242: self.content242,
                 })
             }
         }
@@ -139422,7 +139419,7 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             sequence_number: Option<super::SequenceNumberElementType>,
             sales_outlet: Vec<super::SalesOutletElementType>,
-            content_319: Option<super::SupplementManifestContent319>,
+            content319: Option<super::SupplementManifestContent319>,
             state__: Box<SupplementManifestElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -139487,7 +139484,7 @@ pub mod onix {
                     sourcetype: sourcetype,
                     sequence_number: None,
                     sales_outlet: Vec::new(),
-                    content_319: None,
+                    content319: None,
                     state__: Box::new(SupplementManifestElementTypeDeserializerState::Init__),
                 })
             }
@@ -139505,7 +139502,7 @@ pub mod onix {
                         self.store_sales_outlet(deserializer.finish(helper)?)?
                     }
                     S::Content319(Some(deserializer)) => {
-                        self.store_content_319(deserializer.finish(helper)?)?
+                        self.store_content319(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -139530,16 +139527,16 @@ pub mod onix {
                 self.sales_outlet.push(value);
                 Ok(())
             }
-            fn store_content_319(
+            fn store_content319(
                 &mut self,
                 value: super::SupplementManifestContent319,
             ) -> Result<(), Error> {
-                if self.content_319.is_some() {
+                if self.content319.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content319",
                     )))?;
                 }
-                self.content_319 = Some(value);
+                self.content319 = Some(value);
                 Ok(())
             }
             fn handle_sequence_number<'de>(
@@ -139608,7 +139605,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_319<'de>(
+            fn handle_content319<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SupplementManifestContent319>,
@@ -139634,7 +139631,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_319(data)?;
+                        self.store_content319(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -139694,7 +139691,7 @@ pub mod onix {
                         }
                         (S::Content319(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_319(helper, output, &mut fallback)? {
+                            match self.handle_content319(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -139758,7 +139755,7 @@ pub mod onix {
                                 <super::SupplementManifestContent319 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_319(helper, output, &mut fallback)? {
+                            match self.handle_content319(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -139805,7 +139802,7 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     sequence_number: self.sequence_number,
                     sales_outlet: self.sales_outlet,
-                    content_319: helper.finish_element("Content319", self.content_319)?,
+                    content319: helper.finish_element("Content319", self.content319)?,
                 })
             }
         }
@@ -140042,7 +140039,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::TerritoryContent341 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_341(helper, Default::default(), None, output)? {
+                        match self.handle_content341(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -140055,7 +140052,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::TerritoryContent342 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_342(helper, Default::default(), None, output)? {
+                        match self.handle_content342(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -140082,7 +140079,7 @@ pub mod onix {
                     S::Content341(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_341(&mut values, value)?;
+                            Self::store_content341(&mut values, value)?;
                         }
                         Ok(super::TerritoryElementTypeContent::Content341(
                             helper.finish_element("Content341", values)?,
@@ -140091,7 +140088,7 @@ pub mod onix {
                     S::Content342(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_342(&mut values, value)?;
+                            Self::store_content342(&mut values, value)?;
                         }
                         Ok(super::TerritoryElementTypeContent::Content342(
                             helper.finish_element("Content342", values)?,
@@ -140101,7 +140098,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_341(
+            fn store_content341(
                 values: &mut Option<super::TerritoryContent341>,
                 value: super::TerritoryContent341,
             ) -> Result<(), Error> {
@@ -140113,7 +140110,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_342(
+            fn store_content342(
                 values: &mut Option<super::TerritoryContent342>,
                 value: super::TerritoryContent342,
             ) -> Result<(), Error> {
@@ -140125,7 +140122,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_341<'de>(
+            fn handle_content341<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TerritoryContent341>,
@@ -140148,12 +140145,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_341(&mut values, data)?;
+                    Self::store_content341(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_341(&mut values, data)?;
+                        Self::store_content341(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content341(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -140164,7 +140161,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_342<'de>(
+            fn handle_content342<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TerritoryContent342>,
@@ -140187,12 +140184,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_342(&mut values, data)?;
+                    Self::store_content342(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_342(&mut values, data)?;
+                        Self::store_content342(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content342(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -140241,7 +140238,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content341(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_341(helper, values, fallback, output)? {
+                            match self.handle_content341(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -140250,7 +140247,7 @@ pub mod onix {
                         }
                         (S::Content342(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_342(helper, values, fallback, output)? {
+                            match self.handle_content342(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -140279,7 +140276,7 @@ pub mod onix {
                             let output = <super::TerritoryContent341 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_341(helper, values, fallback, output)? {
+                            match self.handle_content341(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -140293,7 +140290,7 @@ pub mod onix {
                             let output = <super::TerritoryContent342 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_342(helper, values, fallback, output)? {
+                            match self.handle_content342(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -140911,7 +140908,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             agent_role: Option<super::AgentRoleElementType>,
-            content_267: Option<super::PublisherRepresentativeContent267>,
+            content267: Option<super::PublisherRepresentativeContent267>,
             telephone_number: Vec<super::TelephoneNumberElementType>,
             fax_number: Vec<super::FaxNumberElementType>,
             email_address: Vec<super::EmailAddressElementType>,
@@ -140986,7 +140983,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     agent_role: None,
-                    content_267: None,
+                    content267: None,
                     telephone_number: Vec::new(),
                     fax_number: Vec::new(),
                     email_address: Vec::new(),
@@ -141005,7 +141002,7 @@ pub mod onix {
                         self.store_agent_role(deserializer.finish(helper)?)?
                     }
                     S::Content267(Some(deserializer)) => {
-                        self.store_content_267(deserializer.finish(helper)?)?
+                        self.store_content267(deserializer.finish(helper)?)?
                     }
                     S::TelephoneNumber(Some(deserializer)) => {
                         self.store_telephone_number(deserializer.finish(helper)?)?
@@ -141035,16 +141032,16 @@ pub mod onix {
                 self.agent_role = Some(value);
                 Ok(())
             }
-            fn store_content_267(
+            fn store_content267(
                 &mut self,
                 value: super::PublisherRepresentativeContent267,
             ) -> Result<(), Error> {
-                if self.content_267.is_some() {
+                if self.content267.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content267",
                     )))?;
                 }
-                self.content_267 = Some(value);
+                self.content267 = Some(value);
                 Ok(())
             }
             fn store_telephone_number(
@@ -141109,7 +141106,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_267<'de>(
+            fn handle_content267<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PublisherRepresentativeContent267>,
@@ -141135,7 +141132,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_267(data)?;
+                        self.store_content267(data)?;
                         *self.state__ = S::TelephoneNumber(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -141315,7 +141312,7 @@ pub mod onix {
                         }
                         (S::Content267(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_267(helper, output, &mut fallback)? {
+                            match self.handle_content267(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -141407,7 +141404,7 @@ pub mod onix {
                         }
                         (S::Content267(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = < super :: PublisherRepresentativeContent267 as WithDeserializer > :: init (helper , event) ? ;
-                            match self.handle_content_267(helper, output, &mut fallback)? {
+                            match self.handle_content267(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -141521,7 +141518,7 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     agent_role: helper.finish_element("AgentRole", self.agent_role)?,
-                    content_267: helper.finish_element("Content267", self.content_267)?,
+                    content267: helper.finish_element("Content267", self.content267)?,
                     telephone_number: self.telephone_number,
                     fax_number: self.fax_number,
                     email_address: self.email_address,
@@ -143320,7 +143317,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             supplier_role: Option<super::SupplierRoleElementType>,
-            content_322: Option<super::SupplierContent322>,
+            content322: Option<super::SupplierContent322>,
             telephone_number: Vec<super::TelephoneNumberElementType>,
             fax_number: Vec<super::FaxNumberElementType>,
             email_address: Vec<super::EmailAddressElementType>,
@@ -143393,7 +143390,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     supplier_role: None,
-                    content_322: None,
+                    content322: None,
                     telephone_number: Vec::new(),
                     fax_number: Vec::new(),
                     email_address: Vec::new(),
@@ -143412,7 +143409,7 @@ pub mod onix {
                         self.store_supplier_role(deserializer.finish(helper)?)?
                     }
                     S::Content322(Some(deserializer)) => {
-                        self.store_content_322(deserializer.finish(helper)?)?
+                        self.store_content322(deserializer.finish(helper)?)?
                     }
                     S::TelephoneNumber(Some(deserializer)) => {
                         self.store_telephone_number(deserializer.finish(helper)?)?
@@ -143442,13 +143439,13 @@ pub mod onix {
                 self.supplier_role = Some(value);
                 Ok(())
             }
-            fn store_content_322(&mut self, value: super::SupplierContent322) -> Result<(), Error> {
-                if self.content_322.is_some() {
+            fn store_content322(&mut self, value: super::SupplierContent322) -> Result<(), Error> {
+                if self.content322.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content322",
                     )))?;
                 }
-                self.content_322 = Some(value);
+                self.content322 = Some(value);
                 Ok(())
             }
             fn store_telephone_number(
@@ -143513,7 +143510,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_322<'de>(
+            fn handle_content322<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SupplierContent322>,
@@ -143539,7 +143536,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_322(data)?;
+                        self.store_content322(data)?;
                         *self.state__ = S::TelephoneNumber(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -143717,7 +143714,7 @@ pub mod onix {
                         }
                         (S::Content322(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_322(helper, output, &mut fallback)? {
+                            match self.handle_content322(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -143811,7 +143808,7 @@ pub mod onix {
                             let output = <super::SupplierContent322 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_322(helper, output, &mut fallback)? {
+                            match self.handle_content322(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -143925,7 +143922,7 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     supplier_role: helper.finish_element("SupplierRole", self.supplier_role)?,
-                    content_322: helper.finish_element("Content322", self.content_322)?,
+                    content322: helper.finish_element("Content322", self.content322)?,
                     telephone_number: self.telephone_number,
                     fax_number: self.fax_number,
                     email_address: self.email_address,
@@ -143941,12 +143938,12 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             supply_contact_role: Option<super::SupplyContactRoleElementType>,
-            content_327: Option<super::SupplyContactContent327>,
+            content327: Option<super::SupplyContactContent327>,
             contact_name: Option<super::ContactNameElementType>,
             telephone_number: Vec<super::TelephoneNumberElementType>,
             fax_number: Vec<super::FaxNumberElementType>,
             email_address: Vec<super::EmailAddressElementType>,
-            content_329: Option<super::ProductContactContent242>,
+            content329: Option<super::ProductContactContent242>,
             state__: Box<SupplyContactElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -144016,12 +144013,12 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     supply_contact_role: None,
-                    content_327: None,
+                    content327: None,
                     contact_name: None,
                     telephone_number: Vec::new(),
                     fax_number: Vec::new(),
                     email_address: Vec::new(),
-                    content_329: None,
+                    content329: None,
                     state__: Box::new(SupplyContactElementTypeDeserializerState::Init__),
                 })
             }
@@ -144036,7 +144033,7 @@ pub mod onix {
                         self.store_supply_contact_role(deserializer.finish(helper)?)?
                     }
                     S::Content327(Some(deserializer)) => {
-                        self.store_content_327(deserializer.finish(helper)?)?
+                        self.store_content327(deserializer.finish(helper)?)?
                     }
                     S::ContactName(Some(deserializer)) => {
                         self.store_contact_name(deserializer.finish(helper)?)?
@@ -144051,7 +144048,7 @@ pub mod onix {
                         self.store_email_address(deserializer.finish(helper)?)?
                     }
                     S::Content329(Some(deserializer)) => {
-                        self.store_content_329(deserializer.finish(helper)?)?
+                        self.store_content329(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -144069,16 +144066,16 @@ pub mod onix {
                 self.supply_contact_role = Some(value);
                 Ok(())
             }
-            fn store_content_327(
+            fn store_content327(
                 &mut self,
                 value: super::SupplyContactContent327,
             ) -> Result<(), Error> {
-                if self.content_327.is_some() {
+                if self.content327.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content327",
                     )))?;
                 }
-                self.content_327 = Some(value);
+                self.content327 = Some(value);
                 Ok(())
             }
             fn store_contact_name(
@@ -144114,16 +144111,16 @@ pub mod onix {
                 self.email_address.push(value);
                 Ok(())
             }
-            fn store_content_329(
+            fn store_content329(
                 &mut self,
                 value: super::ProductContactContent242,
             ) -> Result<(), Error> {
-                if self.content_329.is_some() {
+                if self.content329.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content329",
                     )))?;
                 }
-                self.content_329 = Some(value);
+                self.content329 = Some(value);
                 Ok(())
             }
             fn handle_supply_contact_role<'de>(
@@ -144163,7 +144160,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_327<'de>(
+            fn handle_content327<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SupplyContactContent327>,
@@ -144189,7 +144186,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_327(data)?;
+                        self.store_content327(data)?;
                         *self.state__ = S::ContactName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -144332,7 +144329,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_329<'de>(
+            fn handle_content329<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ProductContactContent242>,
@@ -144354,7 +144351,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_329(data)?;
+                        self.store_content329(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -144402,7 +144399,7 @@ pub mod onix {
                         }
                         (S::Content327(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_327(helper, output, &mut fallback)? {
+                            match self.handle_content327(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -144462,7 +144459,7 @@ pub mod onix {
                         }
                         (S::Content329(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_329(helper, output, &mut fallback)? {
+                            match self.handle_content329(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -144512,7 +144509,7 @@ pub mod onix {
                                 <super::SupplyContactContent327 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_327(helper, output, &mut fallback)? {
+                            match self.handle_content327(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -144595,7 +144592,7 @@ pub mod onix {
                                 <super::ProductContactContent242 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_329(helper, output, &mut fallback)? {
+                            match self.handle_content329(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -144642,12 +144639,12 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     supply_contact_role: helper
                         .finish_element("SupplyContactRole", self.supply_contact_role)?,
-                    content_327: helper.finish_element("Content327", self.content_327)?,
+                    content327: helper.finish_element("Content327", self.content327)?,
                     contact_name: self.contact_name,
                     telephone_number: self.telephone_number,
                     fax_number: self.fax_number,
                     email_address: self.email_address,
-                    content_329: self.content_329,
+                    content329: self.content329,
                 })
             }
         }
@@ -146245,7 +146242,7 @@ pub mod onix {
             datestamp: Option<String>,
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
-            content_215: Option<super::NewSupplierContent215>,
+            content215: Option<super::NewSupplierContent215>,
             telephone_number: Vec<super::TelephoneNumberElementType>,
             fax_number: Vec<super::FaxNumberElementType>,
             email_address: Vec<super::EmailAddressElementType>,
@@ -146314,7 +146311,7 @@ pub mod onix {
                     datestamp: datestamp,
                     sourcename: sourcename,
                     sourcetype: sourcetype,
-                    content_215: None,
+                    content215: None,
                     telephone_number: Vec::new(),
                     fax_number: Vec::new(),
                     email_address: Vec::new(),
@@ -146330,7 +146327,7 @@ pub mod onix {
                 use NewSupplierElementTypeDeserializerState as S;
                 match state {
                     S::Content215(Some(deserializer)) => {
-                        self.store_content_215(deserializer.finish(helper)?)?
+                        self.store_content215(deserializer.finish(helper)?)?
                     }
                     S::TelephoneNumber(Some(deserializer)) => {
                         self.store_telephone_number(deserializer.finish(helper)?)?
@@ -146348,16 +146345,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_215(
+            fn store_content215(
                 &mut self,
                 value: super::NewSupplierContent215,
             ) -> Result<(), Error> {
-                if self.content_215.is_some() {
+                if self.content215.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content215",
                     )))?;
                 }
-                self.content_215 = Some(value);
+                self.content215 = Some(value);
                 Ok(())
             }
             fn store_telephone_number(
@@ -146385,7 +146382,7 @@ pub mod onix {
                 self.website.push(value);
                 Ok(())
             }
-            fn handle_content_215<'de>(
+            fn handle_content215<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::NewSupplierContent215>,
@@ -146411,7 +146408,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_215(data)?;
+                        self.store_content215(data)?;
                         *self.state__ = S::TelephoneNumber(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -146577,7 +146574,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content215(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_215(helper, output, &mut fallback)? {
+                            match self.handle_content215(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -146654,7 +146651,7 @@ pub mod onix {
                             let output = <super::NewSupplierContent215 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_215(helper, output, &mut fallback)? {
+                            match self.handle_content215(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -146767,7 +146764,7 @@ pub mod onix {
                     datestamp: self.datestamp,
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
-                    content_215: helper.finish_element("Content215", self.content_215)?,
+                    content215: helper.finish_element("Content215", self.content215)?,
                     telephone_number: self.telephone_number,
                     fax_number: self.fax_number,
                     email_address: self.email_address,
@@ -146784,7 +146781,7 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             location_identifier: Vec<super::LocationIdentifierElementType>,
             location_name: Vec<super::LocationNameElementType>,
-            content_308: Option<super::StockContent308>,
+            content308: Option<super::StockContent308>,
             on_order_detail: Vec<super::OnOrderDetailElementType>,
             velocity: Vec<super::VelocityElementType>,
             state__: Box<StockElementTypeDeserializerState>,
@@ -146855,7 +146852,7 @@ pub mod onix {
                     sourcetype: sourcetype,
                     location_identifier: Vec::new(),
                     location_name: Vec::new(),
-                    content_308: None,
+                    content308: None,
                     on_order_detail: Vec::new(),
                     velocity: Vec::new(),
                     state__: Box::new(StockElementTypeDeserializerState::Init__),
@@ -146875,7 +146872,7 @@ pub mod onix {
                         self.store_location_name(deserializer.finish(helper)?)?
                     }
                     S::Content308(Some(deserializer)) => {
-                        self.store_content_308(deserializer.finish(helper)?)?
+                        self.store_content308(deserializer.finish(helper)?)?
                     }
                     S::OnOrderDetail(Some(deserializer)) => {
                         self.store_on_order_detail(deserializer.finish(helper)?)?
@@ -146901,13 +146898,13 @@ pub mod onix {
                 self.location_name.push(value);
                 Ok(())
             }
-            fn store_content_308(&mut self, value: super::StockContent308) -> Result<(), Error> {
-                if self.content_308.is_some() {
+            fn store_content308(&mut self, value: super::StockContent308) -> Result<(), Error> {
+                if self.content308.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content308",
                     )))?;
                 }
-                self.content_308 = Some(value);
+                self.content308 = Some(value);
                 Ok(())
             }
             fn store_on_order_detail(
@@ -146987,7 +146984,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_308<'de>(
+            fn handle_content308<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::StockContent308>,
@@ -147013,7 +147010,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_308(data)?;
+                        self.store_content308(data)?;
                         *self.state__ = S::OnOrderDetail(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -147137,7 +147134,7 @@ pub mod onix {
                         }
                         (S::Content308(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_308(helper, output, &mut fallback)? {
+                            match self.handle_content308(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -147226,7 +147223,7 @@ pub mod onix {
                         (S::Content308(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::StockContent308 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_308(helper, output, &mut fallback)? {
+                            match self.handle_content308(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -147307,7 +147304,7 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     location_identifier: self.location_identifier,
                     location_name: self.location_name,
-                    content_308: helper.finish_element("Content308", self.content_308)?,
+                    content308: helper.finish_element("Content308", self.content308)?,
                     on_order_detail: self.on_order_detail,
                     velocity: self.velocity,
                 })
@@ -152209,7 +152206,7 @@ pub mod onix {
                         let output = <super::ProductPartContent250 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_250(helper, Default::default(), None, output)? {
+                        match self.handle_content250(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -152236,7 +152233,7 @@ pub mod onix {
                     S::Content250(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_250(&mut values, value)?;
+                            Self::store_content250(&mut values, value)?;
                         }
                         Ok(super::ProductPartContent249::Content250(
                             helper.finish_element("Content250", values)?,
@@ -152255,7 +152252,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_250(
+            fn store_content250(
                 values: &mut Option<super::ProductPartContent250>,
                 value: super::ProductPartContent250,
             ) -> Result<(), Error> {
@@ -152279,7 +152276,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_250<'de>(
+            fn handle_content250<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ProductPartContent250>,
@@ -152302,12 +152299,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_250(&mut values, data)?;
+                    Self::store_content250(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_250(&mut values, data)?;
+                        Self::store_content250(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content250(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -152391,7 +152388,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content250(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_250(helper, values, fallback, output)? {
+                            match self.handle_content250(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -152429,7 +152426,7 @@ pub mod onix {
                             let output = <super::ProductPartContent250 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_250(helper, values, fallback, output)? {
+                            match self.handle_content250(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -153509,7 +153506,7 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             sequence_number: Option<super::SequenceNumberElementType>,
             title_element_level: Option<super::TitleElementLevelElementType>,
-            content_351: Option<super::TitleElementContent351>,
+            content351: Option<super::TitleElementContent351>,
             subtitle: Option<super::SubtitleElementType>,
             state__: Box<TitleElementElementTypeDeserializerState>,
         }
@@ -153576,7 +153573,7 @@ pub mod onix {
                     sourcetype: sourcetype,
                     sequence_number: None,
                     title_element_level: None,
-                    content_351: None,
+                    content351: None,
                     subtitle: None,
                     state__: Box::new(TitleElementElementTypeDeserializerState::Init__),
                 })
@@ -153595,7 +153592,7 @@ pub mod onix {
                         self.store_title_element_level(deserializer.finish(helper)?)?
                     }
                     S::Content351(Some(deserializer)) => {
-                        self.store_content_351(deserializer.finish(helper)?)?
+                        self.store_content351(deserializer.finish(helper)?)?
                     }
                     S::Subtitle(Some(deserializer)) => {
                         self.store_subtitle(deserializer.finish(helper)?)?
@@ -153628,16 +153625,16 @@ pub mod onix {
                 self.title_element_level = Some(value);
                 Ok(())
             }
-            fn store_content_351(
+            fn store_content351(
                 &mut self,
                 value: super::TitleElementContent351,
             ) -> Result<(), Error> {
-                if self.content_351.is_some() {
+                if self.content351.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content351",
                     )))?;
                 }
-                self.content_351 = Some(value);
+                self.content351 = Some(value);
                 Ok(())
             }
             fn store_subtitle(&mut self, value: super::SubtitleElementType) -> Result<(), Error> {
@@ -153719,7 +153716,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_351<'de>(
+            fn handle_content351<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitleElementContent351>,
@@ -153745,7 +153742,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_351(data)?;
+                        self.store_content351(data)?;
                         *self.state__ = S::Subtitle(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -153838,7 +153835,7 @@ pub mod onix {
                         }
                         (S::Content351(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_351(helper, output, &mut fallback)? {
+                            match self.handle_content351(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -153916,7 +153913,7 @@ pub mod onix {
                             let output = <super::TitleElementContent351 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_351(helper, output, &mut fallback)? {
+                            match self.handle_content351(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -153981,7 +153978,7 @@ pub mod onix {
                     sequence_number: self.sequence_number,
                     title_element_level: helper
                         .finish_element("TitleElementLevel", self.title_element_level)?,
-                    content_351: helper.finish_element("Content351", self.content_351)?,
+                    content351: helper.finish_element("Content351", self.content351)?,
                     subtitle: self.subtitle,
                 })
             }
@@ -154750,7 +154747,7 @@ pub mod onix {
             from_language: Vec<super::FromLanguageElementType>,
             to_language: Vec<super::ToLanguageElementType>,
             name_type: Option<super::NameTypeElementType>,
-            content_125: Option<super::ContributorContent125>,
+            content125: Option<super::ContributorContent125>,
             alternative_name: Vec<super::AlternativeNameElementType>,
             contributor_date: Vec<super::ContributorDateElementType>,
             professional_affiliation: Vec<super::ProfessionalAffiliationElementType>,
@@ -154855,7 +154852,7 @@ pub mod onix {
                     from_language: Vec::new(),
                     to_language: Vec::new(),
                     name_type: None,
-                    content_125: None,
+                    content125: None,
                     alternative_name: Vec::new(),
                     contributor_date: Vec::new(),
                     professional_affiliation: Vec::new(),
@@ -154890,7 +154887,7 @@ pub mod onix {
                         self.store_name_type(deserializer.finish(helper)?)?
                     }
                     S::Content125(Some(deserializer)) => {
-                        self.store_content_125(deserializer.finish(helper)?)?
+                        self.store_content125(deserializer.finish(helper)?)?
                     }
                     S::AlternativeName(Some(deserializer)) => {
                         self.store_alternative_name(deserializer.finish(helper)?)?
@@ -154962,16 +154959,16 @@ pub mod onix {
                 self.name_type = Some(value);
                 Ok(())
             }
-            fn store_content_125(
+            fn store_content125(
                 &mut self,
                 value: super::ContributorContent125,
             ) -> Result<(), Error> {
-                if self.content_125.is_some() {
+                if self.content125.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content125",
                     )))?;
                 }
-                self.content_125 = Some(value);
+                self.content125 = Some(value);
                 Ok(())
             }
             fn store_alternative_name(
@@ -155200,7 +155197,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_125<'de>(
+            fn handle_content125<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContributorContent125>,
@@ -155226,7 +155223,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_125(data)?;
+                        self.store_content125(data)?;
                         *self.state__ = S::AlternativeName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -155584,7 +155581,7 @@ pub mod onix {
                         }
                         (S::Content125(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_125(helper, output, &mut fallback)? {
+                            match self.handle_content125(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -155802,7 +155799,7 @@ pub mod onix {
                             let output = <super::ContributorContent125 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_125(helper, output, &mut fallback)? {
+                            match self.handle_content125(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -156008,7 +156005,7 @@ pub mod onix {
                     from_language: self.from_language,
                     to_language: self.to_language,
                     name_type: self.name_type,
-                    content_125: helper.finish_element("Content125", self.content_125)?,
+                    content125: helper.finish_element("Content125", self.content125)?,
                     alternative_name: self.alternative_name,
                     contributor_date: self.contributor_date,
                     professional_affiliation: self.professional_affiliation,
@@ -157309,7 +157306,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct DescriptiveDetailContent157Deserializer {
             edition_type: Vec<super::EditionTypeElementType>,
-            content_158: Option<super::DescriptiveDetailContent158>,
+            content158: Option<super::DescriptiveDetailContent158>,
             edition_statement: Vec<super::EditionStatementElementType>,
             state__: Box<DescriptiveDetailContent157DeserializerState>,
         }
@@ -157338,7 +157335,7 @@ pub mod onix {
                         self.store_edition_type(deserializer.finish(helper)?)?
                     }
                     S::Content158(Some(deserializer)) => {
-                        self.store_content_158(deserializer.finish(helper)?)?
+                        self.store_content158(deserializer.finish(helper)?)?
                     }
                     S::EditionStatement(Some(deserializer)) => {
                         self.store_edition_statement(deserializer.finish(helper)?)?
@@ -157354,16 +157351,16 @@ pub mod onix {
                 self.edition_type.push(value);
                 Ok(())
             }
-            fn store_content_158(
+            fn store_content158(
                 &mut self,
                 value: super::DescriptiveDetailContent158,
             ) -> Result<(), Error> {
-                if self.content_158.is_some() {
+                if self.content158.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content158",
                     )))?;
                 }
-                self.content_158 = Some(value);
+                self.content158 = Some(value);
                 Ok(())
             }
             fn store_edition_statement(
@@ -157406,7 +157403,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_158<'de>(
+            fn handle_content158<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::DescriptiveDetailContent158>,
@@ -157428,7 +157425,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_158(data)?;
+                        self.store_content158(data)?;
                         *self.state__ = S::EditionStatement(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -157477,7 +157474,7 @@ pub mod onix {
             fn default() -> Self {
                 Self {
                     edition_type: Vec::new(),
-                    content_158: None,
+                    content158: None,
                     edition_statement: Vec::new(),
                     state__: Box::new(DescriptiveDetailContent157DeserializerState::Init__),
                 }
@@ -157492,7 +157489,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::DescriptiveDetailContent157> {
                 let deserializer = Self {
                     edition_type: Vec::new(),
-                    content_158: None,
+                    content158: None,
                     edition_statement: Vec::new(),
                     state__: Box::new(DescriptiveDetailContent157DeserializerState::Init__),
                 };
@@ -157537,7 +157534,7 @@ pub mod onix {
                         }
                         (S::Content158(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_158(helper, output, &mut fallback)? {
+                            match self.handle_content158(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -157596,7 +157593,7 @@ pub mod onix {
                                 <super::DescriptiveDetailContent158 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_158(helper, output, &mut fallback)? {
+                            match self.handle_content158(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -157656,7 +157653,7 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::DescriptiveDetailContent157 {
                     edition_type: self.edition_type,
-                    content_158: self.content_158,
+                    content158: self.content158,
                     edition_statement: self.edition_statement,
                 })
             }
@@ -159934,7 +159931,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::ExtentContent183 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_183(helper, Default::default(), None, output)? {
+                        match self.handle_content183(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -159961,7 +159958,7 @@ pub mod onix {
                     S::Content183(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_183(&mut values, value)?;
+                            Self::store_content183(&mut values, value)?;
                         }
                         Ok(super::ExtentContent182::Content183(
                             helper.finish_element("Content183", values)?,
@@ -159980,7 +159977,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_183(
+            fn store_content183(
                 values: &mut Option<super::ExtentContent183>,
                 value: super::ExtentContent183,
             ) -> Result<(), Error> {
@@ -160004,7 +160001,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_183<'de>(
+            fn handle_content183<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ExtentContent183>,
@@ -160027,12 +160024,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_183(&mut values, data)?;
+                    Self::store_content183(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_183(&mut values, data)?;
+                        Self::store_content183(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content183(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -160113,7 +160110,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content183(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_183(helper, values, fallback, output)? {
+                            match self.handle_content183(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -160152,7 +160149,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::ExtentContent183 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_183(helper, values, fallback, output)? {
+                            match self.handle_content183(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -166695,7 +166692,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::SubjectContent316 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_316(helper, Default::default(), None, output)? {
+                        match self.handle_content316(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -166722,7 +166719,7 @@ pub mod onix {
                     S::Content316(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_316(&mut values, value)?;
+                            Self::store_content316(&mut values, value)?;
                         }
                         Ok(super::SubjectContent315::Content316(
                             helper.finish_element("Content316", values)?,
@@ -166741,7 +166738,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_316(
+            fn store_content316(
                 values: &mut Option<super::SubjectContent316>,
                 value: super::SubjectContent316,
             ) -> Result<(), Error> {
@@ -166760,7 +166757,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_316<'de>(
+            fn handle_content316<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SubjectContent316>,
@@ -166783,12 +166780,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_316(&mut values, data)?;
+                    Self::store_content316(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_316(&mut values, data)?;
+                        Self::store_content316(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content316(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -166881,7 +166878,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content316(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_316(helper, values, fallback, output)? {
+                            match self.handle_content316(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -166921,7 +166918,7 @@ pub mod onix {
                             let output = <super::SubjectContent316 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_316(helper, values, fallback, output)? {
+                            match self.handle_content316(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -167190,7 +167187,7 @@ pub mod onix {
                         let output = <super::NameAsSubjectContent206 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_206(helper, Default::default(), None, output)? {
+                        match self.handle_content206(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -167204,7 +167201,7 @@ pub mod onix {
                         let output = <super::NameAsSubjectContent208 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_212(helper, Default::default(), None, output)? {
+                        match self.handle_content212(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -167269,7 +167266,7 @@ pub mod onix {
                     S::Content206(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_206(&mut values, value)?;
+                            Self::store_content206(&mut values, value)?;
                         }
                         Ok(super::NameAsSubjectContent205::Content206(
                             helper.finish_element("Content206", values)?,
@@ -167278,7 +167275,7 @@ pub mod onix {
                     S::Content212(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_212(&mut values, value)?;
+                            Self::store_content212(&mut values, value)?;
                         }
                         Ok(super::NameAsSubjectContent205::Content212(
                             helper.finish_element("Content212", values)?,
@@ -167306,7 +167303,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_206(
+            fn store_content206(
                 values: &mut Option<super::NameAsSubjectContent206>,
                 value: super::NameAsSubjectContent206,
             ) -> Result<(), Error> {
@@ -167318,7 +167315,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_212(
+            fn store_content212(
                 values: &mut Option<super::NameAsSubjectContent208>,
                 value: super::NameAsSubjectContent208,
             ) -> Result<(), Error> {
@@ -167354,7 +167351,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_206<'de>(
+            fn handle_content206<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::NameAsSubjectContent206>,
@@ -167379,12 +167376,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_206(&mut values, data)?;
+                    Self::store_content206(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_206(&mut values, data)?;
+                        Self::store_content206(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content206(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -167395,7 +167392,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_212<'de>(
+            fn handle_content212<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::NameAsSubjectContent208>,
@@ -167420,12 +167417,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_212(&mut values, data)?;
+                    Self::store_content212(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_212(&mut values, data)?;
+                        Self::store_content212(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content212(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -167556,7 +167553,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content206(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_206(helper, values, fallback, output)? {
+                            match self.handle_content206(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -167565,7 +167562,7 @@ pub mod onix {
                         }
                         (S::Content212(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_212(helper, values, fallback, output)? {
+                            match self.handle_content212(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -167615,7 +167612,7 @@ pub mod onix {
                                 <super::NameAsSubjectContent206 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_206(helper, values, fallback, output)? {
+                            match self.handle_content206(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -167630,7 +167627,7 @@ pub mod onix {
                                 <super::NameAsSubjectContent208 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_212(helper, values, fallback, output)? {
+                            match self.handle_content212(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -167703,7 +167700,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             name_type: Option<super::NameTypeElementType>,
-            content_76: Option<super::AlternativeNameContent76>,
+            content76: Option<super::AlternativeNameContent76>,
             state__: Box<AlternativeNameElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -167762,7 +167759,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     name_type: None,
-                    content_76: None,
+                    content76: None,
                     state__: Box::new(AlternativeNameElementTypeDeserializerState::Init__),
                 })
             }
@@ -167777,7 +167774,7 @@ pub mod onix {
                         self.store_name_type(deserializer.finish(helper)?)?
                     }
                     S::Content76(Some(deserializer)) => {
-                        self.store_content_76(deserializer.finish(helper)?)?
+                        self.store_content76(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -167792,16 +167789,16 @@ pub mod onix {
                 self.name_type = Some(value);
                 Ok(())
             }
-            fn store_content_76(
+            fn store_content76(
                 &mut self,
                 value: super::AlternativeNameContent76,
             ) -> Result<(), Error> {
-                if self.content_76.is_some() {
+                if self.content76.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content76",
                     )))?;
                 }
-                self.content_76 = Some(value);
+                self.content76 = Some(value);
                 Ok(())
             }
             fn handle_name_type<'de>(
@@ -167841,7 +167838,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_76<'de>(
+            fn handle_content76<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::AlternativeNameContent76>,
@@ -167867,7 +167864,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_76(data)?;
+                        self.store_content76(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -167915,7 +167912,7 @@ pub mod onix {
                         }
                         (S::Content76(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_76(helper, output, &mut fallback)? {
+                            match self.handle_content76(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -167962,7 +167959,7 @@ pub mod onix {
                                 <super::AlternativeNameContent76 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_76(helper, output, &mut fallback)? {
+                            match self.handle_content76(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -168008,7 +168005,7 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     name_type: helper.finish_element("NameType", self.name_type)?,
-                    content_76: helper.finish_element("Content76", self.content_76)?,
+                    content76: helper.finish_element("Content76", self.content76)?,
                 })
             }
         }
@@ -168583,7 +168580,7 @@ pub mod onix {
                             <super::ProfessionalAffiliationContent253 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                        match self.handle_content_253(helper, Default::default(), None, output)? {
+                        match self.handle_content253(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -168598,7 +168595,7 @@ pub mod onix {
                             <super::ProfessionalAffiliationContent254 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                        match self.handle_content_254(helper, Default::default(), None, output)? {
+                        match self.handle_content254(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -168625,7 +168622,7 @@ pub mod onix {
                     S::Content253(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_253(&mut values, value)?;
+                            Self::store_content253(&mut values, value)?;
                         }
                         Ok(
                             super::ProfessionalAffiliationElementTypeContent::Content253(
@@ -168636,7 +168633,7 @@ pub mod onix {
                     S::Content254(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_254(&mut values, value)?;
+                            Self::store_content254(&mut values, value)?;
                         }
                         Ok(
                             super::ProfessionalAffiliationElementTypeContent::Content254(
@@ -168659,7 +168656,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_253(
+            fn store_content253(
                 values: &mut Option<super::ProfessionalAffiliationContent253>,
                 value: super::ProfessionalAffiliationContent253,
             ) -> Result<(), Error> {
@@ -168671,7 +168668,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_254(
+            fn store_content254(
                 values: &mut Option<super::ProfessionalAffiliationContent254>,
                 value: super::ProfessionalAffiliationContent254,
             ) -> Result<(), Error> {
@@ -168695,7 +168692,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_253<'de>(
+            fn handle_content253<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ProfessionalAffiliationContent253>,
@@ -168720,12 +168717,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_253(&mut values, data)?;
+                    Self::store_content253(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_253(&mut values, data)?;
+                        Self::store_content253(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content253(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -168736,7 +168733,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_254<'de>(
+            fn handle_content254<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ProfessionalAffiliationContent254>,
@@ -168761,12 +168758,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_254(&mut values, data)?;
+                    Self::store_content254(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_254(&mut values, data)?;
+                        Self::store_content254(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content254(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -168853,7 +168850,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content253(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_253(helper, values, fallback, output)? {
+                            match self.handle_content253(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -168862,7 +168859,7 @@ pub mod onix {
                         }
                         (S::Content254(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_254(helper, values, fallback, output)? {
+                            match self.handle_content254(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -168898,7 +168895,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = < super :: ProfessionalAffiliationContent253 as WithDeserializer > :: init (helper , event) ? ;
-                            match self.handle_content_253(helper, values, fallback, output)? {
+                            match self.handle_content253(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -168910,7 +168907,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = < super :: ProfessionalAffiliationContent254 as WithDeserializer > :: init (helper , event) ? ;
-                            match self.handle_content_254(helper, values, fallback, output)? {
+                            match self.handle_content254(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -169487,7 +169484,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::AudienceContent88 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_88(helper, Default::default(), None, output)? {
+                        match self.handle_content88(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -169514,7 +169511,7 @@ pub mod onix {
                     S::Content88(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_88(&mut values, value)?;
+                            Self::store_content88(&mut values, value)?;
                         }
                         Ok(super::AudienceContent87::Content88(
                             helper.finish_element("Content88", values)?,
@@ -169533,7 +169530,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_88(
+            fn store_content88(
                 values: &mut Option<super::AudienceContent88>,
                 value: super::AudienceContent88,
             ) -> Result<(), Error> {
@@ -169552,7 +169549,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_88<'de>(
+            fn handle_content88<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AudienceContent88>,
@@ -169575,12 +169572,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_88(&mut values, data)?;
+                    Self::store_content88(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_88(&mut values, data)?;
+                        Self::store_content88(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content88(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -169675,7 +169672,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content88(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_88(helper, values, fallback, output)? {
+                            match self.handle_content88(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -169715,7 +169712,7 @@ pub mod onix {
                             let output = <super::AudienceContent88 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_88(helper, values, fallback, output)? {
+                            match self.handle_content88(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -173542,7 +173539,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::CitedContent104 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_104(helper, Default::default(), None, output)? {
+                        match self.handle_content104(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -173555,7 +173552,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::CitedContent105 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_105(helper, Default::default(), None, output)? {
+                        match self.handle_content105(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -173568,7 +173565,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::CitedContent106 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_107(helper, Default::default(), None, output)? {
+                        match self.handle_content107(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -173595,7 +173592,7 @@ pub mod onix {
                     S::Content104(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_104(&mut values, value)?;
+                            Self::store_content104(&mut values, value)?;
                         }
                         Ok(super::CitedContent103::Content104(
                             helper.finish_element("Content104", values)?,
@@ -173604,7 +173601,7 @@ pub mod onix {
                     S::Content105(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_105(&mut values, value)?;
+                            Self::store_content105(&mut values, value)?;
                         }
                         Ok(super::CitedContent103::Content105(
                             helper.finish_element("Content105", values)?,
@@ -173613,7 +173610,7 @@ pub mod onix {
                     S::Content107(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_107(&mut values, value)?;
+                            Self::store_content107(&mut values, value)?;
                         }
                         Ok(super::CitedContent103::Content107(
                             helper.finish_element("Content107", values)?,
@@ -173623,7 +173620,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_104(
+            fn store_content104(
                 values: &mut Option<super::CitedContent104>,
                 value: super::CitedContent104,
             ) -> Result<(), Error> {
@@ -173635,7 +173632,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_105(
+            fn store_content105(
                 values: &mut Option<super::CitedContent105>,
                 value: super::CitedContent105,
             ) -> Result<(), Error> {
@@ -173647,7 +173644,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_107(
+            fn store_content107(
                 values: &mut Option<super::CitedContent106>,
                 value: super::CitedContent106,
             ) -> Result<(), Error> {
@@ -173659,7 +173656,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_104<'de>(
+            fn handle_content104<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CitedContent104>,
@@ -173682,12 +173679,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_104(&mut values, data)?;
+                    Self::store_content104(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_104(&mut values, data)?;
+                        Self::store_content104(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content104(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -173698,7 +173695,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_105<'de>(
+            fn handle_content105<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CitedContent105>,
@@ -173721,12 +173718,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_105(&mut values, data)?;
+                    Self::store_content105(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_105(&mut values, data)?;
+                        Self::store_content105(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content105(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -173737,7 +173734,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_107<'de>(
+            fn handle_content107<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CitedContent106>,
@@ -173760,12 +173757,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_107(&mut values, data)?;
+                    Self::store_content107(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_107(&mut values, data)?;
+                        Self::store_content107(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content107(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -173809,7 +173806,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content104(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_104(helper, values, fallback, output)? {
+                            match self.handle_content104(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -173818,7 +173815,7 @@ pub mod onix {
                         }
                         (S::Content105(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_105(helper, values, fallback, output)? {
+                            match self.handle_content105(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -173827,7 +173824,7 @@ pub mod onix {
                         }
                         (S::Content107(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_107(helper, values, fallback, output)? {
+                            match self.handle_content107(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -173855,7 +173852,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::CitedContent104 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_104(helper, values, fallback, output)? {
+                            match self.handle_content104(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -173868,7 +173865,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::CitedContent105 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_105(helper, values, fallback, output)? {
+                            match self.handle_content105(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -173881,7 +173878,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::CitedContent106 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_107(helper, values, fallback, output)? {
+                            match self.handle_content107(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -177796,7 +177793,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct PromotionalEventContent257Deserializer {
-            content_258: Option<super::PromotionalEventContent258>,
+            content258: Option<super::PromotionalEventContent258>,
             contributor_statement: Vec<super::ContributorStatementElementType>,
             state__: Box<PromotionalEventContent257DeserializerState>,
         }
@@ -177821,7 +177818,7 @@ pub mod onix {
                 use PromotionalEventContent257DeserializerState as S;
                 match state {
                     S::Content258(Some(deserializer)) => {
-                        self.store_content_258(deserializer.finish(helper)?)?
+                        self.store_content258(deserializer.finish(helper)?)?
                     }
                     S::ContributorStatement(Some(deserializer)) => {
                         self.store_contributor_statement(deserializer.finish(helper)?)?
@@ -177830,16 +177827,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_258(
+            fn store_content258(
                 &mut self,
                 value: super::PromotionalEventContent258,
             ) -> Result<(), Error> {
-                if self.content_258.is_some() {
+                if self.content258.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content258",
                     )))?;
                 }
-                self.content_258 = Some(value);
+                self.content258 = Some(value);
                 Ok(())
             }
             fn store_contributor_statement(
@@ -177849,7 +177846,7 @@ pub mod onix {
                 self.contributor_statement.push(value);
                 Ok(())
             }
-            fn handle_content_258<'de>(
+            fn handle_content258<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PromotionalEventContent258>,
@@ -177875,7 +177872,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_258(data)?;
+                        self.store_content258(data)?;
                         *self.state__ = S::ContributorStatement(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -177928,7 +177925,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::PromotionalEventContent257> {
                 let deserializer = Self {
-                    content_258: None,
+                    content258: None,
                     contributor_statement: Vec::new(),
                     state__: Box::new(PromotionalEventContent257DeserializerState::Init__),
                 };
@@ -177961,7 +177958,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content258(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_258(helper, output, &mut fallback)? {
+                            match self.handle_content258(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -178007,7 +178004,7 @@ pub mod onix {
                                 <super::PromotionalEventContent258 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_258(helper, output, &mut fallback)? {
+                            match self.handle_content258(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -178070,7 +178067,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::PromotionalEventContent257 {
-                    content_258: helper.finish_element("Content258", self.content_258)?,
+                    content258: helper.finish_element("Content258", self.content258)?,
                     contributor_statement: self.contributor_statement,
                 })
             }
@@ -178398,10 +178395,10 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct EventOccurrenceContent173Deserializer {
-            content_174: Option<super::EventOccurrenceContent174>,
+            content174: Option<super::EventOccurrenceContent174>,
             location_name: Vec<super::LocationNameElementType>,
             venue_name: Option<super::VenueNameElementType>,
-            content_176: Option<super::EventOccurrenceContent176>,
+            content176: Option<super::EventOccurrenceContent176>,
             venue_note: Vec<super::VenueNoteElementType>,
             state__: Box<EventOccurrenceContent173DeserializerState>,
         }
@@ -178431,7 +178428,7 @@ pub mod onix {
                 use EventOccurrenceContent173DeserializerState as S;
                 match state {
                     S::Content174(Some(deserializer)) => {
-                        self.store_content_174(deserializer.finish(helper)?)?
+                        self.store_content174(deserializer.finish(helper)?)?
                     }
                     S::LocationName(Some(deserializer)) => {
                         self.store_location_name(deserializer.finish(helper)?)?
@@ -178440,7 +178437,7 @@ pub mod onix {
                         self.store_venue_name(deserializer.finish(helper)?)?
                     }
                     S::Content176(Some(deserializer)) => {
-                        self.store_content_176(deserializer.finish(helper)?)?
+                        self.store_content176(deserializer.finish(helper)?)?
                     }
                     S::VenueNote(Some(deserializer)) => {
                         self.store_venue_note(deserializer.finish(helper)?)?
@@ -178449,16 +178446,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_174(
+            fn store_content174(
                 &mut self,
                 value: super::EventOccurrenceContent174,
             ) -> Result<(), Error> {
-                if self.content_174.is_some() {
+                if self.content174.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content174",
                     )))?;
                 }
-                self.content_174 = Some(value);
+                self.content174 = Some(value);
                 Ok(())
             }
             fn store_location_name(
@@ -178480,16 +178477,16 @@ pub mod onix {
                 self.venue_name = Some(value);
                 Ok(())
             }
-            fn store_content_176(
+            fn store_content176(
                 &mut self,
                 value: super::EventOccurrenceContent176,
             ) -> Result<(), Error> {
-                if self.content_176.is_some() {
+                if self.content176.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content176",
                     )))?;
                 }
-                self.content_176 = Some(value);
+                self.content176 = Some(value);
                 Ok(())
             }
             fn store_venue_note(
@@ -178499,7 +178496,7 @@ pub mod onix {
                 self.venue_note.push(value);
                 Ok(())
             }
-            fn handle_content_174<'de>(
+            fn handle_content174<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::EventOccurrenceContent174>,
@@ -178525,7 +178522,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_174(data)?;
+                        self.store_content174(data)?;
                         *self.state__ = S::LocationName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -178617,7 +178614,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_176<'de>(
+            fn handle_content176<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::EventOccurrenceContent176>,
@@ -178639,7 +178636,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_176(data)?;
+                        self.store_content176(data)?;
                         *self.state__ = S::VenueNote(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -178692,10 +178689,10 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::EventOccurrenceContent173> {
                 let deserializer = Self {
-                    content_174: None,
+                    content174: None,
                     location_name: Vec::new(),
                     venue_name: None,
-                    content_176: None,
+                    content176: None,
                     venue_note: Vec::new(),
                     state__: Box::new(EventOccurrenceContent173DeserializerState::Init__),
                 };
@@ -178728,7 +178725,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content174(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_174(helper, output, &mut fallback)? {
+                            match self.handle_content174(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -178764,7 +178761,7 @@ pub mod onix {
                         }
                         (S::Content176(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_176(helper, output, &mut fallback)? {
+                            match self.handle_content176(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -178806,7 +178803,7 @@ pub mod onix {
                                 <super::EventOccurrenceContent174 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_174(helper, output, &mut fallback)? {
+                            match self.handle_content174(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -178855,7 +178852,7 @@ pub mod onix {
                                 <super::EventOccurrenceContent176 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_176(helper, output, &mut fallback)? {
+                            match self.handle_content176(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -178911,10 +178908,10 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::EventOccurrenceContent173 {
-                    content_174: helper.finish_element("Content174", self.content_174)?,
+                    content174: helper.finish_element("Content174", self.content174)?,
                     location_name: helper.finish_vec(1usize, None, self.location_name)?,
                     venue_name: helper.finish_element("VenueName", self.venue_name)?,
-                    content_176: self.content_176,
+                    content176: self.content176,
                     venue_note: self.venue_note,
                 })
             }
@@ -178922,7 +178919,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct EventSponsorContent178Deserializer {
             event_sponsor_identifier: Vec<super::EventSponsorIdentifierElementType>,
-            content_179: Option<super::CopyrightOwnerContent143>,
+            content179: Option<super::CopyrightOwnerContent143>,
             state__: Box<EventSponsorContent178DeserializerState>,
         }
         #[derive(Debug)]
@@ -178949,7 +178946,7 @@ pub mod onix {
                         self.store_event_sponsor_identifier(deserializer.finish(helper)?)?
                     }
                     S::Content179(Some(deserializer)) => {
-                        self.store_content_179(deserializer.finish(helper)?)?
+                        self.store_content179(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -178962,16 +178959,16 @@ pub mod onix {
                 self.event_sponsor_identifier.push(value);
                 Ok(())
             }
-            fn store_content_179(
+            fn store_content179(
                 &mut self,
                 value: super::CopyrightOwnerContent143,
             ) -> Result<(), Error> {
-                if self.content_179.is_some() {
+                if self.content179.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content179",
                     )))?;
                 }
-                self.content_179 = Some(value);
+                self.content179 = Some(value);
                 Ok(())
             }
             fn handle_event_sponsor_identifier<'de>(
@@ -179018,7 +179015,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_179<'de>(
+            fn handle_content179<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CopyrightOwnerContent143>,
@@ -179040,7 +179037,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_179(data)?;
+                        self.store_content179(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -179059,7 +179056,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::EventSponsorContent178> {
                 let deserializer = Self {
                     event_sponsor_identifier: Vec::new(),
-                    content_179: None,
+                    content179: None,
                     state__: Box::new(EventSponsorContent178DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -179107,7 +179104,7 @@ pub mod onix {
                         }
                         (S::Content179(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_179(helper, output, &mut fallback)? {
+                            match self.handle_content179(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -179161,7 +179158,7 @@ pub mod onix {
                                 <super::CopyrightOwnerContent143 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_179(helper, output, &mut fallback)? {
+                            match self.handle_content179(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -179205,7 +179202,7 @@ pub mod onix {
                         None,
                         self.event_sponsor_identifier,
                     )?,
-                    content_179: self.content_179,
+                    content179: self.content179,
                 })
             }
         }
@@ -181972,7 +181969,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::PublisherContent264 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_264(helper, Default::default(), None, output)? {
+                        match self.handle_content264(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -181999,7 +181996,7 @@ pub mod onix {
                     S::Content264(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_264(&mut values, value)?;
+                            Self::store_content264(&mut values, value)?;
                         }
                         Ok(super::PublisherContent263::Content264(
                             helper.finish_element("Content264", values)?,
@@ -182018,7 +182015,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_264(
+            fn store_content264(
                 values: &mut Option<super::PublisherContent264>,
                 value: super::PublisherContent264,
             ) -> Result<(), Error> {
@@ -182037,7 +182034,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_264<'de>(
+            fn handle_content264<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PublisherContent264>,
@@ -182060,12 +182057,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_264(&mut values, data)?;
+                    Self::store_content264(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_264(&mut values, data)?;
+                        Self::store_content264(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content264(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -182158,7 +182155,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content264(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_264(helper, values, fallback, output)? {
+                            match self.handle_content264(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -182196,7 +182193,7 @@ pub mod onix {
                             let output = <super::PublisherContent264 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_264(helper, values, fallback, output)? {
+                            match self.handle_content264(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -182498,7 +182495,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             copyright_type: Option<super::CopyrightTypeElementType>,
-            content_146: Option<super::CopyrightStatementContent146>,
+            content146: Option<super::CopyrightStatementContent146>,
             state__: Box<CopyrightStatementElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -182561,7 +182558,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     copyright_type: None,
-                    content_146: None,
+                    content146: None,
                     state__: Box::new(CopyrightStatementElementTypeDeserializerState::Init__),
                 })
             }
@@ -182576,7 +182573,7 @@ pub mod onix {
                         self.store_copyright_type(deserializer.finish(helper)?)?
                     }
                     S::Content146(Some(deserializer)) => {
-                        self.store_content_146(deserializer.finish(helper)?)?
+                        self.store_content146(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -182594,16 +182591,16 @@ pub mod onix {
                 self.copyright_type = Some(value);
                 Ok(())
             }
-            fn store_content_146(
+            fn store_content146(
                 &mut self,
                 value: super::CopyrightStatementContent146,
             ) -> Result<(), Error> {
-                if self.content_146.is_some() {
+                if self.content146.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content146",
                     )))?;
                 }
-                self.content_146 = Some(value);
+                self.content146 = Some(value);
                 Ok(())
             }
             fn handle_copyright_type<'de>(
@@ -182639,7 +182636,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_146<'de>(
+            fn handle_content146<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CopyrightStatementContent146>,
@@ -182665,7 +182662,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_146(data)?;
+                        self.store_content146(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -182713,7 +182710,7 @@ pub mod onix {
                         }
                         (S::Content146(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_146(helper, output, &mut fallback)? {
+                            match self.handle_content146(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -182760,7 +182757,7 @@ pub mod onix {
                                 <super::CopyrightStatementContent146 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_146(helper, output, &mut fallback)? {
+                            match self.handle_content146(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -182806,7 +182803,7 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     copyright_type: self.copyright_type,
-                    content_146: helper.finish_element("Content146", self.content_146)?,
+                    content146: helper.finish_element("Content146", self.content146)?,
                 })
             }
         }
@@ -183514,7 +183511,7 @@ pub mod onix {
                         let output = <super::ProductContactContent241 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_241(helper, Default::default(), None, output)? {
+                        match self.handle_content241(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -183541,7 +183538,7 @@ pub mod onix {
                     S::Content241(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_241(&mut values, value)?;
+                            Self::store_content241(&mut values, value)?;
                         }
                         Ok(super::ProductContactContent240::Content241(
                             helper.finish_element("Content241", values)?,
@@ -183560,7 +183557,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_241(
+            fn store_content241(
                 values: &mut Option<super::ProductContactContent241>,
                 value: super::ProductContactContent241,
             ) -> Result<(), Error> {
@@ -183584,7 +183581,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_241<'de>(
+            fn handle_content241<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ProductContactContent241>,
@@ -183609,12 +183606,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_241(&mut values, data)?;
+                    Self::store_content241(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_241(&mut values, data)?;
+                        Self::store_content241(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content241(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -183700,7 +183697,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content241(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_241(helper, values, fallback, output)? {
+                            match self.handle_content241(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -183741,7 +183738,7 @@ pub mod onix {
                                 <super::ProductContactContent241 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_241(helper, values, fallback, output)? {
+                            match self.handle_content241(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -186628,7 +186625,7 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             sequence_number: Option<super::SequenceNumberElementType>,
             sales_outlet: Vec<super::SalesOutletElementType>,
-            content_151: Option<super::CoverResourceContent151>,
+            content151: Option<super::CoverResourceContent151>,
             state__: Box<CoverResourceElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -186691,7 +186688,7 @@ pub mod onix {
                     sourcetype: sourcetype,
                     sequence_number: None,
                     sales_outlet: Vec::new(),
-                    content_151: None,
+                    content151: None,
                     state__: Box::new(CoverResourceElementTypeDeserializerState::Init__),
                 })
             }
@@ -186709,7 +186706,7 @@ pub mod onix {
                         self.store_sales_outlet(deserializer.finish(helper)?)?
                     }
                     S::Content151(Some(deserializer)) => {
-                        self.store_content_151(deserializer.finish(helper)?)?
+                        self.store_content151(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -186734,16 +186731,16 @@ pub mod onix {
                 self.sales_outlet.push(value);
                 Ok(())
             }
-            fn store_content_151(
+            fn store_content151(
                 &mut self,
                 value: super::CoverResourceContent151,
             ) -> Result<(), Error> {
-                if self.content_151.is_some() {
+                if self.content151.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content151",
                     )))?;
                 }
-                self.content_151 = Some(value);
+                self.content151 = Some(value);
                 Ok(())
             }
             fn handle_sequence_number<'de>(
@@ -186812,7 +186809,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_151<'de>(
+            fn handle_content151<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CoverResourceContent151>,
@@ -186838,7 +186835,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_151(data)?;
+                        self.store_content151(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -186898,7 +186895,7 @@ pub mod onix {
                         }
                         (S::Content151(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_151(helper, output, &mut fallback)? {
+                            match self.handle_content151(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -186962,7 +186959,7 @@ pub mod onix {
                                 <super::CoverResourceContent151 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_151(helper, output, &mut fallback)? {
+                            match self.handle_content151(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -187009,7 +187006,7 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     sequence_number: self.sequence_number,
                     sales_outlet: self.sales_outlet,
-                    content_151: helper.finish_element("Content151", self.content_151)?,
+                    content151: helper.finish_element("Content151", self.content151)?,
                 })
             }
         }
@@ -187685,7 +187682,7 @@ pub mod onix {
             sourcetype: Option<super::List3>,
             sequence_number: Option<super::SequenceNumberElementType>,
             sales_outlet: Vec<super::SalesOutletElementType>,
-            content_196: Option<super::CoverResourceContent151>,
+            content196: Option<super::CoverResourceContent151>,
             state__: Box<InsertResourceElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -187748,7 +187745,7 @@ pub mod onix {
                     sourcetype: sourcetype,
                     sequence_number: None,
                     sales_outlet: Vec::new(),
-                    content_196: None,
+                    content196: None,
                     state__: Box::new(InsertResourceElementTypeDeserializerState::Init__),
                 })
             }
@@ -187766,7 +187763,7 @@ pub mod onix {
                         self.store_sales_outlet(deserializer.finish(helper)?)?
                     }
                     S::Content196(Some(deserializer)) => {
-                        self.store_content_196(deserializer.finish(helper)?)?
+                        self.store_content196(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -187791,16 +187788,16 @@ pub mod onix {
                 self.sales_outlet.push(value);
                 Ok(())
             }
-            fn store_content_196(
+            fn store_content196(
                 &mut self,
                 value: super::CoverResourceContent151,
             ) -> Result<(), Error> {
-                if self.content_196.is_some() {
+                if self.content196.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content196",
                     )))?;
                 }
-                self.content_196 = Some(value);
+                self.content196 = Some(value);
                 Ok(())
             }
             fn handle_sequence_number<'de>(
@@ -187869,7 +187866,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_196<'de>(
+            fn handle_content196<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CoverResourceContent151>,
@@ -187895,7 +187892,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_196(data)?;
+                        self.store_content196(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -187955,7 +187952,7 @@ pub mod onix {
                         }
                         (S::Content196(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_196(helper, output, &mut fallback)? {
+                            match self.handle_content196(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -188019,7 +188016,7 @@ pub mod onix {
                                 <super::CoverResourceContent151 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_196(helper, output, &mut fallback)? {
+                            match self.handle_content196(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -188066,7 +188063,7 @@ pub mod onix {
                     sourcetype: self.sourcetype,
                     sequence_number: self.sequence_number,
                     sales_outlet: self.sales_outlet,
-                    content_196: helper.finish_element("Content196", self.content_196)?,
+                    content196: helper.finish_element("Content196", self.content196)?,
                 })
             }
         }
@@ -188077,7 +188074,7 @@ pub mod onix {
             datestamp: Option<String>,
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
-            content_295: Option<super::SalesOutletContent295>,
+            content295: Option<super::SalesOutletContent295>,
             state__: Box<SalesOutletElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -188134,7 +188131,7 @@ pub mod onix {
                     datestamp: datestamp,
                     sourcename: sourcename,
                     sourcetype: sourcetype,
-                    content_295: None,
+                    content295: None,
                     state__: Box::new(SalesOutletElementTypeDeserializerState::Init__),
                 })
             }
@@ -188146,25 +188143,25 @@ pub mod onix {
                 use SalesOutletElementTypeDeserializerState as S;
                 match state {
                     S::Content295(Some(deserializer)) => {
-                        self.store_content_295(deserializer.finish(helper)?)?
+                        self.store_content295(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_295(
+            fn store_content295(
                 &mut self,
                 value: super::SalesOutletContent295,
             ) -> Result<(), Error> {
-                if self.content_295.is_some() {
+                if self.content295.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content295",
                     )))?;
                 }
-                self.content_295 = Some(value);
+                self.content295 = Some(value);
                 Ok(())
             }
-            fn handle_content_295<'de>(
+            fn handle_content295<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::SalesOutletContent295>,
@@ -188190,7 +188187,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_295(data)?;
+                        self.store_content295(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -188224,7 +188221,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content295(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_295(helper, output, &mut fallback)? {
+                            match self.handle_content295(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -188253,7 +188250,7 @@ pub mod onix {
                             let output = <super::SalesOutletContent295 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_295(helper, output, &mut fallback)? {
+                            match self.handle_content295(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -188298,7 +188295,7 @@ pub mod onix {
                     datestamp: self.datestamp,
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
-                    content_295: helper.finish_element("Content295", self.content_295)?,
+                    content295: helper.finish_element("Content295", self.content295)?,
                 })
             }
         }
@@ -188345,7 +188342,7 @@ pub mod onix {
                             <super::SupplementManifestContent320 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                        match self.handle_content_320(helper, Default::default(), None, output)? {
+                        match self.handle_content320(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -188372,7 +188369,7 @@ pub mod onix {
                     S::Content320(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_320(&mut values, value)?;
+                            Self::store_content320(&mut values, value)?;
                         }
                         Ok(super::SupplementManifestContent319::Content320(
                             helper.finish_element("Content320", values)?,
@@ -188391,7 +188388,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_320(
+            fn store_content320(
                 values: &mut Option<super::SupplementManifestContent320>,
                 value: super::SupplementManifestContent320,
             ) -> Result<(), Error> {
@@ -188415,7 +188412,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_320<'de>(
+            fn handle_content320<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SupplementManifestContent320>,
@@ -188440,12 +188437,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_320(&mut values, data)?;
+                    Self::store_content320(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_320(&mut values, data)?;
+                        Self::store_content320(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content320(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -188530,7 +188527,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content320(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_320(helper, values, fallback, output)? {
+                            match self.handle_content320(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -188569,7 +188566,7 @@ pub mod onix {
                                 <super::SupplementManifestContent320 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_320(helper, values, fallback, output)? {
+                            match self.handle_content320(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -190311,7 +190308,7 @@ pub mod onix {
                             <super::PublisherRepresentativeContent268 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                        match self.handle_content_268(helper, Default::default(), None, output)? {
+                        match self.handle_content268(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -190338,7 +190335,7 @@ pub mod onix {
                     S::Content268(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_268(&mut values, value)?;
+                            Self::store_content268(&mut values, value)?;
                         }
                         Ok(super::PublisherRepresentativeContent267::Content268(
                             helper.finish_element("Content268", values)?,
@@ -190357,7 +190354,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_268(
+            fn store_content268(
                 values: &mut Option<super::PublisherRepresentativeContent268>,
                 value: super::PublisherRepresentativeContent268,
             ) -> Result<(), Error> {
@@ -190381,7 +190378,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_268<'de>(
+            fn handle_content268<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PublisherRepresentativeContent268>,
@@ -190406,12 +190403,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_268(&mut values, data)?;
+                    Self::store_content268(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_268(&mut values, data)?;
+                        Self::store_content268(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content268(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -190494,7 +190491,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content268(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_268(helper, values, fallback, output)? {
+                            match self.handle_content268(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -190530,7 +190527,7 @@ pub mod onix {
                             event @ (Event::Start(_) | Event::Empty(_)),
                         ) => {
                             let output = < super :: PublisherRepresentativeContent268 as WithDeserializer > :: init (helper , event) ? ;
-                            match self.handle_content_268(helper, values, fallback, output)? {
+                            match self.handle_content268(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -190972,7 +190969,7 @@ pub mod onix {
                         let output = <super::NewSupplierContent216 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_323(helper, Default::default(), None, output)? {
+                        match self.handle_content323(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -190999,7 +190996,7 @@ pub mod onix {
                     S::Content323(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_323(&mut values, value)?;
+                            Self::store_content323(&mut values, value)?;
                         }
                         Ok(super::SupplierContent322::Content323(
                             helper.finish_element("Content323", values)?,
@@ -191018,7 +191015,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_323(
+            fn store_content323(
                 values: &mut Option<super::NewSupplierContent216>,
                 value: super::NewSupplierContent216,
             ) -> Result<(), Error> {
@@ -191042,7 +191039,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_323<'de>(
+            fn handle_content323<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::NewSupplierContent216>,
@@ -191065,12 +191062,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_323(&mut values, data)?;
+                    Self::store_content323(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_323(&mut values, data)?;
+                        Self::store_content323(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content323(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -191150,7 +191147,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content323(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_323(helper, values, fallback, output)? {
+                            match self.handle_content323(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -191188,7 +191185,7 @@ pub mod onix {
                             let output = <super::NewSupplierContent216 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_323(helper, values, fallback, output)? {
+                            match self.handle_content323(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -191464,7 +191461,7 @@ pub mod onix {
                         let output = <super::SupplyContactContent328 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_328(helper, Default::default(), None, output)? {
+                        match self.handle_content328(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -191491,7 +191488,7 @@ pub mod onix {
                     S::Content328(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_328(&mut values, value)?;
+                            Self::store_content328(&mut values, value)?;
                         }
                         Ok(super::SupplyContactContent327::Content328(
                             helper.finish_element("Content328", values)?,
@@ -191510,7 +191507,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_328(
+            fn store_content328(
                 values: &mut Option<super::SupplyContactContent328>,
                 value: super::SupplyContactContent328,
             ) -> Result<(), Error> {
@@ -191534,7 +191531,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_328<'de>(
+            fn handle_content328<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SupplyContactContent328>,
@@ -191559,12 +191556,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_328(&mut values, data)?;
+                    Self::store_content328(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_328(&mut values, data)?;
+                        Self::store_content328(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content328(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -191650,7 +191647,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content328(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_328(helper, values, fallback, output)? {
+                            match self.handle_content328(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -191691,7 +191688,7 @@ pub mod onix {
                                 <super::SupplyContactContent328 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_328(helper, values, fallback, output)? {
+                            match self.handle_content328(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -193210,7 +193207,7 @@ pub mod onix {
                         let output = <super::NewSupplierContent216 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_216(helper, Default::default(), None, output)? {
+                        match self.handle_content216(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -193237,7 +193234,7 @@ pub mod onix {
                     S::Content216(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_216(&mut values, value)?;
+                            Self::store_content216(&mut values, value)?;
                         }
                         Ok(super::NewSupplierContent215::Content216(
                             helper.finish_element("Content216", values)?,
@@ -193256,7 +193253,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_216(
+            fn store_content216(
                 values: &mut Option<super::NewSupplierContent216>,
                 value: super::NewSupplierContent216,
             ) -> Result<(), Error> {
@@ -193280,7 +193277,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_216<'de>(
+            fn handle_content216<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::NewSupplierContent216>,
@@ -193303,12 +193300,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_216(&mut values, data)?;
+                    Self::store_content216(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_216(&mut values, data)?;
+                        Self::store_content216(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content216(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -193391,7 +193388,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content216(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_216(helper, values, fallback, output)? {
+                            match self.handle_content216(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -193429,7 +193426,7 @@ pub mod onix {
                             let output = <super::NewSupplierContent216 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_216(helper, values, fallback, output)? {
+                            match self.handle_content216(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -194114,7 +194111,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::StockContent309 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_309(helper, Default::default(), None, output)? {
+                        match self.handle_content309(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -194150,7 +194147,7 @@ pub mod onix {
                     S::Content309(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_309(&mut values, value)?;
+                            Self::store_content309(&mut values, value)?;
                         }
                         Ok(super::StockContent308::Content309(
                             helper.finish_element("Content309", values)?,
@@ -194167,7 +194164,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn store_content_309(
+            fn store_content309(
                 values: &mut Option<super::StockContent309>,
                 value: super::StockContent309,
             ) -> Result<(), Error> {
@@ -194228,7 +194225,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_309<'de>(
+            fn handle_content309<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::StockContent309>,
@@ -194251,12 +194248,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_309(&mut values, data)?;
+                    Self::store_content309(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_309(&mut values, data)?;
+                        Self::store_content309(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content309(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -194311,7 +194308,7 @@ pub mod onix {
                         }
                         (S::Content309(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_309(helper, values, fallback, output)? {
+                            match self.handle_content309(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -194358,7 +194355,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::StockContent309 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_309(helper, values, fallback, output)? {
+                            match self.handle_content309(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -195734,12 +195731,12 @@ pub mod onix {
             discount_coded: Vec<super::DiscountCodedElementType>,
             discount: Vec<super::DiscountElementType>,
             price_status: Option<super::PriceStatusElementType>,
-            content_221: Option<super::PriceContent221>,
+            content221: Option<super::PriceContent221>,
             currency_code: Option<super::CurrencyCodeElementType>,
             territory: Option<super::TerritoryElementType>,
             comparison_product_price: Vec<super::ComparisonProductPriceElementType>,
             price_date: Vec<super::PriceDateElementType>,
-            content_225: Option<super::PriceContent225>,
+            content225: Option<super::PriceContent225>,
             state__: Box<PriceElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -195853,12 +195850,12 @@ pub mod onix {
                     discount_coded: Vec::new(),
                     discount: Vec::new(),
                     price_status: None,
-                    content_221: None,
+                    content221: None,
                     currency_code: None,
                     territory: None,
                     comparison_product_price: Vec::new(),
                     price_date: Vec::new(),
-                    content_225: None,
+                    content225: None,
                     state__: Box::new(PriceElementTypeDeserializerState::Init__),
                 })
             }
@@ -195912,7 +195909,7 @@ pub mod onix {
                         self.store_price_status(deserializer.finish(helper)?)?
                     }
                     S::Content221(Some(deserializer)) => {
-                        self.store_content_221(deserializer.finish(helper)?)?
+                        self.store_content221(deserializer.finish(helper)?)?
                     }
                     S::CurrencyCode(Some(deserializer)) => {
                         self.store_currency_code(deserializer.finish(helper)?)?
@@ -195927,7 +195924,7 @@ pub mod onix {
                         self.store_price_date(deserializer.finish(helper)?)?
                     }
                     S::Content225(Some(deserializer)) => {
-                        self.store_content_225(deserializer.finish(helper)?)?
+                        self.store_content225(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -196052,13 +196049,13 @@ pub mod onix {
                 self.price_status = Some(value);
                 Ok(())
             }
-            fn store_content_221(&mut self, value: super::PriceContent221) -> Result<(), Error> {
-                if self.content_221.is_some() {
+            fn store_content221(&mut self, value: super::PriceContent221) -> Result<(), Error> {
+                if self.content221.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content221",
                     )))?;
                 }
-                self.content_221 = Some(value);
+                self.content221 = Some(value);
                 Ok(())
             }
             fn store_currency_code(
@@ -196096,13 +196093,13 @@ pub mod onix {
                 self.price_date.push(value);
                 Ok(())
             }
-            fn store_content_225(&mut self, value: super::PriceContent225) -> Result<(), Error> {
-                if self.content_225.is_some() {
+            fn store_content225(&mut self, value: super::PriceContent225) -> Result<(), Error> {
+                if self.content225.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content225",
                     )))?;
                 }
-                self.content_225 = Some(value);
+                self.content225 = Some(value);
                 Ok(())
             }
             fn handle_price_identifier<'de>(
@@ -196567,7 +196564,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_221<'de>(
+            fn handle_content221<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PriceContent221>,
@@ -196593,7 +196590,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_221(data)?;
+                        self.store_content221(data)?;
                         *self.state__ = S::CurrencyCode(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -196736,7 +196733,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_225<'de>(
+            fn handle_content225<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PriceContent225>,
@@ -196758,7 +196755,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_225(data)?;
+                        self.store_content225(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -196972,7 +196969,7 @@ pub mod onix {
                         }
                         (S::Content221(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_221(helper, output, &mut fallback)? {
+                            match self.handle_content221(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -197036,7 +197033,7 @@ pub mod onix {
                         }
                         (S::Content225(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_225(helper, output, &mut fallback)? {
+                            match self.handle_content225(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -197323,7 +197320,7 @@ pub mod onix {
                         (S::Content221(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::PriceContent221 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_221(helper, output, &mut fallback)? {
+                            match self.handle_content221(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -197411,7 +197408,7 @@ pub mod onix {
                         (S::Content225(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::PriceContent225 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_225(helper, output, &mut fallback)? {
+                            match self.handle_content225(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -197470,12 +197467,12 @@ pub mod onix {
                     discount_coded: self.discount_coded,
                     discount: self.discount,
                     price_status: self.price_status,
-                    content_221: helper.finish_element("Content221", self.content_221)?,
+                    content221: helper.finish_element("Content221", self.content221)?,
                     currency_code: self.currency_code,
                     territory: self.territory,
                     comparison_product_price: self.comparison_product_price,
                     price_date: self.price_date,
-                    content_225: self.content_225,
+                    content225: self.content225,
                 })
             }
         }
@@ -200519,7 +200516,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::CollectionContent110 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_110(helper, Default::default(), None, output)? {
+                        match self.handle_content110(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -200546,7 +200543,7 @@ pub mod onix {
                     S::Content110(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_110(&mut values, value)?;
+                            Self::store_content110(&mut values, value)?;
                         }
                         Ok(super::CollectionGpAuthorship::Content110(
                             helper.finish_element("Content110", values)?,
@@ -200563,7 +200560,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_110(
+            fn store_content110(
                 values: &mut Option<super::CollectionContent110>,
                 value: super::CollectionContent110,
             ) -> Result<(), Error> {
@@ -200587,7 +200584,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_110<'de>(
+            fn handle_content110<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CollectionContent110>,
@@ -200610,12 +200607,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_110(&mut values, data)?;
+                    Self::store_content110(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_110(&mut values, data)?;
+                        Self::store_content110(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content110(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -200699,7 +200696,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content110(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_110(helper, values, fallback, output)? {
+                            match self.handle_content110(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -200737,7 +200734,7 @@ pub mod onix {
                             let output = <super::CollectionContent110 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_110(helper, values, fallback, output)? {
+                            match self.handle_content110(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -201016,7 +201013,7 @@ pub mod onix {
                         let output = <super::TitleElementContent352 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_352(helper, Default::default(), None, output)? {
+                        match self.handle_content352(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -201030,7 +201027,7 @@ pub mod onix {
                         let output = <super::TitleElementContent356 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_356(helper, Default::default(), None, output)? {
+                        match self.handle_content356(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -201044,7 +201041,7 @@ pub mod onix {
                         let output = <super::TitleElementContent360 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_360(helper, Default::default(), None, output)? {
+                        match self.handle_content360(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -201071,7 +201068,7 @@ pub mod onix {
                     S::Content352(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_352(&mut values, value)?;
+                            Self::store_content352(&mut values, value)?;
                         }
                         Ok(super::TitleElementContent351::Content352(
                             helper.finish_element("Content352", values)?,
@@ -201080,7 +201077,7 @@ pub mod onix {
                     S::Content356(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_356(&mut values, value)?;
+                            Self::store_content356(&mut values, value)?;
                         }
                         Ok(super::TitleElementContent351::Content356(
                             helper.finish_element("Content356", values)?,
@@ -201089,7 +201086,7 @@ pub mod onix {
                     S::Content360(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_360(&mut values, value)?;
+                            Self::store_content360(&mut values, value)?;
                         }
                         Ok(super::TitleElementContent351::Content360(
                             helper.finish_element("Content360", values)?,
@@ -201108,7 +201105,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_352(
+            fn store_content352(
                 values: &mut Option<super::TitleElementContent352>,
                 value: super::TitleElementContent352,
             ) -> Result<(), Error> {
@@ -201120,7 +201117,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_356(
+            fn store_content356(
                 values: &mut Option<super::TitleElementContent356>,
                 value: super::TitleElementContent356,
             ) -> Result<(), Error> {
@@ -201132,7 +201129,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_360(
+            fn store_content360(
                 values: &mut Option<super::TitleElementContent360>,
                 value: super::TitleElementContent360,
             ) -> Result<(), Error> {
@@ -201156,7 +201153,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_352<'de>(
+            fn handle_content352<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TitleElementContent352>,
@@ -201179,12 +201176,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_352(&mut values, data)?;
+                    Self::store_content352(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_352(&mut values, data)?;
+                        Self::store_content352(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content352(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -201195,7 +201192,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_356<'de>(
+            fn handle_content356<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TitleElementContent356>,
@@ -201218,12 +201215,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_356(&mut values, data)?;
+                    Self::store_content356(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_356(&mut values, data)?;
+                        Self::store_content356(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content356(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -201234,7 +201231,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_360<'de>(
+            fn handle_content360<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TitleElementContent360>,
@@ -201257,12 +201254,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_360(&mut values, data)?;
+                    Self::store_content360(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_360(&mut values, data)?;
+                        Self::store_content360(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content360(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -201343,7 +201340,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content352(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_352(helper, values, fallback, output)? {
+                            match self.handle_content352(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -201352,7 +201349,7 @@ pub mod onix {
                         }
                         (S::Content356(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_356(helper, values, fallback, output)? {
+                            match self.handle_content356(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -201361,7 +201358,7 @@ pub mod onix {
                         }
                         (S::Content360(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_360(helper, values, fallback, output)? {
+                            match self.handle_content360(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -201399,7 +201396,7 @@ pub mod onix {
                             let output = <super::TitleElementContent352 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_352(helper, values, fallback, output)? {
+                            match self.handle_content352(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -201413,7 +201410,7 @@ pub mod onix {
                             let output = <super::TitleElementContent356 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_356(helper, values, fallback, output)? {
+                            match self.handle_content356(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -201427,7 +201424,7 @@ pub mod onix {
                             let output = <super::TitleElementContent360 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_360(helper, values, fallback, output)? {
+                            match self.handle_content360(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -202270,7 +202267,7 @@ pub mod onix {
                         let output = <super::ContributorContent126 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_126(helper, Default::default(), None, output)? {
+                        match self.handle_content126(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -202284,7 +202281,7 @@ pub mod onix {
                         let output = <super::ContributorContent128 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_132(helper, Default::default(), None, output)? {
+                        match self.handle_content132(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -202348,7 +202345,7 @@ pub mod onix {
                     S::Content126(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_126(&mut values, value)?;
+                            Self::store_content126(&mut values, value)?;
                         }
                         Ok(super::ContributorContent125::Content126(
                             helper.finish_element("Content126", values)?,
@@ -202357,7 +202354,7 @@ pub mod onix {
                     S::Content132(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_132(&mut values, value)?;
+                            Self::store_content132(&mut values, value)?;
                         }
                         Ok(super::ContributorContent125::Content132(
                             helper.finish_element("Content132", values)?,
@@ -202394,7 +202391,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_126(
+            fn store_content126(
                 values: &mut Option<super::ContributorContent126>,
                 value: super::ContributorContent126,
             ) -> Result<(), Error> {
@@ -202406,7 +202403,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_132(
+            fn store_content132(
                 values: &mut Option<super::ContributorContent128>,
                 value: super::ContributorContent128,
             ) -> Result<(), Error> {
@@ -202454,7 +202451,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_126<'de>(
+            fn handle_content126<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ContributorContent126>,
@@ -202477,12 +202474,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_126(&mut values, data)?;
+                    Self::store_content126(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_126(&mut values, data)?;
+                        Self::store_content126(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content126(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -202493,7 +202490,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_132<'de>(
+            fn handle_content132<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ContributorContent128>,
@@ -202516,12 +202513,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_132(&mut values, data)?;
+                    Self::store_content132(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_132(&mut values, data)?;
+                        Self::store_content132(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content132(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -202687,7 +202684,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content126(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_126(helper, values, fallback, output)? {
+                            match self.handle_content126(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -202696,7 +202693,7 @@ pub mod onix {
                         }
                         (S::Content132(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_132(helper, values, fallback, output)? {
+                            match self.handle_content132(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -202754,7 +202751,7 @@ pub mod onix {
                             let output = <super::ContributorContent126 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_126(helper, values, fallback, output)? {
+                            match self.handle_content126(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -202768,7 +202765,7 @@ pub mod onix {
                             let output = <super::ContributorContent128 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_132(helper, values, fallback, output)? {
+                            match self.handle_content132(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -203618,7 +203615,7 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             contributor_place_relator: Option<super::ContributorPlaceRelatorElementType>,
-            content_136: Option<super::ContributorPlaceContent136>,
+            content136: Option<super::ContributorPlaceContent136>,
             location_name: Vec<super::LocationNameElementType>,
             state__: Box<ContributorPlaceElementTypeDeserializerState>,
         }
@@ -203687,7 +203684,7 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     contributor_place_relator: None,
-                    content_136: None,
+                    content136: None,
                     location_name: Vec::new(),
                     state__: Box::new(ContributorPlaceElementTypeDeserializerState::Init__),
                 })
@@ -203703,7 +203700,7 @@ pub mod onix {
                         self.store_contributor_place_relator(deserializer.finish(helper)?)?
                     }
                     S::Content136(Some(deserializer)) => {
-                        self.store_content_136(deserializer.finish(helper)?)?
+                        self.store_content136(deserializer.finish(helper)?)?
                     }
                     S::LocationName(Some(deserializer)) => {
                         self.store_location_name(deserializer.finish(helper)?)?
@@ -203724,16 +203721,16 @@ pub mod onix {
                 self.contributor_place_relator = Some(value);
                 Ok(())
             }
-            fn store_content_136(
+            fn store_content136(
                 &mut self,
                 value: super::ContributorPlaceContent136,
             ) -> Result<(), Error> {
-                if self.content_136.is_some() {
+                if self.content136.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content136",
                     )))?;
                 }
-                self.content_136 = Some(value);
+                self.content136 = Some(value);
                 Ok(())
             }
             fn store_location_name(
@@ -203780,7 +203777,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_136<'de>(
+            fn handle_content136<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContributorPlaceContent136>,
@@ -203806,7 +203803,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_136(data)?;
+                        self.store_content136(data)?;
                         *self.state__ = S::LocationName(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -203891,7 +203888,7 @@ pub mod onix {
                         }
                         (S::Content136(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_136(helper, output, &mut fallback)? {
+                            match self.handle_content136(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -203957,7 +203954,7 @@ pub mod onix {
                                 <super::ContributorPlaceContent136 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_136(helper, output, &mut fallback)? {
+                            match self.handle_content136(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -204023,7 +204020,7 @@ pub mod onix {
                         "ContributorPlaceRelator",
                         self.contributor_place_relator,
                     )?,
-                    content_136: helper.finish_element("Content136", self.content_136)?,
+                    content136: helper.finish_element("Content136", self.content136)?,
                     location_name: self.location_name,
                 })
             }
@@ -209077,10 +209074,10 @@ pub mod onix {
             cellspacing: Option<String>,
             cellpadding: Option<String>,
             caption: Option<super::AbbrElementType>,
-            content_48: Option<super::TableContent48>,
+            content48: Option<super::TableContent48>,
             thead: Option<super::TbodyElementType>,
             tfoot: Option<super::TbodyElementType>,
-            content_49: Option<super::TableContent49>,
+            content49: Option<super::TableContent49>,
             state__: Box<TableElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -209198,10 +209195,10 @@ pub mod onix {
                     cellspacing: cellspacing,
                     cellpadding: cellpadding,
                     caption: None,
-                    content_48: None,
+                    content48: None,
                     thead: None,
                     tfoot: None,
-                    content_49: None,
+                    content49: None,
                     state__: Box::new(TableElementTypeDeserializerState::Init__),
                 })
             }
@@ -209216,7 +209213,7 @@ pub mod onix {
                         self.store_caption(deserializer.finish(helper)?)?
                     }
                     S::Content48(Some(deserializer)) => {
-                        self.store_content_48(deserializer.finish(helper)?)?
+                        self.store_content48(deserializer.finish(helper)?)?
                     }
                     S::Thead(Some(deserializer)) => {
                         self.store_thead(deserializer.finish(helper)?)?
@@ -209225,7 +209222,7 @@ pub mod onix {
                         self.store_tfoot(deserializer.finish(helper)?)?
                     }
                     S::Content49(Some(deserializer)) => {
-                        self.store_content_49(deserializer.finish(helper)?)?
+                        self.store_content49(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -209240,13 +209237,13 @@ pub mod onix {
                 self.caption = Some(value);
                 Ok(())
             }
-            fn store_content_48(&mut self, value: super::TableContent48) -> Result<(), Error> {
-                if self.content_48.is_some() {
+            fn store_content48(&mut self, value: super::TableContent48) -> Result<(), Error> {
+                if self.content48.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content48",
                     )))?;
                 }
-                self.content_48 = Some(value);
+                self.content48 = Some(value);
                 Ok(())
             }
             fn store_thead(&mut self, value: super::TbodyElementType) -> Result<(), Error> {
@@ -209267,13 +209264,13 @@ pub mod onix {
                 self.tfoot = Some(value);
                 Ok(())
             }
-            fn store_content_49(&mut self, value: super::TableContent49) -> Result<(), Error> {
-                if self.content_49.is_some() {
+            fn store_content49(&mut self, value: super::TableContent49) -> Result<(), Error> {
+                if self.content49.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content49",
                     )))?;
                 }
-                self.content_49 = Some(value);
+                self.content49 = Some(value);
                 Ok(())
             }
             fn handle_caption<'de>(
@@ -209309,7 +209306,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_48<'de>(
+            fn handle_content48<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TableContent48>,
@@ -209331,7 +209328,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_48(data)?;
+                        self.store_content48(data)?;
                         *self.state__ = S::Thead(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -209408,7 +209405,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_49<'de>(
+            fn handle_content49<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TableContent49>,
@@ -209434,7 +209431,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_49(data)?;
+                        self.store_content49(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -209480,7 +209477,7 @@ pub mod onix {
                         }
                         (S::Content48(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_48(helper, output, &mut fallback)? {
+                            match self.handle_content48(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -209516,7 +209513,7 @@ pub mod onix {
                         }
                         (S::Content49(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_49(helper, output, &mut fallback)? {
+                            match self.handle_content49(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -209561,7 +209558,7 @@ pub mod onix {
                         (S::Content48(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::TableContent48 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_48(helper, output, &mut fallback)? {
+                            match self.handle_content48(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -209608,7 +209605,7 @@ pub mod onix {
                         (S::Content49(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::TableContent49 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_49(helper, output, &mut fallback)? {
+                            match self.handle_content49(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -209662,10 +209659,10 @@ pub mod onix {
                     cellspacing: self.cellspacing,
                     cellpadding: self.cellpadding,
                     caption: self.caption,
-                    content_48: self.content_48,
+                    content48: self.content48,
                     thead: self.thead,
                     tfoot: self.tfoot,
-                    content_49: helper.finish_element("Content49", self.content_49)?,
+                    content49: helper.finish_element("Content49", self.content49)?,
                 })
             }
         }
@@ -211672,7 +211669,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::RubyContent59 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_59(helper, Default::default(), None, output)? {
+                        match self.handle_content59(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -211685,7 +211682,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::RubyContent62 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_62(helper, Default::default(), None, output)? {
+                        match self.handle_content62(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -211712,7 +211709,7 @@ pub mod onix {
                     S::Content59(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_59(&mut values, value)?;
+                            Self::store_content59(&mut values, value)?;
                         }
                         Ok(super::RubyElementTypeContent::Content59(
                             helper.finish_element("Content59", values)?,
@@ -211721,7 +211718,7 @@ pub mod onix {
                     S::Content62(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_62(&mut values, value)?;
+                            Self::store_content62(&mut values, value)?;
                         }
                         Ok(super::RubyElementTypeContent::Content62(
                             helper.finish_element("Content62", values)?,
@@ -211731,7 +211728,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_59(
+            fn store_content59(
                 values: &mut Option<super::RubyContent59>,
                 value: super::RubyContent59,
             ) -> Result<(), Error> {
@@ -211743,7 +211740,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_62(
+            fn store_content62(
                 values: &mut Option<super::RubyContent62>,
                 value: super::RubyContent62,
             ) -> Result<(), Error> {
@@ -211755,7 +211752,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_59<'de>(
+            fn handle_content59<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::RubyContent59>,
@@ -211778,12 +211775,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_59(&mut values, data)?;
+                    Self::store_content59(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_59(&mut values, data)?;
+                        Self::store_content59(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content59(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -211794,7 +211791,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_62<'de>(
+            fn handle_content62<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::RubyContent62>,
@@ -211817,12 +211814,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_62(&mut values, data)?;
+                    Self::store_content62(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_62(&mut values, data)?;
+                        Self::store_content62(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content62(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -211869,7 +211866,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content59(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_59(helper, values, fallback, output)? {
+                            match self.handle_content59(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -211878,7 +211875,7 @@ pub mod onix {
                         }
                         (S::Content62(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_62(helper, values, fallback, output)? {
+                            match self.handle_content62(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -211906,7 +211903,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::RubyContent59 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_59(helper, values, fallback, output)? {
+                            match self.handle_content59(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -211919,7 +211916,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::RubyContent62 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_62(helper, values, fallback, output)? {
+                            match self.handle_content62(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -212410,7 +212407,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct NameAsSubjectContent206Deserializer {
             name_identifier: Vec<super::NameIdentifierElementType>,
-            content_207: Option<super::NameAsSubjectContent207>,
+            content207: Option<super::NameAsSubjectContent207>,
             state__: Box<NameAsSubjectContent206DeserializerState>,
         }
         #[derive(Debug)]
@@ -212435,7 +212432,7 @@ pub mod onix {
                         self.store_name_identifier(deserializer.finish(helper)?)?
                     }
                     S::Content207(Some(deserializer)) => {
-                        self.store_content_207(deserializer.finish(helper)?)?
+                        self.store_content207(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -212448,16 +212445,16 @@ pub mod onix {
                 self.name_identifier.push(value);
                 Ok(())
             }
-            fn store_content_207(
+            fn store_content207(
                 &mut self,
                 value: super::NameAsSubjectContent207,
             ) -> Result<(), Error> {
-                if self.content_207.is_some() {
+                if self.content207.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content207",
                     )))?;
                 }
-                self.content_207 = Some(value);
+                self.content207 = Some(value);
                 Ok(())
             }
             fn handle_name_identifier<'de>(
@@ -212504,7 +212501,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_207<'de>(
+            fn handle_content207<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::NameAsSubjectContent207>,
@@ -212526,7 +212523,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_207(data)?;
+                        self.store_content207(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -212547,7 +212544,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::NameAsSubjectContent206> {
                 let deserializer = Self {
                     name_identifier: Vec::new(),
-                    content_207: None,
+                    content207: None,
                     state__: Box::new(NameAsSubjectContent206DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -212591,7 +212588,7 @@ pub mod onix {
                         }
                         (S::Content207(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_207(helper, output, &mut fallback)? {
+                            match self.handle_content207(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -212638,7 +212635,7 @@ pub mod onix {
                                 <super::NameAsSubjectContent207 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_207(helper, output, &mut fallback)? {
+                            match self.handle_content207(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -212678,7 +212675,7 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::NameAsSubjectContent206 {
                     name_identifier: helper.finish_vec(1usize, None, self.name_identifier)?,
-                    content_207: self.content_207,
+                    content207: self.content207,
                 })
             }
         }
@@ -213776,7 +213773,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent82 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_211(helper, Default::default(), None, output)? {
+                        match self.handle_content211(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -213803,7 +213800,7 @@ pub mod onix {
                     S::Content211(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_211(&mut values, value)?;
+                            Self::store_content211(&mut values, value)?;
                         }
                         Ok(super::NameAsSubjectGpCorporateName::Content211(
                             helper.finish_element("Content211", values)?,
@@ -213822,7 +213819,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_211(
+            fn store_content211(
                 values: &mut Option<super::AlternativeNameContent82>,
                 value: super::AlternativeNameContent82,
             ) -> Result<(), Error> {
@@ -213841,7 +213838,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_211<'de>(
+            fn handle_content211<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent82>,
@@ -213866,12 +213863,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_211(&mut values, data)?;
+                    Self::store_content211(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_211(&mut values, data)?;
+                        Self::store_content211(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content211(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -213971,7 +213968,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content211(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_211(helper, values, fallback, output)? {
+                            match self.handle_content211(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -214012,7 +214009,7 @@ pub mod onix {
                                 <super::AlternativeNameContent82 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_211(helper, values, fallback, output)? {
+                            match self.handle_content211(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -214109,7 +214106,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent77 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_77(helper, Default::default(), None, output)? {
+                        match self.handle_content77(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -214123,7 +214120,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent79 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_83(helper, Default::default(), None, output)? {
+                        match self.handle_content83(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -214188,7 +214185,7 @@ pub mod onix {
                     S::Content77(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_77(&mut values, value)?;
+                            Self::store_content77(&mut values, value)?;
                         }
                         Ok(super::AlternativeNameContent76::Content77(
                             helper.finish_element("Content77", values)?,
@@ -214197,7 +214194,7 @@ pub mod onix {
                     S::Content83(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_83(&mut values, value)?;
+                            Self::store_content83(&mut values, value)?;
                         }
                         Ok(super::AlternativeNameContent76::Content83(
                             helper.finish_element("Content83", values)?,
@@ -214225,7 +214222,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_77(
+            fn store_content77(
                 values: &mut Option<super::AlternativeNameContent77>,
                 value: super::AlternativeNameContent77,
             ) -> Result<(), Error> {
@@ -214237,7 +214234,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_83(
+            fn store_content83(
                 values: &mut Option<super::AlternativeNameContent79>,
                 value: super::AlternativeNameContent79,
             ) -> Result<(), Error> {
@@ -214273,7 +214270,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_77<'de>(
+            fn handle_content77<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent77>,
@@ -214298,12 +214295,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_77(&mut values, data)?;
+                    Self::store_content77(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_77(&mut values, data)?;
+                        Self::store_content77(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content77(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -214314,7 +214311,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_83<'de>(
+            fn handle_content83<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent79>,
@@ -214339,12 +214336,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_83(&mut values, data)?;
+                    Self::store_content83(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_83(&mut values, data)?;
+                        Self::store_content83(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content83(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -214475,7 +214472,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content77(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_77(helper, values, fallback, output)? {
+                            match self.handle_content77(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -214484,7 +214481,7 @@ pub mod onix {
                         }
                         (S::Content83(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_83(helper, values, fallback, output)? {
+                            match self.handle_content83(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -214534,7 +214531,7 @@ pub mod onix {
                                 <super::AlternativeNameContent77 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_77(helper, values, fallback, output)? {
+                            match self.handle_content77(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -214549,7 +214546,7 @@ pub mod onix {
                                 <super::AlternativeNameContent79 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_83(helper, values, fallback, output)? {
+                            match self.handle_content83(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -217089,7 +217086,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct CitedContent105Deserializer {
             source_title: Vec<super::SourceTitleElementType>,
-            content_106: Option<super::CitedContent106>,
+            content106: Option<super::CitedContent106>,
             state__: Box<CitedContent105DeserializerState>,
         }
         #[derive(Debug)]
@@ -217112,7 +217109,7 @@ pub mod onix {
                         self.store_source_title(deserializer.finish(helper)?)?
                     }
                     S::Content106(Some(deserializer)) => {
-                        self.store_content_106(deserializer.finish(helper)?)?
+                        self.store_content106(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -217125,13 +217122,13 @@ pub mod onix {
                 self.source_title.push(value);
                 Ok(())
             }
-            fn store_content_106(&mut self, value: super::CitedContent106) -> Result<(), Error> {
-                if self.content_106.is_some() {
+            fn store_content106(&mut self, value: super::CitedContent106) -> Result<(), Error> {
+                if self.content106.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content106",
                     )))?;
                 }
-                self.content_106 = Some(value);
+                self.content106 = Some(value);
                 Ok(())
             }
             fn handle_source_title<'de>(
@@ -217178,7 +217175,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_106<'de>(
+            fn handle_content106<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CitedContent106>,
@@ -217200,7 +217197,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_106(data)?;
+                        self.store_content106(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -217219,7 +217216,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::CitedContent105> {
                 let deserializer = Self {
                     source_title: Vec::new(),
-                    content_106: None,
+                    content106: None,
                     state__: Box::new(CitedContent105DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -217260,7 +217257,7 @@ pub mod onix {
                         }
                         (S::Content106(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_106(helper, output, &mut fallback)? {
+                            match self.handle_content106(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -217305,7 +217302,7 @@ pub mod onix {
                         (S::Content106(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::CitedContent106 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_106(helper, output, &mut fallback)? {
+                            match self.handle_content106(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -217345,7 +217342,7 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::CitedContent105 {
                     source_title: helper.finish_vec(1usize, None, self.source_title)?,
-                    content_106: self.content_106,
+                    content106: self.content106,
                 })
             }
         }
@@ -218970,7 +218967,7 @@ pub mod onix {
                         let output = <super::PromotionalEventContent259 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_259(helper, Default::default(), None, output)? {
+                        match self.handle_content259(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -218997,7 +218994,7 @@ pub mod onix {
                     S::Content259(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_259(&mut values, value)?;
+                            Self::store_content259(&mut values, value)?;
                         }
                         Ok(super::PromotionalEventContent258::Content259(
                             helper.finish_element("Content259", values)?,
@@ -219016,7 +219013,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_259(
+            fn store_content259(
                 values: &mut Option<super::PromotionalEventContent259>,
                 value: super::PromotionalEventContent259,
             ) -> Result<(), Error> {
@@ -219035,7 +219032,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_259<'de>(
+            fn handle_content259<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PromotionalEventContent259>,
@@ -219060,12 +219057,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_259(&mut values, data)?;
+                    Self::store_content259(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_259(&mut values, data)?;
+                        Self::store_content259(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content259(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -219161,7 +219158,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content259(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_259(helper, values, fallback, output)? {
+                            match self.handle_content259(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -219200,7 +219197,7 @@ pub mod onix {
                                 <super::PromotionalEventContent259 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_259(helper, values, fallback, output)? {
+                            match self.handle_content259(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -219470,7 +219467,7 @@ pub mod onix {
                         let output = <super::ContributorPlaceContent137 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_175(helper, Default::default(), None, output)? {
+                        match self.handle_content175(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -219497,7 +219494,7 @@ pub mod onix {
                     S::Content175(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_175(&mut values, value)?;
+                            Self::store_content175(&mut values, value)?;
                         }
                         Ok(super::EventOccurrenceContent174::Content175(
                             helper.finish_element("Content175", values)?,
@@ -219516,7 +219513,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_175(
+            fn store_content175(
                 values: &mut Option<super::ContributorPlaceContent137>,
                 value: super::ContributorPlaceContent137,
             ) -> Result<(), Error> {
@@ -219540,7 +219537,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_175<'de>(
+            fn handle_content175<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ContributorPlaceContent137>,
@@ -219565,12 +219562,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_175(&mut values, data)?;
+                    Self::store_content175(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_175(&mut values, data)?;
+                        Self::store_content175(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content175(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -219653,7 +219650,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content175(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_175(helper, values, fallback, output)? {
+                            match self.handle_content175(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -219692,7 +219689,7 @@ pub mod onix {
                                 <super::ContributorPlaceContent137 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_175(helper, values, fallback, output)? {
+                            match self.handle_content175(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -224775,7 +224772,7 @@ pub mod onix {
                             <super::CopyrightStatementContent147 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                        match self.handle_content_147(helper, Default::default(), None, output)? {
+                        match self.handle_content147(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -224802,7 +224799,7 @@ pub mod onix {
                     S::Content147(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_147(&mut values, value)?;
+                            Self::store_content147(&mut values, value)?;
                         }
                         Ok(super::CopyrightStatementContent146::Content147(
                             helper.finish_element("Content147", values)?,
@@ -224821,7 +224818,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_147(
+            fn store_content147(
                 values: &mut Option<super::CopyrightStatementContent147>,
                 value: super::CopyrightStatementContent147,
             ) -> Result<(), Error> {
@@ -224840,7 +224837,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_147<'de>(
+            fn handle_content147<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CopyrightStatementContent147>,
@@ -224865,12 +224862,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_147(&mut values, data)?;
+                    Self::store_content147(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_147(&mut values, data)?;
+                        Self::store_content147(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content147(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -224968,7 +224965,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content147(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_147(helper, values, fallback, output)? {
+                            match self.handle_content147(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -225007,7 +225004,7 @@ pub mod onix {
                                 <super::CopyrightStatementContent147 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_147(helper, values, fallback, output)? {
+                            match self.handle_content147(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -225301,7 +225298,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::ImprintContent190 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_190(helper, Default::default(), None, output)? {
+                        match self.handle_content190(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -225328,7 +225325,7 @@ pub mod onix {
                     S::Content190(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_190(&mut values, value)?;
+                            Self::store_content190(&mut values, value)?;
                         }
                         Ok(super::ImprintElementTypeContent::Content190(
                             helper.finish_element("Content190", values)?,
@@ -225347,7 +225344,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_190(
+            fn store_content190(
                 values: &mut Option<super::ImprintContent190>,
                 value: super::ImprintContent190,
             ) -> Result<(), Error> {
@@ -225371,7 +225368,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_190<'de>(
+            fn handle_content190<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ImprintContent190>,
@@ -225394,12 +225391,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_190(&mut values, data)?;
+                    Self::store_content190(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_190(&mut values, data)?;
+                        Self::store_content190(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content190(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -225482,7 +225479,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content190(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_190(helper, values, fallback, output)? {
+                            match self.handle_content190(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -225520,7 +225517,7 @@ pub mod onix {
                             let output = <super::ImprintContent190 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_190(helper, values, fallback, output)? {
+                            match self.handle_content190(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -229207,7 +229204,7 @@ pub mod onix {
                         let output = <super::SalesOutletContent296 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_296(helper, Default::default(), None, output)? {
+                        match self.handle_content296(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -229234,7 +229231,7 @@ pub mod onix {
                     S::Content296(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_296(&mut values, value)?;
+                            Self::store_content296(&mut values, value)?;
                         }
                         Ok(super::SalesOutletContent295::Content296(
                             helper.finish_element("Content296", values)?,
@@ -229253,7 +229250,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_296(
+            fn store_content296(
                 values: &mut Option<super::SalesOutletContent296>,
                 value: super::SalesOutletContent296,
             ) -> Result<(), Error> {
@@ -229277,7 +229274,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_296<'de>(
+            fn handle_content296<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::SalesOutletContent296>,
@@ -229300,12 +229297,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_296(&mut values, data)?;
+                    Self::store_content296(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_296(&mut values, data)?;
+                        Self::store_content296(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content296(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -229389,7 +229386,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content296(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_296(helper, values, fallback, output)? {
+                            match self.handle_content296(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -229427,7 +229424,7 @@ pub mod onix {
                             let output = <super::SalesOutletContent296 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_296(helper, values, fallback, output)? {
+                            match self.handle_content296(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -233099,9 +233096,9 @@ pub mod onix {
         pub struct StockContent309Deserializer {
             on_hand: Option<super::OnHandElementType>,
             proximity: Option<super::ProximityElementType>,
-            content_310: Option<super::StockContent310>,
-            content_311: Option<super::StockContent311>,
-            content_312: Option<super::StockContent312>,
+            content310: Option<super::StockContent310>,
+            content311: Option<super::StockContent311>,
+            content312: Option<super::StockContent312>,
             state__: Box<StockContent309DeserializerState>,
         }
         #[derive(Debug)]
@@ -233130,13 +233127,13 @@ pub mod onix {
                         self.store_proximity(deserializer.finish(helper)?)?
                     }
                     S::Content310(Some(deserializer)) => {
-                        self.store_content_310(deserializer.finish(helper)?)?
+                        self.store_content310(deserializer.finish(helper)?)?
                     }
                     S::Content311(Some(deserializer)) => {
-                        self.store_content_311(deserializer.finish(helper)?)?
+                        self.store_content311(deserializer.finish(helper)?)?
                     }
                     S::Content312(Some(deserializer)) => {
-                        self.store_content_312(deserializer.finish(helper)?)?
+                        self.store_content312(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -233160,31 +233157,31 @@ pub mod onix {
                 self.proximity = Some(value);
                 Ok(())
             }
-            fn store_content_310(&mut self, value: super::StockContent310) -> Result<(), Error> {
-                if self.content_310.is_some() {
+            fn store_content310(&mut self, value: super::StockContent310) -> Result<(), Error> {
+                if self.content310.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content310",
                     )))?;
                 }
-                self.content_310 = Some(value);
+                self.content310 = Some(value);
                 Ok(())
             }
-            fn store_content_311(&mut self, value: super::StockContent311) -> Result<(), Error> {
-                if self.content_311.is_some() {
+            fn store_content311(&mut self, value: super::StockContent311) -> Result<(), Error> {
+                if self.content311.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content311",
                     )))?;
                 }
-                self.content_311 = Some(value);
+                self.content311 = Some(value);
                 Ok(())
             }
-            fn store_content_312(&mut self, value: super::StockContent312) -> Result<(), Error> {
-                if self.content_312.is_some() {
+            fn store_content312(&mut self, value: super::StockContent312) -> Result<(), Error> {
+                if self.content312.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content312",
                     )))?;
                 }
-                self.content_312 = Some(value);
+                self.content312 = Some(value);
                 Ok(())
             }
             fn handle_on_hand<'de>(
@@ -233257,7 +233254,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_310<'de>(
+            fn handle_content310<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::StockContent310>,
@@ -233279,7 +233276,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_310(data)?;
+                        self.store_content310(data)?;
                         *self.state__ = S::Content311(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -233290,7 +233287,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_311<'de>(
+            fn handle_content311<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::StockContent311>,
@@ -233312,7 +233309,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_311(data)?;
+                        self.store_content311(data)?;
                         *self.state__ = S::Content312(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -233323,7 +233320,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_312<'de>(
+            fn handle_content312<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::StockContent312>,
@@ -233345,7 +233342,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_312(data)?;
+                        self.store_content312(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -233365,9 +233362,9 @@ pub mod onix {
                 let deserializer = Self {
                     on_hand: None,
                     proximity: None,
-                    content_310: None,
-                    content_311: None,
-                    content_312: None,
+                    content310: None,
+                    content311: None,
+                    content312: None,
                     state__: Box::new(StockContent309DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -233420,7 +233417,7 @@ pub mod onix {
                         }
                         (S::Content310(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_310(helper, output, &mut fallback)? {
+                            match self.handle_content310(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -233432,7 +233429,7 @@ pub mod onix {
                         }
                         (S::Content311(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_311(helper, output, &mut fallback)? {
+                            match self.handle_content311(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -233444,7 +233441,7 @@ pub mod onix {
                         }
                         (S::Content312(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_312(helper, output, &mut fallback)? {
+                            match self.handle_content312(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -233506,7 +233503,7 @@ pub mod onix {
                         (S::Content310(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::StockContent310 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_310(helper, output, &mut fallback)? {
+                            match self.handle_content310(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -233519,7 +233516,7 @@ pub mod onix {
                         (S::Content311(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::StockContent311 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_311(helper, output, &mut fallback)? {
+                            match self.handle_content311(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -233532,7 +233529,7 @@ pub mod onix {
                         (S::Content312(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::StockContent312 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_312(helper, output, &mut fallback)? {
+                            match self.handle_content312(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -233573,9 +233570,9 @@ pub mod onix {
                 Ok(super::StockContent309 {
                     on_hand: helper.finish_element("OnHand", self.on_hand)?,
                     proximity: self.proximity,
-                    content_310: self.content_310,
-                    content_311: self.content_311,
-                    content_312: self.content_312,
+                    content310: self.content310,
+                    content311: self.content311,
+                    content312: self.content312,
                 })
             }
         }
@@ -237669,8 +237666,8 @@ pub mod onix {
             sourcename: Option<String>,
             sourcetype: Option<super::List3>,
             discount_type: Option<super::DiscountTypeElementType>,
-            content_160: Option<super::DiscountContent160>,
-            content_161: Option<super::DiscountContent161>,
+            content160: Option<super::DiscountContent160>,
+            content161: Option<super::DiscountContent161>,
             state__: Box<DiscountElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -237732,8 +237729,8 @@ pub mod onix {
                     sourcename: sourcename,
                     sourcetype: sourcetype,
                     discount_type: None,
-                    content_160: None,
-                    content_161: None,
+                    content160: None,
+                    content161: None,
                     state__: Box::new(DiscountElementTypeDeserializerState::Init__),
                 })
             }
@@ -237748,10 +237745,10 @@ pub mod onix {
                         self.store_discount_type(deserializer.finish(helper)?)?
                     }
                     S::Content160(Some(deserializer)) => {
-                        self.store_content_160(deserializer.finish(helper)?)?
+                        self.store_content160(deserializer.finish(helper)?)?
                     }
                     S::Content161(Some(deserializer)) => {
-                        self.store_content_161(deserializer.finish(helper)?)?
+                        self.store_content161(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -237769,22 +237766,22 @@ pub mod onix {
                 self.discount_type = Some(value);
                 Ok(())
             }
-            fn store_content_160(&mut self, value: super::DiscountContent160) -> Result<(), Error> {
-                if self.content_160.is_some() {
+            fn store_content160(&mut self, value: super::DiscountContent160) -> Result<(), Error> {
+                if self.content160.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content160",
                     )))?;
                 }
-                self.content_160 = Some(value);
+                self.content160 = Some(value);
                 Ok(())
             }
-            fn store_content_161(&mut self, value: super::DiscountContent161) -> Result<(), Error> {
-                if self.content_161.is_some() {
+            fn store_content161(&mut self, value: super::DiscountContent161) -> Result<(), Error> {
+                if self.content161.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content161",
                     )))?;
                 }
-                self.content_161 = Some(value);
+                self.content161 = Some(value);
                 Ok(())
             }
             fn handle_discount_type<'de>(
@@ -237820,7 +237817,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_160<'de>(
+            fn handle_content160<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::DiscountContent160>,
@@ -237842,7 +237839,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_160(data)?;
+                        self.store_content160(data)?;
                         *self.state__ = S::Content161(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -237853,7 +237850,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_161<'de>(
+            fn handle_content161<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::DiscountContent161>,
@@ -237879,7 +237876,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_161(data)?;
+                        self.store_content161(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -237925,7 +237922,7 @@ pub mod onix {
                         }
                         (S::Content160(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_160(helper, output, &mut fallback)? {
+                            match self.handle_content160(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -237937,7 +237934,7 @@ pub mod onix {
                         }
                         (S::Content161(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_161(helper, output, &mut fallback)? {
+                            match self.handle_content161(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -237983,7 +237980,7 @@ pub mod onix {
                             let output = <super::DiscountContent160 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_160(helper, output, &mut fallback)? {
+                            match self.handle_content160(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -237997,7 +237994,7 @@ pub mod onix {
                             let output = <super::DiscountContent161 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_161(helper, output, &mut fallback)? {
+                            match self.handle_content161(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -238043,8 +238040,8 @@ pub mod onix {
                     sourcename: self.sourcename,
                     sourcetype: self.sourcetype,
                     discount_type: self.discount_type,
-                    content_160: self.content_160,
-                    content_161: helper.finish_element("Content161", self.content_161)?,
+                    content160: self.content160,
+                    content161: helper.finish_element("Content161", self.content161)?,
                 })
             }
         }
@@ -238267,7 +238264,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::PriceContent222 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_222(helper, Default::default(), None, output)? {
+                        match self.handle_content222(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -238294,7 +238291,7 @@ pub mod onix {
                     S::Content222(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_222(&mut values, value)?;
+                            Self::store_content222(&mut values, value)?;
                         }
                         Ok(super::PriceContent221::Content222(
                             helper.finish_element("Content222", values)?,
@@ -238313,7 +238310,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_222(
+            fn store_content222(
                 values: &mut Option<super::PriceContent222>,
                 value: super::PriceContent222,
             ) -> Result<(), Error> {
@@ -238337,7 +238334,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_222<'de>(
+            fn handle_content222<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::PriceContent222>,
@@ -238360,12 +238357,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_222(&mut values, data)?;
+                    Self::store_content222(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_222(&mut values, data)?;
+                        Self::store_content222(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content222(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -238446,7 +238443,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content222(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_222(helper, values, fallback, output)? {
+                            match self.handle_content222(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -238485,7 +238482,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::PriceContent222 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_222(helper, values, fallback, output)? {
+                            match self.handle_content222(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -240874,7 +240871,7 @@ pub mod onix {
         pub struct TitleElementContent352Deserializer {
             part_number: Option<super::PartNumberElementType>,
             year_of_annual: Option<super::YearOfAnnualElementType>,
-            content_353: Option<super::TitleElementContent353>,
+            content353: Option<super::TitleElementContent353>,
             state__: Box<TitleElementContent352DeserializerState>,
         }
         #[derive(Debug)]
@@ -240903,7 +240900,7 @@ pub mod onix {
                         self.store_year_of_annual(deserializer.finish(helper)?)?
                     }
                     S::Content353(Some(deserializer)) => {
-                        self.store_content_353(deserializer.finish(helper)?)?
+                        self.store_content353(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -240933,16 +240930,16 @@ pub mod onix {
                 self.year_of_annual = Some(value);
                 Ok(())
             }
-            fn store_content_353(
+            fn store_content353(
                 &mut self,
                 value: super::TitleElementContent353,
             ) -> Result<(), Error> {
-                if self.content_353.is_some() {
+                if self.content353.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content353",
                     )))?;
                 }
-                self.content_353 = Some(value);
+                self.content353 = Some(value);
                 Ok(())
             }
             fn handle_part_number<'de>(
@@ -241015,7 +241012,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_353<'de>(
+            fn handle_content353<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitleElementContent353>,
@@ -241037,7 +241034,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_353(data)?;
+                        self.store_content353(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -241057,7 +241054,7 @@ pub mod onix {
                 let deserializer = Self {
                     part_number: None,
                     year_of_annual: None,
-                    content_353: None,
+                    content353: None,
                     state__: Box::new(TitleElementContent352DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -241113,7 +241110,7 @@ pub mod onix {
                         }
                         (S::Content353(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_353(helper, output, &mut fallback)? {
+                            match self.handle_content353(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -241176,7 +241173,7 @@ pub mod onix {
                             let output = <super::TitleElementContent353 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_353(helper, output, &mut fallback)? {
+                            match self.handle_content353(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -241217,14 +241214,14 @@ pub mod onix {
                 Ok(super::TitleElementContent352 {
                     part_number: helper.finish_element("PartNumber", self.part_number)?,
                     year_of_annual: self.year_of_annual,
-                    content_353: self.content_353,
+                    content353: self.content353,
                 })
             }
         }
         #[derive(Debug)]
         pub struct TitleElementContent356Deserializer {
             year_of_annual: Option<super::YearOfAnnualElementType>,
-            content_357: Option<super::TitleElementContent357>,
+            content357: Option<super::TitleElementContent357>,
             state__: Box<TitleElementContent356DeserializerState>,
         }
         #[derive(Debug)]
@@ -241249,7 +241246,7 @@ pub mod onix {
                         self.store_year_of_annual(deserializer.finish(helper)?)?
                     }
                     S::Content357(Some(deserializer)) => {
-                        self.store_content_357(deserializer.finish(helper)?)?
+                        self.store_content357(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -241267,16 +241264,16 @@ pub mod onix {
                 self.year_of_annual = Some(value);
                 Ok(())
             }
-            fn store_content_357(
+            fn store_content357(
                 &mut self,
                 value: super::TitleElementContent357,
             ) -> Result<(), Error> {
-                if self.content_357.is_some() {
+                if self.content357.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content357",
                     )))?;
                 }
-                self.content_357 = Some(value);
+                self.content357 = Some(value);
                 Ok(())
             }
             fn handle_year_of_annual<'de>(
@@ -241316,7 +241313,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_357<'de>(
+            fn handle_content357<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitleElementContent357>,
@@ -241338,7 +241335,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_357(data)?;
+                        self.store_content357(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -241357,7 +241354,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::TitleElementContent356> {
                 let deserializer = Self {
                     year_of_annual: None,
-                    content_357: None,
+                    content357: None,
                     state__: Box::new(TitleElementContent356DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -241401,7 +241398,7 @@ pub mod onix {
                         }
                         (S::Content357(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_357(helper, output, &mut fallback)? {
+                            match self.handle_content357(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -241447,7 +241444,7 @@ pub mod onix {
                             let output = <super::TitleElementContent357 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_357(helper, output, &mut fallback)? {
+                            match self.handle_content357(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -241487,13 +241484,13 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::TitleElementContent356 {
                     year_of_annual: helper.finish_element("YearOfAnnual", self.year_of_annual)?,
-                    content_357: self.content_357,
+                    content357: self.content357,
                 })
             }
         }
         #[derive(Debug)]
         pub struct TitleElementContent360Deserializer {
-            content_361: Option<super::TitleElementContent355>,
+            content361: Option<super::TitleElementContent355>,
             title_without_prefix: Option<super::TitleWithoutPrefixElementType>,
             state__: Box<TitleElementContent360DeserializerState>,
         }
@@ -241516,7 +241513,7 @@ pub mod onix {
                 use TitleElementContent360DeserializerState as S;
                 match state {
                     S::Content361(Some(deserializer)) => {
-                        self.store_content_361(deserializer.finish(helper)?)?
+                        self.store_content361(deserializer.finish(helper)?)?
                     }
                     S::TitleWithoutPrefix(Some(deserializer)) => {
                         self.store_title_without_prefix(deserializer.finish(helper)?)?
@@ -241525,16 +241522,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_361(
+            fn store_content361(
                 &mut self,
                 value: super::TitleElementContent355,
             ) -> Result<(), Error> {
-                if self.content_361.is_some() {
+                if self.content361.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content361",
                     )))?;
                 }
-                self.content_361 = Some(value);
+                self.content361 = Some(value);
                 Ok(())
             }
             fn store_title_without_prefix(
@@ -241549,7 +241546,7 @@ pub mod onix {
                 self.title_without_prefix = Some(value);
                 Ok(())
             }
-            fn handle_content_361<'de>(
+            fn handle_content361<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitleElementContent355>,
@@ -241575,7 +241572,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_361(data)?;
+                        self.store_content361(data)?;
                         *self.state__ = S::TitleWithoutPrefix(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -241630,7 +241627,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::TitleElementContent360> {
                 let deserializer = Self {
-                    content_361: None,
+                    content361: None,
                     title_without_prefix: None,
                     state__: Box::new(TitleElementContent360DeserializerState::Init__),
                 };
@@ -241663,7 +241660,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content361(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_361(helper, output, &mut fallback)? {
+                            match self.handle_content361(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -241704,7 +241701,7 @@ pub mod onix {
                             let output = <super::TitleElementContent355 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_361(helper, output, &mut fallback)? {
+                            match self.handle_content361(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -241763,7 +241760,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::TitleElementContent360 {
-                    content_361: helper.finish_element("Content361", self.content_361)?,
+                    content361: helper.finish_element("Content361", self.content361)?,
                     title_without_prefix: helper
                         .finish_element("TitleWithoutPrefix", self.title_without_prefix)?,
                 })
@@ -241980,7 +241977,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct ContributorContent126Deserializer {
             name_identifier: Vec<super::NameIdentifierElementType>,
-            content_127: Option<super::ContributorContent127>,
+            content127: Option<super::ContributorContent127>,
             state__: Box<ContributorContent126DeserializerState>,
         }
         #[derive(Debug)]
@@ -242005,7 +242002,7 @@ pub mod onix {
                         self.store_name_identifier(deserializer.finish(helper)?)?
                     }
                     S::Content127(Some(deserializer)) => {
-                        self.store_content_127(deserializer.finish(helper)?)?
+                        self.store_content127(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -242018,16 +242015,16 @@ pub mod onix {
                 self.name_identifier.push(value);
                 Ok(())
             }
-            fn store_content_127(
+            fn store_content127(
                 &mut self,
                 value: super::ContributorContent127,
             ) -> Result<(), Error> {
-                if self.content_127.is_some() {
+                if self.content127.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content127",
                     )))?;
                 }
-                self.content_127 = Some(value);
+                self.content127 = Some(value);
                 Ok(())
             }
             fn handle_name_identifier<'de>(
@@ -242074,7 +242071,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_127<'de>(
+            fn handle_content127<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContributorContent127>,
@@ -242096,7 +242093,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_127(data)?;
+                        self.store_content127(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -242115,7 +242112,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::ContributorContent126> {
                 let deserializer = Self {
                     name_identifier: Vec::new(),
-                    content_127: None,
+                    content127: None,
                     state__: Box::new(ContributorContent126DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -242159,7 +242156,7 @@ pub mod onix {
                         }
                         (S::Content127(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_127(helper, output, &mut fallback)? {
+                            match self.handle_content127(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -242205,7 +242202,7 @@ pub mod onix {
                             let output = <super::ContributorContent127 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_127(helper, output, &mut fallback)? {
+                            match self.handle_content127(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -242245,7 +242242,7 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::ContributorContent126 {
                     name_identifier: helper.finish_vec(1usize, None, self.name_identifier)?,
-                    content_127: self.content_127,
+                    content127: self.content127,
                 })
             }
         }
@@ -242571,7 +242568,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent82 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_131(helper, Default::default(), None, output)? {
+                        match self.handle_content131(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -242598,7 +242595,7 @@ pub mod onix {
                     S::Content131(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_131(&mut values, value)?;
+                            Self::store_content131(&mut values, value)?;
                         }
                         Ok(super::ContributorGpCorporateName::Content131(
                             helper.finish_element("Content131", values)?,
@@ -242617,7 +242614,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_131(
+            fn store_content131(
                 values: &mut Option<super::AlternativeNameContent82>,
                 value: super::AlternativeNameContent82,
             ) -> Result<(), Error> {
@@ -242636,7 +242633,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_131<'de>(
+            fn handle_content131<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent82>,
@@ -242661,12 +242658,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_131(&mut values, data)?;
+                    Self::store_content131(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_131(&mut values, data)?;
+                        Self::store_content131(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content131(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -242766,7 +242763,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content131(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_131(helper, values, fallback, output)? {
+                            match self.handle_content131(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -242807,7 +242804,7 @@ pub mod onix {
                                 <super::AlternativeNameContent82 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_131(helper, values, fallback, output)? {
+                            match self.handle_content131(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -243430,7 +243427,7 @@ pub mod onix {
                         let output = <super::ContributorPlaceContent137 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_137(helper, Default::default(), None, output)? {
+                        match self.handle_content137(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -243457,7 +243454,7 @@ pub mod onix {
                     S::Content137(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_137(&mut values, value)?;
+                            Self::store_content137(&mut values, value)?;
                         }
                         Ok(super::ContributorPlaceContent136::Content137(
                             helper.finish_element("Content137", values)?,
@@ -243476,7 +243473,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_137(
+            fn store_content137(
                 values: &mut Option<super::ContributorPlaceContent137>,
                 value: super::ContributorPlaceContent137,
             ) -> Result<(), Error> {
@@ -243500,7 +243497,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_137<'de>(
+            fn handle_content137<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ContributorPlaceContent137>,
@@ -243525,12 +243522,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_137(&mut values, data)?;
+                    Self::store_content137(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_137(&mut values, data)?;
+                        Self::store_content137(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content137(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -243613,7 +243610,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content137(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_137(helper, values, fallback, output)? {
+                            match self.handle_content137(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -243652,7 +243649,7 @@ pub mod onix {
                                 <super::ContributorPlaceContent137 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_137(helper, values, fallback, output)? {
+                            match self.handle_content137(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -250283,7 +250280,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct RubyContent59Deserializer {
             rb: Option<super::RbElementType>,
-            content_60: Option<super::RubyContent60>,
+            content60: Option<super::RubyContent60>,
             state__: Box<RubyContent59DeserializerState>,
         }
         #[derive(Debug)]
@@ -250304,7 +250301,7 @@ pub mod onix {
                 match state {
                     S::Rb(Some(deserializer)) => self.store_rb(deserializer.finish(helper)?)?,
                     S::Content60(Some(deserializer)) => {
-                        self.store_content_60(deserializer.finish(helper)?)?
+                        self.store_content60(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -250317,13 +250314,13 @@ pub mod onix {
                 self.rb = Some(value);
                 Ok(())
             }
-            fn store_content_60(&mut self, value: super::RubyContent60) -> Result<(), Error> {
-                if self.content_60.is_some() {
+            fn store_content60(&mut self, value: super::RubyContent60) -> Result<(), Error> {
+                if self.content60.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content60",
                     )))?;
                 }
-                self.content_60 = Some(value);
+                self.content60 = Some(value);
                 Ok(())
             }
             fn handle_rb<'de>(
@@ -250363,7 +250360,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_60<'de>(
+            fn handle_content60<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::RubyContent60>,
@@ -250389,7 +250386,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_60(data)?;
+                        self.store_content60(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -250408,7 +250405,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::RubyContent59> {
                 let deserializer = Self {
                     rb: None,
-                    content_60: None,
+                    content60: None,
                     state__: Box::new(RubyContent59DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -250449,7 +250446,7 @@ pub mod onix {
                         }
                         (S::Content60(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_60(helper, output, &mut fallback)? {
+                            match self.handle_content60(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -250494,7 +250491,7 @@ pub mod onix {
                         (S::Content60(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::RubyContent60 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_60(helper, output, &mut fallback)? {
+                            match self.handle_content60(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -250534,7 +250531,7 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::RubyContent59 {
                     rb: helper.finish_element("rb", self.rb)?,
-                    content_60: helper.finish_element("Content60", self.content_60)?,
+                    content60: helper.finish_element("Content60", self.content60)?,
                 })
             }
         }
@@ -251402,7 +251399,7 @@ pub mod onix {
                         let output = <super::NameAsSubjectContent208 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_208(helper, Default::default(), None, output)? {
+                        match self.handle_content208(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -251467,7 +251464,7 @@ pub mod onix {
                     S::Content208(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_208(&mut values, value)?;
+                            Self::store_content208(&mut values, value)?;
                         }
                         Ok(super::NameAsSubjectContent207::Content208(
                             helper.finish_element("Content208", values)?,
@@ -251495,7 +251492,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_208(
+            fn store_content208(
                 values: &mut Option<super::NameAsSubjectContent208>,
                 value: super::NameAsSubjectContent208,
             ) -> Result<(), Error> {
@@ -251531,7 +251528,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_208<'de>(
+            fn handle_content208<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::NameAsSubjectContent208>,
@@ -251556,12 +251553,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_208(&mut values, data)?;
+                    Self::store_content208(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_208(&mut values, data)?;
+                        Self::store_content208(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content208(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -251692,7 +251689,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content208(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_208(helper, values, fallback, output)? {
+                            match self.handle_content208(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -251742,7 +251739,7 @@ pub mod onix {
                                 <super::NameAsSubjectContent208 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_208(helper, values, fallback, output)? {
+                            match self.handle_content208(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -251809,7 +251806,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct NameAsSubjectGpUnstructuredNameDeserializer {
-            content_209: Option<super::NameAsSubjectContent209>,
+            content209: Option<super::NameAsSubjectContent209>,
             state__: Box<NameAsSubjectGpUnstructuredNameDeserializerState>,
         }
         #[derive(Debug)]
@@ -251828,25 +251825,25 @@ pub mod onix {
                 use NameAsSubjectGpUnstructuredNameDeserializerState as S;
                 match state {
                     S::Content209(Some(deserializer)) => {
-                        self.store_content_209(deserializer.finish(helper)?)?
+                        self.store_content209(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_209(
+            fn store_content209(
                 &mut self,
                 value: super::NameAsSubjectContent209,
             ) -> Result<(), Error> {
-                if self.content_209.is_some() {
+                if self.content209.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content209",
                     )))?;
                 }
-                self.content_209 = Some(value);
+                self.content209 = Some(value);
                 Ok(())
             }
-            fn handle_content_209<'de>(
+            fn handle_content209<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::NameAsSubjectContent209>,
@@ -251872,7 +251869,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_209(data)?;
+                        self.store_content209(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -251892,7 +251889,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::NameAsSubjectGpUnstructuredName> {
                 let deserializer = Self {
-                    content_209: None,
+                    content209: None,
                     state__: Box::new(NameAsSubjectGpUnstructuredNameDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -251924,7 +251921,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content209(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_209(helper, output, &mut fallback)? {
+                            match self.handle_content209(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -251954,7 +251951,7 @@ pub mod onix {
                                 <super::NameAsSubjectContent209 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_209(helper, output, &mut fallback)? {
+                            match self.handle_content209(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -251993,7 +251990,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::NameAsSubjectGpUnstructuredName {
-                    content_209: helper.finish_element("Content209", self.content_209)?,
+                    content209: helper.finish_element("Content209", self.content209)?,
                 })
             }
         }
@@ -254095,7 +254092,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct AlternativeNameContent77Deserializer {
             name_identifier: Vec<super::NameIdentifierElementType>,
-            content_78: Option<super::AlternativeNameContent78>,
+            content78: Option<super::AlternativeNameContent78>,
             state__: Box<AlternativeNameContent77DeserializerState>,
         }
         #[derive(Debug)]
@@ -254120,7 +254117,7 @@ pub mod onix {
                         self.store_name_identifier(deserializer.finish(helper)?)?
                     }
                     S::Content78(Some(deserializer)) => {
-                        self.store_content_78(deserializer.finish(helper)?)?
+                        self.store_content78(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -254133,16 +254130,16 @@ pub mod onix {
                 self.name_identifier.push(value);
                 Ok(())
             }
-            fn store_content_78(
+            fn store_content78(
                 &mut self,
                 value: super::AlternativeNameContent78,
             ) -> Result<(), Error> {
-                if self.content_78.is_some() {
+                if self.content78.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content78",
                     )))?;
                 }
-                self.content_78 = Some(value);
+                self.content78 = Some(value);
                 Ok(())
             }
             fn handle_name_identifier<'de>(
@@ -254189,7 +254186,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_78<'de>(
+            fn handle_content78<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::AlternativeNameContent78>,
@@ -254211,7 +254208,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_78(data)?;
+                        self.store_content78(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -254232,7 +254229,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::AlternativeNameContent77> {
                 let deserializer = Self {
                     name_identifier: Vec::new(),
-                    content_78: None,
+                    content78: None,
                     state__: Box::new(AlternativeNameContent77DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -254276,7 +254273,7 @@ pub mod onix {
                         }
                         (S::Content78(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_78(helper, output, &mut fallback)? {
+                            match self.handle_content78(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -254323,7 +254320,7 @@ pub mod onix {
                                 <super::AlternativeNameContent78 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_78(helper, output, &mut fallback)? {
+                            match self.handle_content78(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -254363,7 +254360,7 @@ pub mod onix {
                 self.finish_state(helper, state)?;
                 Ok(super::AlternativeNameContent77 {
                     name_identifier: helper.finish_vec(1usize, None, self.name_identifier)?,
-                    content_78: self.content_78,
+                    content78: self.content78,
                 })
             }
         }
@@ -254690,7 +254687,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent82 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_82(helper, Default::default(), None, output)? {
+                        match self.handle_content82(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -254717,7 +254714,7 @@ pub mod onix {
                     S::Content82(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_82(&mut values, value)?;
+                            Self::store_content82(&mut values, value)?;
                         }
                         Ok(super::AlternativeNameGpCorporateName::Content82(
                             helper.finish_element("Content82", values)?,
@@ -254738,7 +254735,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_82(
+            fn store_content82(
                 values: &mut Option<super::AlternativeNameContent82>,
                 value: super::AlternativeNameContent82,
             ) -> Result<(), Error> {
@@ -254757,7 +254754,7 @@ pub mod onix {
                 values.push(value);
                 Ok(())
             }
-            fn handle_content_82<'de>(
+            fn handle_content82<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent82>,
@@ -254782,12 +254779,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_82(&mut values, data)?;
+                    Self::store_content82(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_82(&mut values, data)?;
+                        Self::store_content82(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content82(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -254887,7 +254884,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content82(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_82(helper, values, fallback, output)? {
+                            match self.handle_content82(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -254928,7 +254925,7 @@ pub mod onix {
                                 <super::AlternativeNameContent82 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_82(helper, values, fallback, output)? {
+                            match self.handle_content82(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -259172,7 +259169,7 @@ pub mod onix {
                         let output = <super::CopyrightOwnerContent142 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_142(helper, Default::default(), None, output)? {
+                        match self.handle_content142(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -259199,7 +259196,7 @@ pub mod onix {
                     S::Content142(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_142(&mut values, value)?;
+                            Self::store_content142(&mut values, value)?;
                         }
                         Ok(super::CopyrightOwnerElementTypeContent::Content142(
                             helper.finish_element("Content142", values)?,
@@ -259227,7 +259224,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_142(
+            fn store_content142(
                 values: &mut Option<super::CopyrightOwnerContent142>,
                 value: super::CopyrightOwnerContent142,
             ) -> Result<(), Error> {
@@ -259263,7 +259260,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_142<'de>(
+            fn handle_content142<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::CopyrightOwnerContent142>,
@@ -259288,12 +259285,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_142(&mut values, data)?;
+                    Self::store_content142(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_142(&mut values, data)?;
+                        Self::store_content142(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content142(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -259413,7 +259410,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content142(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_142(helper, values, fallback, output)? {
+                            match self.handle_content142(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -259461,7 +259458,7 @@ pub mod onix {
                                 <super::CopyrightOwnerContent142 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_142(helper, values, fallback, output)? {
+                            match self.handle_content142(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -269504,7 +269501,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::DiscountContent162 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_162(helper, Default::default(), None, output)? {
+                        match self.handle_content162(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -269531,7 +269528,7 @@ pub mod onix {
                     S::Content162(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_162(&mut values, value)?;
+                            Self::store_content162(&mut values, value)?;
                         }
                         Ok(super::DiscountContent161::Content162(
                             helper.finish_element("Content162", values)?,
@@ -269550,7 +269547,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_162(
+            fn store_content162(
                 values: &mut Option<super::DiscountContent162>,
                 value: super::DiscountContent162,
             ) -> Result<(), Error> {
@@ -269574,7 +269571,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_162<'de>(
+            fn handle_content162<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::DiscountContent162>,
@@ -269597,12 +269594,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_162(&mut values, data)?;
+                    Self::store_content162(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_162(&mut values, data)?;
+                        Self::store_content162(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content162(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -269683,7 +269680,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content162(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_162(helper, values, fallback, output)? {
+                            match self.handle_content162(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -269721,7 +269718,7 @@ pub mod onix {
                             let output = <super::DiscountContent162 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_162(helper, values, fallback, output)? {
+                            match self.handle_content162(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -269775,8 +269772,8 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct PriceContent222Deserializer {
-            content_223: Option<super::PriceContent223>,
-            content_224: Option<super::PriceContent224>,
+            content223: Option<super::PriceContent223>,
+            content224: Option<super::PriceContent224>,
             state__: Box<PriceContent222DeserializerState>,
         }
         #[derive(Debug)]
@@ -269796,34 +269793,34 @@ pub mod onix {
                 use PriceContent222DeserializerState as S;
                 match state {
                     S::Content223(Some(deserializer)) => {
-                        self.store_content_223(deserializer.finish(helper)?)?
+                        self.store_content223(deserializer.finish(helper)?)?
                     }
                     S::Content224(Some(deserializer)) => {
-                        self.store_content_224(deserializer.finish(helper)?)?
+                        self.store_content224(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_223(&mut self, value: super::PriceContent223) -> Result<(), Error> {
-                if self.content_223.is_some() {
+            fn store_content223(&mut self, value: super::PriceContent223) -> Result<(), Error> {
+                if self.content223.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content223",
                     )))?;
                 }
-                self.content_223 = Some(value);
+                self.content223 = Some(value);
                 Ok(())
             }
-            fn store_content_224(&mut self, value: super::PriceContent224) -> Result<(), Error> {
-                if self.content_224.is_some() {
+            fn store_content224(&mut self, value: super::PriceContent224) -> Result<(), Error> {
+                if self.content224.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content224",
                     )))?;
                 }
-                self.content_224 = Some(value);
+                self.content224 = Some(value);
                 Ok(())
             }
-            fn handle_content_223<'de>(
+            fn handle_content223<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PriceContent223>,
@@ -269849,7 +269846,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_223(data)?;
+                        self.store_content223(data)?;
                         *self.state__ = S::Content224(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -269860,7 +269857,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_224<'de>(
+            fn handle_content224<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::PriceContent224>,
@@ -269882,7 +269879,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_224(data)?;
+                        self.store_content224(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -269900,8 +269897,8 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::PriceContent222> {
                 let deserializer = Self {
-                    content_223: None,
-                    content_224: None,
+                    content223: None,
+                    content224: None,
                     state__: Box::new(PriceContent222DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -269930,7 +269927,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content223(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_223(helper, output, &mut fallback)? {
+                            match self.handle_content223(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -269942,7 +269939,7 @@ pub mod onix {
                         }
                         (S::Content224(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_224(helper, output, &mut fallback)? {
+                            match self.handle_content224(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -269970,7 +269967,7 @@ pub mod onix {
                         (S::Content223(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::PriceContent223 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_223(helper, output, &mut fallback)? {
+                            match self.handle_content223(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -269983,7 +269980,7 @@ pub mod onix {
                         (S::Content224(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::PriceContent224 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_224(helper, output, &mut fallback)? {
+                            match self.handle_content224(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -270022,8 +270019,8 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::PriceContent222 {
-                    content_223: helper.finish_element("Content223", self.content_223)?,
-                    content_224: self.content_224,
+                    content223: helper.finish_element("Content223", self.content223)?,
+                    content224: self.content224,
                 })
             }
         }
@@ -270953,7 +270950,7 @@ pub mod onix {
                         let output = <super::TitleElementContent354 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_354(helper, Default::default(), None, output)? {
+                        match self.handle_content354(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -270980,7 +270977,7 @@ pub mod onix {
                     S::Content354(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_354(&mut values, value)?;
+                            Self::store_content354(&mut values, value)?;
                         }
                         Ok(super::TitleElementContent353::Content354(
                             helper.finish_element("Content354", values)?,
@@ -270999,7 +270996,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_354(
+            fn store_content354(
                 values: &mut Option<super::TitleElementContent354>,
                 value: super::TitleElementContent354,
             ) -> Result<(), Error> {
@@ -271023,7 +271020,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_354<'de>(
+            fn handle_content354<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TitleElementContent354>,
@@ -271046,12 +271043,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_354(&mut values, data)?;
+                    Self::store_content354(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_354(&mut values, data)?;
+                        Self::store_content354(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content354(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -271132,7 +271129,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content354(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_354(helper, values, fallback, output)? {
+                            match self.handle_content354(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -271170,7 +271167,7 @@ pub mod onix {
                             let output = <super::TitleElementContent354 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_354(helper, values, fallback, output)? {
+                            match self.handle_content354(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -271263,7 +271260,7 @@ pub mod onix {
                         let output = <super::TitleElementContent358 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_358(helper, Default::default(), None, output)? {
+                        match self.handle_content358(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -271290,7 +271287,7 @@ pub mod onix {
                     S::Content358(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_358(&mut values, value)?;
+                            Self::store_content358(&mut values, value)?;
                         }
                         Ok(super::TitleElementContent357::Content358(
                             helper.finish_element("Content358", values)?,
@@ -271309,7 +271306,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_358(
+            fn store_content358(
                 values: &mut Option<super::TitleElementContent358>,
                 value: super::TitleElementContent358,
             ) -> Result<(), Error> {
@@ -271333,7 +271330,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_358<'de>(
+            fn handle_content358<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TitleElementContent358>,
@@ -271356,12 +271353,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_358(&mut values, data)?;
+                    Self::store_content358(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_358(&mut values, data)?;
+                        Self::store_content358(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content358(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -271442,7 +271439,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content358(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_358(helper, values, fallback, output)? {
+                            match self.handle_content358(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -271480,7 +271477,7 @@ pub mod onix {
                             let output = <super::TitleElementContent358 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_358(helper, values, fallback, output)? {
+                            match self.handle_content358(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -272099,7 +272096,7 @@ pub mod onix {
                         let output = <super::ContributorContent128 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_128(helper, Default::default(), None, output)? {
+                        match self.handle_content128(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -272163,7 +272160,7 @@ pub mod onix {
                     S::Content128(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_128(&mut values, value)?;
+                            Self::store_content128(&mut values, value)?;
                         }
                         Ok(super::ContributorContent127::Content128(
                             helper.finish_element("Content128", values)?,
@@ -272200,7 +272197,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_128(
+            fn store_content128(
                 values: &mut Option<super::ContributorContent128>,
                 value: super::ContributorContent128,
             ) -> Result<(), Error> {
@@ -272248,7 +272245,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_128<'de>(
+            fn handle_content128<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::ContributorContent128>,
@@ -272271,12 +272268,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_128(&mut values, data)?;
+                    Self::store_content128(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_128(&mut values, data)?;
+                        Self::store_content128(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content128(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -272442,7 +272439,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content128(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_128(helper, values, fallback, output)? {
+                            match self.handle_content128(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -272500,7 +272497,7 @@ pub mod onix {
                             let output = <super::ContributorContent128 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_128(helper, values, fallback, output)? {
+                            match self.handle_content128(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -272584,7 +272581,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct ContributorGpUnstructuredNameDeserializer {
-            content_129: Option<super::ContributorContent129>,
+            content129: Option<super::ContributorContent129>,
             state__: Box<ContributorGpUnstructuredNameDeserializerState>,
         }
         #[derive(Debug)]
@@ -272603,25 +272600,25 @@ pub mod onix {
                 use ContributorGpUnstructuredNameDeserializerState as S;
                 match state {
                     S::Content129(Some(deserializer)) => {
-                        self.store_content_129(deserializer.finish(helper)?)?
+                        self.store_content129(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_129(
+            fn store_content129(
                 &mut self,
                 value: super::ContributorContent129,
             ) -> Result<(), Error> {
-                if self.content_129.is_some() {
+                if self.content129.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content129",
                     )))?;
                 }
-                self.content_129 = Some(value);
+                self.content129 = Some(value);
                 Ok(())
             }
-            fn handle_content_129<'de>(
+            fn handle_content129<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::ContributorContent129>,
@@ -272647,7 +272644,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_129(data)?;
+                        self.store_content129(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -272667,7 +272664,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::ContributorGpUnstructuredName> {
                 let deserializer = Self {
-                    content_129: None,
+                    content129: None,
                     state__: Box::new(ContributorGpUnstructuredNameDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -272699,7 +272696,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content129(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_129(helper, output, &mut fallback)? {
+                            match self.handle_content129(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -272728,7 +272725,7 @@ pub mod onix {
                             let output = <super::ContributorContent129 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_129(helper, output, &mut fallback)? {
+                            match self.handle_content129(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -272767,7 +272764,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::ContributorGpUnstructuredName {
-                    content_129: helper.finish_element("Content129", self.content_129)?,
+                    content129: helper.finish_element("Content129", self.content129)?,
                 })
             }
         }
@@ -274008,7 +274005,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::RubyContent61 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_61(helper, Default::default(), None, output)? {
+                        match self.handle_content61(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -274044,7 +274041,7 @@ pub mod onix {
                     S::Content61(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_61(&mut values, value)?;
+                            Self::store_content61(&mut values, value)?;
                         }
                         Ok(super::RubyContent60::Content61(
                             helper.finish_element("Content61", values)?,
@@ -274064,7 +274061,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_61(
+            fn store_content61(
                 values: &mut Option<super::RubyContent61>,
                 value: super::RubyContent61,
             ) -> Result<(), Error> {
@@ -274110,7 +274107,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_61<'de>(
+            fn handle_content61<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::RubyContent61>,
@@ -274133,12 +274130,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_61(&mut values, data)?;
+                    Self::store_content61(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_61(&mut values, data)?;
+                        Self::store_content61(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content61(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -274191,7 +274188,7 @@ pub mod onix {
                         }
                         (S::Content61(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_61(helper, values, fallback, output)? {
+                            match self.handle_content61(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -274236,7 +274233,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::RubyContent61 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_61(helper, values, fallback, output)? {
+                            match self.handle_content61(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -274970,7 +274967,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent81 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_210(helper, Default::default(), None, output)? {
+                        match self.handle_content210(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -274997,7 +274994,7 @@ pub mod onix {
                     S::Content210(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_210(&mut values, value)?;
+                            Self::store_content210(&mut values, value)?;
                         }
                         Ok(super::NameAsSubjectContent209::Content210(
                             helper.finish_element("Content210", values)?,
@@ -275016,7 +275013,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_210(
+            fn store_content210(
                 values: &mut Option<super::AlternativeNameContent81>,
                 value: super::AlternativeNameContent81,
             ) -> Result<(), Error> {
@@ -275040,7 +275037,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_210<'de>(
+            fn handle_content210<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent81>,
@@ -275065,12 +275062,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_210(&mut values, data)?;
+                    Self::store_content210(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_210(&mut values, data)?;
+                        Self::store_content210(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content210(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -275156,7 +275153,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content210(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_210(helper, values, fallback, output)? {
+                            match self.handle_content210(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -275197,7 +275194,7 @@ pub mod onix {
                                 <super::AlternativeNameContent81 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_210(helper, values, fallback, output)? {
+                            match self.handle_content210(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -275289,7 +275286,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent79 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_79(helper, Default::default(), None, output)? {
+                        match self.handle_content79(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -275354,7 +275351,7 @@ pub mod onix {
                     S::Content79(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_79(&mut values, value)?;
+                            Self::store_content79(&mut values, value)?;
                         }
                         Ok(super::AlternativeNameContent78::Content79(
                             helper.finish_element("Content79", values)?,
@@ -275382,7 +275379,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_79(
+            fn store_content79(
                 values: &mut Option<super::AlternativeNameContent79>,
                 value: super::AlternativeNameContent79,
             ) -> Result<(), Error> {
@@ -275418,7 +275415,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_79<'de>(
+            fn handle_content79<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent79>,
@@ -275443,12 +275440,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_79(&mut values, data)?;
+                    Self::store_content79(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_79(&mut values, data)?;
+                        Self::store_content79(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content79(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -275579,7 +275576,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content79(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_79(helper, values, fallback, output)? {
+                            match self.handle_content79(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -275629,7 +275626,7 @@ pub mod onix {
                                 <super::AlternativeNameContent79 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_79(helper, values, fallback, output)? {
+                            match self.handle_content79(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -275696,7 +275693,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct AlternativeNameGpUnstructuredNameDeserializer {
-            content_80: Option<super::AlternativeNameContent80>,
+            content80: Option<super::AlternativeNameContent80>,
             state__: Box<AlternativeNameGpUnstructuredNameDeserializerState>,
         }
         #[derive(Debug)]
@@ -275715,25 +275712,25 @@ pub mod onix {
                 use AlternativeNameGpUnstructuredNameDeserializerState as S;
                 match state {
                     S::Content80(Some(deserializer)) => {
-                        self.store_content_80(deserializer.finish(helper)?)?
+                        self.store_content80(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
                 Ok(())
             }
-            fn store_content_80(
+            fn store_content80(
                 &mut self,
                 value: super::AlternativeNameContent80,
             ) -> Result<(), Error> {
-                if self.content_80.is_some() {
+                if self.content80.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content80",
                     )))?;
                 }
-                self.content_80 = Some(value);
+                self.content80 = Some(value);
                 Ok(())
             }
-            fn handle_content_80<'de>(
+            fn handle_content80<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::AlternativeNameContent80>,
@@ -275759,7 +275756,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_80(data)?;
+                        self.store_content80(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -275779,7 +275776,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::AlternativeNameGpUnstructuredName> {
                 let deserializer = Self {
-                    content_80: None,
+                    content80: None,
                     state__: Box::new(AlternativeNameGpUnstructuredNameDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -275811,7 +275808,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content80(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_80(helper, output, &mut fallback)? {
+                            match self.handle_content80(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -275841,7 +275838,7 @@ pub mod onix {
                                 <super::AlternativeNameContent80 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_80(helper, output, &mut fallback)? {
+                            match self.handle_content80(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -275880,7 +275877,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::AlternativeNameGpUnstructuredName {
-                    content_80: helper.finish_element("Content80", self.content_80)?,
+                    content80: helper.finish_element("Content80", self.content80)?,
                 })
             }
         }
@@ -276834,7 +276831,7 @@ pub mod onix {
         #[derive(Debug)]
         pub struct CopyrightOwnerContent142Deserializer {
             copyright_owner_identifier: Vec<super::CopyrightOwnerIdentifierElementType>,
-            content_143: Option<super::CopyrightOwnerContent143>,
+            content143: Option<super::CopyrightOwnerContent143>,
             state__: Box<CopyrightOwnerContent142DeserializerState>,
         }
         #[derive(Debug)]
@@ -276861,7 +276858,7 @@ pub mod onix {
                         self.store_copyright_owner_identifier(deserializer.finish(helper)?)?
                     }
                     S::Content143(Some(deserializer)) => {
-                        self.store_content_143(deserializer.finish(helper)?)?
+                        self.store_content143(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -276874,16 +276871,16 @@ pub mod onix {
                 self.copyright_owner_identifier.push(value);
                 Ok(())
             }
-            fn store_content_143(
+            fn store_content143(
                 &mut self,
                 value: super::CopyrightOwnerContent143,
             ) -> Result<(), Error> {
-                if self.content_143.is_some() {
+                if self.content143.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content143",
                     )))?;
                 }
-                self.content_143 = Some(value);
+                self.content143 = Some(value);
                 Ok(())
             }
             fn handle_copyright_owner_identifier<'de>(
@@ -276930,7 +276927,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_143<'de>(
+            fn handle_content143<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::CopyrightOwnerContent143>,
@@ -276952,7 +276949,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_143(data)?;
+                        self.store_content143(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -276973,7 +276970,7 @@ pub mod onix {
             ) -> DeserializerResult<'de, super::CopyrightOwnerContent142> {
                 let deserializer = Self {
                     copyright_owner_identifier: Vec::new(),
-                    content_143: None,
+                    content143: None,
                     state__: Box::new(CopyrightOwnerContent142DeserializerState::Init__),
                 };
                 let mut output = deserializer.next(helper, event)?;
@@ -277021,7 +277018,7 @@ pub mod onix {
                         }
                         (S::Content143(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_143(helper, output, &mut fallback)? {
+                            match self.handle_content143(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -277075,7 +277072,7 @@ pub mod onix {
                                 <super::CopyrightOwnerContent143 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_143(helper, output, &mut fallback)? {
+                            match self.handle_content143(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -277119,7 +277116,7 @@ pub mod onix {
                         None,
                         self.copyright_owner_identifier,
                     )?,
-                    content_143: self.content_143,
+                    content143: self.content143,
                 })
             }
         }
@@ -281617,7 +281614,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct TitleElementContent354Deserializer {
-            content_355: Option<super::TitleElementContent355>,
+            content355: Option<super::TitleElementContent355>,
             title_without_prefix: Option<super::TitleWithoutPrefixElementType>,
             state__: Box<TitleElementContent354DeserializerState>,
         }
@@ -281640,7 +281637,7 @@ pub mod onix {
                 use TitleElementContent354DeserializerState as S;
                 match state {
                     S::Content355(Some(deserializer)) => {
-                        self.store_content_355(deserializer.finish(helper)?)?
+                        self.store_content355(deserializer.finish(helper)?)?
                     }
                     S::TitleWithoutPrefix(Some(deserializer)) => {
                         self.store_title_without_prefix(deserializer.finish(helper)?)?
@@ -281649,16 +281646,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_355(
+            fn store_content355(
                 &mut self,
                 value: super::TitleElementContent355,
             ) -> Result<(), Error> {
-                if self.content_355.is_some() {
+                if self.content355.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content355",
                     )))?;
                 }
-                self.content_355 = Some(value);
+                self.content355 = Some(value);
                 Ok(())
             }
             fn store_title_without_prefix(
@@ -281673,7 +281670,7 @@ pub mod onix {
                 self.title_without_prefix = Some(value);
                 Ok(())
             }
-            fn handle_content_355<'de>(
+            fn handle_content355<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitleElementContent355>,
@@ -281699,7 +281696,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_355(data)?;
+                        self.store_content355(data)?;
                         *self.state__ = S::TitleWithoutPrefix(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -281754,7 +281751,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::TitleElementContent354> {
                 let deserializer = Self {
-                    content_355: None,
+                    content355: None,
                     title_without_prefix: None,
                     state__: Box::new(TitleElementContent354DeserializerState::Init__),
                 };
@@ -281787,7 +281784,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content355(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_355(helper, output, &mut fallback)? {
+                            match self.handle_content355(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -281828,7 +281825,7 @@ pub mod onix {
                             let output = <super::TitleElementContent355 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_355(helper, output, &mut fallback)? {
+                            match self.handle_content355(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -281887,7 +281884,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::TitleElementContent354 {
-                    content_355: helper.finish_element("Content355", self.content_355)?,
+                    content355: helper.finish_element("Content355", self.content355)?,
                     title_without_prefix: helper
                         .finish_element("TitleWithoutPrefix", self.title_without_prefix)?,
                 })
@@ -281895,7 +281892,7 @@ pub mod onix {
         }
         #[derive(Debug)]
         pub struct TitleElementContent358Deserializer {
-            content_359: Option<super::TitleElementContent355>,
+            content359: Option<super::TitleElementContent355>,
             title_without_prefix: Option<super::TitleWithoutPrefixElementType>,
             state__: Box<TitleElementContent358DeserializerState>,
         }
@@ -281918,7 +281915,7 @@ pub mod onix {
                 use TitleElementContent358DeserializerState as S;
                 match state {
                     S::Content359(Some(deserializer)) => {
-                        self.store_content_359(deserializer.finish(helper)?)?
+                        self.store_content359(deserializer.finish(helper)?)?
                     }
                     S::TitleWithoutPrefix(Some(deserializer)) => {
                         self.store_title_without_prefix(deserializer.finish(helper)?)?
@@ -281927,16 +281924,16 @@ pub mod onix {
                 }
                 Ok(())
             }
-            fn store_content_359(
+            fn store_content359(
                 &mut self,
                 value: super::TitleElementContent355,
             ) -> Result<(), Error> {
-                if self.content_359.is_some() {
+                if self.content359.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content359",
                     )))?;
                 }
-                self.content_359 = Some(value);
+                self.content359 = Some(value);
                 Ok(())
             }
             fn store_title_without_prefix(
@@ -281951,7 +281948,7 @@ pub mod onix {
                 self.title_without_prefix = Some(value);
                 Ok(())
             }
-            fn handle_content_359<'de>(
+            fn handle_content359<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TitleElementContent355>,
@@ -281977,7 +281974,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_359(data)?;
+                        self.store_content359(data)?;
                         *self.state__ = S::TitleWithoutPrefix(None);
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -282032,7 +282029,7 @@ pub mod onix {
                 event: Event<'de>,
             ) -> DeserializerResult<'de, super::TitleElementContent358> {
                 let deserializer = Self {
-                    content_359: None,
+                    content359: None,
                     title_without_prefix: None,
                     state__: Box::new(TitleElementContent358DeserializerState::Init__),
                 };
@@ -282065,7 +282062,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content359(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_359(helper, output, &mut fallback)? {
+                            match self.handle_content359(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -282106,7 +282103,7 @@ pub mod onix {
                             let output = <super::TitleElementContent355 as WithDeserializer>::init(
                                 helper, event,
                             )?;
-                            match self.handle_content_359(helper, output, &mut fallback)? {
+                            match self.handle_content359(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -282165,7 +282162,7 @@ pub mod onix {
                 );
                 self.finish_state(helper, state)?;
                 Ok(super::TitleElementContent358 {
-                    content_359: helper.finish_element("Content359", self.content_359)?,
+                    content359: helper.finish_element("Content359", self.content359)?,
                     title_without_prefix: helper
                         .finish_element("TitleWithoutPrefix", self.title_without_prefix)?,
                 })
@@ -282543,7 +282540,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent81 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_130(helper, Default::default(), None, output)? {
+                        match self.handle_content130(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -282570,7 +282567,7 @@ pub mod onix {
                     S::Content130(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_130(&mut values, value)?;
+                            Self::store_content130(&mut values, value)?;
                         }
                         Ok(super::ContributorContent129::Content130(
                             helper.finish_element("Content130", values)?,
@@ -282589,7 +282586,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_130(
+            fn store_content130(
                 values: &mut Option<super::AlternativeNameContent81>,
                 value: super::AlternativeNameContent81,
             ) -> Result<(), Error> {
@@ -282613,7 +282610,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_130<'de>(
+            fn handle_content130<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent81>,
@@ -282638,12 +282635,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_130(&mut values, data)?;
+                    Self::store_content130(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_130(&mut values, data)?;
+                        Self::store_content130(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content130(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -282727,7 +282724,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content130(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_130(helper, values, fallback, output)? {
+                            match self.handle_content130(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -282768,7 +282765,7 @@ pub mod onix {
                                 <super::AlternativeNameContent81 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_130(helper, values, fallback, output)? {
+                            match self.handle_content130(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -284735,7 +284732,7 @@ pub mod onix {
                         let output = <super::AlternativeNameContent81 as WithDeserializer>::init(
                             helper, event,
                         )?;
-                        match self.handle_content_81(helper, Default::default(), None, output)? {
+                        match self.handle_content81(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -284762,7 +284759,7 @@ pub mod onix {
                     S::Content81(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_81(&mut values, value)?;
+                            Self::store_content81(&mut values, value)?;
                         }
                         Ok(super::AlternativeNameContent80::Content81(
                             helper.finish_element("Content81", values)?,
@@ -284781,7 +284778,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_81(
+            fn store_content81(
                 values: &mut Option<super::AlternativeNameContent81>,
                 value: super::AlternativeNameContent81,
             ) -> Result<(), Error> {
@@ -284805,7 +284802,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_81<'de>(
+            fn handle_content81<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::AlternativeNameContent81>,
@@ -284830,12 +284827,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_81(&mut values, data)?;
+                    Self::store_content81(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_81(&mut values, data)?;
+                        Self::store_content81(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content81(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -284921,7 +284918,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content81(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_81(helper, values, fallback, output)? {
+                            match self.handle_content81(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -284962,7 +284959,7 @@ pub mod onix {
                                 <super::AlternativeNameContent81 as WithDeserializer>::init(
                                     helper, event,
                                 )?;
-                            match self.handle_content_81(helper, values, fallback, output)? {
+                            match self.handle_content81(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -286375,7 +286372,7 @@ pub mod onix {
             price_part_description: Vec<super::PricePartDescriptionElementType>,
             tax_type: Option<super::TaxTypeElementType>,
             tax_rate_code: Option<super::TaxRateCodeElementType>,
-            content_337: Option<super::TaxContent337>,
+            content337: Option<super::TaxContent337>,
             state__: Box<TaxElementTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -286444,7 +286441,7 @@ pub mod onix {
                     price_part_description: Vec::new(),
                     tax_type: None,
                     tax_rate_code: None,
-                    content_337: None,
+                    content337: None,
                     state__: Box::new(TaxElementTypeDeserializerState::Init__),
                 })
             }
@@ -286468,7 +286465,7 @@ pub mod onix {
                         self.store_tax_rate_code(deserializer.finish(helper)?)?
                     }
                     S::Content337(Some(deserializer)) => {
-                        self.store_content_337(deserializer.finish(helper)?)?
+                        self.store_content337(deserializer.finish(helper)?)?
                     }
                     _ => (),
                 }
@@ -286509,13 +286506,13 @@ pub mod onix {
                 self.tax_rate_code = Some(value);
                 Ok(())
             }
-            fn store_content_337(&mut self, value: super::TaxContent337) -> Result<(), Error> {
-                if self.content_337.is_some() {
+            fn store_content337(&mut self, value: super::TaxContent337) -> Result<(), Error> {
+                if self.content337.is_some() {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"Content337",
                     )))?;
                 }
-                self.content_337 = Some(value);
+                self.content337 = Some(value);
                 Ok(())
             }
             fn handle_product_identifier<'de>(
@@ -286650,7 +286647,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_337<'de>(
+            fn handle_content337<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 output: DeserializerOutput<'de, super::TaxContent337>,
@@ -286676,7 +286673,7 @@ pub mod onix {
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        self.store_content_337(data)?;
+                        self.store_content337(data)?;
                         *self.state__ = S::Done__;
                         Ok(ElementHandlerOutput::from_event(event, allow_any))
                     }
@@ -286762,7 +286759,7 @@ pub mod onix {
                         }
                         (S::Content337(Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_337(helper, output, &mut fallback)? {
+                            match self.handle_content337(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -286868,7 +286865,7 @@ pub mod onix {
                         (S::Content337(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output =
                                 <super::TaxContent337 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_337(helper, output, &mut fallback)? {
+                            match self.handle_content337(helper, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
@@ -286917,7 +286914,7 @@ pub mod onix {
                     price_part_description: self.price_part_description,
                     tax_type: self.tax_type,
                     tax_rate_code: self.tax_rate_code,
-                    content_337: helper.finish_element("Content337", self.content_337)?,
+                    content337: helper.finish_element("Content337", self.content337)?,
                 })
             }
         }
@@ -288529,7 +288526,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::TaxContent338 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_338(helper, Default::default(), None, output)? {
+                        match self.handle_content338(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -288542,7 +288539,7 @@ pub mod onix {
                     event = {
                         let output =
                             <super::TaxContent339 as WithDeserializer>::init(helper, event)?;
-                        match self.handle_content_339(helper, Default::default(), None, output)? {
+                        match self.handle_content339(helper, Default::default(), None, output)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -288569,7 +288566,7 @@ pub mod onix {
                     S::Content338(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_338(&mut values, value)?;
+                            Self::store_content338(&mut values, value)?;
                         }
                         Ok(super::TaxContent337::Content338(
                             helper.finish_element("Content338", values)?,
@@ -288578,7 +288575,7 @@ pub mod onix {
                     S::Content339(mut values, None, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(helper)?;
-                            Self::store_content_339(&mut values, value)?;
+                            Self::store_content339(&mut values, value)?;
                         }
                         Ok(super::TaxContent337::Content339(
                             helper.finish_element("Content339", values)?,
@@ -288588,7 +288585,7 @@ pub mod onix {
                     _ => unreachable!(),
                 }
             }
-            fn store_content_338(
+            fn store_content338(
                 values: &mut Option<super::TaxContent338>,
                 value: super::TaxContent338,
             ) -> Result<(), Error> {
@@ -288600,7 +288597,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn store_content_339(
+            fn store_content339(
                 values: &mut Option<super::TaxContent339>,
                 value: super::TaxContent339,
             ) -> Result<(), Error> {
@@ -288612,7 +288609,7 @@ pub mod onix {
                 *values = Some(value);
                 Ok(())
             }
-            fn handle_content_338<'de>(
+            fn handle_content338<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TaxContent338>,
@@ -288635,12 +288632,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_338(&mut values, data)?;
+                    Self::store_content338(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_338(&mut values, data)?;
+                        Self::store_content338(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content338(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -288651,7 +288648,7 @@ pub mod onix {
                     }
                 }
             }
-            fn handle_content_339<'de>(
+            fn handle_content339<'de>(
                 &mut self,
                 helper: &mut DeserializeHelper,
                 mut values: Option<super::TaxContent339>,
@@ -288674,12 +288671,12 @@ pub mod onix {
                 }
                 if let Some(deserializer) = fallback {
                     let data = deserializer.finish(helper)?;
-                    Self::store_content_339(&mut values, data)?;
+                    Self::store_content339(&mut values, data)?;
                 }
                 match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
-                        Self::store_content_339(&mut values, data)?;
+                        Self::store_content339(&mut values, data)?;
                         let data = Self::finish_state(helper, S::Content339(values, None, None))?;
                         *self.state__ = S::Done__(data);
                         Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -288723,7 +288720,7 @@ pub mod onix {
                         (S::Unknown__, _) => unreachable!(),
                         (S::Content338(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_338(helper, values, fallback, output)? {
+                            match self.handle_content338(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -288732,7 +288729,7 @@ pub mod onix {
                         }
                         (S::Content339(values, fallback, Some(deserializer)), event) => {
                             let output = deserializer.next(helper, event)?;
-                            match self.handle_content_339(helper, values, fallback, output)? {
+                            match self.handle_content339(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -288760,7 +288757,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::TaxContent338 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_338(helper, values, fallback, output)? {
+                            match self.handle_content338(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -288773,7 +288770,7 @@ pub mod onix {
                         ) => {
                             let output =
                                 <super::TaxContent339 as WithDeserializer>::init(helper, event)?;
-                            match self.handle_content_339(helper, values, fallback, output)? {
+                            match self.handle_content339(helper, values, fallback, output)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -290484,7 +290481,7 @@ pub mod onix {
                         SenderElementTypeSerializerState::Init__ => {
                             *self.state = SenderElementTypeSerializerState::Content302(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_302,
+                                    &self.value.content302,
                                     Some("Content302"),
                                     ElementNamespace::None,
                                     false,
@@ -290655,7 +290652,7 @@ pub mod onix {
                         AddresseeElementTypeSerializerState::Init__ => {
                             *self.state = AddresseeElementTypeSerializerState::Content70(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_70,
+                                    &self.value.content70,
                                     Some("Content70"),
                                     ElementNamespace::None,
                                     false,
@@ -294911,7 +294908,7 @@ pub mod onix {
                         DescriptiveDetailGpCollectionsSerializerState::Init__ => {
                             *self.state = DescriptiveDetailGpCollectionsSerializerState::Content153(
                                 IterSerializer::new(
-                                    self.value.content_153.as_ref(),
+                                    self.value.content153.as_ref(),
                                     Some("Content153"),
                                     false,
                                 )
@@ -294996,7 +294993,7 @@ pub mod onix {
                                     *self.state =
                                         DescriptiveDetailGpTitlesSerializerState::Content154(
                                             IterSerializer::new(
-                                                self.value.content_154.as_ref(),
+                                                self.value.content154.as_ref(),
                                                 Some("Content154"),
                                                 false,
                                             )
@@ -295208,7 +295205,7 @@ pub mod onix {
                         DescriptiveDetailGpEditionsSerializerState::Init__ => {
                             *self.state = DescriptiveDetailGpEditionsSerializerState::Content156(
                                 IterSerializer::new(
-                                    self.value.content_156.as_ref(),
+                                    self.value.content156.as_ref(),
                                     Some("Content156"),
                                     false,
                                 )
@@ -296020,7 +296017,7 @@ pub mod onix {
                                     *self.state =
                                         PromotionalEventElementTypeSerializerState::Content256(
                                             IterSerializer::new(
-                                                self.value.content_256.as_ref(),
+                                                self.value.content256.as_ref(),
                                                 Some("Content256"),
                                                 false,
                                             )
@@ -296218,7 +296215,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ContentItemElementTypeSerializerState :: Init__ => { * self . state = ContentItemElementTypeSerializerState :: LevelSequenceNumber (IterSerializer :: new (self . value . level_sequence_number . as_ref () , Some ("LevelSequenceNumber") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ContentItemElementTypeSerializerState :: LevelSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content118 (WithSerializer :: serializer_with_namespace (& self . value . content_118 , Some ("Content118") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content118 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubUsageConstraint (IterSerializer :: new (& self . value . epub_usage_constraint [..] , Some ("EpubUsageConstraint") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubUsageConstraint (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubLicense (IterSerializer :: new (& self . value . epub_license [..] , Some ("EpubLicense") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubLicense (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content119 (WithSerializer :: serializer_with_namespace (& self . value . content_119 , Some ("Content119") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content119 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpAuthorship (IterSerializer :: new (self . value . gp_authorship . as_ref () , Some ("gp.authorship") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: GpAuthorship (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpLanguages (WithSerializer :: serializer_with_namespace (& self . value . gp_languages , Some ("gp.languages") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpLanguages (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpSubjects (WithSerializer :: serializer_with_namespace (& self . value . gp_subjects , Some ("gp.subjects") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpSubjects (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer_with_namespace (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Publisher (IterSerializer :: new (& self . value . publisher [..] , Some ("Publisher") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: Publisher (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content123 (IterSerializer :: new (self . value . content_123 . as_ref () , Some ("Content123") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: Content123 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpRelatedMaterials (WithSerializer :: serializer_with_namespace (& self . value . gp_related_materials , Some ("gp.related_materials") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpRelatedMaterials (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: End__ , } ContentItemElementTypeSerializerState :: End__ => { * self . state = ContentItemElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ContentItemElementTypeSerializerState :: Done__ => return Ok (None) , ContentItemElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ContentItemElementTypeSerializerState :: Init__ => { * self . state = ContentItemElementTypeSerializerState :: LevelSequenceNumber (IterSerializer :: new (self . value . level_sequence_number . as_ref () , Some ("LevelSequenceNumber") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) ; let namespace = if self . is_root { ElementNamespace :: Namespace (super :: super :: NS_ONIX) } else { self . namespace . clone () } ; self . name = helper . element_name (self . name , & namespace) ; let mut bytes = BytesStart :: new (self . name) ; helper . begin_ns_scope () ; helper . write_xmlns_for_element (& mut bytes , self . name , & namespace) ; if self . is_root { helper . write_default_namespace (& mut bytes , self . name , & namespace) ; } if self . is_root { helper . write_xmlns (& mut bytes , None , & super :: super :: NS_ONIX) ; } helper . write_attrib_opt (& mut bytes , "refname" , & self . value . refname) ? ; helper . write_attrib_opt (& mut bytes , "shortname" , & self . value . shortname) ? ; helper . write_attrib_opt (& mut bytes , "datestamp" , & self . value . datestamp) ? ; helper . write_attrib_opt (& mut bytes , "sourcename" , & self . value . sourcename) ? ; helper . write_attrib_opt (& mut bytes , "sourcetype" , & self . value . sourcetype) ? ; return Ok (Some (Event :: Start (bytes))) } ContentItemElementTypeSerializerState :: LevelSequenceNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content118 (WithSerializer :: serializer_with_namespace (& self . value . content118 , Some ("Content118") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content118 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubUsageConstraint (IterSerializer :: new (& self . value . epub_usage_constraint [..] , Some ("EpubUsageConstraint") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubUsageConstraint (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: EpubLicense (IterSerializer :: new (& self . value . epub_license [..] , Some ("EpubLicense") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: EpubLicense (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content119 (WithSerializer :: serializer_with_namespace (& self . value . content119 , Some ("Content119") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: Content119 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpAuthorship (IterSerializer :: new (self . value . gp_authorship . as_ref () , Some ("gp.authorship") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: GpAuthorship (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpLanguages (WithSerializer :: serializer_with_namespace (& self . value . gp_languages , Some ("gp.languages") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpLanguages (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpSubjects (WithSerializer :: serializer_with_namespace (& self . value . gp_subjects , Some ("gp.subjects") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpSubjects (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (WithSerializer :: serializer_with_namespace (& self . value . gp_descriptions_and_marketing_resources , Some ("gp.descriptions_and_marketing_resources") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpDescriptionsAndMarketingResources (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Publisher (IterSerializer :: new (& self . value . publisher [..] , Some ("Publisher") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } ContentItemElementTypeSerializerState :: Publisher (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: Content123 (IterSerializer :: new (self . value . content123 . as_ref () , Some ("Content123") , false) . with_namespace (ElementNamespace :: None)) , } ContentItemElementTypeSerializerState :: Content123 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: GpRelatedMaterials (WithSerializer :: serializer_with_namespace (& self . value . gp_related_materials , Some ("gp.related_materials") , ElementNamespace :: None , false) ?) , } ContentItemElementTypeSerializerState :: GpRelatedMaterials (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ContentItemElementTypeSerializerState :: End__ , } ContentItemElementTypeSerializerState :: End__ => { * self . state = ContentItemElementTypeSerializerState :: Done__ ; helper . end_ns_scope () ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ContentItemElementTypeSerializerState :: Done__ => return Ok (None) , ContentItemElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -296273,7 +296270,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { PublishingDetailGpImprintsAndPublishersSerializerState :: Init__ => { * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: Content271 (WithSerializer :: serializer_with_namespace (& self . value . content_271 , Some ("Content271") , ElementNamespace :: None , false) ?) ; } PublishingDetailGpImprintsAndPublishersSerializerState :: Content271 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: CityOfPublication (IterSerializer :: new (& self . value . city_of_publication [..] , Some ("CityOfPublication") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpImprintsAndPublishersSerializerState :: CityOfPublication (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: CountryOfPublication (IterSerializer :: new (self . value . country_of_publication . as_ref () , Some ("CountryOfPublication") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpImprintsAndPublishersSerializerState :: CountryOfPublication (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: ProductContact (IterSerializer :: new (& self . value . product_contact [..] , Some ("ProductContact") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpImprintsAndPublishersSerializerState :: ProductContact (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: Done__ , } PublishingDetailGpImprintsAndPublishersSerializerState :: Done__ => return Ok (None) , PublishingDetailGpImprintsAndPublishersSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { PublishingDetailGpImprintsAndPublishersSerializerState :: Init__ => { * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: Content271 (WithSerializer :: serializer_with_namespace (& self . value . content271 , Some ("Content271") , ElementNamespace :: None , false) ?) ; } PublishingDetailGpImprintsAndPublishersSerializerState :: Content271 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: CityOfPublication (IterSerializer :: new (& self . value . city_of_publication [..] , Some ("CityOfPublication") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpImprintsAndPublishersSerializerState :: CityOfPublication (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: CountryOfPublication (IterSerializer :: new (self . value . country_of_publication . as_ref () , Some ("CountryOfPublication") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpImprintsAndPublishersSerializerState :: CountryOfPublication (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: ProductContact (IterSerializer :: new (& self . value . product_contact [..] , Some ("ProductContact") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpImprintsAndPublishersSerializerState :: ProductContact (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpImprintsAndPublishersSerializerState :: Done__ , } PublishingDetailGpImprintsAndPublishersSerializerState :: Done__ => return Ok (None) , PublishingDetailGpImprintsAndPublishersSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -296336,7 +296333,7 @@ pub mod onix {
                 helper: &mut SerializeHelper,
             ) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Init__ => { * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content273 (IterSerializer :: new (self . value . content_273 . as_ref () , Some ("Content273") , false) . with_namespace (ElementNamespace :: None)) ; } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content273 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: PublishingDate (IterSerializer :: new (& self . value . publishing_date [..] , Some ("PublishingDate") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: PublishingDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: LatestReprintNumber (IterSerializer :: new (self . value . latest_reprint_number . as_ref () , Some ("LatestReprintNumber") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: LatestReprintNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content274 (IterSerializer :: new (self . value . content_274 . as_ref () , Some ("Content274") , false) . with_namespace (ElementNamespace :: None)) , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content274 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Done__ , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Done__ => return Ok (None) , PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Init__ => { * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content273 (IterSerializer :: new (self . value . content273 . as_ref () , Some ("Content273") , false) . with_namespace (ElementNamespace :: None)) ; } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content273 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: PublishingDate (IterSerializer :: new (& self . value . publishing_date [..] , Some ("PublishingDate") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: PublishingDate (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: LatestReprintNumber (IterSerializer :: new (self . value . latest_reprint_number . as_ref () , Some ("LatestReprintNumber") , false) . with_namespace (ElementNamespace :: Namespace (super :: super :: NS_ONIX))) , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: LatestReprintNumber (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content274 (IterSerializer :: new (self . value . content274 . as_ref () , Some ("Content274") , false) . with_namespace (ElementNamespace :: None)) , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Content274 (x) => match x . next (helper) . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Done__ , } PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Done__ => return Ok (None) , PublishingDetailGpPublishingStatusDatesAndCopyrightSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -296381,7 +296378,7 @@ pub mod onix {
                 loop {
                     match &mut *self.state {
                         PublishingDetailGpSalesRightsAndRestrictionsSerializerState::Init__ => {
-                            * self . state = PublishingDetailGpSalesRightsAndRestrictionsSerializerState :: Content275 (IterSerializer :: new (self . value . content_275 . as_ref () , Some ("Content275") , false) . with_namespace (ElementNamespace :: None)) ;
+                            * self . state = PublishingDetailGpSalesRightsAndRestrictionsSerializerState :: Content275 (IterSerializer :: new (self . value . content275 . as_ref () , Some ("Content275") , false) . with_namespace (ElementNamespace :: None)) ;
                         }
                         PublishingDetailGpSalesRightsAndRestrictionsSerializerState::Content275(
                             x,
@@ -296657,7 +296654,7 @@ pub mod onix {
                                     *self.state =
                                         RelatedProductElementTypeSerializerState::Content279(
                                             IterSerializer::new(
-                                                self.value.content_279.as_ref(),
+                                                self.value.content279.as_ref(),
                                                 Some("Content279"),
                                                 false,
                                             )
@@ -297542,7 +297539,7 @@ pub mod onix {
                                 None => {
                                     *self.state = SupplyDetailElementTypeSerializerState::Content333(
                                         IterSerializer::new(
-                                            self.value.content_333.as_ref(),
+                                            self.value.content333.as_ref(),
                                             Some("Content333"),
                                             false,
                                         )
@@ -297557,7 +297554,7 @@ pub mod onix {
                                 None => {
                                     *self.state = SupplyDetailElementTypeSerializerState::Content334(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_334,
+                                            &self.value.content334,
                                             Some("Content334"),
                                             ElementNamespace::None,
                                             false,
@@ -300358,7 +300355,7 @@ pub mod onix {
                                 None => {
                                     *self.state = ProductPartElementTypeSerializerState::Content249(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_249,
+                                            &self.value.content249,
                                             Some("Content249"),
                                             ElementNamespace::None,
                                             false,
@@ -301728,7 +301725,7 @@ pub mod onix {
                                 None => {
                                     *self.state = ExtentElementTypeSerializerState::Content182(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_182,
+                                            &self.value.content182,
                                             Some("Content182"),
                                             ElementNamespace::None,
                                             false,
@@ -302287,7 +302284,7 @@ pub mod onix {
                                 None => {
                                     *self.state = SubjectElementTypeSerializerState::Content315(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_315,
+                                            &self.value.content315,
                                             Some("Content315"),
                                             ElementNamespace::None,
                                             false,
@@ -302430,7 +302427,7 @@ pub mod onix {
                                     *self.state =
                                         NameAsSubjectElementTypeSerializerState::Content205(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_205,
+                                                &self.value.content205,
                                                 Some("Content205"),
                                                 ElementNamespace::None,
                                                 false,
@@ -302652,7 +302649,7 @@ pub mod onix {
                                 None => {
                                     *self.state = AudienceElementTypeSerializerState::Content87(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_87,
+                                            &self.value.content87,
                                             Some("Content87"),
                                             ElementNamespace::None,
                                             false,
@@ -302812,7 +302809,7 @@ pub mod onix {
                                 None => {
                                     *self.state = AudienceRangeElementTypeSerializerState::Content91(
                                         IterSerializer::new(
-                                            self.value.content_91.as_ref(),
+                                            self.value.content91.as_ref(),
                                             Some("Content91"),
                                             false,
                                         )
@@ -303681,7 +303678,7 @@ pub mod onix {
                                 None => {
                                     *self.state = CitedContentElementTypeSerializerState::Content103(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_103,
+                                            &self.value.content103,
                                             Some("Content103"),
                                             ElementNamespace::None,
                                             false,
@@ -305201,7 +305198,7 @@ pub mod onix {
                                     *self.state =
                                         EventOccurrenceElementTypeSerializerState::Content173(
                                             IterSerializer::new(
-                                                self.value.content_173.as_ref(),
+                                                self.value.content173.as_ref(),
                                                 Some("Content173"),
                                                 false,
                                             )
@@ -306073,7 +306070,7 @@ pub mod onix {
                                 None => {
                                     *self.state = PublisherElementTypeSerializerState::Content263(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_263,
+                                            &self.value.content263,
                                             Some("Content263"),
                                             ElementNamespace::None,
                                             false,
@@ -306709,7 +306706,7 @@ pub mod onix {
                                     *self.state =
                                         ProductContactElementTypeSerializerState::Content240(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_240,
+                                                &self.value.content240,
                                                 Some("Content240"),
                                                 ElementNamespace::None,
                                                 false,
@@ -306797,7 +306794,7 @@ pub mod onix {
                                     *self.state =
                                         ProductContactElementTypeSerializerState::Content242(
                                             IterSerializer::new(
-                                                self.value.content_242.as_ref(),
+                                                self.value.content242.as_ref(),
                                                 Some("Content242"),
                                                 false,
                                             )
@@ -308144,7 +308141,7 @@ pub mod onix {
                                     *self.state =
                                         SupplementManifestElementTypeSerializerState::Content319(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_319,
+                                                &self.value.content319,
                                                 Some("Content319"),
                                                 ElementNamespace::None,
                                                 false,
@@ -308665,7 +308662,7 @@ pub mod onix {
                                 None => *self.state =
                                     PublisherRepresentativeElementTypeSerializerState::Content267(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_267,
+                                            &self.value.content267,
                                             Some("Content267"),
                                             ElementNamespace::None,
                                             false,
@@ -309734,7 +309731,7 @@ pub mod onix {
                                 None => {
                                     *self.state = SupplierElementTypeSerializerState::Content322(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_322,
+                                            &self.value.content322,
                                             Some("Content322"),
                                             ElementNamespace::None,
                                             false,
@@ -309957,7 +309954,7 @@ pub mod onix {
                                     *self.state =
                                         SupplyContactElementTypeSerializerState::Content327(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_327,
+                                                &self.value.content327,
                                                 Some("Content327"),
                                                 ElementNamespace::None,
                                                 false,
@@ -310044,7 +310041,7 @@ pub mod onix {
                                     *self.state =
                                         SupplyContactElementTypeSerializerState::Content329(
                                             IterSerializer::new(
-                                                self.value.content_329.as_ref(),
+                                                self.value.content329.as_ref(),
                                                 Some("Content329"),
                                                 false,
                                             )
@@ -310758,7 +310755,7 @@ pub mod onix {
                         NewSupplierElementTypeSerializerState::Init__ => {
                             *self.state = NewSupplierElementTypeSerializerState::Content215(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_215,
+                                    &self.value.content215,
                                     Some("Content215"),
                                     ElementNamespace::None,
                                     false,
@@ -311022,7 +311019,7 @@ pub mod onix {
                                 None => {
                                     *self.state = StockElementTypeSerializerState::Content308(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_308,
+                                            &self.value.content308,
                                             Some("Content308"),
                                             ElementNamespace::None,
                                             false,
@@ -313890,7 +313887,7 @@ pub mod onix {
                                 None => {
                                     *self.state = TitleElementElementTypeSerializerState::Content351(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_351,
+                                            &self.value.content351,
                                             Some("Content351"),
                                             ElementNamespace::None,
                                             false,
@@ -314571,7 +314568,7 @@ pub mod onix {
                                 None => {
                                     *self.state = ContributorElementTypeSerializerState::Content125(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_125,
+                                            &self.value.content125,
                                             Some("Content125"),
                                             ElementNamespace::None,
                                             false,
@@ -315496,7 +315493,7 @@ pub mod onix {
                                     *self.state =
                                         DescriptiveDetailContent157SerializerState::Content158(
                                             IterSerializer::new(
-                                                self.value.content_158.as_ref(),
+                                                self.value.content158.as_ref(),
                                                 Some("Content158"),
                                                 false,
                                             )
@@ -318697,7 +318694,7 @@ pub mod onix {
                                     *self.state =
                                         AlternativeNameElementTypeSerializerState::Content76(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_76,
+                                                &self.value.content76,
                                                 Some("Content76"),
                                                 ElementNamespace::None,
                                                 false,
@@ -323109,7 +323106,7 @@ pub mod onix {
                         PromotionalEventContent257SerializerState::Init__ => {
                             *self.state = PromotionalEventContent257SerializerState::Content258(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_258,
+                                    &self.value.content258,
                                     Some("Content258"),
                                     ElementNamespace::None,
                                     false,
@@ -323321,7 +323318,7 @@ pub mod onix {
                         EventOccurrenceContent173SerializerState::Init__ => {
                             *self.state = EventOccurrenceContent173SerializerState::Content174(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_174,
+                                    &self.value.content174,
                                     Some("Content174"),
                                     ElementNamespace::None,
                                     false,
@@ -323369,7 +323366,7 @@ pub mod onix {
                                     *self.state =
                                         EventOccurrenceContent173SerializerState::Content176(
                                             IterSerializer::new(
-                                                self.value.content_176.as_ref(),
+                                                self.value.content176.as_ref(),
                                                 Some("Content176"),
                                                 false,
                                             )
@@ -323472,7 +323469,7 @@ pub mod onix {
                                 None => {
                                     *self.state = EventSponsorContent178SerializerState::Content179(
                                         IterSerializer::new(
-                                            self.value.content_179.as_ref(),
+                                            self.value.content179.as_ref(),
                                             Some("Content179"),
                                             false,
                                         )
@@ -324916,7 +324913,7 @@ pub mod onix {
                                     *self.state =
                                         CopyrightStatementElementTypeSerializerState::Content146(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_146,
+                                                &self.value.content146,
                                                 Some("Content146"),
                                                 ElementNamespace::None,
                                                 false,
@@ -326594,7 +326591,7 @@ pub mod onix {
                                     *self.state =
                                         CoverResourceElementTypeSerializerState::Content151(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_151,
+                                                &self.value.content151,
                                                 Some("Content151"),
                                                 ElementNamespace::None,
                                                 false,
@@ -326984,7 +326981,7 @@ pub mod onix {
                                     *self.state =
                                         InsertResourceElementTypeSerializerState::Content196(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_196,
+                                                &self.value.content196,
                                                 Some("Content196"),
                                                 ElementNamespace::None,
                                                 false,
@@ -327049,7 +327046,7 @@ pub mod onix {
                         SalesOutletElementTypeSerializerState::Init__ => {
                             *self.state = SalesOutletElementTypeSerializerState::Content295(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_295,
+                                    &self.value.content295,
                                     Some("Content295"),
                                     ElementNamespace::None,
                                     false,
@@ -330621,7 +330618,7 @@ pub mod onix {
                                 None => {
                                     *self.state = PriceElementTypeSerializerState::Content221(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_221,
+                                            &self.value.content221,
                                             Some("Content221"),
                                             ElementNamespace::None,
                                             false,
@@ -330705,7 +330702,7 @@ pub mod onix {
                                 None => {
                                     *self.state = PriceElementTypeSerializerState::Content225(
                                         IterSerializer::new(
-                                            self.value.content_225.as_ref(),
+                                            self.value.content225.as_ref(),
                                             Some("Content225"),
                                             false,
                                         )
@@ -333253,7 +333250,7 @@ pub mod onix {
                                     *self.state =
                                         ContributorPlaceElementTypeSerializerState::Content136(
                                             WithSerializer::serializer_with_namespace(
-                                                &self.value.content_136,
+                                                &self.value.content136,
                                                 Some("Content136"),
                                                 ElementNamespace::None,
                                                 false,
@@ -335420,7 +335417,7 @@ pub mod onix {
                                 None => {
                                     *self.state = TableElementTypeSerializerState::Content48(
                                         IterSerializer::new(
-                                            self.value.content_48.as_ref(),
+                                            self.value.content48.as_ref(),
                                             Some("Content48"),
                                             false,
                                         )
@@ -335469,7 +335466,7 @@ pub mod onix {
                                 None => {
                                     *self.state = TableElementTypeSerializerState::Content49(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_49,
+                                            &self.value.content49,
                                             Some("Content49"),
                                             ElementNamespace::None,
                                             false,
@@ -336506,7 +336503,7 @@ pub mod onix {
                                 None => {
                                     *self.state = NameAsSubjectContent206SerializerState::Content207(
                                         IterSerializer::new(
-                                            self.value.content_207.as_ref(),
+                                            self.value.content207.as_ref(),
                                             Some("Content207"),
                                             false,
                                         )
@@ -338019,7 +338016,7 @@ pub mod onix {
                                 None => {
                                     *self.state = CitedContent105SerializerState::Content106(
                                         IterSerializer::new(
-                                            self.value.content_106.as_ref(),
+                                            self.value.content106.as_ref(),
                                             Some("Content106"),
                                             false,
                                         )
@@ -343913,7 +343910,7 @@ pub mod onix {
                                 None => {
                                     *self.state = StockContent309SerializerState::Content310(
                                         IterSerializer::new(
-                                            self.value.content_310.as_ref(),
+                                            self.value.content310.as_ref(),
                                             Some("Content310"),
                                             false,
                                         )
@@ -343928,7 +343925,7 @@ pub mod onix {
                                 None => {
                                     *self.state = StockContent309SerializerState::Content311(
                                         IterSerializer::new(
-                                            self.value.content_311.as_ref(),
+                                            self.value.content311.as_ref(),
                                             Some("Content311"),
                                             false,
                                         )
@@ -343943,7 +343940,7 @@ pub mod onix {
                                 None => {
                                     *self.state = StockContent309SerializerState::Content312(
                                         IterSerializer::new(
-                                            self.value.content_312.as_ref(),
+                                            self.value.content312.as_ref(),
                                             Some("Content312"),
                                             false,
                                         )
@@ -345857,7 +345854,7 @@ pub mod onix {
                                 None => {
                                     *self.state = DiscountElementTypeSerializerState::Content160(
                                         IterSerializer::new(
-                                            self.value.content_160.as_ref(),
+                                            self.value.content160.as_ref(),
                                             Some("Content160"),
                                             false,
                                         )
@@ -345872,7 +345869,7 @@ pub mod onix {
                                 None => {
                                     *self.state = DiscountElementTypeSerializerState::Content161(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_161,
+                                            &self.value.content161,
                                             Some("Content161"),
                                             ElementNamespace::None,
                                             false,
@@ -347224,7 +347221,7 @@ pub mod onix {
                                 None => {
                                     *self.state = TitleElementContent352SerializerState::Content353(
                                         IterSerializer::new(
-                                            self.value.content_353.as_ref(),
+                                            self.value.content353.as_ref(),
                                             Some("Content353"),
                                             false,
                                         )
@@ -347299,7 +347296,7 @@ pub mod onix {
                                 None => {
                                     *self.state = TitleElementContent356SerializerState::Content357(
                                         IterSerializer::new(
-                                            self.value.content_357.as_ref(),
+                                            self.value.content357.as_ref(),
                                             Some("Content357"),
                                             false,
                                         )
@@ -347357,7 +347354,7 @@ pub mod onix {
                         TitleElementContent360SerializerState::Init__ => {
                             *self.state = TitleElementContent360SerializerState::Content361(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_361,
+                                    &self.value.content361,
                                     Some("Content361"),
                                     ElementNamespace::None,
                                     false,
@@ -347566,7 +347563,7 @@ pub mod onix {
                                 None => {
                                     *self.state = ContributorContent126SerializerState::Content127(
                                         IterSerializer::new(
-                                            self.value.content_127.as_ref(),
+                                            self.value.content127.as_ref(),
                                             Some("Content127"),
                                             false,
                                         )
@@ -349914,7 +349911,7 @@ pub mod onix {
                             None => {
                                 *self.state = RubyContent59SerializerState::Content60(
                                     WithSerializer::serializer_with_namespace(
-                                        &self.value.content_60,
+                                        &self.value.content60,
                                         Some("Content60"),
                                         ElementNamespace::None,
                                         false,
@@ -350371,7 +350368,7 @@ pub mod onix {
                             *self.state =
                                 NameAsSubjectGpUnstructuredNameSerializerState::Content209(
                                     WithSerializer::serializer_with_namespace(
-                                        &self.value.content_209,
+                                        &self.value.content209,
                                         Some("Content209"),
                                         ElementNamespace::None,
                                         false,
@@ -351533,7 +351530,7 @@ pub mod onix {
                                 None => {
                                     *self.state = AlternativeNameContent77SerializerState::Content78(
                                         IterSerializer::new(
-                                            self.value.content_78.as_ref(),
+                                            self.value.content78.as_ref(),
                                             Some("Content78"),
                                             false,
                                         )
@@ -357747,7 +357744,7 @@ pub mod onix {
                         PriceContent222SerializerState::Init__ => {
                             *self.state = PriceContent222SerializerState::Content223(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_223,
+                                    &self.value.content223,
                                     Some("Content223"),
                                     ElementNamespace::None,
                                     false,
@@ -357760,7 +357757,7 @@ pub mod onix {
                                 None => {
                                     *self.state = PriceContent222SerializerState::Content224(
                                         IterSerializer::new(
-                                            self.value.content_224.as_ref(),
+                                            self.value.content224.as_ref(),
                                             Some("Content224"),
                                             false,
                                         )
@@ -358744,7 +358741,7 @@ pub mod onix {
                         ContributorGpUnstructuredNameSerializerState::Init__ => {
                             *self.state = ContributorGpUnstructuredNameSerializerState::Content129(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_129,
+                                    &self.value.content129,
                                     Some("Content129"),
                                     ElementNamespace::None,
                                     false,
@@ -359709,7 +359706,7 @@ pub mod onix {
                             *self.state =
                                 AlternativeNameGpUnstructuredNameSerializerState::Content80(
                                     WithSerializer::serializer_with_namespace(
-                                        &self.value.content_80,
+                                        &self.value.content80,
                                         Some("Content80"),
                                         ElementNamespace::None,
                                         false,
@@ -360249,7 +360246,7 @@ pub mod onix {
                                     *self.state =
                                         CopyrightOwnerContent142SerializerState::Content143(
                                             IterSerializer::new(
-                                                self.value.content_143.as_ref(),
+                                                self.value.content143.as_ref(),
                                                 Some("Content143"),
                                                 false,
                                             )
@@ -362390,7 +362387,7 @@ pub mod onix {
                         TitleElementContent354SerializerState::Init__ => {
                             *self.state = TitleElementContent354SerializerState::Content355(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_355,
+                                    &self.value.content355,
                                     Some("Content355"),
                                     ElementNamespace::None,
                                     false,
@@ -362462,7 +362459,7 @@ pub mod onix {
                         TitleElementContent358SerializerState::Init__ => {
                             *self.state = TitleElementContent358SerializerState::Content359(
                                 WithSerializer::serializer_with_namespace(
-                                    &self.value.content_359,
+                                    &self.value.content359,
                                     Some("Content359"),
                                     ElementNamespace::None,
                                     false,
@@ -364042,7 +364039,7 @@ pub mod onix {
                                 None => {
                                     *self.state = TaxElementTypeSerializerState::Content337(
                                         WithSerializer::serializer_with_namespace(
-                                            &self.value.content_337,
+                                            &self.value.content337,
                                             Some("Content337"),
                                             ElementNamespace::None,
                                             false,

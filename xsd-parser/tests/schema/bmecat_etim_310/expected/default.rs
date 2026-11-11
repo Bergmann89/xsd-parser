@@ -13,7 +13,7 @@ pub enum BmecatElementTypeContent {
 }
 #[derive(Debug)]
 pub enum TypeBmEcatVersion {
-    _12,
+    _1_2,
     _2005,
 }
 #[derive(Debug)]
@@ -1086,7 +1086,7 @@ pub struct UdxEdxfPackingUnitElementType {
     pub udx_edxf_depth: Option<f64>,
     pub udx_edxf_diameter: Option<f64>,
     pub udx_edxf_gtin: Option<String>,
-    pub udx_edxf_gs_1128: Option<String>,
+    pub udx_edxf_gs1_128: Option<String>,
 }
 #[derive(Debug)]
 pub struct UdxEdxfSurchargeElementType {

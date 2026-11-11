@@ -199,18 +199,18 @@ pub mod definition {
     }
     #[derive(Debug)]
     pub struct CtRegionAreaLineXElementType {
-        pub point_1: String,
+        pub point1: String,
     }
     #[derive(Debug)]
     pub struct CtRegionAreaOuadraticBezierXElementType {
         pub pointl: String,
-        pub point_2: String,
+        pub point2: String,
     }
     #[derive(Debug)]
     pub struct CtRegionAreaCubicBezierXElementType {
-        pub point_1: Option<String>,
-        pub point_2: Option<String>,
-        pub point_3: String,
+        pub point1: Option<String>,
+        pub point2: Option<String>,
+        pub point3: String,
     }
     #[derive(Debug)]
     pub struct CtRegionAreaArcXElementType {

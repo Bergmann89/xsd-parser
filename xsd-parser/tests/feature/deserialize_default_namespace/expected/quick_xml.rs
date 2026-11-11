@@ -265,7 +265,7 @@ pub mod quick_xml_deserialize {
                     Some(b"a")
                 ) {
                     let output = <String as WithDeserializer>::init(helper, event)?;
-                    return self.handle_oa(helper, Default::default(), None, output);
+                    return self.handle_o_a(helper, Default::default(), None, output);
                 }
             }
             *self.state__ = FooTypeContentDeserializerState::Init__;
@@ -290,7 +290,7 @@ pub mod quick_xml_deserialize {
                 S::OA(mut values, None, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(helper)?;
-                        Self::store_oa(&mut values, value)?;
+                        Self::store_o_a(&mut values, value)?;
                     }
                     Ok(super::FooTypeContent::OA(
                         helper.finish_element("a", values)?,
@@ -307,7 +307,7 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn store_oa(values: &mut Option<String>, value: String) -> Result<(), Error> {
+        fn store_o_a(values: &mut Option<String>, value: String) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"a")))?;
             }
@@ -348,7 +348,7 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn handle_oa<'de>(
+        fn handle_o_a<'de>(
             &mut self,
             helper: &mut DeserializeHelper,
             mut values: Option<String>,
@@ -366,12 +366,12 @@ pub mod quick_xml_deserialize {
             }
             if let Some(deserializer) = fallback {
                 let data = deserializer.finish(helper)?;
-                Self::store_oa(&mut values, data)?;
+                Self::store_o_a(&mut values, data)?;
             }
             match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    Self::store_oa(&mut values, data)?;
+                    Self::store_o_a(&mut values, data)?;
                     let data = Self::finish_state(helper, S::OA(values, None, None))?;
                     *self.state__ = S::Done__(data);
                     Ok(ElementHandlerOutput::break_(event, allow_any))
@@ -424,7 +424,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::OA(values, fallback, Some(deserializer)), event) => {
                         let output = deserializer.next(helper, event)?;
-                        match self.handle_oa(helper, values, fallback, output)? {
+                        match self.handle_o_a(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -473,7 +473,7 @@ pub mod quick_xml_deserialize {
                             b"a",
                             false,
                         )?;
-                        match self.handle_oa(helper, values, fallback, output)? {
+                        match self.handle_o_a(helper, values, fallback, output)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }

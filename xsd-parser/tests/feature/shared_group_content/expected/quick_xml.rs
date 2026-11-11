@@ -88,7 +88,7 @@ pub type UnsignedLongType = u64;
 pub type UnsignedShortType = u16;
 #[derive(Debug)]
 pub struct ElementAType {
-    pub attr_1: Option<String>,
+    pub attr1: Option<String>,
     pub content: Vec<ChoiceGroupType>,
 }
 impl WithSerializer for ElementAType {
@@ -120,7 +120,7 @@ impl WithDeserializer for ElementAType {
 }
 #[derive(Debug)]
 pub struct ElementBType {
-    pub attr_2: Option<String>,
+    pub attr2: Option<String>,
     pub content: Vec<ChoiceGroupType>,
 }
 impl WithSerializer for ElementBType {
@@ -191,7 +191,7 @@ pub mod quick_xml_deserialize {
     };
     #[derive(Debug)]
     pub struct ElementATypeDeserializer {
-        attr_1: Option<String>,
+        attr1: Option<String>,
         content: Vec<super::ChoiceGroupType>,
         state__: Box<ElementATypeDeserializerState>,
     }
@@ -207,20 +207,20 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             bytes_start: &BytesStart<'_>,
         ) -> Result<Self, Error> {
-            let mut attr_1: Option<String> = None;
+            let mut attr1: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"attr1")
                 ) {
-                    helper.read_attrib(&mut attr_1, b"attr1", &attrib.value)?;
+                    helper.read_attrib(&mut attr1, b"attr1", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                attr_1: attr_1,
+                attr1: attr1,
                 content: Vec::new(),
                 state__: Box::new(ElementATypeDeserializerState::Init__),
             })
@@ -336,14 +336,14 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, ElementATypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::ElementAType {
-                attr_1: self.attr_1,
+                attr1: self.attr1,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
     }
     #[derive(Debug)]
     pub struct ElementBTypeDeserializer {
-        attr_2: Option<String>,
+        attr2: Option<String>,
         content: Vec<super::ChoiceGroupType>,
         state__: Box<ElementBTypeDeserializerState>,
     }
@@ -359,20 +359,20 @@ pub mod quick_xml_deserialize {
             helper: &mut DeserializeHelper,
             bytes_start: &BytesStart<'_>,
         ) -> Result<Self, Error> {
-            let mut attr_2: Option<String> = None;
+            let mut attr2: Option<String> = None;
             for attrib in helper.filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     helper.resolve_attrib_local_name(attrib.key, &super::NS_TNS),
                     Some(b"attr2")
                 ) {
-                    helper.read_attrib(&mut attr_2, b"attr2", &attrib.value)?;
+                    helper.read_attrib(&mut attr2, b"attr2", &attrib.value)?;
                 } else {
                     helper.raise_unexpected_attrib_checked(&attrib)?;
                 }
             }
             Ok(Self {
-                attr_2: attr_2,
+                attr2: attr2,
                 content: Vec::new(),
                 state__: Box::new(ElementBTypeDeserializerState::Init__),
             })
@@ -488,7 +488,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state__, ElementBTypeDeserializerState::Unknown__);
             self.finish_state(helper, state)?;
             Ok(super::ElementBType {
-                attr_2: self.attr_2,
+                attr2: self.attr2,
                 content: helper.finish_vec(0usize, None, self.content)?,
             })
         }
@@ -829,7 +829,7 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
-                        helper.write_attrib_opt(&mut bytes, "attr1", &self.value.attr_1)?;
+                        helper.write_attrib_opt(&mut bytes, "attr1", &self.value.attr1)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ElementATypeSerializerState::Content__(x) => {
@@ -902,7 +902,7 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             helper.write_default_namespace(&mut bytes, self.name, &namespace);
                         }
-                        helper.write_attrib_opt(&mut bytes, "attr2", &self.value.attr_2)?;
+                        helper.write_attrib_opt(&mut bytes, "attr2", &self.value.attr2)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ElementBTypeSerializerState::Content__(x) => {

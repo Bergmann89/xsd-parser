@@ -6,11 +6,11 @@ pub enum FooType {
 }
 #[derive(Debug)]
 pub struct FooContent2Type {
-    pub element_1: i32,
-    pub element_2: String,
+    pub element1: i32,
+    pub element2: String,
 }
 #[derive(Debug)]
 pub struct FooContent3Type {
-    pub element_3: i32,
-    pub element_4: String,
+    pub element3: i32,
+    pub element4: String,
 }
