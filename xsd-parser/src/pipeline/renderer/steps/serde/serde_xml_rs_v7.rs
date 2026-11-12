@@ -1,8 +1,6 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::quote;
 
-use super::SerdeOptions;
-
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::{
     data::{
@@ -15,7 +13,7 @@ use crate::models::{
 
 use super::super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 use super::super::{format_traits, render_trait_impls};
-use super::{get_derive, get_dyn_type_traits};
+use super::{get_derive, get_dyn_type_traits, misc::SerdeAttribute, SerdeOptions};
 
 /// Implements a [`RenderStep`] that renders rust types of the types defined in
 /// the schema with `serde-xml-rs <= 0.7` support.
@@ -24,6 +22,12 @@ pub struct SerdeXmlRsV7TypesRenderStep {
     /// Adapt arrays longer than 32 elements. Disabled by default.
     /// Requires `serde_with` with `std` or `alloc` in the generated-code crate.
     pub large_arrays: bool,
+
+    /// Skip serializing named fields containing `None`. Disabled by default.
+    pub skip_none: bool,
+
+    /// Skip serializing named fields containing empty vectors. Disabled by default.
+    pub skip_empty_vecs: bool,
 }
 
 impl RenderStep for SerdeXmlRsV7TypesRenderStep {
@@ -34,12 +38,14 @@ impl RenderStep for SerdeXmlRsV7TypesRenderStep {
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         let options = SerdeOptions {
             large_arrays: self.large_arrays,
+            skip_none: self.skip_none,
+            skip_empty_vecs: self.skip_empty_vecs,
             arrays_as_vec: false,
         };
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
             DataTypeVariant::Union(x) => x.render_type_serde_xml_rs_v7(ctx, options),
-            DataTypeVariant::Dynamic(x) => x.render_type_serde_xml_rs_v7(ctx, options),
+            DataTypeVariant::Dynamic(x) => x.render_type_serde_xml_rs_v7(ctx),
             DataTypeVariant::Reference(x) => x.render_type_serde_xml_rs_v7(ctx, options),
             DataTypeVariant::Enumeration(x) => x.render_type_serde_xml_rs_v7(ctx, options),
             DataTypeVariant::Simple(x) => x.render_type_serde_xml_rs_v7(ctx, options),
@@ -91,7 +97,11 @@ impl UnionTypeVariant<'_> {
         ctx: &Context<'_, '_>,
         options: SerdeOptions,
     ) -> TokenStream {
-        let array_attribute = self.serde_array_attribute(ctx, options);
+        let serde_attribute = SerdeAttribute::new(&self.extra_attributes).with_field(
+            ctx,
+            options,
+            self.serde_field(),
+        );
         let Self {
             target_type,
             variant_ident,
@@ -103,7 +113,7 @@ impl UnionTypeVariant<'_> {
 
         quote! {
             #( #[#extra_attributes] )*
-            #variant_ident ( #array_attribute #target_type ),
+            #variant_ident ( #serde_attribute #target_type ),
         }
     }
 }
@@ -111,7 +121,7 @@ impl UnionTypeVariant<'_> {
 /* DynamicData */
 
 impl DynamicData<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, _options: SerdeOptions) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
             trait_ident,
@@ -152,7 +162,8 @@ impl DynamicData<'_> {
 
 impl ReferenceData<'_> {
     fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
-        let array_attribute = self.serde_array_attribute(ctx, options);
+        let serde_attribute =
+            SerdeAttribute::new(&[]).with_field(ctx, options, self.serde_field(options));
         let Self {
             mode,
             occurs,
@@ -187,7 +198,7 @@ impl ReferenceData<'_> {
                     #docs
                     #derive
                     #( #[#extra_attributes] )*
-                    pub struct #type_ident(#array_attribute pub #target_type);
+                    pub struct #type_ident(#serde_attribute pub #target_type);
 
                     #( #trait_impls )*
                 }
@@ -242,7 +253,11 @@ impl EnumerationDataVariant<'_> {
         ctx: &Context<'_, '_>,
         options: SerdeOptions,
     ) -> TokenStream {
-        let array_attribute = self.serde_array_attribute(ctx, options);
+        let serde_attribute = SerdeAttribute::new(&self.extra_attributes).with_field(
+            ctx,
+            options,
+            self.serde_field(),
+        );
         let Self {
             meta,
             s_name,
@@ -263,7 +278,7 @@ impl EnumerationDataVariant<'_> {
         let target_type = target_type.as_ref().map(|target_type| {
             let target_type = ctx.resolve_type_for_module(target_type);
 
-            quote!((#array_attribute #target_type))
+            quote!((#serde_attribute #target_type))
         });
 
         quote! {
@@ -279,7 +294,7 @@ impl EnumerationDataVariant<'_> {
 
 impl SimpleData<'_> {
     fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
-        let array_attribute = self.serde_array_attribute(ctx, options);
+        let serde_attribute = SerdeAttribute::new(&[]).with_field(ctx, options, self.serde_field());
         let Self {
             occurs,
             type_ident,
@@ -300,7 +315,7 @@ impl SimpleData<'_> {
             #docs
             #derive
             #( #[#extra_attributes] )*
-            pub struct #type_ident(#array_attribute pub #target_type);
+            pub struct #type_ident(#serde_attribute pub #target_type);
 
             #( #trait_impls )*
         };
@@ -426,18 +441,14 @@ impl ComplexDataContent<'_> {
         let target_type = self.occurs.make_type(ctx, &target_type, false)?;
         let extra_attributes = &self.extra_attributes;
 
-        let has_default = self.is_empty_string_content(ctx) || self.min_occurs == 0;
-        let default = if has_default {
-            quote!(default,)
-        } else {
-            quote!()
-        };
-        let serde_attributes = self.serde_field_attributes(ctx, options, has_default);
+        let serde_attribute = SerdeAttribute::new(&self.extra_attributes)
+            .with_default(self.is_empty_string_content(ctx) || self.min_occurs == 0)
+            .with_rename("$value")
+            .with_field(ctx, options, self.serde_field(options));
 
         Some(quote! {
             #( #[#extra_attributes] )*
-            #serde_attributes
-            #[serde(#default rename = "$value")]
+            #serde_attribute
             pub #field_ident: #target_type,
         })
     }
@@ -468,17 +479,11 @@ impl ComplexDataAttribute<'_> {
             target_type
         };
 
-        let has_default = self.default_value.is_some() || self.meta.use_ == Use::Optional;
-        let default = if self.default_value.is_some() {
-            let default_path = format!("{type_ident}::default_{field_ident}");
-
-            quote!(default = #default_path,)
-        } else if self.meta.use_ == Use::Optional {
-            quote!(default,)
-        } else {
-            quote!()
-        };
-        let serde_attributes = self.serde_field_attributes(ctx, options, has_default);
+        let serde_attribute = SerdeAttribute::new(&self.extra_attributes)
+            .with_default_function(self.serde_default_path(type_ident))
+            .with_default(self.meta.use_ == Use::Optional)
+            .with_rename(tag_name)
+            .with_field(ctx, options, self.serde_field());
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ATTRIBUTE_DOCS,
@@ -488,8 +493,7 @@ impl ComplexDataAttribute<'_> {
         quote! {
             #docs
             #( #[#extra_attributes] )*
-            #serde_attributes
-            #[serde(#default rename = #tag_name)]
+            #serde_attribute
             pub #field_ident: #target_type,
         }
     }
@@ -525,18 +529,18 @@ impl ComplexDataElement<'_> {
             &self.meta().documentation[..],
         );
 
-        let has_default = matches!(self.occurs, Occurs::Optional | Occurs::DynamicList);
-        let default = match self.occurs {
-            Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
-            Occurs::Optional | Occurs::DynamicList => quote!(default,),
-        };
-        let serde_attributes = self.serde_field_attributes(ctx, options, has_default);
+        let serde_attribute = SerdeAttribute::new(&self.extra_attributes)
+            .with_default(matches!(
+                self.occurs,
+                Occurs::Optional | Occurs::DynamicList
+            ))
+            .with_rename(name)
+            .with_field(ctx, options, self.serde_field(options));
 
         quote! {
             #docs
             #( #[#extra_attributes] )*
-            #serde_attributes
-            #[serde(#default rename = #name)]
+            #serde_attribute
             pub #field_ident: #target_type,
         }
     }
@@ -546,7 +550,11 @@ impl ComplexDataElement<'_> {
         ctx: &Context<'_, '_>,
         options: SerdeOptions,
     ) -> TokenStream {
-        let array_attribute = self.serde_array_attribute(ctx, options);
+        let serde_attribute = SerdeAttribute::new(&self.extra_attributes).with_field(
+            ctx,
+            options,
+            self.serde_field(options).as_payload(),
+        );
         let Self {
             s_name,
             variant_ident,
@@ -574,7 +582,7 @@ impl ComplexDataElement<'_> {
             #docs
             #( #[#extra_attributes] )*
             #[serde(rename = #name)]
-            #variant_ident(#array_attribute #target_type),
+            #variant_ident(#serde_attribute #target_type),
         }
     }
 }

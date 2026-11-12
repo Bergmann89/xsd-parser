@@ -151,6 +151,12 @@ pub enum RenderStep {
         /// Adapt arrays longer than 32 elements. Disabled by default.
         /// Requires `serde_with` with `std` or `alloc` in the generated-code crate.
         large_arrays: bool,
+
+        /// Skip serializing named fields containing `None`. Disabled by default.
+        skip_none: bool,
+
+        /// Skip serializing named fields containing empty vectors. Disabled by default.
+        skip_empty_vecs: bool,
     },
 
     /// Step to render the types with `quick_xml` serde support.
@@ -158,6 +164,12 @@ pub enum RenderStep {
         /// Adapt arrays longer than 32 elements. Disabled by default.
         /// Requires `serde_with` with `std` or `alloc` in the generated-code crate.
         large_arrays: bool,
+
+        /// Skip serializing named fields containing `None`. Disabled by default.
+        skip_none: bool,
+
+        /// Skip serializing named fields containing empty vectors. Disabled by default.
+        skip_empty_vecs: bool,
     },
 
     /// Renderer to render associated methods that return the default values
@@ -329,14 +341,32 @@ impl RenderStepConfig for RenderStep {
             Self::TypesSerdeXmlRs {
                 version: SerdeXmlRsVersion::Version07AndBelow,
                 large_arrays,
-            } => Box::new(SerdeXmlRsV7TypesRenderStep { large_arrays }),
+                skip_none,
+                skip_empty_vecs,
+            } => Box::new(SerdeXmlRsV7TypesRenderStep {
+                large_arrays,
+                skip_none,
+                skip_empty_vecs,
+            }),
             Self::TypesSerdeXmlRs {
                 version: SerdeXmlRsVersion::Version08AndAbove,
                 large_arrays,
-            } => Box::new(SerdeXmlRsV8TypesRenderStep { large_arrays }),
-            Self::TypesSerdeQuickXml { large_arrays } => {
-                Box::new(SerdeQuickXmlTypesRenderStep { large_arrays })
-            }
+                skip_none,
+                skip_empty_vecs,
+            } => Box::new(SerdeXmlRsV8TypesRenderStep {
+                large_arrays,
+                skip_none,
+                skip_empty_vecs,
+            }),
+            Self::TypesSerdeQuickXml {
+                large_arrays,
+                skip_none,
+                skip_empty_vecs,
+            } => Box::new(SerdeQuickXmlTypesRenderStep {
+                large_arrays,
+                skip_none,
+                skip_empty_vecs,
+            }),
             Self::Defaults => Box::new(DefaultsRenderStep),
             Self::PolymorphicFrom => Box::new(PolymorphicFromRenderStep),
             Self::EnumConstants => Box::new(EnumConstantsRenderStep),

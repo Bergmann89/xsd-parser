@@ -1,9 +1,6 @@
-use std::path::Path;
-
 use quote::ToTokens;
 use xsd_parser::{
-    config::{GeneratorFlags, IdentTriple, OptimizerFlags, RenderStep, Schema, TypedefMode},
-    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
+    config::{GeneratorFlags, IdentTriple, OptimizerFlags, RenderStep, TypedefMode},
     models::{
         data::{ComplexData, DataTypeVariant, StructMode},
         meta::{MetaTypeVariant, ReferenceMeta},
@@ -12,7 +9,7 @@ use xsd_parser::{
     Config, IdentType, TypeIdent,
 };
 
-use crate::utils::{generate_test_validate, ConfigEx};
+use crate::utils::{generate_test_validate, render_with_customizations, ConfigEx};
 
 fn render(mode: TypedefMode, split: bool, merge_enums: bool) -> String {
     let mut config = Config::test_default()
@@ -24,53 +21,57 @@ fn render(mode: TypedefMode, split: bool, merge_enums: bool) -> String {
         .with_generate([(IdentType::Element, "tns:Message")])
         .with_typedef_mode(mode)
         .with_derive(["Debug", "PartialEq"])
-        .with_render_step(RenderStep::TypesSerdeQuickXml { large_arrays: true });
+        .with_render_step(RenderStep::TypesSerdeQuickXml {
+            large_arrays: true,
+            skip_none: false,
+            skip_empty_vecs: false,
+        });
     if split {
         config
             .generator
             .flags
             .insert(GeneratorFlags::USE_TYPE_MODULES);
     }
-    config.parser.schemas.push(Schema::File(
-        Path::new("tests/feature/serde_large_arrays/wrappers.xsd")
-            .canonicalize()
-            .unwrap(),
-    ));
-    let schemas = exec_parser(config.parser).unwrap();
-    let mut meta = exec_interpreter(config.interpreter, &schemas).unwrap();
-    let row = IdentTriple::from((IdentType::Type, "tns:RowType"))
-        .resolve(&schemas)
-        .unwrap();
-    let matrix = IdentTriple::from((IdentType::Type, "tns:MatrixType"))
-        .resolve(&schemas)
-        .unwrap();
-    // Exercise array references through the public meta model. Schema frontends
-    // may otherwise choose a record or a list newtype for these shapes.
-    let mut reference = ReferenceMeta::new(TypeIdent::STRING);
-    reference.min_occurs = 64;
-    reference.max_occurs = MaxOccurs::Bounded(64);
-    meta.items.get_mut(&row).unwrap().variant = MetaTypeVariant::Reference(reference);
-    let mut reference = ReferenceMeta::new(row);
-    reference.min_occurs = 2;
-    reference.max_occurs = MaxOccurs::Bounded(2);
-    meta.items.get_mut(&matrix).unwrap().variant = MetaTypeVariant::Reference(reference);
-    let meta = exec_optimizer(config.optimizer, meta).unwrap();
-    let mut data = exec_generator(config.generator, &schemas, &meta).unwrap();
-    let mut boxed = false;
-    for item in data.items.values_mut() {
-        if let DataTypeVariant::Complex(ComplexData::Struct { type_, .. }) = &mut item.variant {
-            if let StructMode::Sequence { elements, .. } = &mut type_.mode {
-                for element in elements {
-                    if matches!(element.s_name.as_str(), "Boxed" | "BigBoxes") {
-                        element.need_indirection = true;
-                        boxed = true;
+    let module = render_with_customizations(
+        "tests/feature/serde_large_arrays/wrappers.xsd",
+        config,
+        |schemas, meta| {
+            let row = IdentTriple::from((IdentType::Type, "tns:RowType"))
+                .resolve(schemas)
+                .unwrap();
+            let matrix = IdentTriple::from((IdentType::Type, "tns:MatrixType"))
+                .resolve(schemas)
+                .unwrap();
+            // Exercise array references through the public meta model. Schema frontends
+            // may otherwise choose a record or a list newtype for these shapes.
+            let mut reference = ReferenceMeta::new(TypeIdent::STRING);
+            reference.min_occurs = 64;
+            reference.max_occurs = MaxOccurs::Bounded(64);
+            meta.items.get_mut(&row).unwrap().variant = MetaTypeVariant::Reference(reference);
+            let mut reference = ReferenceMeta::new(row);
+            reference.min_occurs = 2;
+            reference.max_occurs = MaxOccurs::Bounded(2);
+            meta.items.get_mut(&matrix).unwrap().variant = MetaTypeVariant::Reference(reference);
+        },
+        |data| {
+            let mut boxed = false;
+            for item in data.items.values_mut() {
+                if let DataTypeVariant::Complex(ComplexData::Struct { type_, .. }) =
+                    &mut item.variant
+                {
+                    if let StructMode::Sequence { elements, .. } = &mut type_.mode {
+                        for element in elements {
+                            if matches!(element.s_name.as_str(), "Boxed" | "BigBoxes") {
+                                element.need_indirection = true;
+                                boxed = true;
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
-    assert!(boxed);
-    let module = exec_render(config.renderer, &data).unwrap();
+            assert!(boxed);
+        },
+    );
     module.to_token_stream().to_string()
 }
 
@@ -80,9 +81,7 @@ fn generate(expected: &str, mode: TypedefMode, split: bool) {
 
 #[test]
 fn merged_enumeration_payloads_receive_array_adapters() {
-    // Serde XML's existing typed fallback uses serde(other), which cannot be
-    // derived for a payload variant. Check adapter generation separately; the
-    // compiled fixtures keep this union unmerged and exercise both payloads.
+    // Typed serde(other) fallbacks cannot derive Serde; compiled fixtures keep this union unmerged.
     let code = render(TypedefMode::Typedef, false, true);
     let enumeration = code.split("pub enum TaggedType").nth(1).unwrap();
     assert!(

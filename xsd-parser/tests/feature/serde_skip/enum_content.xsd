@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com">
+    <xs:simpleType name="StateType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="READY" />
+            <xs:enumeration value="DONE" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="MessageType">
+        <xs:simpleContent>
+            <xs:extension base="tns:StateType">
+                <xs:attribute name="id" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

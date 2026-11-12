@@ -6,6 +6,8 @@
     <xs:complexType name="MeasurementsType">
         <xs:sequence>
             <xs:element name="Sample" type="ex:SampleType" minOccurs="360" maxOccurs="360" />
+            <xs:element name="Description" type="xs:string" minOccurs="0" />
+            <xs:element name="Tag" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="SampleType">

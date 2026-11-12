@@ -10,8 +10,11 @@ use quick_xml::{escape::unescape, events::BytesText, Reader};
 use serde::{Deserialize, Serialize};
 
 use xsd_parser::{
-    config::{Config, Generate, GeneratorFlags, IdentQuadruple, OptimizerFlags, Schema},
-    generate,
+    config::{
+        Config, Generate, GeneratorFlags, IdentQuadruple, OptimizerFlags, RendererConfig, Schema,
+    },
+    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render, generate,
+    models::{code::Module, data::DataTypes, meta::MetaTypes, schema::Schemas},
 };
 use xsd_parser_types::quick_xml::{
     DeserializeAsync, DeserializeSync, ErrorReader, Event, IoReader, SerializeHelper, Serializer,
@@ -66,6 +69,36 @@ where
     let actual = actual.to_string();
 
     generate_test_validate(actual, expected_rs);
+}
+
+pub fn render_with_customizations(
+    input_xsd: impl AsRef<Path>,
+    config: Config,
+    customize_meta: impl FnOnce(&Schemas, &mut MetaTypes),
+    customize_data: impl FnOnce(&mut DataTypes<'_>),
+) -> Module {
+    with_generated_data(input_xsd, config, customize_meta, |data, renderer| {
+        customize_data(data);
+        exec_render(renderer, data).unwrap()
+    })
+}
+
+pub fn with_generated_data<R>(
+    input_xsd: impl AsRef<Path>,
+    mut config: Config,
+    customize_meta: impl FnOnce(&Schemas, &mut MetaTypes),
+    use_data: impl FnOnce(&mut DataTypes<'_>, RendererConfig) -> R,
+) -> R {
+    config
+        .parser
+        .schemas
+        .push(Schema::File(input_xsd.as_ref().canonicalize().unwrap()));
+    let schemas = exec_parser(config.parser).unwrap();
+    let mut meta = exec_interpreter(config.interpreter, &schemas).unwrap();
+    customize_meta(&schemas, &mut meta);
+    let meta = exec_optimizer(config.optimizer, meta).unwrap();
+    let mut data = exec_generator(config.generator, &schemas, &meta).unwrap();
+    use_data(&mut data, config.renderer)
 }
 
 pub fn generate_test_no_input<P>(expected_rs: P, config: Config)

@@ -85,8 +85,10 @@ pub mod type_message_type {
         pub matrix: super::type_matrix_type::MatrixType,
         #[serde(rename = "Boxed")]
         pub boxed: Box<super::type_row_type::RowType>,
-        #[serde(with = "::serde_with::As::<[::std::boxed::Box<::serde_with::Same>; 64]>")]
-        #[serde(rename = "BigBoxes")]
+        #[serde(
+            with = "::serde_with::As::<[::std::boxed::Box<::serde_with::Same>; 64]>",
+            rename = "BigBoxes"
+        )]
         pub big_boxes: [Box<super::type_string_type::StringType>; 64usize],
         #[serde(rename = "List")]
         pub list: super::type_list_of_rows_type::ListOfRowsType,
