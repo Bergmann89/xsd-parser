@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:t="urn:nullable" targetNamespace="urn:nullable">
+    <xs:element name="Head" type="xs:boolean" abstract="true"/>
+    <xs:element name="Plain" type="xs:boolean" substitutionGroup="t:Head"/>
+    <xs:element name="Nil" type="xs:boolean" nillable="true" substitutionGroup="t:Head"/>
+    <xs:element name="Ambiguous" type="xs:boolean" abstract="true"/>
+    <xs:element name="PlainMember" type="xs:boolean" substitutionGroup="t:Ambiguous"/>
+    <xs:element name="NilA" type="xs:boolean" nillable="true" substitutionGroup="t:Ambiguous"/>
+    <xs:element name="NilB" type="xs:boolean" nillable="true" substitutionGroup="t:Ambiguous"/>
+</xs:schema>

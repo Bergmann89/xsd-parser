@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:t="urn:aliases" targetNamespace="urn:aliases">
+    <xs:simpleType name="NativeNumber"><xs:restriction base="xs:unsignedInt"/></xs:simpleType>
+    <xs:simpleType name="NativeText"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="BareText"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="LocalText"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="CrateText"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="LeftText"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="RightText"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:element name="ScalarHead" type="xs:anyType" abstract="true"/>
+    <xs:element name="StandardNumber" type="xs:unsignedInt" substitutionGroup="t:ScalarHead"/>
+    <xs:element name="AliasedNumber" type="t:NativeNumber" substitutionGroup="t:ScalarHead"/>
+    <xs:element name="Boolean" type="xs:boolean" substitutionGroup="t:ScalarHead"/>
+    <xs:element name="TextHead" type="xs:anyType" abstract="true"/>
+    <xs:element name="StandardText" type="xs:string" substitutionGroup="t:TextHead"/>
+    <xs:element name="CustomText" type="t:NativeText" substitutionGroup="t:TextHead"/>
+    <xs:element name="PathHead" type="xs:anyType" abstract="true"/>
+    <xs:element name="Bare" type="t:BareText" substitutionGroup="t:PathHead"/>
+    <xs:element name="Local" type="t:LocalText" substitutionGroup="t:PathHead"/>
+    <xs:element name="Crate" type="t:CrateText" substitutionGroup="t:PathHead"/>
+    <xs:element name="DistinctHead" type="xs:anyType" abstract="true"/>
+    <xs:element name="Left" type="t:LeftText" substitutionGroup="t:DistinctHead"/>
+    <xs:element name="Right" type="t:RightText" substitutionGroup="t:DistinctHead"/>
+</xs:schema>
