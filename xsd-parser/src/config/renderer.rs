@@ -147,10 +147,18 @@ pub enum RenderStep {
     TypesSerdeXmlRs {
         /// Version of `serde-xml-rs` to render the code for.
         version: SerdeXmlRsVersion,
+
+        /// Adapt arrays longer than 32 elements. Disabled by default.
+        /// Requires `serde_with` with `std` or `alloc` in the generated-code crate.
+        large_arrays: bool,
     },
 
     /// Step to render the types with `quick_xml` serde support.
-    TypesSerdeQuickXml,
+    TypesSerdeQuickXml {
+        /// Adapt arrays longer than 32 elements. Disabled by default.
+        /// Requires `serde_with` with `std` or `alloc` in the generated-code crate.
+        large_arrays: bool,
+    },
 
     /// Renderer to render associated methods that return the default values
     /// of the different fields of a struct.
@@ -257,7 +265,7 @@ impl RenderStepConfig for RenderStep {
         match self {
             Self::Types => RenderStepType::Types,
             Self::TypesSerdeXmlRs { .. } => RenderStepType::Types,
-            Self::TypesSerdeQuickXml => RenderStepType::Types,
+            Self::TypesSerdeQuickXml { .. } => RenderStepType::Types,
             Self::Defaults => RenderStepType::ExtraImpls,
             Self::EnumConstants => RenderStepType::ExtraImpls,
             Self::PrefixConstants => RenderStepType::ExtraImpls,
@@ -287,11 +295,15 @@ impl RenderStepConfig for RenderStep {
             Self::Types => Box::new(TypesRenderStep),
             Self::TypesSerdeXmlRs {
                 version: SerdeXmlRsVersion::Version07AndBelow,
-            } => Box::new(SerdeXmlRsV7TypesRenderStep),
+                large_arrays,
+            } => Box::new(SerdeXmlRsV7TypesRenderStep { large_arrays }),
             Self::TypesSerdeXmlRs {
                 version: SerdeXmlRsVersion::Version08AndAbove,
-            } => Box::new(SerdeXmlRsV8TypesRenderStep),
-            Self::TypesSerdeQuickXml => Box::new(SerdeQuickXmlTypesRenderStep),
+                large_arrays,
+            } => Box::new(SerdeXmlRsV8TypesRenderStep { large_arrays }),
+            Self::TypesSerdeQuickXml { large_arrays } => {
+                Box::new(SerdeQuickXmlTypesRenderStep { large_arrays })
+            }
             Self::Defaults => Box::new(DefaultsRenderStep),
             Self::EnumConstants => Box::new(EnumConstantsRenderStep),
             Self::PrefixConstants => Box::new(PrefixConstantsRenderStep::default()),
@@ -338,7 +350,7 @@ impl RenderStepConfig for RenderStep {
         match (self, other) {
             (Self::Types, Some(Self::Types)) => true,
             (Self::TypesSerdeXmlRs { .. }, Some(Self::TypesSerdeXmlRs { .. })) => true,
-            (Self::TypesSerdeQuickXml, Some(Self::TypesSerdeQuickXml)) => true,
+            (Self::TypesSerdeQuickXml { .. }, Some(Self::TypesSerdeQuickXml { .. })) => true,
             (Self::Defaults, Some(Self::Defaults)) => true,
             (Self::NamespaceConstants, Some(Self::NamespaceConstants)) => true,
             (Self::EnumConstants, Some(Self::EnumConstants)) => true,
@@ -351,16 +363,18 @@ impl RenderStepConfig for RenderStep {
             (
                 Self::TypesSerdeXmlRs {
                     version: SerdeXmlRsVersion::Version07AndBelow,
+                    ..
                 },
                 None,
             ) => other_id == TypeId::of::<SerdeXmlRsV7TypesRenderStep>(),
             (
                 Self::TypesSerdeXmlRs {
                     version: SerdeXmlRsVersion::Version08AndAbove,
+                    ..
                 },
                 None,
             ) => other_id == TypeId::of::<SerdeXmlRsV8TypesRenderStep>(),
-            (Self::TypesSerdeQuickXml, None) => {
+            (Self::TypesSerdeQuickXml { .. }, None) => {
                 other_id == TypeId::of::<SerdeQuickXmlTypesRenderStep>()
             }
             (Self::Defaults, None) => other_id == TypeId::of::<DefaultsRenderStep>(),
@@ -393,8 +407,8 @@ impl RenderStep {
     pub fn is_same(&self, other: &Self) -> bool {
         match (self, other) {
             (
-                Self::Types | Self::TypesSerdeXmlRs { .. } | Self::TypesSerdeQuickXml,
-                Self::Types | Self::TypesSerdeXmlRs { .. } | Self::TypesSerdeQuickXml,
+                Self::Types | Self::TypesSerdeXmlRs { .. } | Self::TypesSerdeQuickXml { .. },
+                Self::Types | Self::TypesSerdeXmlRs { .. } | Self::TypesSerdeQuickXml { .. },
             )
             | (Self::Defaults, Self::Defaults)
             | (Self::NamespaceConstants, Self::NamespaceConstants)

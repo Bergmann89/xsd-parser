@@ -97,6 +97,7 @@ mod schema_no_prefix;
 mod sequence;
 mod sequence_with_choice;
 mod sequence_with_choice_nested;
+mod serde_large_arrays;
 mod shared_group_content;
 mod simple_content;
 mod simple_content_with_extension;

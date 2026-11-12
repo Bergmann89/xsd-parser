@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:ex="urn:measurements"
+           targetNamespace="urn:measurements">
+    <xs:element name="Measurements" type="ex:MeasurementsType" />
+    <xs:complexType name="MeasurementsType">
+        <xs:sequence>
+            <xs:element name="Sample" type="ex:SampleType" minOccurs="360" maxOccurs="360" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SampleType">
+        <xs:sequence>
+            <xs:element name="Label" type="xs:string" />
+            <xs:element name="Value" type="xs:double" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

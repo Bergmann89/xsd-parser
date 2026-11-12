@@ -334,7 +334,12 @@ impl Config {
     pub fn with_serde_quick_xml(mut self) -> Self {
         self.optimizer.flags |= OptimizerFlags::SERDE;
 
-        self.with_render_steps([RenderStep::TypesSerdeQuickXml, RenderStep::Defaults])
+        self.with_render_steps([
+            RenderStep::TypesSerdeQuickXml {
+                large_arrays: false,
+            },
+            RenderStep::Defaults,
+        ])
     }
 
     /// Enable render steps for types with [`quick_xml`] serde support.
@@ -342,7 +347,10 @@ impl Config {
         self.optimizer.flags |= OptimizerFlags::SERDE;
 
         self.with_render_steps([
-            RenderStep::TypesSerdeXmlRs { version },
+            RenderStep::TypesSerdeXmlRs {
+                version,
+                large_arrays: false,
+            },
             RenderStep::Defaults,
         ])
     }
