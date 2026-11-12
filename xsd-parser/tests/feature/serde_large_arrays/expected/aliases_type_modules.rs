@@ -74,20 +74,32 @@ pub mod type_message_type {
     use serde::{Deserialize, Serialize};
     #[derive(Debug, Deserialize, PartialEq, Serialize)]
     pub struct MessageType {
-        #[serde(with = "::serde_with::As::<::core::option::Option<[::serde_with::Same; 64]>>")]
-        #[serde(default, rename = "Row")]
+        #[serde(
+            with = "::serde_with::As::<::core::option::Option<[::serde_with::Same; 64]>>",
+            default,
+            rename = "Row"
+        )]
         pub row: Option<super::type_row_type::RowType>,
-        #[serde(with = "::serde_with::As::<::std::vec::Vec<[::serde_with::Same; 64]>>")]
-        #[serde(default, rename = "Rows")]
+        #[serde(
+            with = "::serde_with::As::<::std::vec::Vec<[::serde_with::Same; 64]>>",
+            default,
+            rename = "Rows"
+        )]
         pub rows: Vec<super::type_row_type::RowType>,
-        #[serde(with = "::serde_with::As::<[[::serde_with::Same; 64]; 2]>")]
-        #[serde(rename = "Matrix")]
+        #[serde(
+            with = "::serde_with::As::<[[::serde_with::Same; 64]; 2]>",
+            rename = "Matrix"
+        )]
         pub matrix: super::type_matrix_type::MatrixType,
-        #[serde(with = "::serde_with::As::<::std::boxed::Box<[::serde_with::Same; 64]>>")]
-        #[serde(rename = "Boxed")]
+        #[serde(
+            with = "::serde_with::As::<::std::boxed::Box<[::serde_with::Same; 64]>>",
+            rename = "Boxed"
+        )]
         pub boxed: Box<super::type_row_type::RowType>,
-        #[serde(with = "::serde_with::As::<[::std::boxed::Box<::serde_with::Same>; 64]>")]
-        #[serde(rename = "BigBoxes")]
+        #[serde(
+            with = "::serde_with::As::<[::std::boxed::Box<::serde_with::Same>; 64]>",
+            rename = "BigBoxes"
+        )]
         pub big_boxes: [Box<super::type_string_type::StringType>; 64usize],
         #[serde(rename = "List")]
         pub list: super::type_list_of_rows_type::ListOfRowsType,

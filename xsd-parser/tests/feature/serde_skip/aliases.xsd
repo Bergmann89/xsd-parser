@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com">
+    <xs:simpleType name="OptionalType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="ItemsType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="ArrayType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="OptionalArrayType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="ArrayItemsType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="ValuesType"><xs:list itemType="xs:string" /></xs:simpleType>
+    <xs:complexType name="AliasesType">
+        <xs:sequence>
+            <xs:element name="Optional" type="tns:OptionalType" />
+            <xs:element name="Items" type="tns:ItemsType" />
+            <xs:element name="BoxedItems" type="tns:ItemsType" />
+            <xs:element name="OptionalArray" type="tns:OptionalArrayType" />
+            <xs:element name="ArrayItems" type="tns:ArrayItemsType" />
+        </xs:sequence>
+        <xs:attribute name="requiredValues" type="tns:ValuesType" use="required" />
+    </xs:complexType>
+</xs:schema>

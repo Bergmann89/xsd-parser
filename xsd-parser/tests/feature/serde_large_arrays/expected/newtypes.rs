@@ -13,8 +13,10 @@ pub struct MessageType {
     pub matrix: MatrixType,
     #[serde(rename = "Boxed")]
     pub boxed: Box<RowType>,
-    #[serde(with = "::serde_with::As::<[::std::boxed::Box<::serde_with::Same>; 64]>")]
-    #[serde(rename = "BigBoxes")]
+    #[serde(
+        with = "::serde_with::As::<[::std::boxed::Box<::serde_with::Same>; 64]>",
+        rename = "BigBoxes"
+    )]
     pub big_boxes: [Box<StringType>; 64usize],
     #[serde(rename = "List")]
     pub list: ListOfRowsType,

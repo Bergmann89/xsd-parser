@@ -331,25 +331,52 @@ impl Config {
     }
 
     /// Enable render steps for types with [`quick_xml`] serde support.
-    pub fn with_serde_quick_xml(mut self) -> Self {
+    pub fn with_serde_quick_xml(self) -> Self {
+        self.with_serde_quick_xml_config(false, false, false)
+    }
+
+    /// Enable render steps for types with [`quick_xml`] serde support and the
+    /// passed options of the Serde render step.
+    pub fn with_serde_quick_xml_config(
+        mut self,
+        large_arrays: bool,
+        skip_none: bool,
+        skip_empty_vecs: bool,
+    ) -> Self {
         self.optimizer.flags |= OptimizerFlags::SERDE;
 
         self.with_render_steps([
             RenderStep::TypesSerdeQuickXml {
-                large_arrays: false,
+                large_arrays,
+                skip_none,
+                skip_empty_vecs,
             },
             RenderStep::Defaults,
         ])
     }
 
-    /// Enable render steps for types with [`quick_xml`] serde support.
-    pub fn with_serde_xml_rs(mut self, version: SerdeXmlRsVersion) -> Self {
+    /// Enable render steps for types with [`serde-xml-rs`](https://docs.rs/serde-xml-rs) support.
+    pub fn with_serde_xml_rs(self, version: SerdeXmlRsVersion) -> Self {
+        self.with_serde_xml_rs_config(version, false, false, false)
+    }
+
+    /// Enable render steps for types with [`serde-xml-rs`](https://docs.rs/serde-xml-rs) support and the
+    /// passed options of the Serde render step.
+    pub fn with_serde_xml_rs_config(
+        mut self,
+        version: SerdeXmlRsVersion,
+        large_arrays: bool,
+        skip_none: bool,
+        skip_empty_vecs: bool,
+    ) -> Self {
         self.optimizer.flags |= OptimizerFlags::SERDE;
 
         self.with_render_steps([
             RenderStep::TypesSerdeXmlRs {
                 version,
-                large_arrays: false,
+                large_arrays,
+                skip_none,
+                skip_empty_vecs,
             },
             RenderStep::Defaults,
         ])

@@ -3,20 +3,26 @@
            xmlns:tns="http://example.com"
            targetNamespace="http://example.com">
     <xs:simpleType name="RowType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="ItemsType"><xs:restriction base="xs:string" /></xs:simpleType>
     <xs:simpleType name="NillableRowType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="NillableItemsType"><xs:restriction base="xs:string" /></xs:simpleType>
     <xs:complexType name="AliasesType">
         <xs:sequence>
             <xs:element name="Row" type="tns:NillableRowType" />
+            <xs:element name="Items" type="tns:NillableItemsType" />
+            <xs:element name="Plain" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="NillableType">
         <xs:sequence>
             <xs:element name="Row" type="tns:RowType" nillable="true" />
+            <xs:element name="Items" type="tns:ItemsType" nillable="true" />
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="MixedType" mixed="true">
         <xs:sequence>
             <xs:element name="Row" type="tns:RowType" />
+            <xs:element name="Items" type="tns:ItemsType" />
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

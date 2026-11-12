@@ -8,8 +8,10 @@ pub struct PacketType {
     #[serde(rename = "Small")]
     pub small: [u32; 32usize],
     #[serde(serialize_with = "crate::feature::serde_large_arrays::overrides::codec::serialize")]
-    #[serde(deserialize_with = "::serde_with::As::<[::serde_with::Same; 33]>::deserialize")]
-    #[serde(rename = "Threshold")]
+    #[serde(
+        deserialize_with = "::serde_with::As::<[::serde_with::Same; 33]>::deserialize",
+        rename = "Threshold"
+    )]
     pub threshold: [u32; 33usize],
     #[serde(rename = "Choice")]
     pub choice: ChoiceType,
@@ -27,7 +29,9 @@ pub struct NamedArrayType {
     #[serde(rename = "Sample")]
     pub sample: [String; 64usize],
     #[serde(serialize_with = "crate::feature::serde_large_arrays::overrides::codec::serialize")]
-    #[serde(deserialize_with = "::serde_with::As::<[::serde_with::Same; 33]>::deserialize")]
-    #[serde(rename = "Threshold")]
+    #[serde(
+        deserialize_with = "::serde_with::As::<[::serde_with::Same; 33]>::deserialize",
+        rename = "Threshold"
+    )]
     pub threshold: [u32; 33usize],
 }

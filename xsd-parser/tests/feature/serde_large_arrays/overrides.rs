@@ -1,49 +1,41 @@
-use std::path::Path;
-
 use quote::{quote, ToTokens};
-use xsd_parser::{
-    config::Schema,
-    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
-    models::data::{ComplexData, DataTypeVariant, StructMode},
-};
+use xsd_parser::models::data::{ComplexData, DataTypeVariant, StructMode};
 
-use crate::utils::generate_test_validate;
+use crate::utils::{generate_test_validate, render_with_customizations};
 
 fn generate(expected: &str, serialize_only: bool) {
-    let mut config = super::config();
-    config.parser.schemas.push(Schema::File(
-        Path::new("tests/feature/serde_large_arrays/schema.xsd")
-            .canonicalize()
-            .unwrap(),
-    ));
-    let schemas = exec_parser(config.parser).unwrap();
-    let meta = exec_interpreter(config.interpreter, &schemas).unwrap();
-    let meta = exec_optimizer(config.optimizer, meta).unwrap();
-    let mut data = exec_generator(config.generator, &schemas, &meta).unwrap();
-    for item in data.items.values_mut() {
-        if let DataTypeVariant::Complex(ComplexData::Struct { type_, .. }) = &mut item.variant {
-            if let StructMode::Sequence { elements, .. } = &mut type_.mode {
-                for element in elements {
-                    let attribute = match element.s_name.as_str() {
-                        "Sample" => Some(quote!(serde(
-                            with = "crate::feature::serde_large_arrays::overrides::codec"
-                        ))),
-                        "Threshold" if serialize_only => Some(quote!(serde(
-                            serialize_with =
-                                "crate::feature::serde_large_arrays::overrides::codec::serialize"
-                        ))),
-                        "Threshold" => Some(quote!(serde(
-                            deserialize_with =
-                                "crate::feature::serde_large_arrays::overrides::codec::deserialize"
-                        ))),
-                        _ => None,
-                    };
-                    element.extra_attributes.extend(attribute);
+    let module = render_with_customizations(
+        "tests/feature/serde_large_arrays/schema.xsd",
+        super::config(),
+        |_, _| {},
+        |data| {
+            for item in data.items.values_mut() {
+                if let DataTypeVariant::Complex(ComplexData::Struct { type_, .. }) =
+                    &mut item.variant
+                {
+                    if let StructMode::Sequence { elements, .. } = &mut type_.mode {
+                        for element in elements {
+                            let attribute = match element.s_name.as_str() {
+                                "Sample" => Some(quote!(serde(
+                                    with = "crate::feature::serde_large_arrays::overrides::codec"
+                                ))),
+                                "Threshold" if serialize_only => Some(quote!(serde(
+                                    serialize_with =
+                                        "crate::feature::serde_large_arrays::overrides::codec::serialize"
+                                ))),
+                                "Threshold" => Some(quote!(serde(
+                                    deserialize_with =
+                                        "crate::feature::serde_large_arrays::overrides::codec::deserialize"
+                                ))),
+                                _ => None,
+                            };
+                            element.extra_attributes.extend(attribute);
+                        }
+                    }
                 }
             }
-        }
-    }
-    let module = exec_render(config.renderer, &data).unwrap();
+        },
+    );
     generate_test_validate(module.to_token_stream().to_string(), expected);
 }
 
