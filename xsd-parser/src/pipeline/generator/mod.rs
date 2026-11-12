@@ -52,6 +52,13 @@ pub use self::state::TypeRef;
 
 use self::state::{PendingType, State, TraitInfos};
 
+/// Names of build-in types and traits the renderer refers to without a path
+/// unless [`GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS`] is set. A generated type
+/// with one of these names would shadow them and break the generated code.
+const SHADOWABLE_BUILD_INS: &[&str] = &[
+    "Box", "Default", "Deref", "DerefMut", "From", "Option", "Result", "String", "TryFrom", "Vec",
+];
+
 /// Configurable Rust code generator for schema-derived type information.
 ///
 /// The [`Generator`] type provides a flexible interface to customize how Rust code
@@ -549,6 +556,16 @@ impl<'types> State<'types> {
         path: &IdentPath,
         ident: &TypeIdent,
     ) -> Result<(), Error> {
+        let name = path.ident().to_string();
+        if SHADOWABLE_BUILD_INS.contains(&name.as_str())
+            && !meta.check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS)
+        {
+            return Err(Error::ShadowedBuildIn {
+                name,
+                type_: Self::describe_type(meta, ident),
+            });
+        }
+
         match paths.insert(path.clone(), ident.clone()) {
             Some(first) if &first != ident => Err(Error::DuplicateTypeName {
                 path: path.to_string(),

@@ -99,6 +99,7 @@ mod sequence;
 mod sequence_with_choice;
 mod sequence_with_choice_nested;
 mod serde_large_arrays;
+mod shadowed_build_in;
 mod shared_group_content;
 mod simple_content;
 mod simple_content_with_extension;
