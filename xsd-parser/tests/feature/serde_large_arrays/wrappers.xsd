@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com">
+    <xs:simpleType name="RowType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="MatrixType"><xs:restriction base="tns:RowType" /></xs:simpleType>
+    <xs:simpleType name="ListOfRowsType"><xs:restriction><xs:simpleType><xs:list itemType="tns:RowType" /></xs:simpleType><xs:minLength value="1" /></xs:restriction></xs:simpleType>
+    <xs:simpleType name="CodeType"><xs:restriction base="xs:string"><xs:enumeration value="EMPTY" /></xs:restriction></xs:simpleType>
+    <xs:simpleType name="TaggedType"><xs:union memberTypes="tns:CodeType tns:RowType" /></xs:simpleType>
+    <xs:simpleType name="UnionType"><xs:union memberTypes="tns:RowType xs:boolean" /></xs:simpleType>
+    <xs:complexType name="MessageType">
+        <xs:sequence>
+            <xs:element name="Row" type="tns:RowType" minOccurs="0" />
+            <xs:element name="Rows" type="tns:RowType" maxOccurs="unbounded" />
+            <xs:element name="Matrix" type="tns:MatrixType" />
+            <xs:element name="Boxed" type="tns:RowType" />
+            <xs:element name="BigBoxes" type="xs:string" minOccurs="64" maxOccurs="64" />
+            <xs:element name="List" type="tns:ListOfRowsType" />
+            <xs:element name="Choice" type="tns:UnionType" />
+            <xs:element name="Tagged" type="tns:TaggedType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Message" type="tns:MessageType" />
+</xs:schema>

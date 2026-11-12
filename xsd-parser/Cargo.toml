@@ -60,6 +60,8 @@ rust_decimal = { workspace = true }
 serde = { workspace = true, features = [ "derive" ] }
 serde-xml-rs = { workspace = true }
 serde-xml-rs-v7 = { workspace = true }
+serde_json = { workspace = true }
+serde_with = { workspace = true }
 text-diff = { workspace = true }
 tokio = { workspace = true, features = [ "fs", "io-util", "macros", "rt-multi-thread" ] }
 tracing-subscriber = { workspace = true, features = [ "std", "env-filter", "json", "tracing-log" ] }

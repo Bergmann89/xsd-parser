@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com"
+           elementFormDefault="qualified">
+    <xs:element name="Packet" type="tns:PacketType" />
+    <xs:complexType name="PacketType">
+        <xs:sequence>
+            <xs:element name="Sample" type="xs:string" minOccurs="64" maxOccurs="64" />
+            <xs:element name="Small" type="xs:unsignedInt" minOccurs="32" maxOccurs="32" />
+            <xs:element name="Threshold" type="xs:unsignedInt" minOccurs="33" maxOccurs="33" />
+            <xs:element name="Choice" type="tns:ChoiceType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ChoiceType">
+        <xs:choice>
+            <xs:element name="Number" type="xs:unsignedInt" minOccurs="64" maxOccurs="64" />
+            <xs:element name="Text" type="xs:string" />
+        </xs:choice>
+    </xs:complexType>
+    <xs:complexType name="NamedArrayType">
+        <xs:sequence>
+            <xs:element name="Sample" type="xs:string" minOccurs="64" maxOccurs="64" />
+            <xs:element name="Threshold" type="xs:unsignedInt" minOccurs="33" maxOccurs="33" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

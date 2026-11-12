@@ -1,6 +1,8 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::quote;
 
+use super::SerdeOptions;
+
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::{
     data::{
@@ -17,8 +19,12 @@ use super::{get_derive, get_dyn_type_traits};
 
 /// Implements a [`RenderStep`] that renders rust types of the types defined in
 /// the schema with `serde-xml-rs <= 0.7` support.
-#[derive(Debug, Clone, Copy)]
-pub struct SerdeXmlRsV7TypesRenderStep;
+#[derive(Debug, Default, Clone, Copy)]
+pub struct SerdeXmlRsV7TypesRenderStep {
+    /// Adapt arrays longer than 32 elements. Disabled by default.
+    /// Requires `serde_with` with `std` or `alloc` in the generated-code crate.
+    pub large_arrays: bool,
+}
 
 impl RenderStep for SerdeXmlRsV7TypesRenderStep {
     fn render_step_type(&self) -> RenderStepType {
@@ -26,14 +32,18 @@ impl RenderStep for SerdeXmlRsV7TypesRenderStep {
     }
 
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+        let options = SerdeOptions {
+            large_arrays: self.large_arrays,
+            arrays_as_vec: false,
+        };
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
-            DataTypeVariant::Union(x) => x.render_type_serde_xml_rs_v7(ctx),
-            DataTypeVariant::Dynamic(x) => x.render_type_serde_xml_rs_v7(ctx),
-            DataTypeVariant::Reference(x) => x.render_type_serde_xml_rs_v7(ctx),
-            DataTypeVariant::Enumeration(x) => x.render_type_serde_xml_rs_v7(ctx),
-            DataTypeVariant::Simple(x) => x.render_type_serde_xml_rs_v7(ctx),
-            DataTypeVariant::Complex(x) => x.render_type_serde_xml_rs_v7(ctx),
+            DataTypeVariant::Union(x) => x.render_type_serde_xml_rs_v7(ctx, options),
+            DataTypeVariant::Dynamic(x) => x.render_type_serde_xml_rs_v7(ctx, options),
+            DataTypeVariant::Reference(x) => x.render_type_serde_xml_rs_v7(ctx, options),
+            DataTypeVariant::Enumeration(x) => x.render_type_serde_xml_rs_v7(ctx, options),
+            DataTypeVariant::Simple(x) => x.render_type_serde_xml_rs_v7(ctx, options),
+            DataTypeVariant::Complex(x) => x.render_type_serde_xml_rs_v7(ctx, options),
         }
     }
 }
@@ -41,7 +51,7 @@ impl RenderStep for SerdeXmlRsV7TypesRenderStep {
 /* UnionData */
 
 impl UnionData<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
         let Self {
             type_ident,
             trait_impls,
@@ -53,7 +63,7 @@ impl UnionData<'_> {
         let trait_impls = render_trait_impls(type_ident, trait_impls);
         let variants = variants
             .iter()
-            .map(|x| x.render_variant_serde_xml_rs_v7(ctx));
+            .map(|x| x.render_variant_serde_xml_rs_v7(ctx, options));
         let extra_attributes = &ctx.data.extra_attributes;
 
         let code = quote! {
@@ -76,7 +86,12 @@ impl UnionData<'_> {
 /* UnionTypeVariant */
 
 impl UnionTypeVariant<'_> {
-    fn render_variant_serde_xml_rs_v7(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_variant_serde_xml_rs_v7(
+        &self,
+        ctx: &Context<'_, '_>,
+        options: SerdeOptions,
+    ) -> TokenStream {
+        let array_attribute = self.serde_array_attribute(ctx, options);
         let Self {
             target_type,
             variant_ident,
@@ -88,7 +103,7 @@ impl UnionTypeVariant<'_> {
 
         quote! {
             #( #[#extra_attributes] )*
-            #variant_ident ( #target_type ),
+            #variant_ident ( #array_attribute #target_type ),
         }
     }
 }
@@ -96,7 +111,7 @@ impl UnionTypeVariant<'_> {
 /* DynamicData */
 
 impl DynamicData<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, _options: SerdeOptions) {
         let Self {
             type_ident,
             trait_ident,
@@ -136,7 +151,8 @@ impl DynamicData<'_> {
 /* ReferenceData */
 
 impl ReferenceData<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
+        let array_attribute = self.serde_array_attribute(ctx, options);
         let Self {
             mode,
             occurs,
@@ -171,7 +187,7 @@ impl ReferenceData<'_> {
                     #docs
                     #derive
                     #( #[#extra_attributes] )*
-                    pub struct #type_ident(pub #target_type);
+                    pub struct #type_ident(#array_attribute pub #target_type);
 
                     #( #trait_impls )*
                 }
@@ -185,7 +201,7 @@ impl ReferenceData<'_> {
 /* EnumerationData */
 
 impl EnumerationData<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
         let Self {
             type_ident,
             variants,
@@ -200,7 +216,7 @@ impl EnumerationData<'_> {
 
         let variants = variants
             .iter()
-            .map(|d| d.render_variant_serde_xml_rs_v7(ctx))
+            .map(|d| d.render_variant_serde_xml_rs_v7(ctx, options))
             .collect::<Vec<_>>();
 
         let code = quote! {
@@ -221,7 +237,12 @@ impl EnumerationData<'_> {
 }
 
 impl EnumerationDataVariant<'_> {
-    fn render_variant_serde_xml_rs_v7(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_variant_serde_xml_rs_v7(
+        &self,
+        ctx: &Context<'_, '_>,
+        options: SerdeOptions,
+    ) -> TokenStream {
+        let array_attribute = self.serde_array_attribute(ctx, options);
         let Self {
             meta,
             s_name,
@@ -242,7 +263,7 @@ impl EnumerationDataVariant<'_> {
         let target_type = target_type.as_ref().map(|target_type| {
             let target_type = ctx.resolve_type_for_module(target_type);
 
-            quote!((#target_type))
+            quote!((#array_attribute #target_type))
         });
 
         quote! {
@@ -257,7 +278,8 @@ impl EnumerationDataVariant<'_> {
 /* SimpleData */
 
 impl SimpleData<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
+        let array_attribute = self.serde_array_attribute(ctx, options);
         let Self {
             occurs,
             type_ident,
@@ -278,7 +300,7 @@ impl SimpleData<'_> {
             #docs
             #derive
             #( #[#extra_attributes] )*
-            pub struct #type_ident(pub #target_type);
+            pub struct #type_ident(#array_attribute pub #target_type);
 
             #( #trait_impls )*
         };
@@ -292,26 +314,26 @@ impl SimpleData<'_> {
 /* ComplexData */
 
 impl ComplexData<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
         match self {
             Self::Enum {
                 type_,
                 content_type,
             } => {
-                type_.render_type_serde_xml_rs_v7(ctx);
+                type_.render_type_serde_xml_rs_v7(ctx, options);
 
                 if let Some(content_type) = content_type {
-                    content_type.render_type_serde_xml_rs_v7(ctx);
+                    content_type.render_type_serde_xml_rs_v7(ctx, options);
                 }
             }
             Self::Struct {
                 type_,
                 content_type,
             } => {
-                type_.render_type_serde_xml_rs_v7(ctx);
+                type_.render_type_serde_xml_rs_v7(ctx, options);
 
                 if let Some(content_type) = content_type {
-                    content_type.render_type_serde_xml_rs_v7(ctx);
+                    content_type.render_type_serde_xml_rs_v7(ctx, options);
                 }
             }
         }
@@ -319,7 +341,7 @@ impl ComplexData<'_> {
 }
 
 impl ComplexDataEnum<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, []);
         let type_ident = &self.type_ident;
@@ -329,7 +351,7 @@ impl ComplexDataEnum<'_> {
         let variants = self
             .elements
             .iter()
-            .map(|x| x.render_variant_serde_xml_rs_v7(ctx));
+            .map(|x| x.render_variant_serde_xml_rs_v7(ctx, options));
 
         let code = quote! {
             #docs
@@ -347,7 +369,7 @@ impl ComplexDataEnum<'_> {
 }
 
 impl ComplexDataStruct<'_> {
-    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
+    fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>, options: SerdeOptions) {
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, []);
         let type_ident = &self.type_ident;
@@ -357,15 +379,15 @@ impl ComplexDataStruct<'_> {
         let attributes = self
             .attributes
             .iter()
-            .map(|x| x.render_field_serde_xml_rs_v7(ctx, type_ident));
+            .map(|x| x.render_field_serde_xml_rs_v7(ctx, type_ident, options));
         let fields = self
             .elements()
             .iter()
-            .map(|x| x.render_field_serde_xml_rs_v7(ctx));
+            .map(|x| x.render_field_serde_xml_rs_v7(ctx, options));
         let content = self
             .content()
             .as_ref()
-            .and_then(|x| x.render_field_serde_xml_rs_v7(ctx));
+            .and_then(|x| x.render_field_serde_xml_rs_v7(ctx, options));
 
         let struct_data = if self.is_unit_struct() {
             quote!(;)
@@ -394,17 +416,27 @@ impl ComplexDataStruct<'_> {
 }
 
 impl ComplexDataContent<'_> {
-    fn render_field_serde_xml_rs_v7(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+    fn render_field_serde_xml_rs_v7(
+        &self,
+        ctx: &Context<'_, '_>,
+        options: SerdeOptions,
+    ) -> Option<TokenStream> {
         let field_ident = &self.field_ident;
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.make_type(ctx, &target_type, false)?;
         let extra_attributes = &self.extra_attributes;
 
-        let default =
-            (self.is_empty_string_content(ctx) || self.min_occurs == 0).then(|| quote!(default,));
+        let has_default = self.is_empty_string_content(ctx) || self.min_occurs == 0;
+        let default = if has_default {
+            quote!(default,)
+        } else {
+            quote!()
+        };
+        let serde_attributes = self.serde_field_attributes(ctx, options, has_default);
 
         Some(quote! {
             #( #[#extra_attributes] )*
+            #serde_attributes
             #[serde(#default rename = "$value")]
             pub #field_ident: #target_type,
         })
@@ -416,6 +448,7 @@ impl ComplexDataAttribute<'_> {
         &self,
         ctx: &Context<'_, '_>,
         type_ident: &Ident2,
+        options: SerdeOptions,
     ) -> TokenStream {
         let Self {
             tag_name,
@@ -435,6 +468,7 @@ impl ComplexDataAttribute<'_> {
             target_type
         };
 
+        let has_default = self.default_value.is_some() || self.meta.use_ == Use::Optional;
         let default = if self.default_value.is_some() {
             let default_path = format!("{type_ident}::default_{field_ident}");
 
@@ -444,6 +478,7 @@ impl ComplexDataAttribute<'_> {
         } else {
             quote!()
         };
+        let serde_attributes = self.serde_field_attributes(ctx, options, has_default);
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ATTRIBUTE_DOCS,
@@ -453,6 +488,7 @@ impl ComplexDataAttribute<'_> {
         quote! {
             #docs
             #( #[#extra_attributes] )*
+            #serde_attributes
             #[serde(#default rename = #tag_name)]
             pub #field_ident: #target_type,
         }
@@ -460,7 +496,11 @@ impl ComplexDataAttribute<'_> {
 }
 
 impl ComplexDataElement<'_> {
-    fn render_field_serde_xml_rs_v7(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_field_serde_xml_rs_v7(
+        &self,
+        ctx: &Context<'_, '_>,
+        options: SerdeOptions,
+    ) -> TokenStream {
         let Self {
             s_name,
             field_ident,
@@ -485,20 +525,28 @@ impl ComplexDataElement<'_> {
             &self.meta().documentation[..],
         );
 
+        let has_default = matches!(self.occurs, Occurs::Optional | Occurs::DynamicList);
         let default = match self.occurs {
             Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
             Occurs::Optional | Occurs::DynamicList => quote!(default,),
         };
+        let serde_attributes = self.serde_field_attributes(ctx, options, has_default);
 
         quote! {
             #docs
             #( #[#extra_attributes] )*
+            #serde_attributes
             #[serde(#default rename = #name)]
             pub #field_ident: #target_type,
         }
     }
 
-    fn render_variant_serde_xml_rs_v7(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_variant_serde_xml_rs_v7(
+        &self,
+        ctx: &Context<'_, '_>,
+        options: SerdeOptions,
+    ) -> TokenStream {
+        let array_attribute = self.serde_array_attribute(ctx, options);
         let Self {
             s_name,
             variant_ident,
@@ -526,7 +574,7 @@ impl ComplexDataElement<'_> {
             #docs
             #( #[#extra_attributes] )*
             #[serde(rename = #name)]
-            #variant_ident(#target_type),
+            #variant_ident(#array_attribute #target_type),
         }
     }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com">
+    <xs:simpleType name="RowType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:simpleType name="NillableRowType"><xs:restriction base="xs:string" /></xs:simpleType>
+    <xs:complexType name="AliasesType">
+        <xs:sequence>
+            <xs:element name="Row" type="tns:NillableRowType" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="NillableType">
+        <xs:sequence>
+            <xs:element name="Row" type="tns:RowType" nillable="true" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="MixedType" mixed="true">
+        <xs:sequence>
+            <xs:element name="Row" type="tns:RowType" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
