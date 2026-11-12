@@ -10,6 +10,7 @@ use crate::models::{
     },
     schema::xs::Use,
 };
+use crate::RendererError;
 
 use super::super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 use super::super::{format_traits, render_trait_impls};
@@ -25,7 +26,7 @@ impl RenderStep for SerdeQuickXmlTypesRenderStep {
         RenderStepType::Types
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
             DataTypeVariant::Union(x) => x.render_type_serde_quick_xml(ctx),
@@ -35,6 +36,8 @@ impl RenderStep for SerdeQuickXmlTypesRenderStep {
             DataTypeVariant::Simple(x) => x.render_type_serde_quick_xml(ctx),
             DataTypeVariant::Complex(x) => x.render_type_serde_quick_xml(ctx),
         }
+
+        Ok(())
     }
 }
 

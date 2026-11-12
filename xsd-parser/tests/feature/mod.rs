@@ -55,6 +55,7 @@ mod extension_simple_content;
 mod extra_derive;
 mod facets;
 mod facets_binary;
+mod fallible_render_steps;
 mod flattened_content_helpers;
 mod global_attribute_without_type;
 mod globally_allowed_attribute;

@@ -21,6 +21,7 @@ use crate::models::{
     schema::{xs::Use, MaxOccurs, NamespaceId},
     IdentType, TypeIdent,
 };
+use crate::RendererError;
 
 use super::super::super::{
     context::{Context, ValueKey},
@@ -74,7 +75,7 @@ impl RenderStep for QuickXmlDeserializeRenderStep {
         RenderStepType::ExtraImpls
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         ctx.set::<DeserializerConfig>(*self);
 
         match &ctx.data.variant {
@@ -88,6 +89,8 @@ impl RenderStep for QuickXmlDeserializeRenderStep {
         }
 
         ctx.unset::<DeserializerConfig>();
+
+        Ok(())
     }
 }
 

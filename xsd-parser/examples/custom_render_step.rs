@@ -45,7 +45,7 @@ use xsd_parser::{
         },
     },
     pipeline::renderer::{Context, RenderStep, RenderStepType},
-    Config,
+    Config, RendererError,
 };
 
 fn main() -> Result<(), Error> {
@@ -118,7 +118,7 @@ impl RenderStep for CustomRenderStep {
         RenderStepType::Types
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) => (),
             DataTypeVariant::Custom(ty) => self.render_custom(ty, ctx),
@@ -129,6 +129,8 @@ impl RenderStep for CustomRenderStep {
             DataTypeVariant::Simple(ty) => self.render_simple(ty, ctx),
             DataTypeVariant::Complex(ty) => self.render_complex(ty, ctx),
         }
+
+        Ok(())
     }
 }
 

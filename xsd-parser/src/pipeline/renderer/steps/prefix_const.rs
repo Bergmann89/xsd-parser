@@ -4,6 +4,7 @@ use proc_macro2::Literal;
 use quote::quote;
 
 use crate::models::code::IdentPath;
+use crate::RendererError;
 
 use super::super::{Context, MetaData, Module, RenderStep, RenderStepType};
 
@@ -25,23 +26,27 @@ impl RenderStep for PrefixConstantsRenderStep {
         RenderStepType::ExtraImpls
     }
 
-    fn initialize(&mut self, meta: &mut MetaData<'_>) {
+    fn initialize(&mut self, meta: &mut MetaData<'_>) -> Result<(), RendererError> {
         if meta.types.meta.types.modules.is_empty() {
             self.0 = State::Done;
         }
+
+        Ok(())
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         if matches!(&self.0, State::ResolveNamespace) {
             self.0 = State::NamespaceResolved(
                 ctx.resolve_root_ident_path("xsd_parser_types::misc::NamespacePrefix"),
             );
         }
+
+        Ok(())
     }
 
-    fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) {
+    fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) -> Result<(), RendererError> {
         let State::NamespaceResolved(prefix) = replace(&mut self.0, State::Done) else {
-            return;
+            return Ok(());
         };
 
         let prefix_constants = meta.types.meta.types.modules.values().filter_map(|module| {
@@ -56,5 +61,7 @@ impl RenderStep for PrefixConstantsRenderStep {
         });
 
         module.prepend(quote! { #( #prefix_constants )* });
+
+        Ok(())
     }
 }

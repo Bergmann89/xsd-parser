@@ -6,6 +6,7 @@ use crate::models::data::{
     ComplexData, ComplexDataEnum, ComplexDataStruct, DynamicData, EnumerationData, ReferenceData,
     SimpleData, UnionData,
 };
+use crate::RendererError;
 
 use super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 
@@ -19,7 +20,7 @@ impl RenderStep for WithNamespaceTraitRenderStep {
         RenderStepType::ExtraImpls
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
             DataTypeVariant::Union(x) => x.render_with_namespace_trait(ctx),
@@ -29,6 +30,8 @@ impl RenderStep for WithNamespaceTraitRenderStep {
             DataTypeVariant::Simple(x) => x.render_with_namespace_trait(ctx),
             DataTypeVariant::Complex(x) => x.render_with_namespace_trait(ctx),
         }
+
+        Ok(())
     }
 }
 

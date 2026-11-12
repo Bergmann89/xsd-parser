@@ -5,6 +5,7 @@ use crate::models::data::{
     ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataStruct, DataTypeVariant,
     StructMode,
 };
+use crate::RendererError;
 
 use super::super::{Context, RenderStep, RenderStepType};
 
@@ -18,10 +19,12 @@ impl RenderStep for DefaultsRenderStep {
         RenderStepType::ExtraImpls
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         if let DataTypeVariant::Complex(x) = &ctx.data.variant {
             x.render_defaults(ctx);
         }
+
+        Ok(())
     }
 }
 

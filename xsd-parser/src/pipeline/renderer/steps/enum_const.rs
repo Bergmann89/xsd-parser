@@ -4,6 +4,7 @@ use proc_macro2::TokenStream;
 use quote::quote;
 
 use crate::models::data::{EnumerationData, EnumerationDataVariant, EnumerationVariantValue};
+use crate::RendererError;
 
 use super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 
@@ -16,10 +17,12 @@ impl RenderStep for EnumConstantsRenderStep {
         RenderStepType::Types
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         if let DataTypeVariant::Enumeration(x) = &ctx.data.variant {
             x.render_enum_constants(ctx);
         }
+
+        Ok(())
     }
 }
 

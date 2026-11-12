@@ -31,7 +31,7 @@ use xsd_parser::{
         renderer::{MetaData, RenderStep, RenderStepType},
     },
     traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait},
-    Config, Name, TypeIdent,
+    Config, Name, RendererError, TypeIdent,
 };
 
 fn main() -> Result<(), Error> {
@@ -292,10 +292,11 @@ impl RenderStep for FixItemType {
         RenderStepType::ExtraTypes
     }
 
-    fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) {
+    fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) -> Result<(), RendererError> {
         for wrapped in self.0.borrow().iter() {
-            wrapped.borrow().render(meta, module);
+            wrapped.borrow().render(meta, module)?;
         }
+        Ok(())
     }
 }
 
@@ -314,14 +315,15 @@ impl WrappedType {
 
     /// Render the type definition and the `ItemTags` implementation for this
     /// wrapper into the given `module`.
-    fn render(&self, meta: &MetaData<'_>, module: &mut Module) {
+    fn render(&self, meta: &MetaData<'_>, module: &mut Module) -> Result<(), RendererError> {
         let wrapped_ident = format_ident!("{}", self.ident.name.as_str());
         let tags_ident = format_ident!("{}Tags", self.ident.name.as_str());
 
         let target_type = self
             .target_type
             .as_ref()
-            .expect("the concrete type path is resolved by the custom generator step")
+            .with_context(|| format!("Missing concrete type path for {}", self.ident))
+            .map_err(RendererError::custom)?
             .resolve_relative_to(&ModulePath::root());
 
         let tags = self.tags.iter().map(|tag| tag.render(meta));
@@ -341,6 +343,8 @@ impl WrappedType {
                 }
             }
         });
+
+        Ok(())
     }
 }
 

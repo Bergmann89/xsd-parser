@@ -14,6 +14,7 @@ use crate::models::{
     meta::{MetaTypeVariant, MetaTypes},
     schema::xs::FormChoiceType,
 };
+use crate::RendererError;
 
 use super::super::super::{
     context::Context, DataTypeVariant, MetaData, RenderStep, RenderStepType,
@@ -40,7 +41,7 @@ impl RenderStep for QuickXmlCollectNamespacesRenderStep {
         RenderStepType::ExtraImpls
     }
 
-    fn initialize(&mut self, meta: &mut MetaData<'_>) {
+    fn initialize(&mut self, meta: &mut MetaData<'_>) -> Result<(), RendererError> {
         let ident = IdentPath::from_parts(
             [meta.xsd_parser_types.clone(), format_ident!("quick_xml")],
             format_ident!("CollectNamespaces"),
@@ -49,9 +50,11 @@ impl RenderStep for QuickXmlCollectNamespacesRenderStep {
         if !meta.dyn_type_traits.contains(&ident) {
             meta.dyn_type_traits.push(ident);
         }
+
+        Ok(())
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
             DataTypeVariant::Union(x) => x.render_collect_namespaces(ctx),
@@ -61,6 +64,8 @@ impl RenderStep for QuickXmlCollectNamespacesRenderStep {
             DataTypeVariant::Simple(x) => x.render_collect_namespaces(ctx),
             DataTypeVariant::Complex(x) => x.render_collect_namespaces(ctx),
         }
+
+        Ok(())
     }
 }
 

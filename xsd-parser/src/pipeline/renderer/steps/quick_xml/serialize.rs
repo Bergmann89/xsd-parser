@@ -27,6 +27,7 @@ use crate::models::{
     schema::{xs::FormChoiceType, NamespaceId},
     IdentType, TypeIdent,
 };
+use crate::RendererError;
 
 use super::super::super::{
     context::{Context, ValueKey},
@@ -135,7 +136,7 @@ impl RenderStep for QuickXmlSerializeRenderStep {
         RenderStepType::ExtraImpls
     }
 
-    fn initialize(&mut self, meta: &mut MetaData<'_>) {
+    fn initialize(&mut self, meta: &mut MetaData<'_>) -> Result<(), RendererError> {
         let ident = IdentPath::from_parts(
             [meta.xsd_parser_types.clone(), format_ident!("quick_xml")],
             format_ident!("WithBoxedSerializer"),
@@ -144,9 +145,11 @@ impl RenderStep for QuickXmlSerializeRenderStep {
         if !meta.dyn_type_traits.contains(&ident) {
             meta.dyn_type_traits.push(ident);
         }
+
+        Ok(())
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         ctx.set::<SerializerConfig>(self.clone());
 
         match &ctx.data.variant {
@@ -160,6 +163,8 @@ impl RenderStep for QuickXmlSerializeRenderStep {
         }
 
         ctx.unset::<SerializerConfig>();
+
+        Ok(())
     }
 }
 

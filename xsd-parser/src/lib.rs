@@ -470,9 +470,7 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
         renderer = renderer.with_step_boxed(step.into_render_step());
     }
 
-    let module = renderer.finish();
-
-    Ok(module)
+    renderer.finish()
 }
 
 /// Error emitted by the [`generate`] function.

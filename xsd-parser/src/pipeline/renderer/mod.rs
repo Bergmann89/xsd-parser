@@ -15,7 +15,7 @@
 //! let module = Renderer::new(&types)
 //!     .with_default_steps()
 //!     .derive(["Debug", "Clone"])
-//!     .finish();
+//!     .finish()?;
 //! ```
 
 mod context;
@@ -39,7 +39,7 @@ use crate::models::{
 
 pub use self::context::{Context, ValueKey, Values};
 pub use self::custom::{ValueRenderer, ValueRendererBox};
-pub use self::error::Error;
+pub use self::error::{Error, RenderStepPhase};
 pub use self::meta::MetaData;
 pub use self::steps::{
     ContentHelpersRenderStep, DefaultsRenderStep, EnumConstantsRenderStep,
@@ -207,8 +207,13 @@ impl<'types> Renderer<'types> {
     }
 
     /// Finish the rendering process and return the resulting [`Module`].
-    #[must_use]
-    pub fn finish(self) -> Module {
+    ///
+    /// # Errors
+    ///
+    /// Returns the first callback error, annotated with the step, callback, and
+    /// current schema type when available. No later callbacks or module layout
+    /// run after an error, and the partially rendered module is discarded.
+    pub fn finish(self) -> Result<Module, Error> {
         let mut module = Module::default();
         let Self {
             mut meta,
@@ -233,7 +238,13 @@ impl<'types> Renderer<'types> {
         };
 
         for step in &mut steps {
-            step.initialize(&mut meta);
+            step.initialize(&mut meta)
+                .map_err(|source| Error::RenderStep {
+                    step: step.render_step_name(),
+                    phase: RenderStepPhase::Initialize,
+                    ident: None,
+                    source: Box::new(source),
+                })?;
         }
 
         let mut values = Values::new();
@@ -241,18 +252,30 @@ impl<'types> Renderer<'types> {
             let mut ctx = Context::new(&meta, data, ident, &mut module, values);
 
             for step in &mut steps {
-                step.render_type(&mut ctx);
+                step.render_type(&mut ctx)
+                    .map_err(|source| Error::RenderStep {
+                        step: step.render_step_name(),
+                        phase: RenderStepPhase::RenderType,
+                        ident: Some(ident.clone()),
+                        source: Box::new(source),
+                    })?;
             }
 
             values = ctx.values;
         }
 
         for step in &mut steps {
-            step.finish(&meta, &mut module);
+            step.finish(&meta, &mut module)
+                .map_err(|source| Error::RenderStep {
+                    step: step.render_step_name(),
+                    phase: RenderStepPhase::Finish,
+                    ident: None,
+                    source: Box::new(source),
+                })?;
         }
 
         layout::finish(&meta, &mut module);
-        module
+        Ok(module)
     }
 }
 
@@ -263,31 +286,48 @@ impl<'types> Renderer<'types> {
 /// The idea is that different render steps generate different code. This can be
 /// used by the user to compose different render steps depending on his needs, or
 /// he could even implement customized steps on his own.
+///
+/// Callbacks return [`Error`] directly, or wrap application-specific errors with
+/// [`Error::custom`]. The renderer stops at the first error. In particular,
+/// [`finish`](Self::finish) is a fallible output hook, not a cleanup hook: it is
+/// not called after an earlier error. Use ordinary Rust resource ownership for
+/// cleanup that must run even when rendering fails.
 pub trait RenderStep: Debug {
     /// Returns the type of the render step.
     fn render_step_type(&self) -> RenderStepType;
 
-    /// Initialized the renderer.
+    /// Name used in callback error diagnostics.
+    ///
+    /// Defaults to the concrete Rust type name. Override this to use an
+    /// application-specific label.
+    fn render_step_name(&self) -> &'static str {
+        std::any::type_name::<Self>()
+    }
+
+    /// Initialize the renderer.
     ///
     /// This is called once for each renderer when the generator is initialized.
-    fn initialize(&mut self, meta: &mut MetaData<'_>) {
+    fn initialize(&mut self, meta: &mut MetaData<'_>) -> Result<(), Error> {
         let _meta = meta;
+        Ok(())
     }
 
     /// Renders the code for the given type.
     ///
     /// This is called once for each type that needs to be rendered.
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), Error> {
         let _cxt = ctx;
+        Ok(())
     }
 
     /// Finishes the rendering process.
     ///
     /// This is called once for each renderer after the actual rendering of the
     /// types is finished and the code generation process is being finished.
-    fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) {
+    fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) -> Result<(), Error> {
         let _meta = meta;
         let _module = module;
+        Ok(())
     }
 }
 

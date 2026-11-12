@@ -3,6 +3,7 @@ use quote::{format_ident, quote};
 
 use crate::models::data::{ComplexData, ComplexDataEnum, DataTypeVariant, Occurs};
 use crate::pipeline::renderer::{Context, RenderStep, RenderStepType};
+use crate::RendererError;
 
 /// RenderStep that generates ergonomic helper accessors for flattened struct content.
 ///
@@ -22,27 +23,27 @@ impl RenderStep for ContentHelpersRenderStep {
         RenderStepType::ExtraImpls
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) -> Result<(), RendererError> {
         let DataTypeVariant::Complex(complex) = &ctx.data.variant else {
-            return;
+            return Ok(());
         };
         let ComplexData::Struct {
             type_,
             content_type,
         } = complex
         else {
-            return;
+            return Ok(());
         };
         let Some(content) = type_.content() else {
-            return;
+            return Ok(());
         };
         if content.occurs != Occurs::DynamicList {
-            return;
+            return Ok(());
         }
 
         // The content enum is stored inline as content_type of ComplexData::Struct
         let Some(content_type) = content_type else {
-            return;
+            return Ok(());
         };
 
         let impl_block = match content_type.as_ref() {
@@ -56,11 +57,13 @@ impl RenderStep for ContentHelpersRenderStep {
             ),
             ComplexData::Struct { .. } => {
                 // Struct content (e.g. a sequence) - no enum variants to flatten
-                return;
+                return Ok(());
             }
         };
 
         ctx.current_module().append(impl_block);
+
+        Ok(())
     }
 }
 
