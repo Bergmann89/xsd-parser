@@ -156,6 +156,38 @@ pub enum RenderStep {
     /// of the different fields of a struct.
     Defaults,
 
+    /// Generate `From<Concrete>` implementations for polymorphic choice enums.
+    ///
+    /// Enable [`OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE`](super::OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE)
+    /// to represent dynamic types as choices. Each unambiguous, single-value
+    /// variant gets a conversion from its concrete payload, allocating a box
+    /// when the generator requires indirection. With unflattened content,
+    /// the implementations belong to the content enum.
+    ///
+    /// Payload types shared by multiple variants are skipped because a value
+    /// alone cannot select an XML element name. The comparison conservatively
+    /// ignores module qualifiers, so same-named payload types may require
+    /// explicit variant construction even when their Rust types differ.
+    /// Generic arguments and nullable wrappers remain distinct.
+    ///
+    /// Aliases defined in external Rust code cannot be detected. For example,
+    /// a custom `Text` with `type Text = String` alongside a `String` variant
+    /// can produce conflicting `From` implementations (E0119). Use a newtype
+    /// instead, or omit this step.
+    ///
+    /// This step is independent of the type and serialization renderers.
+    /// Ordinary `xs:choice` enums and dynamic trait objects are unaffected.
+    /// Not included in the default pipeline.
+    ///
+    /// ```rust
+    /// use xsd_parser::{Config, config::{OptimizerFlags, RenderStep}};
+    ///
+    /// let config = Config::default()
+    ///     .with_optimizer_flags(OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE)
+    ///     .with_render_step(RenderStep::PolymorphicFrom);
+    /// ```
+    PolymorphicFrom,
+
     /// Renderer to add constants for the namespaces to the generated code.
     NamespaceConstants,
 
@@ -259,6 +291,7 @@ impl RenderStepConfig for RenderStep {
             Self::TypesSerdeXmlRs { .. } => RenderStepType::Types,
             Self::TypesSerdeQuickXml => RenderStepType::Types,
             Self::Defaults => RenderStepType::ExtraImpls,
+            Self::PolymorphicFrom => RenderStepType::ExtraImpls,
             Self::EnumConstants => RenderStepType::ExtraImpls,
             Self::PrefixConstants => RenderStepType::ExtraImpls,
             Self::NamespaceConstants => RenderStepType::ExtraImpls,
@@ -277,7 +310,7 @@ impl RenderStepConfig for RenderStep {
     fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
         use crate::pipeline::renderer::{
             ContentHelpersRenderStep, DefaultsRenderStep, EnumConstantsRenderStep,
-            NamespaceConstantsRenderStep, PrefixConstantsRenderStep,
+            NamespaceConstantsRenderStep, PolymorphicFromRenderStep, PrefixConstantsRenderStep,
             QuickXmlCollectNamespacesRenderStep, QuickXmlDeserializeRenderStep,
             QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
             SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
@@ -293,6 +326,7 @@ impl RenderStepConfig for RenderStep {
             } => Box::new(SerdeXmlRsV8TypesRenderStep),
             Self::TypesSerdeQuickXml => Box::new(SerdeQuickXmlTypesRenderStep),
             Self::Defaults => Box::new(DefaultsRenderStep),
+            Self::PolymorphicFrom => Box::new(PolymorphicFromRenderStep),
             Self::EnumConstants => Box::new(EnumConstantsRenderStep),
             Self::PrefixConstants => Box::new(PrefixConstantsRenderStep::default()),
             Self::NamespaceConstants => Box::new(NamespaceConstantsRenderStep::default()),
@@ -319,7 +353,7 @@ impl RenderStepConfig for RenderStep {
     fn is_mutual_exclusive_to(&self, other: &dyn RenderStepConfig) -> bool {
         use crate::pipeline::renderer::{
             ContentHelpersRenderStep, DefaultsRenderStep, EnumConstantsRenderStep,
-            NamespaceConstantsRenderStep, PrefixConstantsRenderStep,
+            NamespaceConstantsRenderStep, PolymorphicFromRenderStep, PrefixConstantsRenderStep,
             QuickXmlCollectNamespacesRenderStep, QuickXmlDeserializeRenderStep,
             QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
             SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
@@ -340,6 +374,7 @@ impl RenderStepConfig for RenderStep {
             (Self::TypesSerdeXmlRs { .. }, Some(Self::TypesSerdeXmlRs { .. })) => true,
             (Self::TypesSerdeQuickXml, Some(Self::TypesSerdeQuickXml)) => true,
             (Self::Defaults, Some(Self::Defaults)) => true,
+            (Self::PolymorphicFrom, Some(Self::PolymorphicFrom)) => true,
             (Self::NamespaceConstants, Some(Self::NamespaceConstants)) => true,
             (Self::EnumConstants, Some(Self::EnumConstants)) => true,
             (Self::PrefixConstants, Some(Self::PrefixConstants)) => true,
@@ -364,6 +399,7 @@ impl RenderStepConfig for RenderStep {
                 other_id == TypeId::of::<SerdeQuickXmlTypesRenderStep>()
             }
             (Self::Defaults, None) => other_id == TypeId::of::<DefaultsRenderStep>(),
+            (Self::PolymorphicFrom, None) => other_id == TypeId::of::<PolymorphicFromRenderStep>(),
             (Self::NamespaceConstants, None) => {
                 other_id == TypeId::of::<NamespaceConstantsRenderStep>()
             }
@@ -397,6 +433,7 @@ impl RenderStep {
                 Self::Types | Self::TypesSerdeXmlRs { .. } | Self::TypesSerdeQuickXml,
             )
             | (Self::Defaults, Self::Defaults)
+            | (Self::PolymorphicFrom, Self::PolymorphicFrom)
             | (Self::NamespaceConstants, Self::NamespaceConstants)
             | (Self::EnumConstants, Self::EnumConstants)
             | (Self::PrefixConstants, Self::PrefixConstants)

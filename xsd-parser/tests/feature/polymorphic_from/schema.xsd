@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:t="urn:polymorphic" xmlns:f="urn:foreign"
+    targetNamespace="urn:polymorphic" elementFormDefault="qualified">
+    <xs:import namespace="urn:foreign" schemaLocation="foreign.xsd"/>
+    <xs:complexType name="Base" abstract="true">
+        <xs:attribute name="id" type="xs:unsignedInt" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Middle" abstract="true">
+        <xs:complexContent><xs:extension base="t:Base"/></xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Leaf">
+        <xs:complexContent><xs:extension base="t:Middle">
+            <xs:attribute name="label" type="xs:string" use="required"/>
+        </xs:extension></xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Node">
+        <xs:complexContent><xs:extension base="t:Base"><xs:sequence>
+            <xs:element name="child" type="t:Base" minOccurs="0"/>
+        </xs:sequence></xs:extension></xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Empty" abstract="true"/>
+    <xs:complexType name="Ordinary"><xs:choice>
+        <xs:element name="text" type="xs:string"/>
+        <xs:element name="number" type="xs:int"/>
+    </xs:choice></xs:complexType>
+    <xs:simpleType name="AliasA"><xs:restriction base="xs:string"/></xs:simpleType>
+    <xs:simpleType name="AliasB"><xs:restriction base="t:AliasA"/></xs:simpleType>
+    <xs:element name="Head" type="xs:anyType" abstract="true"/>
+    <xs:element name="First" type="xs:string" substitutionGroup="t:Head"/>
+    <xs:element name="Second" type="xs:string" substitutionGroup="t:Head"/>
+    <xs:element name="AliasFirst" type="t:AliasA" substitutionGroup="t:Head"/>
+    <xs:element name="AliasSecond" type="t:AliasB" substitutionGroup="t:Head"/>
+    <xs:element name="Number" type="xs:int" substitutionGroup="t:Head"/>
+    <xs:element name="MixedHead" type="xs:anyType" abstract="true"/>
+    <xs:element name="Plain" type="xs:string" substitutionGroup="t:MixedHead"/>
+    <xs:element name="Native" type="t:AliasA" substitutionGroup="t:MixedHead"/>
+    <xs:element name="Unique" type="xs:boolean" abstract="true"/>
+    <xs:element name="Boolean" type="xs:boolean" substitutionGroup="t:Unique"/>
+</xs:schema>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:t="urn:polymorphic" targetNamespace="urn:foreign">
+    <xs:import namespace="urn:polymorphic" schemaLocation="schema.xsd"/>
+    <xs:complexType name="ForeignLeaf">
+        <xs:complexContent><xs:extension base="t:Base">
+            <xs:attribute name="value" type="xs:int" use="required"/>
+        </xs:extension></xs:complexContent>
+    </xs:complexType>
+</xs:schema>

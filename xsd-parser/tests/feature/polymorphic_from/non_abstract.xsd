@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:t="urn:concrete" targetNamespace="urn:concrete">
+    <xs:complexType name="Base">
+        <xs:attribute name="id" type="xs:unsignedInt" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Derived">
+        <xs:complexContent><xs:extension base="t:Base">
+            <xs:attribute name="label" type="xs:string" use="required"/>
+        </xs:extension></xs:complexContent>
+    </xs:complexType>
+</xs:schema>

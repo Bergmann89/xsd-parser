@@ -45,10 +45,11 @@ pub use self::pipeline::{
     optimizer::Optimizer,
     parser::Parser,
     renderer::{
-        DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlCollectNamespacesRenderStep,
-        QuickXmlDeserializeRenderStep, QuickXmlSerializeRenderStep, RenderStep, Renderer,
-        SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep,
-        TypesRenderStep, WithNamespaceTraitRenderStep,
+        DefaultsRenderStep, NamespaceConstantsRenderStep, PolymorphicFromRenderStep,
+        QuickXmlCollectNamespacesRenderStep, QuickXmlDeserializeRenderStep,
+        QuickXmlSerializeRenderStep, RenderStep, Renderer, SerdeQuickXmlTypesRenderStep,
+        SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep, TypesRenderStep,
+        WithNamespaceTraitRenderStep,
     },
 };
 pub use self::traits::{VecHelper, WithIdent};
