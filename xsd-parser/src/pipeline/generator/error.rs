@@ -70,4 +70,21 @@ pub enum Error {
         /// Description of the schema type that collides with `first`.
         second: String,
     },
+
+    /// Generated type shadows a build-in type.
+    ///
+    /// Is raised if a schema type would be generated with the name of a
+    /// build-in Rust type or trait (like `String` or `Option`) that the
+    /// generated code refers to, which results in code that does not compile.
+    #[error(
+        "Type name `{name}` is generated for {type_} and shadows the build-in `{name}`! \
+         Enable `GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS` or use a custom naming."
+    )]
+    ShadowedBuildIn {
+        /// The name of the shadowed build-in type or trait.
+        name: String,
+
+        /// Description of the schema type that uses the name.
+        type_: String,
+    },
 }

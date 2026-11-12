@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Option xmlns:tns="http://example.com">
+    <tns:Value>text</tns:Value>
+</tns:Option>

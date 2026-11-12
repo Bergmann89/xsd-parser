@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com"
+    xmlns:tns="http://example.com"
+    elementFormDefault="qualified">
+    <!-- the element postfix is empty by default, so this element is named like `core::option::Option` -->
+    <xs:element name="Option">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Value" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
