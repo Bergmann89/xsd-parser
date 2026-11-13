@@ -65,7 +65,7 @@ The usual setup generates the code in the build script of your crate. Add `xsd-p
 xsd-parser-types = { version = "0.4", features = ["quick-xml"] }
 
 [build-dependencies]
-xsd-parser = "1.7"
+xsd-parser = "1.8"
 ```
 
 Then generate the code in `build.rs` and include it from your crate:
@@ -150,6 +150,26 @@ The benchmarks were created on the following system:
 # Changelog
 
 Below you can find a short list of the most important changes for each released version.
+
+## Version 1.8.0
+
+- **Word-Based Naming**
+  The default naming splits names into words itself instead of using Inflector, so digits and plural acronyms stay together (`MP3s` becomes `mp3s` instead of `mp_3s`). `LegacyNaming` keeps the names of version 1.7.
+
+- **New Generator and Renderer Options**
+  `GeneratorFlags::USE_TYPE_MODULES` generates one module (and file) per type, `CodeFormat::Pretty` formats the output with `prettyplease` (feature `pretty`), `CustomMeta::with_alias` keeps mapped Rust types as aliases, and `RenderStep::PolymorphicFrom` adds `From` conversions for polymorphic choices.
+
+- **Serde Options**
+  The Serde render steps can add `serde_with` adapters for arrays with more than 32 elements and skip `None` values and empty vectors (`Config::with_serde_quick_xml_config`, `Config::with_serde_xml_rs_config`).
+
+- **Fixes**
+  Choices created by `OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE` no longer contain abstract types, and types defined inline at a local element use the element name as default tag.
+
+- **Breaking Changes**
+  - The generated names change with the word-based naming (e.g. `content_103` becomes `content103`).
+  - The Serde render steps have the new fields `large_arrays`, `skip_none` and `skip_empty_vecs`.
+  - `GeneratorFlags::all()` includes `USE_TYPE_MODULES`, use `all() - USE_TYPE_MODULES` to keep the previous layout.
+  - A generated type named like a build-in type (e.g. `String`) raises an error unless `BUILD_IN_ABSOLUTE_PATHS` is set.
 
 ## Version 1.7.0
 
