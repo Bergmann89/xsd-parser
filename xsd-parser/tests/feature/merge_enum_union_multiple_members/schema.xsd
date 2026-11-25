@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="CountryCode">
+        <xs:union memberTypes="tns:Alpha2 tns:Alpha3 tns:Named" />
+    </xs:simpleType>
+
+    <xs:simpleType name="Named">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Germany" />
+            <xs:enumeration value="USA" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Alpha2">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{2}" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Alpha3">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{3}" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="FooType">
+        <xs:attribute name="country" type="tns:CountryCode" use="required" />
+    </xs:complexType>
+
+    <xs:element name="Foo" type="tns:FooType" />
+</xs:schema>

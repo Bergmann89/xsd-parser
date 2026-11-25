@@ -805,11 +805,11 @@ impl EnumerationData<'_> {
             ..
         } = self;
 
-        let mut other = None;
+        let mut others = Vec::new();
         let validation = self.constrains.render_validation(ctx);
         let variants_matcher = variants
             .iter()
-            .filter_map(|v| v.render_deserializer_variant_matcher(ctx, &mut other))
+            .filter_map(|v| v.render_deserializer_variant_matcher(ctx, &mut others))
             .collect::<Vec<_>>();
         let variants_simple = variants
             .iter()
@@ -829,20 +829,7 @@ impl EnumerationData<'_> {
             "xsd_parser_types::quick_xml::WithDeserializerFromBytes"
         );
 
-        let other = other.unwrap_or_else(|| {
-            let error_kind = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
-            let raw_byte_str = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::RawByteStr");
-
-            quote! {
-                Err(
-                    #error::from(
-                        #error_kind::UnknownOrInvalidValue(
-                            #raw_byte_str::from_slice(x)
-                        )
-                    )
-                )
-            }
-        });
+        let other = Self::render_deserializer_other(ctx, &others);
 
         let simple = variants_simple
             .is_empty()
@@ -899,13 +886,65 @@ impl EnumerationData<'_> {
 
         ctx.current_module().append(code);
     }
+
+    /// Renders the fallback that is used if the value does not match any of
+    /// the enumeration values. Each variant that wraps a separate type (for
+    /// example a member of a merged union) is tried in order.
+    fn render_deserializer_other(
+        ctx: &Context<'_, '_>,
+        others: &[(Ident2, TokenStream)],
+    ) -> TokenStream {
+        let error = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::Error");
+
+        match others {
+            [] => {
+                let error_kind = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
+                let raw_byte_str = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::RawByteStr");
+
+                quote! {
+                    Err(
+                        #error::from(
+                            #error_kind::UnknownOrInvalidValue(
+                                #raw_byte_str::from_slice(x)
+                            )
+                        )
+                    )
+                }
+            }
+            [(variant_ident, target_type)] => {
+                quote!(Ok(Self::#variant_ident(#target_type::deserialize_bytes(helper, x)?)))
+            }
+            _ => {
+                let vec = resolve_build_in!(ctx, "::alloc::vec::Vec");
+                let box_ = resolve_build_in!(ctx, "::alloc::boxed::Box");
+                let error_kind = resolve_ident!(ctx, "::xsd_parser_types::quick_xml::ErrorKind");
+
+                let attempts = others.iter().map(|(variant_ident, target_type)| {
+                    quote! {
+                        match #target_type::deserialize_bytes(helper, x) {
+                            Ok(value) => return Ok(Self::#variant_ident(value)),
+                            Err(error) => errors.push(#box_::new(error)),
+                        }
+                    }
+                });
+
+                quote! {
+                    let mut errors = #vec::new();
+
+                    #( #attempts )*
+
+                    Err(#error::from(#error_kind::InvalidUnion(errors.into())))
+                }
+            }
+        }
+    }
 }
 
 impl EnumerationDataVariant<'_> {
     fn render_deserializer_variant_matcher(
         &self,
         ctx: &Context<'_, '_>,
-        other: &mut Option<TokenStream>,
+        others: &mut Vec<(Ident2, TokenStream)>,
     ) -> Option<TokenStream> {
         let Self {
             b_name,
@@ -917,8 +956,7 @@ impl EnumerationDataVariant<'_> {
         if let Some(target_type) = target_type {
             let target_type = ctx.resolve_type_for_module(target_type);
 
-            *other =
-                Some(quote!(Ok(Self::#variant_ident(#target_type::deserialize_bytes(helper, x)?))));
+            others.push((variant_ident.clone(), target_type));
 
             return None;
         }
